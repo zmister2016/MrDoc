@@ -4,14 +4,18 @@
 一个简单的文档系统
 
 #### 软件架构
-软件架构说明
+基于Python Web框架Django构建。
+后端：Django 2.1
+前端：LayUI 2.5.4
+编辑器：Editormd
 
 
 #### 安装教程
 
-1. xxxx
-2. xxxx
-3. xxxx
+1. 下载并解压；
+2. 如果需要使用其他数据库，请修改；
+3. 运行python manage.py makemigrations&&python manage.py migrate 创建和执行数据库迁移；
+4. 运行python manage.py createsuperuser 创建管理员账号；
 
 #### 使用说明
 
