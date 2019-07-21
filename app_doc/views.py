@@ -99,7 +99,7 @@ def create_doc(request):
     if request.method == 'GET':
         # doc_list = Doc.objects.filter(create_user=request.user)
         project_list = Project.objects.filter(create_user=request.user)
-        doctemp_list = DocTemp.objects.filter(create_user=request.user)
+        doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
         return render(request,'app_doc/create_doc.html',locals())
     elif request.method == 'POST':
         project = request.POST.get('project','')
@@ -169,9 +169,9 @@ def create_doctemp(request):
     if request.method == 'GET':
         return render(request,'app_doc/create_doctemp.html',locals())
     elif request.method == 'POST':
-        name = request.POST.get('name',None)
+        name = request.POST.get('name','')
         content = request.POST.get('content','')
-        if name:
+        if name != '':
             doctemp = DocTemp.objects.create(
                 name = name,
                 content = content,

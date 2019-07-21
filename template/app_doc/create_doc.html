@@ -9,12 +9,12 @@
     <link href="{% static 'style.css' %}" rel="stylesheet">
 </head>
 <body class="layui-layout-body">
-<div class="layui-row">
-    <ul class="layui-nav layui-bg-blue">
-        <li class="layui-nav-item"><a href="">MrDoc</a></li>
-        <li class="layui-nav-item"><a href="/">回到首页</a></li>
-    </ul>
-</div>
+<!--<div class="layui-row">-->
+    <!--<ul class="layui-nav layui-bg-blue">-->
+        <!--<li class="layui-nav-item"><a href="">MrDoc</a></li>-->
+        <!--<li class="layui-nav-item"><a href="/">回到首页</a></li>-->
+    <!--</ul>-->
+<!--</div>-->
 <div class="layui-main">
     <div class="create-doc-form">
 {#        文档标题#}
@@ -187,6 +187,16 @@
                 area:['530px','300px'],
             });
         });
+        //插入模板
+        insertTemp = function(doctemp_id){
+            //$.post("get_doctemp",data.function(r){
+            //    if(r.status){
+            //        editor.insertValue(r.data)
+            //    }else{
+            //    }
+            //});
+            //layer.close()
+        };
     </script>
 {% endblock %}
 </body>
@@ -213,9 +223,9 @@
           <td>{{ temp.name }}</td>
           <td>{{ temp.create_time }}</td>
           <td>
-              <a href="">插入</a>
-              <a href="">修改</a>
-              <a href="">删除</a>
+              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">插入</a>
+              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>
+              <a href="javascript:void(0);" onclick="delTemp();">删除</a>
           </td>
         </tr>
         {% endfor %}
