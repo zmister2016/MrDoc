@@ -1,0 +1,120 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load staticfiles %}
+{% block title %}用户管理{% endblock %}
+{% block content %}
+    <div class="layui-row">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="username" id="username" required lay-verify="required" placeholder="输入用户名" autocomplete="off" class="layui-input">
+            </div>
+            <button class="layui-btn layui-btn-normal">搜索</button>
+            <button class="layui-btn layui-btn-normal" onclick="createUser()">添加用户</button>
+        </div>
+    </div>
+    <div class="layui-row" lay-skin="line">
+        <table class="layui-table"  id="user-list"></table>
+    </div>
+{% endblock %}
+
+{% block custom_script %}
+{#    // 用户角色模板#}
+    <script type="text/html" id="userRole">
+      {% verbatim %}
+          {{#  if(d['is_superuser']){ }}
+                超级管理员
+          {{#  } else { }}
+            普通用户
+          {{#  } }}
+      {% endverbatim %}
+    </script>
+{#    // 用户状态模板#}
+    <script type="text/html" id="userStatus">
+      {% verbatim %}
+          {{#  if(d['is_active']){ }}
+              <i class="layui-icon layui-icon-ok-circle" style="color: green"/>
+          {{#  } else { }}
+              <i class="layui-icon layui-icon-close-fill" style="color: red"/>
+          {{#  } }}
+      {% endverbatim %}
+    </script>
+{#    //用户操作模板#}
+    <script type="text/html" id="userOpera">
+      {% verbatim %}
+      <a class="layui-table-link" href="javascript:void(0);" onclick="changePwd('{{ d.id }}','{{ d.username }}')">修改密码</a>&nbsp;&nbsp;
+      <a class="layui-table-link" href="javascript:void(0);" onclick="delUser('{{ d.id }}')">删除用户</a>
+      {% endverbatim %}
+    </script>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    var table = layui.table;
+    var layer = layui.layer;
+    //获取用户列表
+    getUserInfo = function () {
+        $.post("{% url 'user_manage' %}",{'username':$("#username").val()},function(r){
+            if(r.status){
+                //执行表格渲染
+                table.render({
+                    elem: '#user-list' //指定原始表格元素选择器（推荐id选择器）
+                    ,height: 315 //容器高度
+                    ,limit:20
+                    ,page:true
+                    ,cols: [[
+                        {field:'username',title:'用户名',width:160},
+                        {field:'email',title:'电子邮箱',width:160},
+                        {field:'is_superuser',title:'用户角色',width:100,templet:'#userRole'},
+                        {field:'date_joined',title:'注册时间',width:200},
+                        {field:'last_login',title:'最后登录时间',width:200},
+                        {field:'is_active',title:'状态',width:60,templet:'#userStatus'},
+                        {field:'oprate',title:'操作',width:180,templet:'#userOpera'},
+                    ]] //设置表头
+                    ,data:r.data
+                });
+            }
+        });
+    };
+    //新建用户
+    createUser = function(){
+        layer.open({
+            type:1,
+            title:'新建用户',
+            area:'300px;',
+            id:'createUser',//配置ID
+            content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="user" style="margin-bottom:10px;" placeholder="输入用户名" required  lay-verify="required"><input class="layui-input" type="email" id="email" style="margin-bottom:10px;" placeholder="输入电子邮箱" required  lay-verify="required"><input class="layui-input" type="password" id="password" placeholder="输入密码" required  lay-verify="required"></div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                data = {
+                    'username':$("#user").val(),
+                    'password':$("#password").val(),
+                    'email':$("#email").val()
+                }
+                $.post("{% url 'create_user' %}",data,function(r){
+                    if(r.status){
+                        //创建成功，刷新页面
+                        window.location.reload();
+                    }else{
+                        //创建失败，提示
+                        console.log(r)
+
+                    }
+                })
+            },
+        })
+    };
+    //修改用户密码
+    changePwd = function(uid,username){
+        layer.open({
+            type:1,
+            title:'修改密码',
+            area:'300px;',
+            id:'changePwd',
+            content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
+            btn:['确认修改','取消'],
+        })
+    };
+    //页面加载执行 获取所有用户信息
+    getUserInfo();
+</script>
+{% endblock %}

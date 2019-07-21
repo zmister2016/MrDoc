@@ -1,0 +1,195 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ doc.name }} - {{ project.name }} - MrDoc</title>
+    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
+    <link rel="stylesheet" href="{% static 'prism/prism.css' %}" />
+    <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}" />
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <style>
+        .doc-content ul li{
+            list-style:disc;
+        }
+        .doc-content ul > li > ul > li{
+            list-style-type: circle;
+        }
+        .doc-content ol li{
+            list-style-type: decimal;
+        }
+    </style>
+</head>
+<body>
+<div class="doc">
+    <!-- 左侧目录栏 -->
+    <div class="doc-summary">
+        <div id="doc-search-input">
+            <input type="text" placeholder="搜索文集或文档" value="" class="layui-input doc-search-input">
+        </div>
+        <div class="project-title">
+            <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}</a>
+        </div>
+        <hr>
+        {% load doc_filter %}
+        <nav>
+            <ul class="summary">
+            {% for docs in project_docs %}
+                <li><a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
+                {% if docs.id|get_next_doc %}
+                    <ul class="sub-menu">
+                    {% for node in docs.id|get_next_doc %}
+                        <li><a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}">{{ node.name }}</a>
+                            {% if node.id|get_next_doc %}
+                            <ul>
+                            {% for doc in node.id|get_next_doc %}
+                                <li><a href="{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}">{{ doc.name }}</a></li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </nav>
+        <div class="bq">
+            <a href="" class="mrdoc-link">本文档使用MrDoc发布</a>
+        </div>
+    </div>
+    <!-- 左侧目录栏结束 -->
+    <!-- 右侧文档栏 -->
+    <div class="doc-body">
+        <!-- 文档导航 -->
+        <div class="doc-header" role="navigation">
+            <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
+                <i class="fa fa-home"></i> 返回首页
+            </a>
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="#">
+                <i class="fa fa-align-justify"></i>
+            </a>
+
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="#">
+                <i class="fa fa-font">-</i>
+            </a>
+            <div class="dropdown pull-left font-settings js-toolbar-action">
+                <a class="btn toggle-dropdown" aria-label="Font Settings" href="#">
+                    <i class="fa fa-font">+</i>
+                </a>
+            </div>
+            {% if request.user == doc.create_user %}
+                <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
+                    <i class="fa fa-edit"></i> 修改文档
+                </a>
+            {% endif %}
+        </div>
+        <!-- 文档主体 -->
+        <div class="doc-body-content">
+            <div class="doc-body-content-div">
+                <!-- 文档内容 -->
+                <div class="doc-content">
+                    <div class="doc-info">
+                        <h1>{{ doc.name }}</h1>
+{#                        <p>创建时间：{{ doc.create_time }} 最后修改时间：{{ doc.modify_time }}</p>#}
+                        <hr>
+                    </div>
+                    <div class="markdown-body" id="content">
+{#                        {{ doc.content | safe }}#}
+                        <style>
+                            ul.markdown-toc-list li,ul.markdown-toc-list > li > ul  li{
+                                list-style: none;
+                            }
+                        </style>
+                        <textarea id="" style="display: none;">{{ doc.pre_content }}</textarea>
+                    </div>
+                </div>
+                <!-- 文档目录 -->
+                <div class="doc-cata">
+                    <div id="toc-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 右侧文档栏结束 -->
+    <div class="toTop"><i class="layui-icon layui-icon-top" style="font-size: 50px;"></i></div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'prism/prism.js' %}"></script>
+<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
+<script src="{% static 'editor.md/editormd.min.js' %}"></script>
+{% block custom_script %}
+    <script>
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        //为当前页面的目录链接添加样式
+        $("nav li a").each(function (i) {
+            var $me = $(this);
+            var lochref = $.trim(window.location.href);
+            var mehref = $.trim($me.get(0).href);
+            if (lochref.indexOf(mehref) != -1) {
+                //console.log($me)
+                $me.parent().addClass("active");
+            } else {
+                //console.log(lochref,mehref)
+                $me.parent().removeClass("active");
+            }
+        });
+        //解析Markdown为HTML
+        editormd.markdownToHTML("content", {
+            htmlDecode      : "style,script,iframe",
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 科学公式
+            flowChart       : true,  // 流程图
+            sequenceDiagram : true,  // 默认不解析
+            tocm            : true, //目录
+            //tocContainer    : "#toc-container"
+        });
+    </script>
+    <!-- 返回顶部 -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // 初始时，“返回顶部”标签隐藏
+            $(".toTop").hide();
+            $(window).scroll(function() {
+                // 若滚动的高度，超出指定的高度后，“返回顶部”的标签出现。
+                if($(document).scrollTop() >= 150) {
+                    $(".toTop").show();
+                } else {
+                    $(".toTop").hide();
+                }
+            })
+            // 绑定点击事件，实现返回顶部的效果
+            $(".toTop").click(function() {
+                $(document).scrollTop(0);
+            });
+        });
+    </script>
+    <!-- 切换隐藏侧边栏 -->
+    <script>
+        // 切换侧边栏
+        $(function(){
+            $(".js-toolbar-action").click(toggleSidebar);
+        });
+        //切换侧边栏显示隐藏
+        function toggleSidebar(){
+            console.log("切换侧边栏")
+            $("body").toggleClass("big-page");
+            return false;
+        }
+    </script>
+{% endblock %}
+</body>
+</html>

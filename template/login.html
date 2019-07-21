@@ -1,0 +1,65 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+	<title>用户登录 - MrDoc</title>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
+    <style>
+        body{
+            background-color: #fafafa;
+            text-align: center;
+        }
+        .container{
+            display: flex;
+            display: -webkit-flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-form{
+            margin-top: 15%;
+            {#width: 400px;#}
+            padding: 20px 50px 20px 60px;
+            background-color: #fff;
+            -webkit-box-shadow: #666 0px 0px 10px;
+           -moz-box-shadow: #666 0px 0px 10px;
+           box-shadow: #666 0px 0px 10px;
+        }
+        .register-link{
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div></div>
+        <div></div>
+        <div class="login-form">
+            <form class="layui-form" action="{% url 'login' %}"  method='POST'>
+                {% csrf_token %}
+                <div class="layui-form-item">
+                    <h2><strong>登录 - MrDoc</strong></h2>
+                </div>
+                <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                      <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                        <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">登录</button>
+                    </div>
+                </div>
+                <a href="{% url 'register' %}" class="register-link">注册新账号</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

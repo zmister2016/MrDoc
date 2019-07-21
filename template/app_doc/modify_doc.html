@@ -1,0 +1,149 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>修改文档 - MrDoc</title>
+    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <style>
+        ul li{
+            list-style:disc;
+        }
+        ol li{
+            list-style-type: decimal;
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-row">
+    <ul class="layui-nav layui-bg-blue">
+        <li class="layui-nav-item"><a href="">MrDoc</a></li>
+        <li class="layui-nav-item"><a href="/">回到首页</a></li>
+    </ul>
+</div>
+<div class="layui-main">
+    <div class="create-doc-form">
+{#        文档标题#}
+        <div class="layui-form">
+            <label class="layui-form-label">文档标题</label>
+            <div class="layui-input-inline">
+              <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input" >
+            </div>
+            <label class="doc-form-label">所属文集</label>
+            <div class="layui-input-inline">
+              <select name="pro_id" lay-verify="required"  lay-filter="project" id="project" disabled>
+                <option value="{{ project.id }}">{{ project.name }}</option>
+              </select>
+            </div>
+            <label class="doc-form-label">上级文档</label>
+            <div class="layui-input-inline">
+              <select name="parent_id" lay-verify="required" id="parent-doc">
+                  <option value="0"></option>
+                  {% for docs in doc_list %}
+                      {% if doc.parent_doc == docs.id %}
+                            <option value="{{ docs.id }}" selected>{{ docs.name }}</option>
+                      {% else %}
+                          <option value="{{ docs.id }}">{{ docs.name }}</option>
+                      {% endif %}
+                  {% endfor %}
+              </select>
+            </div>
+            <label class="doc-form-label">
+                <button class="layui-btn layui-btn-primary">插入模板</button>
+            </label>
+            <label class="doc-form-label">
+                <button class="layui-btn layui-btn-normal" onclick="createDoc()">保存</button>
+            </label>
+        </div>
+    </div>
+    <div id="editor-md">
+        <textarea style="display:none;">{{ doc.pre_content }}</textarea>
+        <textarea class="editormd-html-textarea" name="$id-html-code"></textarea>
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'editor.md/editormd.min.js' %}"></script>
+{% block custom_script %}
+    <script>
+        layui.config({
+            base: "/static/layui/module/"
+        }).extend({
+            treeSelect: "treeSelect/treeSelect"
+        });
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        //初始化editormd
+        var editor = editormd("editor-md", {
+            width       :   "100%",
+            height      :   "1000px;",
+            placeholder :   "开始使用Markdown书写……",
+            path        :   "/static/editor.md/lib/",
+            saveHTMLToTextarea : true,
+            tex         :   true,//开启科学公式
+            tocm        :   true,//开启下拉目录
+            taskList    :   true,//开启任务列表
+            tocTitle    :   '文章导读',//目录标题
+            tocContainer:   '',
+            tocDropdown :   false,
+            emoji       :   true,//开启Emoji
+            imageUpload    : true, //开启图片上传
+            imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "{% url 'upload_doc_img' %}",
+        });
+        //粘贴上传图片
+        $("#editor-md").on('paste', function (ev) {
+            var data = ev.clipboardData;
+            var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (var index in items) {
+                var item = items[index];
+                if (item.kind === 'file') {
+                    var blob = item.getAsFile();
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        var base64 = event.target.result;
+                        //ajax上传图片
+                        $.post("{% url 'upload_doc_img' %}",{base:base64}, function (ret) {
+                            layer.msg(ret.message);
+                            if (ret.success === 1) {
+                                //新一行的图片显示
+                                editor.insertValue("\n![](" + ret.url + ")");
+                            }
+                        });
+                    }; // data url!
+                    var url = reader.readAsDataURL(blob);
+                }
+            }
+        });
+        var layer = layui.layer;
+        var form = layui.form;
+        //保存文档
+        createDoc = function(){
+            var data = {
+                'doc_id':{{ doc.id }},
+                'project':$("#project").val(),
+                'parent_doc':$("#parent-doc").val(),
+                'doc_name':$("#doc-name").val(),
+                'content':editor.getHTML(),
+                'pre_content':editor.getMarkdown(),
+            }
+            $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
+                if(r.status){
+                    //创建成功
+                    layer.msg('保存成功，即将跳转',function(){
+                        window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
+                    });
+                }else{
+                    //创建失败
+                    layer.msg('保存失败');
+                }
+            });
+        };
+    </script>
+{% endblock %}
+</body>
+</html>

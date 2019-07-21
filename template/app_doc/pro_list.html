@@ -1,0 +1,126 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>MrDoc</title>
+    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+</head>
+<body class="layui-layout-body">
+<div class="layui-header">
+    <div class="layui-main">
+        <a class="logo" href="{% url 'pro_list' %}">
+            <img src="/media/logo.png" />
+        </a>
+{#        <ul class="layui-nav layui-bg-blue" lay-filter="">#}
+{#          <li class="layui-nav-item"><a href="">MrDoc</a></li>#}
+    {#      <li class="layui-nav-item layui-this"><a href="">产品</a></li>#}
+    {#      <li class="layui-nav-item"><a href="">大数据</a></li>#}
+    {#      <li class="layui-nav-item"><a href="">社区</a></li>#}
+{#        </ul>#}
+    </div>
+</div>
+<div class="layui-main">
+    {% for p in project_list %}
+        <div class="project-item">
+            <a href="{% url 'pro_index' p.id %}">
+                <div class="layui-card">
+                    <div class="layui-card-header">《{{ p.name }}》</div>
+                  <div class="layui-card-body">
+                    {{ p.intro }}
+                  </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+{#    <div class="project-item">#}
+{#        <a href="javascript:void(0);" onclick="createPro();">#}
+{#            <div class="layui-card">#}
+{#                <div class="layui-card-header"><i class="layui-icon layui-icon-add-1"></i> 创建文集</div>#}
+{#              <div class="layui-card-body">#}
+{#                新建一个文集，开始愉快的写作……#}
+{#              </div>#}
+{#            </div>#}
+{#        </a>#}
+{#    </div>#}
+    <div class="project-item">
+        <a href="{% url 'create_doc' %}" target="_blank">
+            <div class="layui-card">
+                <div class="layui-card-header"><i class="layui-icon layui-icon-add-1"></i> 创建文档</div>
+              <div class="layui-card-body">
+                新建一个文档，马上开始愉快的写作……
+              </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+{% block custom_script %}
+    <script>
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        var layer = layui.layer;
+        //创建新文集
+        createPro = function () {
+            layer.open({
+                type:1,
+                title:'新建文集',
+                area:'300px;',
+                id:'createPro',//配置ID
+                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea"></textarea></div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    data = {
+                        'pname':$("#pname").val(),
+                        'desc':$("#desc").val(),
+                    }
+                    $.post("{% url 'create_project' %}",data,function(r){
+                        if(r.status){
+                            //创建成功，刷新页面
+                            window.location.reload();
+                        }else{
+                            //创建失败，提示
+                            console.log(r)
+
+                        }
+                    })
+                },
+            });
+        };
+        //修改文集
+        modifyPro = function(pro_id){
+            layer.open({
+                type:1,
+                title:'修改文集',
+                area:'300px;',
+                id:'createPro',//配置ID
+                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea"></textarea></div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    data = {
+                        'pro_id':pro_id,
+                        'name':$("#pname").val(),
+                        'desc':$("#desc").val(),
+                    }
+                    $.post("{% url 'modify_project' %}",data,function(r){
+                        if(r.status){
+                            //修改成功，刷新页面
+                            window.location.reload();
+                        }else{
+                            //修改失败，提示
+                            console.log(r)
+                        }
+                    })
+                },
+            });
+        };
+    </script>
+{% endblock %}
+</body>
+</html>
