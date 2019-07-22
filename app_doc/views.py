@@ -198,20 +198,40 @@ def modify_doctemp(request,doctemp_id):
 
 # 删除文档模板
 @login_required()
-def del_doctemp(request,doctemp_id):
-    doctemp = DocTemp.objects.get(id=doctemp_id)
-    if request.user.id == doctemp.create_user.id:
-        doctemp.delete()
-        return JsonResponse({'status':True,'data':'删除完成'})
+def del_doctemp(request):
+    doctemp_id = request.POST.get('doctemp_id','')
+    if doctemp_id != '':
+        doctemp = DocTemp.objects.get(id=doctemp_id)
+        if request.user.id == doctemp.create_user.id:
+            doctemp.delete()
+            return JsonResponse({'status':True,'data':'删除完成'})
+        else:
+            return JsonResponse({'status':False,'data':'非法请求'})
     else:
-        return JsonResponse({'status':False,'data':'非法请求'})
+        return JsonResponse({'status': False, 'data': '参数错误'})
 
 
-# 获取文档模板列表
+# 文档模板列表页 - (管理模板)
 @login_required()
-def get_doctemp_list(request):
-    if request.method == 'POST':
+def manage_doctemp(request):
+    if request.method == 'GET':
         doctemp_list = DocTemp.objects.filter(create_user=request.user)
+        return render(request,'app_doc/doctemp_list.html',locals())
+    # if request.method == 'POST':
+    #     doctemp_list = DocTemp.objects.filter(create_user=request.user)
+
+# 获取指定文档模板
+@login_required()
+def get_doctemp(request):
+    if request.method == 'POST':
+        doctemp_id = request.POST.get('doctemp_id','')
+        if doctemp_id != '':
+            content = DocTemp.objects.get(id=int(doctemp_id)).serializable_value('content')
+            return JsonResponse({'status':True,'data':content})
+        else:
+            return JsonResponse({'status':False,'data':'参数错误'})
+    else:
+        return JsonResponse({'status':False,'data':'方法错误'})
 
 
 # 获取指定文集的所有文档
@@ -220,9 +240,22 @@ def get_pro_doc(request):
         pro_id = request.POST.get('pro_id','')
         if pro_id != '':
             doc_list = Doc.objects.filter(top_doc=int(pro_id)).values_list('id','name','parent_doc').order_by('parent_doc')
-            return JsonResponse({'status':True,'data':list(doc_list)})
+            item_list = []
+            for doc in doc_list:
+                if doc[2] == 0:
+                    item = [
+                        doc[0],doc[1],doc[2],''
+                    ]
+                else:
+                    parent = Doc.objects.get(id=doc[2])
+                    if parent.parent_doc == 0: # 只要二级目录
+                        item = [
+                            doc[0],doc[1],doc[2],parent.name+' --> '
+                        ]
+                item_list.append(item)
+            return JsonResponse({'status':True,'data':list(item_list)})
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     else:
-        pass
+        return JsonResponse({'status':False,'data':'方法错误'})
 

@@ -69,19 +69,21 @@
         });
         //初始化editormd
         var editor = editormd("editor-md", {
-            width  : "100%",
-            height : "1000px;",
-            placeholder:"开始使用Markdown书写……",
-            path   : "/static/editor.md/lib/",
+            width       :   "100%",
+            height      :   "1000px;",
+            placeholder :   "开始使用Markdown书写……",
+            path        :   "/static/editor.md/lib/",
             saveHTMLToTextarea : true,
-            tex:true,//开启科学公式
-            tocm:true,//开启下拉目录
-            taskList:true,//开启任务列表
-            tocTitle:'文章导读',
-            tocContainer:'',
-            tocDropdown:false,
-            emoji:true,
-
+            tex         :   true,//开启科学公式
+            tocm        :   true,//开启下拉目录
+            taskList    :   true,//开启任务列表
+            tocTitle    :   '文章导读',//目录标题
+            tocContainer:   '',
+            tocDropdown :   false,
+            emoji       :   true,//开启Emoji
+            imageUpload    : true, //开启图片上传
+            imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "{% url 'upload_doc_img' %}",
         });
         //粘贴上传图片
         $("#editor-md").on('paste', function (ev) {
@@ -148,7 +150,7 @@
                         //解析文集的下级文档
                         //console.log(r.data)
                         for(let i in r.data) {
-                            $("#parent-doc").append("<option value='"+r.data[i][0]+"'>"+r.data[i][2]+r.data[i][1]+"</option>")
+                            $("#parent-doc").append("<option value='"+r.data[i][0]+"'>"+r.data[i][3]+r.data[i][1]+"</option>")
                         };
                         form.render();
                     }else{
@@ -183,19 +185,32 @@
         $("#sel-doctemp").click(function(){
             layer.open({
               type: 1,
+                id:'temp-div',
               content: $('#doctemp-list'),
                 area:['530px','300px'],
             });
         });
         //插入模板
         insertTemp = function(doctemp_id){
-            //$.post("get_doctemp",data.function(r){
-            //    if(r.status){
-            //        editor.insertValue(r.data)
-            //    }else{
-            //    }
-            //});
-            //layer.close()
+            $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
+                if(r.status){
+                    editor.insertValue(r.data);
+                    layer.closeAll()
+                }else{
+                    layer.msg(r.data)
+                }
+            });
+        };
+        //删除模板
+        delTemp = function(doctemp_id){
+            layer.open({
+                title:'删除模板',
+                content:'确认删除此模板？',
+                btn:['确定','取消'],
+                yes:function(index,layero){
+
+                },
+            });
         };
     </script>
 {% endblock %}
@@ -203,6 +218,7 @@
 <div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
     <div style="margin: 10px 0 0 10px;">
         <a class="layui-btn layui-btn-normal" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
+        <a class="layui-btn layui-btn-normal" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
     </div>
     <table class="layui-table" style="margin: 10px;">
       <colgroup>
@@ -223,9 +239,9 @@
           <td>{{ temp.name }}</td>
           <td>{{ temp.create_time }}</td>
           <td>
-              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">插入</a>
-              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>
-              <a href="javascript:void(0);" onclick="delTemp();">删除</a>
+              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
+{#              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>#}
+{#              <a href="javascript:void(0);" onclick="delTemp();">删除</a>#}
           </td>
         </tr>
         {% endfor %}
