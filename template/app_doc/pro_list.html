@@ -13,12 +13,36 @@
         <a class="logo" href="{% url 'pro_list' %}">
             <img src="/media/logo.png" />
         </a>
-{#        <ul class="layui-nav layui-bg-blue" lay-filter="">#}
-{#          <li class="layui-nav-item"><a href="">MrDoc</a></li>#}
-    {#      <li class="layui-nav-item layui-this"><a href="">产品</a></li>#}
-    {#      <li class="layui-nav-item"><a href="">大数据</a></li>#}
-    {#      <li class="layui-nav-item"><a href="">社区</a></li>#}
-{#        </ul>#}
+        <div class="component">
+            <div class="layui-input-inline">
+                <input class="layui-input" placeholder="搜索文集"/>
+            </div>
+        </div>
+        <ul class="layui-nav layui-layout-right">
+            {% if request.user.is_authenticated %}
+          <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
+            </a>
+            <dl class="layui-nav-child">
+              <!-- <dd><a href="">基本资料</a></dd> -->
+              <dd><a href="javascript:void(0);">修改密码</a></dd>
+                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
+            </dl>
+          </li>
+            {% else %}
+            <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> 游客
+            </a>
+            <dl class="layui-nav-child">
+              <!-- <dd><a href="">基本资料</a></dd> -->
+              <dd><a href="javascript:void(0);">注册</a></dd>
+                <dd><a href="{% url 'login' %}">登录</a></dd>
+            </dl>
+          </li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 <div class="layui-main">

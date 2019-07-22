@@ -1,11 +1,39 @@
+/* 页头下边框线 */
+.layui-header{
+    border-bottom:1px solid #ddd;
+}
+/* 页头搜索框样式 */
+.component{
+    position: absolute;
+    width: 250px;
+    left: 160px;
+    top: 10px;
+}
+/* 页头logo图片样式 */
 .logo {
     position: absolute;
-    left: 0;
+    left: 20px;
     top: 16px;
 }
 .logo img {
     /*width: 85px;*/
     height: 30px;
+}
+/* 页头背景 */
+.layui-nav{
+    background-color:transparent;
+}
+.layui-header .layui-nav{
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 0;
+}
+.layui-nav .layui-nav-item a{
+    color:black;
+}
+.layui-nav .layui-nav-item a:hover{
+    color:black;
 }
 .project-list{
     margin: 50px 0;
