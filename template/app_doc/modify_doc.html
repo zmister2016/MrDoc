@@ -41,13 +41,13 @@
             <div class="layui-input-inline">
               <select name="parent_id" lay-verify="required" id="parent-doc">
                   <option value="0"></option>
-                  {% for docs in doc_list %}
-                      {% if doc.parent_doc == docs.id %}
-                            <option value="{{ docs.id }}" selected>{{ docs.name }}</option>
-                      {% else %}
-                          <option value="{{ docs.id }}">{{ docs.name }}</option>
-                      {% endif %}
-                  {% endfor %}
+{#                  {% for docs in doc_list %}#}
+{#                      {% if doc.parent_doc == docs.id %}#}
+{#                            <option value="{{ docs.id }}" selected>{{ docs.name }}</option>#}
+{#                      {% else %}#}
+{#                          <option value="{{ docs.id }}">{{ docs.name }}</option>#}
+{#                      {% endif %}#}
+{#                  {% endfor %}#}
               </select>
             </div>
             <label class="doc-form-label">
@@ -121,6 +121,26 @@
         });
         var layer = layui.layer;
         var form = layui.form;
+        $(function(){
+            var doc_parent_id = {{ doc.parent_doc }};
+           $.post('{% url 'get_pro_doc' %}',{'pro_id':$("#project").val()},function(r){
+
+                if(r.status){
+                    //解析文集的下级文档
+                    for(let i in r.data) {
+                        console.log(doc_parent_id,r.data[i][2])
+                        if(r.data[i][0] == doc_parent_id){
+                            $("#parent-doc").append("<option value='"+r.data[i][0]+"' selected>"+r.data[i][3]+r.data[i][1]+"</option>")
+                        }else{
+                            $("#parent-doc").append("<option value='"+r.data[i][0]+"'>"+r.data[i][3]+r.data[i][1]+"</option>")
+                        }
+                    };
+                    form.render();
+                }else{
+                    layer.msg("获取下级文档失败！")
+                }
+            });
+        });
         //保存文档
         createDoc = function(){
             var data = {

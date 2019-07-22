@@ -246,13 +246,14 @@ def get_pro_doc(request):
                     item = [
                         doc[0],doc[1],doc[2],''
                     ]
+                    item_list.append(item)
                 else:
                     parent = Doc.objects.get(id=doc[2])
                     if parent.parent_doc == 0: # 只要二级目录
                         item = [
                             doc[0],doc[1],doc[2],parent.name+' --> '
                         ]
-                item_list.append(item)
+                        item_list.append(item)
             return JsonResponse({'status':True,'data':list(item_list)})
         else:
             return JsonResponse({'status':False,'data':'参数错误'})

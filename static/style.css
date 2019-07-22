@@ -235,3 +235,7 @@ li.active > a{
     cursor: pointer;
     color: red;
 }
+
+.switch-font{
+    font-family: Serif;
+}

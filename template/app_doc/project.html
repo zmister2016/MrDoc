@@ -68,18 +68,21 @@
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
                 <i class="fa fa-home"></i> 返回首页
             </a>
-            <a class="btn pull-left js-toolbar-action" aria-label="" href="#">
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
                 <i class="fa fa-align-justify"></i>
             </a>
 
-            <a class="btn pull-left js-toolbar-action" aria-label="" href="#">
+            <a class="btn pull-left" aria-label="" href="#">
                 <i class="fa fa-font">-</i>
             </a>
-            <div class="dropdown pull-left font-settings js-toolbar-action">
+            <div class="dropdown pull-left font-settings ">
                 <a class="btn toggle-dropdown" aria-label="Font Settings" href="#">
                     <i class="fa fa-font">+</i>
                 </a>
             </div>
+            <a class="btn pull-left font-switch" aria-label="" href="javascript:void(0);" title="切换字体类型">
+                <i class="fa fa-text-height"></i>
+            </a>
             {% if request.user == doc.create_user %}
                 <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
                     <i class="fa fa-edit"></i> 修改文档
@@ -189,6 +192,17 @@
             $("body").toggleClass("big-page");
             return false;
         }
+    </script>
+    <!-- 切换内容字体 -->
+    <script>
+        //切换文档内容字体类型
+        $(function(){
+           $('.font-switch').click(switchFont);
+        });
+        function switchFont(){
+            $(".doc-content").toggleClass("switch-font")
+          $("#content").toggleClass("switch-font")
+        };
     </script>
 {% endblock %}
 </body>
