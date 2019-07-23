@@ -35,14 +35,19 @@
         {% load doc_filter %}
         <nav>
             <ul class="summary">
+            <!-- 一级目录 -->
             {% for docs in project_docs %}
-                <li><a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
+                <li>
+                    <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
                 {% if docs.id|get_next_doc %}
+{#                    <i class="layui-icon layui-icon-down tagger-on"></i>#}
                     <ul class="sub-menu">
+                    <!-- 二级目录 -->
                     {% for node in docs.id|get_next_doc %}
                         <li><a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}">{{ node.name }}</a>
                             {% if node.id|get_next_doc %}
                             <ul>
+                            <!-- 三级目录 -->
                             {% for doc in node.id|get_next_doc %}
                                 <li><a href="{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}">{{ doc.name }}</a></li>
                             {% endfor %}
