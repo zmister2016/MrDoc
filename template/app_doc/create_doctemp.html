@@ -14,11 +14,11 @@
         <a class="logo" href="{% url 'pro_list' %}">
             <img src="/media/logo.png" />
         </a>
-        <div class="component">
-            <div class="layui-input-inline">
-                <input class="layui-input" placeholder="搜索文集"/>
-            </div>
-        </div>
+{#        <div class="component">#}
+{#            <div class="layui-input-inline">#}
+{#                <input class="layui-input" placeholder="搜索文集"/>#}
+{#            </div>#}
+{#        </div>#}
         <ul class="layui-nav layui-layout-right">
             {% if request.user.is_authenticated %}
           <li class="layui-nav-item">
@@ -27,7 +27,8 @@
             </a>
             <dl class="layui-nav-child">
               <!-- <dd><a href="">基本资料</a></dd> -->
-              <dd><a href="javascript:void(0);">修改密码</a></dd>
+                <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
+                <dd><a href="javascript:void(0);">修改密码</a></dd>
                 <dd><a href="{% url 'logout' %}">退出登录</a></dd>
             </dl>
           </li>
