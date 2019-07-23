@@ -60,12 +60,13 @@ def modify_project(request):
     if request.method == 'POST':
         pro_id = request.POST.get('pro_id',None)
         project = Project.objects.get(id=pro_id)
-        if request.user is project.create_user:
+        if request.user == project.create_user:
             name = request.POST.get('name',None)
             content = request.POST.get('desc',None)
             project.name = name
             project.intro = content
             project.save()
+            return JsonResponse({'status':True,'data':'修改成功'})
         else:
             return JsonResponse({'status':False,'data':'非法请求'})
     else:
@@ -74,14 +75,27 @@ def modify_project(request):
 
 # 删除文集
 @login_required()
-def del_project(request,pro_id):
-    pass
+def del_project(request):
+    pro_id = request.POST.get('pro_id','')
+    if pro_id != '':
+        pro = Project.objects.get(id=pro_id)
+        if request.user == pro.create_user:
+            pro.delete()
+            return JsonResponse({'status':True})
+        else:
+            return JsonResponse({'status':False,'data':'非法请求'})
+    else:
+        return JsonResponse({'status':False,'data':'参数错误'})
 
 # 管理文集
 @login_required()
 def manage_project(request):
     if request.method == 'GET':
-        pro_list = Project.objects.filter(create_user=request.user)
+        search_kw = request.GET.get('kw', None)
+        if search_kw:
+            pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw)
+        else:
+            pro_list = Project.objects.filter(create_user=request.user)
         return render(request,'app_doc/manage_project.html',locals())
 
 
@@ -161,19 +175,27 @@ def modify_doc(request,doc_id):
 
 # 删除文档
 @login_required()
-def del_doc(request,doc_id):
-    doc = Doc.objects.get(id=doc_id)
-    if request.user == doc.create_user:
-        doc.delete()
-        return JsonResponse({'status': True, 'data': '删除完成'})
+def del_doc(request):
+    doc_id = request.POST.get('doc_id',None)
+    if doc_id:
+        doc = Doc.objects.get(id=doc_id)
+        if request.user == doc.create_user:
+            doc.delete()
+            return JsonResponse({'status': True, 'data': '删除完成'})
+        else:
+            return JsonResponse({'status': False, 'data': '非法请求'})
     else:
-        return JsonResponse({'status': False, 'data': '非法请求'})
+        return JsonResponse({'status':False,'data':'参数错误'})
 
 # 管理文档
 @login_required()
 def manage_doc(request):
     if request.method == 'GET':
-        doc_list = Doc.objects.filter(create_user=request.user)
+        search_kw = request.GET.get('kw',None)
+        if search_kw:
+            doc_list = Doc.objects.filter(create_user=request.user,content__icontains=search_kw)
+        else:
+            doc_list = Doc.objects.filter(create_user=request.user)
         return render(request,'app_doc/manage_doc.html',locals())
 
 # 创建文档模板
@@ -206,7 +228,20 @@ def modify_doctemp(request,doctemp_id):
         else:
             return HttpResponse('非法请求')
     elif request.method == 'POST':
-        pass
+        doctemp_id = request.POST.get('doctemp_id','')
+        name = request.POST.get('name','')
+        content = request.POST.get('content','')
+        if doctemp_id != '' and name !='':
+            doctemp = DocTemp.objects.get(id=doctemp_id)
+            if request.user.id == doctemp.create_user.id:
+                doctemp.name = name
+                doctemp.content = content
+                doctemp.save()
+                return JsonResponse({'status':True,'data':'修改成功'})
+            else:
+                return JsonResponse({'status':False,'data':'非法操作'})
+        else:
+            return JsonResponse({'status':False,'data':'参数错误'})
 
 
 # 删除文档模板
@@ -228,7 +263,11 @@ def del_doctemp(request):
 @login_required()
 def manage_doctemp(request):
     if request.method == 'GET':
-        doctemp_list = DocTemp.objects.filter(create_user=request.user)
+        search_kw = request.GET.get('kw', None)
+        if search_kw:
+            doctemp_list = DocTemp.objects.filter(create_user=request.user,content__icontains=search_kw)
+        else:
+            doctemp_list = DocTemp.objects.filter(create_user=request.user)
         return render(request, 'app_doc/manage_doctemp.html', locals())
 
 

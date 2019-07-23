@@ -10,6 +10,9 @@
         .logo img{
             height: 30px;
         }
+        .layui-btn a{
+            color:white;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -64,18 +67,21 @@
 <script src="{% static 'layui/layui.all.js' %}"></script>
 <script>
     //为当前页面的目录链接添加样式
-        $("li a").each(function (i) {
-            var $me = $(this);
-            var lochref = $.trim(window.location.href);
-            var mehref = $.trim($me.get(0).href);
-            if (lochref.indexOf(mehref) != -1) {
-                //console.log($me,lochref,mehref)
-                $me.parent().addClass("layui-this");
-            } else {
-                //console.log(lochref,mehref)
-                $me.parent().removeClass("layui-this");
-            }
-        });
+    $("li a").each(function (i) {
+        var $me = $(this);
+        var lochref = $.trim(window.location.href);
+        var mehref = $.trim($me.get(0).href);
+        if (lochref.indexOf(mehref) != -1) {
+            //console.log($me,lochref,mehref)
+            $me.parent().addClass("layui-this");
+        } else {
+            //console.log(lochref,mehref)
+            $me.parent().removeClass("layui-this");
+        }
+    });
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
 </script>
 {% block custom_script %}
 {% endblock %}
