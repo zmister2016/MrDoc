@@ -189,7 +189,7 @@ def modify_doctemp(request,doctemp_id):
     if request.method == 'GET':
         doctemp = DocTemp.objects.get(id=doctemp_id)
         if request.user.id == doctemp.create_user.id:
-            return render(request,'app_doc/midify_doctemp.html',locals())
+            return render(request,'app_doc/modify_doctemp.html',locals())
         else:
             return HttpResponse('非法请求')
     elif request.method == 'POST':
@@ -217,8 +217,7 @@ def manage_doctemp(request):
     if request.method == 'GET':
         doctemp_list = DocTemp.objects.filter(create_user=request.user)
         return render(request,'app_doc/doctemp_list.html',locals())
-    # if request.method == 'POST':
-    #     doctemp_list = DocTemp.objects.filter(create_user=request.user)
+
 
 # 获取指定文档模板
 @login_required()
