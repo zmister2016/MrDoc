@@ -9,16 +9,47 @@
     <link href="{% static 'style.css' %}" rel="stylesheet">
 </head>
 <body class="layui-layout-body">
-<!--<div class="layui-row">-->
-    <!--<ul class="layui-nav layui-bg-blue">-->
-        <!--<li class="layui-nav-item"><a href="">MrDoc</a></li>-->
-        <!--<li class="layui-nav-item"><a href="/">回到首页</a></li>-->
-    <!--</ul>-->
-<!--</div>-->
+<div class="layui-header">
+    <div class="layui-main">
+        <a class="logo" href="{% url 'pro_list' %}">
+            <img src="/media/logo.png" />
+        </a>
+        <div class="component">
+            <div class="layui-input-inline">
+                <input class="layui-input" placeholder="搜索文集"/>
+            </div>
+        </div>
+        <ul class="layui-nav layui-layout-right">
+            {% if request.user.is_authenticated %}
+          <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
+            </a>
+            <dl class="layui-nav-child">
+              <!-- <dd><a href="">基本资料</a></dd> -->
+              <dd><a href="javascript:void(0);">修改密码</a></dd>
+                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
+            </dl>
+          </li>
+            {% else %}
+            <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> 游客
+            </a>
+            <dl class="layui-nav-child">
+              <!-- <dd><a href="">基本资料</a></dd> -->
+              <dd><a href="javascript:void(0);">注册</a></dd>
+                <dd><a href="{% url 'login' %}">登录</a></dd>
+            </dl>
+          </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
 <div class="layui-main">
     <div class="create-doc-form">
         <div class="layui-form">
-            <label class="layui-form-label">模板标题：</label>
+            <label class="layui-form-label">模板标题</label>
             <div class="layui-input-inline">
               <input type="text" name="doc-name" id="doctemp-name" required lay-verify="required" placeholder="请输入模板名称" autocomplete="off" class="layui-input">
             </div>
