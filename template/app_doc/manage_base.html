@@ -37,10 +37,10 @@
           <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
           <ul class="layui-nav layui-nav-tree"  lay-filter="test">
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="/manage_project/"><i class="layui-icon layui-icon-list"></i> 文集管理</a>
+              <a href="{% url 'manage_project' %}"><i class="layui-icon layui-icon-list"></i> 文集管理</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="/manage_doc/"><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
+              <a href="{% url 'manage_doc' %}"><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
             </li>
               <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'manage_doctemp' %}"><i class="layui-icon layui-icon-template"></i> 文档模板管理</a>

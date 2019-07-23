@@ -1,0 +1,55 @@
+{% extends 'app_doc/manage_base.html' %}
+{% load staticfiles %}
+{% block title %}文档管理{% endblock %}
+{% block content %}
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+      <div class="layui-row">
+          <span style="font-size:18px;">文档管理
+          </span>
+      </div>
+  </div>
+    <div class="layui-row">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" name="username" id="username" required lay-verify="required" placeholder="输入文档内容" autocomplete="off" class="layui-input">
+            </div>
+            <button class="layui-btn layui-btn-normal">搜索</button>
+            <button class="layui-btn layui-btn-normal" onclick="createTemp()">新建文档</button>
+        </div>
+    </div>
+    <div class="layui-row" lay-skin="line">
+        <table class="layui-table"  id="doctemp-list" lay-skin="line">
+{#            <colgroup>#}
+{#            <col width="200">#}
+{#            <col width="200">#}
+{#            <col>#}
+{#      </colgroup>#}
+      <thead>
+        <tr>
+          <th>文档名称</th>
+{#            <th>文档内容</th>#}
+            <th>上级文档</th>
+            <th>所属文集</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% load doc_filter %}
+        {% for doc in doc_list %}
+        <tr>
+          <td>{{ doc.name }}</td>
+            <td>{{ doc.parent_doc|get_doc_parent }}</td>
+            <td>{{ doc.top_doc|get_doc_top }}</td>
+          <td>{{ doc.create_time }}</td>
+          <td>
+{#              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">查看</a>#}
+              <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank">修改</a>
+              <a href="javascript:void(0);" onclick="delDoc();">删除</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+        </table>
+    </div>
+{% endblock %}

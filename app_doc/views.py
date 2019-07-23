@@ -77,6 +77,13 @@ def modify_project(request):
 def del_project(request,pro_id):
     pass
 
+# 管理文集
+@login_required()
+def manage_project(request):
+    if request.method == 'GET':
+        pro_list = Project.objects.filter(create_user=request.user)
+        return render(request,'app_doc/manage_project.html',locals())
+
 
 # 文档浏览页页
 def doc(request,pro_id,doc_id):
@@ -162,6 +169,12 @@ def del_doc(request,doc_id):
     else:
         return JsonResponse({'status': False, 'data': '非法请求'})
 
+# 管理文档
+@login_required()
+def manage_doc(request):
+    if request.method == 'GET':
+        doc_list = Doc.objects.filter(create_user=request.user)
+        return render(request,'app_doc/manage_doc.html',locals())
 
 # 创建文档模板
 @login_required()
@@ -211,12 +224,12 @@ def del_doctemp(request):
         return JsonResponse({'status': False, 'data': '参数错误'})
 
 
-# 文档模板列表页 - (管理模板)
+# 管理文档模板
 @login_required()
 def manage_doctemp(request):
     if request.method == 'GET':
         doctemp_list = DocTemp.objects.filter(create_user=request.user)
-        return render(request,'app_doc/doctemp_list.html',locals())
+        return render(request, 'app_doc/manage_doctemp.html', locals())
 
 
 # 获取指定文档模板
