@@ -77,15 +77,15 @@
                 <i class="fa fa-align-justify"></i>
             </a>
 
-            <a class="btn pull-left" aria-label="" href="#">
+            <a class="btn pull-left font-small"  href="javascript:void(0);" title="缩小字体">
                 <i class="fa fa-font">-</i>
             </a>
             <div class="dropdown pull-left font-settings ">
-                <a class="btn toggle-dropdown" aria-label="Font Settings" href="#">
+                <a class="btn toggle-dropdown font-large"  href="javascript:void(0);" title="放大字体">
                     <i class="fa fa-font">+</i>
                 </a>
             </div>
-            <a class="btn pull-left font-switch" aria-label="" href="javascript:void(0);" title="切换字体类型">
+            <a class="btn pull-left font-switch" href="javascript:void(0);" title="切换字体类型">
                 <i class="fa fa-text-height"></i>
             </a>
             {% if request.user == doc.create_user %}
@@ -166,6 +166,23 @@
             //tocContainer    : "#toc-container"
         });
     </script>
+    <!-- 页面初始化字体设置 -->
+    <script>
+        font_stauts = window.localStorage.getItem('font-sans')
+        //font_size = window.localStorage.getItem('font-size')
+        if(font_stauts == 'serif'){
+            $(".doc-content").toggleClass("switch-font")
+            $("#content").toggleClass("switch-font")
+        }
+        if(window.localStorage.getItem('font-size')){
+            font_size = window.localStorage.getItem('font-size')
+            console.log(font_size)
+            //$('.doc-info h1').css({'font-size':font_size+'rem'})
+            $('#content').css({'font-size':font_size+'rem'})
+        }else{
+            window.localStorage.setItem('font-size',0.8)
+        }
+    </script>
     <!-- 返回顶部 -->
     <script type="text/javascript">
         $(document).ready(function() {
@@ -205,8 +222,47 @@
            $('.font-switch').click(switchFont);
         });
         function switchFont(){
-            $(".doc-content").toggleClass("switch-font")
-          $("#content").toggleClass("switch-font")
+            if(font_stauts == 'serif'){
+                $(".doc-content").toggleClass("switch-font")
+                $("#content").toggleClass("switch-font")
+                window.localStorage.setItem('font-sans','sans')
+            }else{
+                $(".doc-content").toggleClass("switch-font")
+                $("#content").toggleClass("switch-font")
+                window.localStorage.setItem('font-sans','serif')
+            }
+        };
+        //放大字体
+        $(function(){
+           $('.font-large').click(largeFont);
+        });
+        function largeFont(){
+            var font_size = window.localStorage.getItem('font-size')
+            console.log(font_size)
+            if(parseFloat(font_size) < 1.4){
+                size = parseFloat(font_size) + 0.2
+                //$('.doc-info h1').css({'font-size':size+'rem'})
+                $('#content').css({'font-size':size+'rem'})
+                window.localStorage.setItem('font-size',size)
+            }else{
+                console.log("xxx")
+            }
+        };
+        //缩小字体
+        $(function(){
+           $('.font-small').click(smallFont);
+        });
+        function smallFont(){
+            var font_size = window.localStorage.getItem('font-size')
+            console.log(font_size)
+            if(parseFloat(font_size) >= 0.6){
+                size = parseFloat(font_size) - 0.2
+                //$('.doc-info h1').css({'font-size':size+'rem'})
+                $('#content').css({'font-size':size+'rem'})
+                window.localStorage.setItem('font-size',size)
+            }else{
+                console.log("xxx")
+            }
         };
     </script>
 {% endblock %}
