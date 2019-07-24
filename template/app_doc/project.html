@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
     <link rel="stylesheet" href="{% static 'prism/prism.css' %}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'share.js/css/share.min.css' %}" />
     <link href="{% static 'style.css' %}" rel="stylesheet">
     <style>
         .doc-content ul li{
@@ -103,6 +104,10 @@
                         <h1>{{ doc.name }}</h1>
 {#                        <p>创建时间：{{ doc.create_time }} 最后修改时间：{{ doc.modify_time }}</p>#}
                         <hr>
+                        <p style="color: #cccccc;">
+                            <i class="layui-icon layui-icon-date"></i> {{ doc.create_time }}&nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-user"></i> {{ doc.create_user.username }}
+                        </p>
                     </div>
                     <div class="markdown-body" id="content">
 {#                        {{ doc.content | safe }}#}
@@ -118,7 +123,12 @@
                 <div class="doc-cata">
                     <div id="toc-container"></div>
                 </div>
+                <!-- 社交分享 -->
+                <div class="share-div" style="margin-top: 10px;padding:10px;text-align: center;background-color: #fafafa">
+                    分享到：<span class="social-share"></span>
+                </div>
             </div>
+
         </div>
     </div>
     <!-- 右侧文档栏结束 -->
@@ -136,6 +146,7 @@
 <script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
 <script src="{% static 'editor.md/editormd.min.js' %}"></script>
+<script src="{% static 'share.js/js/social-share.min.js' %}"></script>
 {% block custom_script %}
     <script>
         $.ajaxSetup({
@@ -254,7 +265,7 @@
         });
         function smallFont(){
             var font_size = window.localStorage.getItem('font-size')
-            console.log(font_size)
+            //console.log(font_size)
             if(parseFloat(font_size) >= 0.6){
                 size = parseFloat(font_size) - 0.2
                 //$('.doc-info h1').css({'font-size':size+'rem'})
