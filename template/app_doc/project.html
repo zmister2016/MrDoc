@@ -26,9 +26,11 @@
 <div class="doc">
     <!-- 左侧目录栏 -->
     <div class="doc-summary">
+        <form action="{% url 'pro_index' pro_id=project.id %}" method="get">
         <div id="doc-search-input">
-            <input type="text" placeholder="搜索文档" value="" class="layui-input doc-search-input">
+            <input type="text" name="kw" placeholder="输入并回车搜索" value="" class="layui-input doc-search-input">
         </div>
+        </form>
         <div class="project-title">
             <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}</a>
         </div>
@@ -101,22 +103,35 @@
                 <!-- 文档内容 -->
                 <div class="doc-content">
                     <div class="doc-info">
+                        {% if doc %}
                         <h1>{{ doc.name }}</h1>
-{#                        <p>创建时间：{{ doc.create_time }} 最后修改时间：{{ doc.modify_time }}</p>#}
                         <hr>
                         <p style="color: #cccccc;">
                             <i class="layui-icon layui-icon-date"></i> {{ doc.create_time }}&nbsp;&nbsp;&nbsp;&nbsp;
                             <i class="layui-icon layui-icon-user"></i> {{ doc.create_user.username }}
                         </p>
+                        {% else %}
+                            <h1>共有{{ search_result.count }}个搜索结果</h1>
+                            <hr>
+                        {% endif %}
                     </div>
                     <div class="markdown-body" id="content">
+                        {% if doc %}
 {#                        {{ doc.content | safe }}#}
-                        <style>
-                            ul.markdown-toc-list li,ul.markdown-toc-list > li > ul  li{
-                                list-style: none;
-                            }
-                        </style>
-                        <textarea id="" style="display: none;">{{ doc.pre_content }}</textarea>
+                            <style>
+                                ul.markdown-toc-list li,ul.markdown-toc-list > li > ul  li{
+                                    list-style: none;
+                                }
+                            </style>
+                            <textarea id="" style="display: none;">{{ doc.pre_content }}</textarea>
+                        {% else %}
+                            {% for result in search_result %}
+                                <div>
+                                    <h2><a href="{% url 'doc' pro_id=project.id doc_id=result.id %}">{{ result.name }}</a></h2>
+                                    <p>{{ result.pre_content|truncatechars:300 }}</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
                 <!-- 文档目录 -->

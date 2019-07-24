@@ -37,14 +37,19 @@ def project_index(request,pro_id):
     if request.method == 'GET':
         # 获取文集信息
         project = Project.objects.get(id=int(pro_id))
-        doc = Doc.objects.filter(top_doc=int(pro_id)).order_by('id')
-        # 获取文集第一篇文档作为默认内容
-        if doc.count() > 0:
-            doc = doc[0]
-        else:
-            doc = None
+        # 获取搜索词
+        kw = request.GET.get('kw','')
+        if kw == '':
+            doc = Doc.objects.filter(top_doc=int(pro_id)).order_by('id')
+            # 获取文集第一篇文档作为默认内容
+            if doc.count() > 0:
+                doc = doc[0]
+            else:
+                doc = None
+        else: # 搜索结果
+            search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
         # 获取文集下所有一级文档
-        project_docs = Doc.objects.filter(top_doc=int(pro_id),parent_doc=0)
+        project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0)
         return render(request,'app_doc/project.html',locals())
     # 更新文集
     elif request.method == 'PUT':
