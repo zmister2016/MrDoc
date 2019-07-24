@@ -45,7 +45,11 @@ def log_in(request):
 
 # 注册视图
 def register(request):
-    pass
+    if request.user.is_authenticated:
+        return redirect('/')
+    else:
+        if request.method == 'GET':
+            return render(request,'register.html',locals())
 
 # 注销
 def log_out(request):

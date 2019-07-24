@@ -11,6 +11,7 @@ def project_list(request):
     project_list = Project.objects.all()
     return render(request, 'app_doc/pro_list.html', locals())
 
+
 # 创建文集
 @login_required()
 def create_project(request):
@@ -91,6 +92,7 @@ def del_project(request):
             return JsonResponse({'status':False,'data':'非法请求'})
     else:
         return JsonResponse({'status':False,'data':'参数错误'})
+
 
 # 管理文集
 @login_required()
