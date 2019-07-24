@@ -1,61 +1,14 @@
+{% extends 'app_doc/create_base.html' %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <title>新建文档 - MrDoc</title>
-    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
-    <link href="{% static 'style.css' %}" rel="stylesheet">
-</head>
-<body class="layui-layout-body">
-<div class="layui-header">
-    <div class="layui-main">
-        <a class="logo" href="{% url 'pro_list' %}">
-            <img src="/media/logo.png" />
-        </a>
-{#        <div class="component">#}
-{#            <div class="layui-input-inline">#}
-{#                <input class="layui-input" placeholder="搜索文集"/>#}
-{#            </div>#}
-{#        </div>#}
-        <ul class="layui-nav layui-layout-right">
-            {% if request.user.is_authenticated %}
-          <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-                <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
-                <dd><a href="javascript:void(0);">修改密码</a></dd>
-                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
-            </dl>
-          </li>
-            {% else %}
-            <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> 游客
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-              <dd><a href="javascript:void(0);">注册</a></dd>
-                <dd><a href="{% url 'login' %}">登录</a></dd>
-            </dl>
-          </li>
-            {% endif %}
-        </ul>
-    </div>
-</div>
-<div class="layui-main">
+{% block title %}新建文档{% endblock %}
+
+{% block content %}
     <div class="create-doc-form">
-{#        文档标题#}
         <div class="layui-form">
             <label class="layui-form-label">文档标题</label>
             <div class="layui-input-inline">
               <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
             </div>
-{#            <label class="layui-form-label">所属文集</label>#}
             <label class="doc-form-label">所属文集</label>
             <div class="layui-input-inline">
               <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
@@ -84,66 +37,11 @@
         <textarea style="display:none;"></textarea>
         <textarea class="editormd-html-textarea" name="$id-html-code"></textarea>
     </div>
-</div>
+{% endblock %}
 
-<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static 'editor.md/editormd.min.js' %}"></script>
+
 {% block custom_script %}
     <script>
-        layui.config({
-            base: "/static/layui/module/"
-        }).extend({
-            treeSelect: "treeSelect/treeSelect"
-        });
-        $.ajaxSetup({
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-        });
-        //初始化editormd
-        var editor = editormd("editor-md", {
-            width       :   "100%",
-            height      :   "1000px;",
-            placeholder :   "开始使用Markdown书写……",
-            path        :   "/static/editor.md/lib/",
-            saveHTMLToTextarea : true,
-            tex         :   true,//开启科学公式
-            tocm        :   true,//开启下拉目录
-            taskList    :   true,//开启任务列表
-            tocTitle    :   '文章导读',//目录标题
-            tocContainer:   '',
-            tocDropdown :   false,
-            emoji       :   true,//开启Emoji
-            imageUpload    : true, //开启图片上传
-            imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL : "{% url 'upload_doc_img' %}",
-        });
-        //粘贴上传图片
-        $("#editor-md").on('paste', function (ev) {
-            var data = ev.clipboardData;
-            var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-            for (var index in items) {
-                var item = items[index];
-                if (item.kind === 'file') {
-                    var blob = item.getAsFile();
-                    var reader = new FileReader();
-                    reader.onload = function (event) {
-                        var base64 = event.target.result;
-                        //ajax上传图片
-                        $.post("{% url 'upload_doc_img' %}",{base:base64}, function (ret) {
-                            layer.msg(ret.message);
-                            if (ret.success === 1) {
-                                //新一行的图片显示
-                                editor.insertValue("\n![](" + ret.url + ")");
-                            }
-                        });
-                    }; // data url!
-                    var url = reader.readAsDataURL(blob);
-                }
-            }
-        });
-        var layer = layui.layer;
-        var form = layui.form;
-        var treeSelect = layui.treeSelect;
         //选择文集
         form.on('select(project)', function(data){
             console.log(data.value); //得到被选中的值
@@ -246,8 +144,9 @@
         };
     </script>
 {% endblock %}
-</body>
-<div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
+
+{% block custom_div %}
+    <div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
     <div style="margin: 10px 0 0 10px;">
         <a class="layui-btn layui-btn-normal" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
         <a class="layui-btn layui-btn-normal" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
@@ -280,4 +179,4 @@
       </tbody>
     </table>
 </div>
-</html>
+{% endblock %}
