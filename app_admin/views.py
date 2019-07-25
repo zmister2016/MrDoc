@@ -50,6 +50,28 @@ def register(request):
     else:
         if request.method == 'GET':
             return render(request,'register.html',locals())
+        elif request.method == 'POST':
+            username = request.POST.get('username',None)
+            email = request.POST.get('email',None)
+            password = request.POST.get('password',None)
+            if username and email and password:
+                if '@'in email:
+                    email_exit = User.objects.filter(email=email)
+                    username_exit = User.objects.filter(username=username)
+                    if email_exit.count() > 0:
+                        errormsg = '电子邮箱已经被注册使用，请更换电子邮箱地址！'
+                        return render(request, 'register.html', locals())
+                    elif username_exit.count() > 0:
+                        errormsg = '用户名已存在，请换一个用户名！'
+                        return render(request, 'register.html', locals())
+                    elif len(password) < 6:
+                        errormsg = '密码必须大于等于6位！'
+                        return render(request, 'register.html', locals())
+                    else:
+                        pass
+                else:
+                    errormsg = '请输入正确的电子邮箱格式！'
+                    return render(request, 'register.html', locals())
 
 # 注销
 def log_out(request):
