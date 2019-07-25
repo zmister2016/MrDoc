@@ -10,4 +10,5 @@ urlpatterns = [
     path('project_manage/',views.admin_project,name='project_manage'), # 文集管理
     path('doc_manage/',views.admin_doc,name='doc_manage'), # 文集管理
     path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文集管理
+    path('check_code/',views.check_code,name='check_code'), # 验证码
 ]

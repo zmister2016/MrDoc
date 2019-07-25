@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse,HttpResponse
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
@@ -9,6 +9,18 @@ import json
 import datetime
 from app_doc.models import *
 
+# 返回验证码图片
+def check_code(request):
+    import io
+    from . import check_code as CheckCode
+
+    stream = io.BytesIO()
+    # img图片对象,code在图像中写的内容
+    img, code = CheckCode.create_validate_code()
+    img.save(stream, "png")
+    # 图片页面中显示,立即把session中的CheckCode更改为目前的随机字符串值
+    request.session["CheckCode"] = code
+    return HttpResponse(stream.getvalue())
 
 # 登录视图
 def log_in(request):
@@ -48,6 +60,7 @@ def register(request):
             username = request.POST.get('username',None)
             email = request.POST.get('email',None)
             password = request.POST.get('password',None)
+            checkcode = request.POST.get("check_code",None)
             if username and email and password:
                 if '@'in email:
                     email_exit = User.objects.filter(email=email)
@@ -61,11 +74,27 @@ def register(request):
                     elif len(password) < 6:
                         errormsg = '密码必须大于等于6位！'
                         return render(request, 'register.html', locals())
+                    elif checkcode != request.session['CheckCode'].lower():
+                        errormsg = "验证码错误"
+                        return render(request, 'register.html', locals())
                     else:
-                        pass
+                        # 创建用户
+                        user = User.objects.create_user(username=username, email=email, password=password)
+                        user.save()
+                        # 登录用户
+                        user = authenticate(username=username, password=password)
+                        if user.is_active:
+                            login(request, user)
+                            return redirect('/')
+                        else:
+                            errormsg = '用户被禁用！'
+                            return render(request, 'register.html', locals())
                 else:
                     errormsg = '请输入正确的电子邮箱格式！'
                     return render(request, 'register.html', locals())
+            else:
+                errormsg = "请检查输入值"
+                return render(request, 'register.html', locals())
 
 
 # 注销

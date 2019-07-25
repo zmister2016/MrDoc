@@ -59,6 +59,18 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="请输入验证码" name="check_code">
+                            <img src="{% url 'check_code' %}" onclick="ChangeCode(this);">
+                            <script>
+                                // 点击一次,更改图片内容,
+                                function ChangeCode(ths){
+                                    ths.src = ths.src + '?';
+                                }
+                            </script>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
                         <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">登录</button>
                     </div>
                 </div>
