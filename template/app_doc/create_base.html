@@ -12,7 +12,8 @@
 <div class="layui-header">
     <div class="layui-main">
         <a class="logo" href="{% url 'pro_list' %}">
-            <img src="/media/logo.png" />
+{#            <img src="/media/logo.png" />#}
+            <h1><strong>MrDoc</strong></h1>
         </a>
         <ul class="layui-nav layui-layout-right">
             {% if request.user.is_authenticated %}

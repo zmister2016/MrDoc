@@ -157,6 +157,7 @@ def modify_doc(request,doc_id):
         if request.user == doc.create_user:
             project = Project.objects.get(id=doc.top_doc)
             doc_list = Doc.objects.filter(top_doc=project.id)
+            doctemp_list = DocTemp.objects.filter(create_user=request.user)
             return render(request,'app_doc/modify_doc.html',locals())
         else:
             return HttpResponse("非法请求")

@@ -134,12 +134,29 @@ def admin_create_user(request):
 # 管理员后台 - 修改密码
 @superuser_only
 def admin_change_pwd(request):
-    pass
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id',None)
+        password = request.POST.get('password',None)
+        if user_id and password:
+            user = User.objects.get(id=int(user_id))
+            user.set_password(password)
+            user_id.save()
+            return JsonResponse({'status':True,'data':'修改成功'})
+        else:
+            return JsonResponse({'status':False,'data':'参数错误'})
+    else:
+        return JsonResponse({'status':False,'data':'方法错误'})
 
 # 管理员后台 - 删除用户
 @superuser_only
 def admin_del_user(request):
-    pass
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id',None)
+        user = User.objects.get(id=int(user_id))
+        user.delete()
+        return JsonResponse({'status':True,'data':'删除成功'})
+    else:
+        return JsonResponse({'status':False,'data':'方法错误'})
 
 
 # 管理员后台 - 文集管理
@@ -227,5 +244,17 @@ def admin_doctemp(request):
 
 
 # 普通用户修改密码
+@login_required()
 def change_pwd(request):
-    pass
+    if request.method == 'POST':
+        password = request.POST.get('password',None)
+        if password:
+            if len(password) >= 6:
+                user = User.objects.get(id=request.user.id)
+                user.set_password(password)
+                user.save()
+                return JsonResponse({'status':True,'data':'修改成功'})
+            else:
+                return JsonResponse({'status':False,'data':'密码不得少于6位数'})
+        else:
+            return JsonResponse({'status':False,'data':'参数错误'})
