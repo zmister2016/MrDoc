@@ -3,7 +3,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>MrDoc</title>
+    <title>MrDoc - 一个简单的文档写作系统</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'style.css' %}" rel="stylesheet">
 </head>
@@ -55,7 +55,7 @@
         <div class="project-item">
             <a href="{% url 'pro_index' p.id %}">
                 <div class="layui-card">
-                    <div class="layui-card-header"><strong>{{ p.name }}</strong>
+                    <div class="layui-card-header"><strong><i class="layui-icon layui-icon-read"></i> {{ p.name }}</strong>
                     </div>
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>

@@ -13,7 +13,6 @@ from app_doc.models import *
 def check_code(request):
     import io
     from . import check_code as CheckCode
-
     stream = io.BytesIO()
     # img图片对象,code在图像中写的内容
     img, code = CheckCode.create_validate_code()
@@ -22,31 +21,35 @@ def check_code(request):
     request.session["CheckCode"] = code
     return HttpResponse(stream.getvalue())
 
+
 # 登录视图
 def log_in(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return redirect('/user/user_manage')
+            return redirect('/')
         else:
             return render(request,'login.html',locals())
     elif request.method == 'POST':
-        username = request.POST.get('username','')
-        pwd = request.POST.get('password','')
-        if username != '' and pwd != '':
-            user = authenticate(username=username,password=pwd)
-            if user is not None:
-                if user.is_active:
-                    login(request,user)
-                    return redirect('/user/user_manage')
+        try:
+            username = request.POST.get('username','')
+            pwd = request.POST.get('password','')
+            if username != '' and pwd != '':
+                user = authenticate(username=username,password=pwd)
+                if user is not None:
+                    if user.is_active:
+                        login(request,user)
+                        return redirect('/')
+                    else:
+                        errormsg = '用户被禁用！'
+                        return render(request, 'login.html', locals())
                 else:
-                    errormsg = '用户被禁用！'
+                    errormsg = '用户名或密码错误！'
                     return render(request, 'login.html', locals())
             else:
                 errormsg = '用户名或密码错误！'
                 return render(request, 'login.html', locals())
-        else:
-            errormsg = '用户名或密码错误！'
-            return render(request, 'login.html', locals())
+        except Exception as e:
+            return HttpResponse('请求出错')
 
 
 # 注册视图
@@ -158,32 +161,41 @@ def admin_create_user(request):
                 return JsonResponse({'status':False})
         else:
             return JsonResponse({'status':False})
+    else:
+        return HttpResponse('方法不允许')
 
 
 # 管理员后台 - 修改密码
 @superuser_only
 def admin_change_pwd(request):
     if request.method == 'POST':
-        user_id = request.POST.get('user_id',None)
-        password = request.POST.get('password',None)
-        if user_id and password:
-            user = User.objects.get(id=int(user_id))
-            user.set_password(password)
-            user_id.save()
-            return JsonResponse({'status':True,'data':'修改成功'})
-        else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+        try:
+            user_id = request.POST.get('user_id',None)
+            password = request.POST.get('password',None)
+            if user_id and password:
+                user = User.objects.get(id=int(user_id))
+                user.set_password(password)
+                user_id.save()
+                return JsonResponse({'status':True,'data':'修改成功'})
+            else:
+                return JsonResponse({'status':False,'data':'参数错误'})
+        except Exception as e:
+            return JsonResponse({'status':False,'data':'请求错误'})
     else:
         return JsonResponse({'status':False,'data':'方法错误'})
+
 
 # 管理员后台 - 删除用户
 @superuser_only
 def admin_del_user(request):
     if request.method == 'POST':
-        user_id = request.POST.get('user_id',None)
-        user = User.objects.get(id=int(user_id))
-        user.delete()
-        return JsonResponse({'status':True,'data':'删除成功'})
+        try:
+            user_id = request.POST.get('user_id',None)
+            user = User.objects.get(id=int(user_id))
+            user.delete()
+            return JsonResponse({'status':True,'data':'删除成功'})
+        except Exception as e:
+            return JsonResponse({'status':False,'data':'删除出错'})
     else:
         return JsonResponse({'status':False,'data':'方法错误'})
 
@@ -214,6 +226,8 @@ def admin_project(request):
             except EmptyPage:
                 projects = paginator.page(paginator.num_pages)
         return render(request,'app_admin/admin_project.html',locals())
+    else:
+        return HttpResponse('方法错误')
 
 
 # 管理员后台 - 文档管理
@@ -276,14 +290,19 @@ def admin_doctemp(request):
 @login_required()
 def change_pwd(request):
     if request.method == 'POST':
-        password = request.POST.get('password',None)
-        if password:
-            if len(password) >= 6:
-                user = User.objects.get(id=request.user.id)
-                user.set_password(password)
-                user.save()
-                return JsonResponse({'status':True,'data':'修改成功'})
+        try:
+            password = request.POST.get('password',None)
+            if password:
+                if len(password) >= 6:
+                    user = User.objects.get(id=request.user.id)
+                    user.set_password(password)
+                    user.save()
+                    return JsonResponse({'status':True,'data':'修改成功'})
+                else:
+                    return JsonResponse({'status':False,'data':'密码不得少于6位数'})
             else:
-                return JsonResponse({'status':False,'data':'密码不得少于6位数'})
-        else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+                return JsonResponse({'status':False,'data':'参数错误'})
+        except Exception as e:
+            return JsonResponse({'status':False,'data':'修改出错'})
+    else:
+        return HttpResponse('方法错误')
