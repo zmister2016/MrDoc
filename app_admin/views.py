@@ -3,18 +3,12 @@ from django.http.response import JsonResponse
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage
 from app_admin.decorators import superuser_only
 import json
 import datetime
+from app_doc.models import *
 
-class DateEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, datetime.date):
-            return obj.strftime("%Y-%m-%d")
-        else:
-            return json.JSONEncoder.default(self, obj)
 
 # 登录视图
 def log_in(request):
@@ -73,6 +67,7 @@ def register(request):
                     errormsg = '请输入正确的电子邮箱格式！'
                     return render(request, 'register.html', locals())
 
+
 # 注销
 def log_out(request):
     try:
@@ -81,6 +76,7 @@ def log_out(request):
         print(e)
         # logger.error(e)
     return redirect(request.META['HTTP_REFERER'])
+
 
 # 管理员后台首页 - 用户管理
 @superuser_only
@@ -111,6 +107,7 @@ def admin_user(request):
             }
             table_data.append(item)
         return JsonResponse({'status':True,'data':table_data})
+
 
 # 管理员后台首页 - 创建用户
 @superuser_only
@@ -143,6 +140,91 @@ def admin_change_pwd(request):
 @superuser_only
 def admin_del_user(request):
     pass
+
+
+# 管理员后台 - 文集管理
+@superuser_only
+def admin_project(request):
+    if request.method == 'GET':
+        username = request.GET.get('kw','')
+        if username == '':
+            project_list = Project.objects.all()
+            paginator = Paginator(project_list,20)
+            page = request.GET.get('page',1)
+            try:
+                projects = paginator.page(page)
+            except PageNotAnInteger:
+                projects = paginator.page(1)
+            except EmptyPage:
+                projects = paginator.page(paginator.num_pages)
+        else:
+            project_list = Project.objects.filter(intro__icontains=username)
+            paginator = Paginator(project_list, 20)
+            page = request.GET.get('page', 1)
+            try:
+                projects = paginator.page(page)
+            except PageNotAnInteger:
+                projects = paginator.page(1)
+            except EmptyPage:
+                projects = paginator.page(paginator.num_pages)
+        return render(request,'app_admin/admin_project.html',locals())
+
+
+# 管理员后台 - 文档管理
+@superuser_only
+def admin_doc(request):
+    if request.method == 'GET':
+        kw = request.GET.get('kw','')
+        if kw == '':
+            doc_list = Doc.objects.all()
+            paginator = Paginator(doc_list, 10)
+            page = request.GET.get('page', 1)
+            try:
+                docs = paginator.page(page)
+            except PageNotAnInteger:
+                docs = paginator.page(1)
+            except EmptyPage:
+                docs = paginator.page(paginator.num_pages)
+        else:
+            doc_list = Doc.objects.filter(pre_content__icontains=kw)
+            paginator = Paginator(doc_list, 10)
+            page = request.GET.get('page', 1)
+            try:
+                docs = paginator.page(page)
+            except PageNotAnInteger:
+                docs = paginator.page(1)
+            except EmptyPage:
+                docs = paginator.page(paginator.num_pages)
+        return render(request,'app_admin/admin_doc.html',locals())
+
+
+# 管理员后台 - 文档模板管理
+@superuser_only
+def admin_doctemp(request):
+    if request.method == 'GET':
+        kw = request.GET.get('kw','')
+        if kw == '':
+            doctemp_list = DocTemp.objects.all()
+            paginator = Paginator(doctemp_list, 10)
+            page = request.GET.get('page', 1)
+            try:
+                doctemps = paginator.page(page)
+            except PageNotAnInteger:
+                doctemps = paginator.page(1)
+            except EmptyPage:
+                doctemps = paginator.page(paginator.num_pages)
+        else:
+            doctemp_list = DocTemp.objects.filter(content__icontains=kw)
+            paginator = Paginator(doctemp_list, 10)
+            page = request.GET.get('page', 1)
+            try:
+                doctemps = paginator.page(page)
+            except PageNotAnInteger:
+                doctemps = paginator.page(1)
+            except EmptyPage:
+                doctemps = paginator.page(paginator.num_pages)
+        return render(request,'app_admin/admin_doctemp.html',locals())
+
 
 # 普通用户修改密码
 def change_pwd(request):

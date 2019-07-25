@@ -16,12 +16,16 @@
     <div class="layui-header">
         <div class="layui-logo">
             <a class="logo" href="{% url 'pro_list' %}">
-            <img src="/media/logo-white.png" />
+{#            <img src="/media/logo-white.png" />#}
+                <h1 style="color: white;">
+                    <strong>MrDoc</strong>
+                    <span style="font-size: 16px;">后台管理</span>
+                </h1>
         </a>
         </div>
         <ul class="layui-nav layui-layout-right">
           <li class="layui-nav-item">
-            <a href="javascript:;">
+            <a href="javascript:void(0);">
               <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
             </a>
             <dl class="layui-nav-child">
@@ -36,13 +40,13 @@
           <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
           <ul class="layui-nav layui-nav-tree"  lay-filter="test">
             <li class="layui-nav-item layui-nav-itemed">
-              <a href=""><i class="layui-icon layui-icon-list"></i> 文集管理</a>
+              <a href="{% url 'project_manage' %}"><i class="layui-icon layui-icon-list"></i> 文集管理</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
-              <a href=""><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
+              <a href="{% url 'doc_manage' %}"><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
             </li>
               <li class="layui-nav-item layui-nav-itemed">
-              <a href=""><i class="layui-icon layui-icon-template"></i> 文档模板管理</a>
+              <a href="{% url 'doctemp_manage' %}"><i class="layui-icon layui-icon-template"></i> 文档模板管理</a>
             </li>
               {% if request.user.is_superuser %}
                <li class="layui-nav-item layui-nav-itemed">

@@ -11,7 +11,8 @@
 <div class="layui-header">
     <div class="layui-main">
         <a class="logo" href="{% url 'pro_list' %}">
-            <img src="/media/logo.png" />
+{#            <img src="/media/logo.png" />#}
+            <h1><strong>MrDoc</strong></h1>
         </a>
 {#        <div class="component">#}
 {#            <div class="layui-input-inline">#}
@@ -26,6 +27,9 @@
             </a>
             <dl class="layui-nav-child">
               <!-- <dd><a href="">基本资料</a></dd> -->
+                {% if request.user.is_superuser %}
+                    <dd><a href="{% url 'user_manage' %}">进入后台</a></dd>
+                {% endif %}
                 <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
                 <dd><a href="javascript:void(0);">修改密码</a></dd>
                 <dd><a href="{% url 'logout' %}">退出登录</a></dd>

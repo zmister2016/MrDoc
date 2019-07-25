@@ -9,13 +9,16 @@
       </div>
   </div>
     <div class="layui-row">
+{#        <form action="{% url 'user_manage' %}" method="post">#}
+{#             {% csrf_token %}#}
         <div class="layui-form-item">
             <div class="layui-input-inline">
                 <input type="text" name="username" id="username" required lay-verify="required" placeholder="输入用户名" autocomplete="off" class="layui-input">
             </div>
-            <button class="layui-btn layui-btn-normal">搜索</button>
-            <button class="layui-btn layui-btn-normal" onclick="createUser()">添加用户</button>
+            <button class="layui-btn layui-btn-normal" onclick="getUserInfo()">搜索</button>
+            <button class="layui-btn layui-btn-normal" onclick="createUser()" type="button">添加用户</button>
         </div>
+{#        </form>#}
     </div>
     <div class="layui-row" lay-skin="line">
         <table class="layui-table"  id="user-list"></table>
@@ -122,5 +125,6 @@
     };
     //页面加载执行 获取所有用户信息
     getUserInfo();
+
 </script>
 {% endblock %}
