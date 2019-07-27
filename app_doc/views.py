@@ -45,7 +45,7 @@ def project_index(request,pro_id):
             # 获取搜索词
             kw = request.GET.get('kw','')
             if kw == '':
-                doc = Doc.objects.filter(top_doc=int(pro_id)).order_by('id')
+                doc = Doc.objects.filter(top_doc=int(pro_id)).order_by('sort')
                 # 获取文集第一篇文档作为默认内容
                 if doc.count() > 0:
                     doc = doc[0]
@@ -54,7 +54,7 @@ def project_index(request,pro_id):
             else: # 搜索结果
                 search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
             # 获取文集下所有一级文档
-            project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0)
+            project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0).order_by('sort')
             return render(request,'app_doc/project.html',locals())
         except Exception as e:
             return HttpResponse('请求出错')
@@ -129,7 +129,7 @@ def doc(request,pro_id,doc_id):
                 # 获取文档内容
                 doc = Doc.objects.get(id=int(doc_id))
                 # 获取文集下一级文档
-                project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0)
+                project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0).order_by('sort')
                 return render(request,'app_doc/project.html',locals())
             else:
                 return HttpResponse('参数错误')
@@ -149,6 +149,7 @@ def create_doc(request):
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
             return render(request,'app_doc/create_doc.html',locals())
         except Exception as e:
+            print(repr(e))
             return HttpResponse('请求出错')
     elif request.method == 'POST':
         try:
@@ -157,6 +158,7 @@ def create_doc(request):
             doc_name = request.POST.get('doc_name','')
             doc_content = request.POST.get('content','')
             pre_content = request.POST.get('pre_content','')
+            sort = request.POST.get('sort','')
             if project != '' and doc_name != '' and project != '-1':
                 doc = Doc.objects.create(
                     name=doc_name,
@@ -164,12 +166,14 @@ def create_doc(request):
                     pre_content= pre_content,
                     parent_doc= int(parent_doc) if parent_doc != '' else 0,
                     top_doc= int(project),
+                    sort = sort if sort != '' else 99,
                     create_user=request.user
                 )
                 return JsonResponse({'status':True,'data':'创建成功'})
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
+            print(repr(e))
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法不允许'})
@@ -198,6 +202,7 @@ def modify_doc(request,doc_id):
             doc_name = request.POST.get('doc_name', '') # 文档名称
             doc_content = request.POST.get('content', '') # 文档内容
             pre_content = request.POST.get('pre_content', '') # 文档Markdown格式内容
+            sort = request.POST.get('sort', '') # 文档排序
             if doc_id != '' and project != '' and doc_name != '' and project != '-1':
                 # 更新文档内容
                 Doc.objects.filter(id=int(doc_id)).update(
@@ -205,6 +210,7 @@ def modify_doc(request,doc_id):
                     content=doc_content,
                     pre_content=pre_content,
                     parent_doc=int(parent_doc) if parent_doc != '' else 0,
+                    sort=sort if sort != '' else 99,
                 )
                 return JsonResponse({'status': True,'data':'修改成功'})
             else:

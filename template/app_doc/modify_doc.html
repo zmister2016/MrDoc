@@ -1,15 +1,30 @@
 {% extends 'app_doc/create_base.html' %}
 {% load staticfiles %}
 {% block title %}修改文档{% endblock %}
+{% block subtitle %}修改文档{% endblock %}
+
+{% block custom_style %}
+<style>
+        ul li{
+            list-style:disc;
+        }
+        ul > li > ul > li{
+            list-style-type: circle;
+        }
+        ol li{
+            list-style-type: decimal;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
     <div class="create-doc-form">
         <div class="layui-form">
-            <label class="layui-form-label">文档标题</label>
+            <label class="doc-form-label">标题</label>
             <div class="layui-input-inline">
               <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input" >
             </div>
-            <label class="doc-form-label">所属文集</label>
+            <label class="doc-form-label">文集</label>
             <div class="layui-input-inline">
               <select name="pro_id" lay-verify="required"  lay-filter="project" id="project" disabled>
                 <option value="{{ project.id }}">{{ project.name }}</option>
@@ -21,11 +36,15 @@
                   <option value="0"></option>
               </select>
             </div>
+            <label class="doc-form-label">排序</label>
+            <div class="layui-input-inline">
+              <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort" value="{{doc.sort}}"/>
+            </div>
             <label class="doc-form-label">
-                <button class="layui-btn layui-btn-primary" id="sel-doctemp">插入模板</button>
+                <button class="layui-btn layui-btn-primary layui-btn-sm" id="sel-doctemp">插入模板</button>
             </label>
             <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal" onclick="createDoc()">保存</button>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">保存</button>
             </label>
         </div>
     </div>
@@ -66,15 +85,16 @@
                 'doc_name':$("#doc-name").val(),
                 'content':editor.getHTML(),
                 'pre_content':editor.getMarkdown(),
+                'sort':$("#sort").val(),
             }
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 if(r.status){
-                    //创建成功
+                    //修改成功
                     layer.msg('保存成功，即将跳转',function(){
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                     });
                 }else{
-                    //创建失败
+                    //修改失败
                     layer.msg('保存失败');
                 }
             });

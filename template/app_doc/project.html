@@ -95,6 +95,9 @@
                 <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
                     <i class="fa fa-edit"></i> 修改文档
                 </a>
+                <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}" target="_blank">
+                    <i class="fa fa-edit"></i> 新建文档
+                </a>
             {% endif %}
         </div>
         <!-- 文档主体 -->

@@ -7,13 +7,17 @@
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
     <link href="{% static 'style.css' %}" rel="stylesheet">
+    {% block custom_style %}{% endblock %}
 </head>
 <body class="layui-layout-body">
 <div class="layui-header">
     <div class="layui-main">
         <a class="logo" href="{% url 'pro_list' %}">
 {#            <img src="/media/logo.png" />#}
-            <h1><strong>MrDoc</strong></h1>
+            <h1>
+                <strong>MrDoc</strong>
+                <span style="font-size: 16px;">{% block subtitle %}{% endblock %}</span>
+            </h1>
         </a>
         <ul class="layui-nav layui-layout-right">
             {% if request.user.is_authenticated %}
