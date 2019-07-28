@@ -84,6 +84,8 @@
                     if(r.status){
                         //解析文集的下级文档
                         //console.log(r.data)
+                        $("#parent-doc").empty(); // 清空select选项
+                        $("#parent-doc").append("<option value=''></option>")
                         for(let i in r.data) {
                             $("#parent-doc").append("<option value='"+r.data[i][0]+"'>"+r.data[i][3]+r.data[i][1]+"</option>")
                         };
