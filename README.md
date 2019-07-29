@@ -10,9 +10,8 @@ MrDoc拥有以下特点：
 - 提供文档模板功能，支持文档模板的创建、修改；
 - 仿GitBook文档阅读页面，支持文档阅读页面的字体缩放，字体类型修改；
 - 支持三级目录层级显示；
--  基于Django传统MTV模式，方便二次开发；
 
-在开发过程中，借鉴了GitBook、ShowDoc、Wordbook等应用的功能和样式，对此表示感谢。
+在开发过程中，参考和借鉴了GitBook、ShowDoc、Wordbook等应用的功能和样式，对此表示感谢。
 
 ## 软件架构
 基于Python Web框架Django构建。
@@ -31,17 +30,17 @@ Markdown科学公式：Katex.js
 
 ## 安装教程
 
-详见MrDoc使用文档:https://mrdoc.zmister.com
+详见MrDoc使用文档:http://mrdoc.zmister.com
 
 ## 使用说明
 
-详见MrDoc使用文档:https://mrdoc.zmister.com
+详见MrDoc使用文档:http://mrdoc.zmister.com
 
 ## 二次开发说明
 
-详见MrDoc使用文档:https://mrdoc.zmister.com
+详见MrDoc使用文档:http://mrdoc.zmister.com
 
-## 问题反馈
+## 问题提交和反馈
 
 ### 1、提交issue
 
