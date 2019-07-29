@@ -92,6 +92,10 @@ def del_project(request):
         if pro_id != '':
             pro = Project.objects.get(id=pro_id)
             if request.user == pro.create_user:
+                # 删除文集下的文档
+                pro_doc_list = Doc.objects.filter(top_doc=int(pro_id))
+                pro_doc_list.delete()
+                # 删除文集
                 pro.delete()
                 return JsonResponse({'status':True})
             else:
@@ -169,7 +173,7 @@ def create_doc(request):
                     sort = sort if sort != '' else 99,
                     create_user=request.user
                 )
-                return JsonResponse({'status':True,'data':'创建成功'})
+                return JsonResponse({'status':True,'data':doc.id})
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
