@@ -11,7 +11,7 @@ MrDoc拥有以下特点：
 - 仿GitBook文档阅读页面，支持文档阅读页面的字体缩放，字体类型修改；
 - 支持三级目录层级显示；
 
-在开发过程中，参考和借鉴了GitBook、ShowDoc、Wordbook等应用的功能和样式，对此表示感谢。
+在开发过程中，参考和借鉴了GitBook、ShowDoc、Wordbook等应用的功能和样式。
 
 ## 软件架构
 基于Python Web框架Django构建。

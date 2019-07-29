@@ -392,3 +392,7 @@ def get_pro_doc(request):
     else:
         return JsonResponse({'status':False,'data':'方法错误'})
 
+
+# 404页面
+def handle_404(request):
+    return render(request,'404.html')

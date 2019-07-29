@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>页面未找到 -  MrDoc</title>
+    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+</head>
+<body class="layui-layout-body">
+<div class="layui-header">
+    <div class="layui-main">
+        <a class="logo" href="{% url 'pro_list' %}">
+{#            <img src="/media/logo.png" />#}
+            <h1><strong>MrDoc</strong></h1>
+        </a>
+        <ul class="layui-nav layui-layout-right">
+            {% if request.user.is_authenticated %}
+          <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
+            </a>
+            <dl class="layui-nav-child">
+                {% if request.user.is_superuser %}
+                    <dd><a href="{% url 'user_manage' %}">进入后台</a></dd>
+                {% endif %}
+                <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
+                <dd><a href="javascript:void(0);">修改密码</a></dd>
+                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
+            </dl>
+          </li>
+            {% else %}
+            <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> 游客
+            </a>
+            <dl class="layui-nav-child">
+                <dd><a href="{% url 'register' %}">注册</a></dd>
+                <dd><a href="{% url 'login' %}">登录</a></dd>
+            </dl>
+          </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+<div class="layui-main">
+    <div class="project-item">
+
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+</body>
+</html>
