@@ -172,14 +172,19 @@ def admin_change_pwd(request):
         try:
             user_id = request.POST.get('user_id',None)
             password = request.POST.get('password',None)
+            password2 = request.POST.get('password2',None)
             if user_id and password:
-                user = User.objects.get(id=int(user_id))
-                user.set_password(password)
-                user_id.save()
-                return JsonResponse({'status':True,'data':'修改成功'})
+                if password == password2:
+                    user = User.objects.get(id=int(user_id))
+                    user.set_password(password)
+                    user.save()
+                    return JsonResponse({'status':True,'data':'修改成功'})
+                else:
+                    return JsonResponse({'status':False,'data':'两个密码不一致'})
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
+            print(repr(e))
             return JsonResponse({'status':False,'data':'请求错误'})
     else:
         return JsonResponse({'status':False,'data':'方法错误'})
@@ -292,7 +297,9 @@ def change_pwd(request):
     if request.method == 'POST':
         try:
             password = request.POST.get('password',None)
-            if password:
+            password2 = request.POST.get('password2',None)
+            print(password, password2)
+            if password and password== password2:
                 if len(password) >= 6:
                     user = User.objects.get(id=request.user.id)
                     user.set_password(password)
@@ -301,7 +308,7 @@ def change_pwd(request):
                 else:
                     return JsonResponse({'status':False,'data':'密码不得少于6位数'})
             else:
-                return JsonResponse({'status':False,'data':'参数错误'})
+                return JsonResponse({'status':False,'data':'两个密码不一致'})
         except Exception as e:
             return JsonResponse({'status':False,'data':'修改出错'})
     else:
