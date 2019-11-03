@@ -3,7 +3,7 @@ from django.http.response import JsonResponse,HttpResponse
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
-from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage
+from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from app_admin.decorators import superuser_only
 import json
 import datetime
@@ -209,8 +209,8 @@ def admin_del_user(request):
 @superuser_only
 def admin_project(request):
     if request.method == 'GET':
-        username = request.GET.get('kw','')
-        if username == '':
+        search_kw = request.GET.get('kw','')
+        if search_kw == '':
             project_list = Project.objects.all()
             paginator = Paginator(project_list,20)
             page = request.GET.get('page',1)
@@ -221,15 +221,17 @@ def admin_project(request):
             except EmptyPage:
                 projects = paginator.page(paginator.num_pages)
         else:
-            project_list = Project.objects.filter(intro__icontains=username)
+            project_list = Project.objects.filter(intro__icontains=search_kw)
             paginator = Paginator(project_list, 20)
             page = request.GET.get('page', 1)
+
             try:
                 projects = paginator.page(page)
             except PageNotAnInteger:
                 projects = paginator.page(1)
             except EmptyPage:
                 projects = paginator.page(paginator.num_pages)
+            projects.kw = search_kw
         return render(request,'app_admin/admin_project.html',locals())
     else:
         return HttpResponse('方法错误')
@@ -260,6 +262,7 @@ def admin_doc(request):
                 docs = paginator.page(1)
             except EmptyPage:
                 docs = paginator.page(paginator.num_pages)
+            docs.kw = kw
         return render(request,'app_admin/admin_doc.html',locals())
 
 
@@ -288,6 +291,7 @@ def admin_doctemp(request):
                 doctemps = paginator.page(1)
             except EmptyPage:
                 doctemps = paginator.page(paginator.num_pages)
+            doctemps.kw = kw
         return render(request,'app_admin/admin_doctemp.html',locals())
 
 

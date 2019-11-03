@@ -56,7 +56,7 @@
                     title:'新建文集',
                     area:'300px;',
                     id:'createPro',//配置ID
-                    content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea"></textarea></div>',
+                    content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea></div>',
                     btn:['确定','取消'], //添加按钮
                     btnAlign:'c', //按钮居中
                     yes:function (index,layero) {
@@ -107,17 +107,25 @@
                 'sort':$("#sort").val(),
             }
             console.log(data)
-            $.post("{% url 'create_doc' %}",data,function(r){
-                if(r.status){
-                    //创建成功
-                    layer.msg('保存成功',function(){
-                        window.location.href = "{% url 'pro_list' %}";
-                    });
-                }else{
-                    //创建失败
-                    layer.msg('保存失败');
-                }
-            });
+            if(data.doc_name == ""){
+                layer.msg('请输入文档标题！');
+            }
+            else if(data.project == ""){
+                layer.msg('请选择文集！');
+            }
+            else{
+                $.post("{% url 'create_doc' %}",data,function(r){
+                    if(r.status){
+                        //创建成功
+                        layer.msg('保存成功',function(){
+                            window.location.href = "{% url 'pro_list' %}";
+                        });
+                    }else{
+                        //创建失败
+                        layer.msg('保存失败:'+r.data);
+                    }
+                });
+            }
         };
         //选择文档模板
         $("#sel-doctemp").click(function(){

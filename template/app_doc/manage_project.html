@@ -12,7 +12,7 @@
         <form action="{% url 'manage_project' %}" method="get">
         <div class="layui-form-item">
             <div class="layui-input-inline">
-                <input type="text" name="kw" id="kw" required lay-verify="required" placeholder="输入文集内容" autocomplete="off" class="layui-input">
+                <input type="text" name="kw" id="kw" placeholder="输入文集内容" autocomplete="off" class="layui-input">
             </div>
             <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
             <button class="layui-btn layui-btn-normal" onclick="createProject()" type="button">新建文集</button>
@@ -21,11 +21,12 @@
     </div>
     <div class="layui-row" lay-skin="line">
         <table class="layui-table"  id="doctemp-list" lay-skin="line">
-{#            <colgroup>#}
-{#            <col width="200">#}
-{#            <col width="200">#}
-{#            <col>#}
-{#            </colgroup>#}
+            <colgroup>
+            <col width="100">
+            <col width="400">
+            <col width="100">
+            <col width="100">
+            </colgroup>
       <thead>
         <tr>
           <th>文集名称</th>
@@ -35,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for pro in pro_list %}
+        {% for pro in pros %}
         <tr>
           <td>{{ pro.name }}</td>
             <td>{{ pro.intro }}</td>
@@ -49,6 +50,22 @@
         {% endfor %}
       </tbody>
         </table>
+    </div>
+    <!-- 分页 -->
+    <div class="layui-row">
+        <div class="pagination">
+            <span class="step-links">
+                {% if pros.has_previous %}
+                    <a href="?page={{ pros.previous_page_number }}&kw={{pros.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                {% endif %}
+                <span class="current">
+                    当前页： {{ pros.number }} 共 {{ pros.paginator.num_pages }} 页
+                </span>
+                {% if pros.has_next %}
+                    <a href="?page={{ pros.next_page_number }}&kw={{pros.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 {% endblock %}
 {% block custom_script %}

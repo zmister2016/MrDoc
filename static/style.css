@@ -44,13 +44,94 @@
 .project-item{
     float: left;
     width: 200px;
-    height: 120px;
+    /*height: 120px;*/
     margin-top: 20px;
     margin-left: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,.055);
 }
+.project-desc{
+    overflow:hidden;
+    text-overflow:ellipsis; /* 加省略号 */
+    white-space:nowrap; /* 强制不换行 */
+}
+
+.tooltip {
+	display: inline;
+	/*position: relative;*/
+	z-index: 999;
+}
+
+/* Gap filler */
+
+.tooltip-item::after {
+	content: '';
+	position: absolute;
+	width: 360px;
+	height: 20px;
+	bottom: 100%;
+	left: 50%;
+	pointer-events: none;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+
+.tooltip:hover .tooltip-item::after {
+	pointer-events: auto;
+}
+
+/* 文集简介提示工具 */
+
+.tooltip-content {
+	position: absolute;
+	z-index: 9999;
+	width: 170px;
+	left: 78%;
+	margin: 0 -60px 20px -150px;
+	padding:10px;
+	top: 100%;
+	text-align: left;
+	box-shadow: -5px -5px 15px rgba(48,54,61,0.2);
+	background: #2a3035;
+	opacity: 0;
+	cursor: default;
+	pointer-events: none;
+	font-size: 0.68em;
+	line-height: 1.35;
+	display: block;
+	color: #fff;
+	-webkit-transform: translate3d(0,-10px,0);
+	transform: translate3d(0,-10px,0);
+	-webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+	transition: opacity 0.3s, transform 0.3s;
+}
+
+.tooltip:hover .tooltip-content {
+	pointer-events: auto;
+	opacity: 1;
+	-webkit-transform: translate3d(0,0,0) rotate3d(0,0,0,0);
+	transform: translate3d(0,0,0) rotate3d(0,0,0,0);
+}
+
+/* 箭头 */
+
+.tooltip-content::after {
+	content: '';
+	bottom: 100%; /* 箭头在头部 */
+	left: 50%;
+	border: solid transparent;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: transparent;
+	border-bottom-color: #2a3035;
+	border-width: 10px;
+	/*margin-left: 10px;8*/
+}
+
+
 .layui-card{
     box-shadow:0 0 0 0;
 }
@@ -242,7 +323,7 @@ li.active > a{
   font-size: 28px;
   font-weight: 700;
 }
-
+/* 返回顶部 */
 .toTop {
     width: 70px;
     height: 70px;
@@ -264,7 +345,7 @@ li.active > a{
     cursor: pointer;
     color: red;
 }
-
+/*切换字号*/
 .switch-font{
     font-family: Serif;
 }

@@ -59,7 +59,10 @@
                     </div>
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>
-                      <p>简介：{{ p.intro }}</p>
+                      <p class="tooltip">简介：
+                          <span class="">{{ p.intro | slice:'16' }}…</span>
+                          <span class="tooltip-content clearfix">{{ p.intro }}</span>
+                      </p>
                       <p></p>
                   </div>
                 </div>

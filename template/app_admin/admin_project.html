@@ -21,6 +21,14 @@
     </div>
     <div class="layui-row" lay-skin="line">
         <table class="layui-table"  id="doctemp-list" lay-skin="line">
+            <colgroup>
+                <col width="100">
+                <col width="300">
+                <col width="40">
+                <col width="50">
+                <col width="50">
+                <col width="50">
+            </colgroup>
       <thead>
         <tr>
             <th>文集名称</th>
@@ -55,13 +63,13 @@
         <div class="pagination">
             <span class="step-links">
                 {% if projects.has_previous %}
-                    <a href="?page={{ projects.previous_page_number }}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ projects.previous_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
                 {% endif %}
                 <span class="current">
                     当前页： {{ projects.number }} 共 {{ projects.paginator.num_pages }} 页
                 </span>
                 {% if projects.has_next %}
-                    <a href="?page={{ projects.next_page_number }}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                    <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
                 {% endif %}
             </span>
         </div>

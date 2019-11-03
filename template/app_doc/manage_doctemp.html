@@ -12,7 +12,7 @@
         <form action="{% url 'manage_doctemp' %}" method="get">
         <div class="layui-form-item">
             <div class="layui-input-inline">
-                <input type="text" name="kw" id="kw" required lay-verify="required" placeholder="输入文档模板内容" autocomplete="off" class="layui-input">
+                <input type="text" name="kw" id="kw"  placeholder="输入文档模板内容" autocomplete="off" class="layui-input">
             </div>
             <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
             <button class="layui-btn layui-btn-normal" type="button"><a href="{% url 'create_doctemp' %}" target="_blank">新建文档模板</a></button>
@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for temp in doctemp_list %}
+        {% for temp in doctemps %}
         <tr>
           <td>{{ temp.name }}</td>
           <td>{{ temp.create_time }}</td>
@@ -47,6 +47,22 @@
         {% endfor %}
       </tbody>
         </table>
+    </div>
+    <!-- 分页 -->
+    <div class="layui-row">
+        <div class="pagination">
+            <span class="step-links">
+                {% if doctemps.has_previous %}
+                    <a href="?page={{ doctemps.previous_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                {% endif %}
+                <span class="current">
+                    当前页： {{ doctemps.number }} 共 {{ doctemps.paginator.num_pages }} 页
+                </span>
+                {% if doctemps.has_next %}
+                    <a href="?page={{ doctemps.next_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 {% endblock %}
 {% block custom_script %}

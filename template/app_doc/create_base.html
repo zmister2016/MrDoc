@@ -64,7 +64,19 @@
     var editor = editormd("editor-md", {
         width       :   "100%",
         height      :   "1000px;",
-        placeholder :   "开始使用Markdown书写……",
+        placeholder :   "开始使用Markdown书写MrDoc文档……\n编辑器支持粘贴上传图片",
+        toolbarIcons : function() {
+            return [
+                "undo", "redo", "|",
+                "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|",
+                "h1", "h2", "h3", "h4", "h5", "h6", "|",
+                "list-ul", "list-ol", "hr", "|",
+                "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
+                "watch", "preview", "clear", "search", "|",
+                "help"
+            ]
+        },
+        pageBreak : true, //分页符
         path        :   "/static/editor.md/lib/",
         saveHTMLToTextarea : true,
         tex         :   true,//开启科学公式

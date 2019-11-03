@@ -12,7 +12,7 @@
         <form action="{% url 'manage_doc' %}" method="get">
         <div class="layui-form-item">
             <div class="layui-input-inline">
-                <input type="text" name="kw" id="kw" required lay-verify="required" placeholder="输入文档内容" autocomplete="off" class="layui-input">
+                <input type="text" name="kw" id="kw" placeholder="输入文档内容" autocomplete="off" class="layui-input">
             </div>
             <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
             <button class="layui-btn layui-btn-normal"><a href="{% url 'create_doc' %}" target="_blank">新建文档</a></button>
@@ -38,7 +38,7 @@
       </thead>
       <tbody>
         {% load doc_filter %}
-        {% for doc in doc_list %}
+        {% for doc in docs %}
         <tr>
           <td>{{ doc.name }}</td>
             <td>{{ doc.parent_doc|get_doc_parent }}</td>
@@ -53,6 +53,22 @@
         {% endfor %}
       </tbody>
         </table>
+    </div>
+    <!-- 分页 -->
+    <div class="layui-row">
+        <div class="pagination">
+            <span class="step-links">
+                {% if docs.has_previous %}
+                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                {% endif %}
+                <span class="current">
+                    当前页： {{ docs.number }} 共 {{ docs.paginator.num_pages }} 页
+                </span>
+                {% if docs.has_next %}
+                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 {% endblock %}
 {% block custom_script %}

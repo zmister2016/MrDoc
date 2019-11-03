@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http.response import JsonResponse,Http404,HttpResponseNotAllowed,HttpResponse
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -22,7 +23,7 @@ def create_project(request):
             if name != '':
                 project = Project.objects.create(
                     name=name,
-                    intro=desc,
+                    intro=desc[:100],
                     create_user=request.user
                 )
                 project.save()
@@ -69,7 +70,7 @@ def modify_project(request):
         try:
             pro_id = request.POST.get('pro_id',None)
             project = Project.objects.get(id=pro_id)
-            if request.user == project.create_user:
+            if (request.user == project.create_user) or request.user.is_superuser:
                 name = request.POST.get('name',None)
                 content = request.POST.get('desc',None)
                 project.name = name
@@ -91,7 +92,7 @@ def del_project(request):
         pro_id = request.POST.get('pro_id','')
         if pro_id != '':
             pro = Project.objects.get(id=pro_id)
-            if request.user == pro.create_user:
+            if (request.user == pro.create_user) or request.user.is_superuser:
                 # 删除文集下的文档
                 pro_doc_list = Doc.objects.filter(top_doc=int(pro_id))
                 pro_doc_list.delete()
@@ -114,8 +115,25 @@ def manage_project(request):
             search_kw = request.GET.get('kw', None)
             if search_kw:
                 pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw)
+                paginator = Paginator(pro_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    pros = paginator.page(page)
+                except PageNotAnInteger:
+                    pros = paginator.page(1)
+                except EmptyPage:
+                    pros = paginator.page(paginator.num_pages)
+                pros.kw = search_kw
             else:
                 pro_list = Project.objects.filter(create_user=request.user)
+                paginator = Paginator(pro_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    pros = paginator.page(page)
+                except PageNotAnInteger:
+                    pros = paginator.page(1)
+                except EmptyPage:
+                    pros = paginator.page(paginator.num_pages)
             return render(request,'app_doc/manage_project.html',locals())
         except Exception as e:
             return HttpResponse('请求出错')
@@ -248,8 +266,25 @@ def manage_doc(request):
         search_kw = request.GET.get('kw',None)
         if search_kw:
             doc_list = Doc.objects.filter(create_user=request.user,content__icontains=search_kw)
+            paginator = Paginator(doc_list, 10)
+            page = request.GET.get('page', 1)
+            try:
+                docs = paginator.page(page)
+            except PageNotAnInteger:
+                docs = paginator.page(1)
+            except EmptyPage:
+                docs = paginator.page(paginator.num_pages)
+            docs.kw = search_kw
         else:
             doc_list = Doc.objects.filter(create_user=request.user)
+            paginator = Paginator(doc_list, 10)
+            page = request.GET.get('page', 1)
+            try:
+                docs = paginator.page(page)
+            except PageNotAnInteger:
+                docs = paginator.page(1)
+            except EmptyPage:
+                docs = paginator.page(paginator.num_pages)
         return render(request,'app_doc/manage_doc.html',locals())
     else:
         return HttpResponse('方法不允许')
@@ -340,8 +375,25 @@ def manage_doctemp(request):
             search_kw = request.GET.get('kw', None)
             if search_kw:
                 doctemp_list = DocTemp.objects.filter(create_user=request.user,content__icontains=search_kw)
+                paginator = Paginator(doctemp_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    doctemps = paginator.page(page)
+                except PageNotAnInteger:
+                    doctemps = paginator.page(1)
+                except EmptyPage:
+                    doctemps = paginator.page(paginator.num_pages)
+                doctemps.kw = search_kw
             else:
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
+                paginator = Paginator(doctemp_list, 10)
+                page = request.GET.get('page', 1)
+                try:
+                    doctemps = paginator.page(page)
+                except PageNotAnInteger:
+                    doctemps = paginator.page(1)
+                except EmptyPage:
+                    doctemps = paginator.page(paginator.num_pages)
             return render(request, 'app_doc/manage_doctemp.html', locals())
         except Exception as e:
             return HttpResponse('请求出错')
