@@ -60,8 +60,12 @@
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>
                       <p class="tooltip">简介：
+                          {% if p.intro == "" %}
+                          <span class="">此文集没有填写简介</span>
+                          {% else %}
                           <span class="">{{ p.intro | slice:'16' }}…</span>
                           <span class="tooltip-content clearfix">{{ p.intro }}</span>
+                          {% endif %}
                       </p>
                       <p></p>
                   </div>
