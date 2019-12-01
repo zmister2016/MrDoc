@@ -349,3 +349,8 @@ li.active > a{
 .switch-font{
     font-family: Serif;
 }
+
+/* 广告样式 */
+.ad-code{
+    margin:10px;
+}

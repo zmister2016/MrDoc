@@ -1,4 +1,6 @@
-# MrDoc
+# MrDoc - 一个简单的文档写作应用
+
+![Mrdoc首页](./docs/mrdoc_index.png)
 
 ## 介绍
 一个简单的MarkDown文档写作系统。
@@ -10,11 +12,14 @@ MrDoc拥有以下特点：
 - 提供文档模板功能，支持文档模板的创建、修改；
 - 仿GitBook文档阅读页面，支持文档阅读页面的字体缩放，字体类型修改；
 - 支持三级目录层级显示；
+- 使用方便、二次开发修改也方便；
+
 
 在开发过程中，参考和借鉴了GitBook、ShowDoc、Wordbook等应用的功能和样式。
 
 ## 软件架构
-基于Python Web框架Django构建。
+
+后端基于Python Web框架Django
 
 编程语言：Python 3
 
@@ -50,6 +55,33 @@ Markdown科学公式：Katex.js
 
 加入MrDoc交流QQ群，群号为735507293，入群密码：mrdoc
 
+## 版本更新日志
+
+版本更新日志详见：[CHANGES.md](./CHANGES.md)
+
 ## 版本更新
 
-关注州的先生微信公众号（ID：zmister2016）,及时获取MrDoc版本更新信息。
+关注州的先生微信公众号（ID：zmister2016）、博客 https://zmister.com,及时获取MrDoc版本更新信息。
+
+## 更多截图
+
+### 文档界面
+![MrDoc文档页](./docs/mrdoc_docdetail.png)
+
+### 登录界面
+![MrDoc登录页](./docs/mrdoc_login.png)
+
+### 注册界面
+![MrDoc注册页](./docs/mrdoc_register.png)
+
+### 文档写作界面
+![MrDoc写作页](./docs/mrdoc_write.png)
+
+### 文档模板界面
+![MrDoc文档模板页](./docs/mrdoc_doctemp.png)
+
+### 管理员后台界面
+![MrDoc管理员后台](./docs/mrdoc_admin.png)
+
+### 普通用户后台界面
+![MrDoc普通用户后台](./docs/mrdoc_user.png)

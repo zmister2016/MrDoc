@@ -5,51 +5,15 @@
     <meta charset="UTF-8">
     <title>MrDoc - 一个简单的文档写作系统</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
-    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="{% static 'mrdoc.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'favicon_16.png' %}"/>
 </head>
 <body class="layui-layout-body">
-<div class="layui-header">
-    <div class="layui-main">
-        <a class="logo" href="{% url 'pro_list' %}">
-{#            <img src="/media/logo.png" />#}
-            <h1><strong>MrDoc</strong></h1>
-        </a>
-{#        <div class="component">#}
-{#            <div class="layui-input-inline">#}
-{#                <input class="layui-input" placeholder="搜索文集"/>#}
-{#            </div>#}
-{#        </div>#}
-        <ul class="layui-nav layui-layout-right">
-            {% if request.user.is_authenticated %}
-          <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-                {% if request.user.is_superuser %}
-                    <dd><a href="{% url 'user_manage' %}">进入后台</a></dd>
-                {% endif %}
-                <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
-                <dd><a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">修改密码</a></dd>
-                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
-            </dl>
-          </li>
-            {% else %}
-            <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> 游客
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-                <dd><a href="{% url 'register' %}">注册</a></dd>
-                <dd><a href="{% url 'login' %}">登录</a></dd>
-            </dl>
-          </li>
-            {% endif %}
-        </ul>
-    </div>
-</div>
+<!-- 页头 -->
+{% include 'app_doc/head_base.html' %}
+<!-- 页头结束 -->
+
+<!-- 主体 -->
 <div class="layui-main">
     {% for p in project_list %}
         <div class="project-item">
@@ -94,7 +58,7 @@
         </a>
     </div>
 </div>
-
+<!-- 主体结束 -->
 <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 {% block custom_script %}
@@ -187,8 +151,10 @@
                 },
             })
         };
-
     </script>
+    <!-- 统计代码开始 -->
+        {{ static | safe }}
+    <!-- 统计代码结束 -->
 {% endblock %}
 </body>
 </html>

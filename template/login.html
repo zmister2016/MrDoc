@@ -39,12 +39,12 @@
             <form class="layui-form" action="{% url 'login' %}"  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h2><strong>登录 - MrDoc</strong></h2>
+                    <h2><strong>登录 - <a href="/">MrDoc</a></strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
-                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -57,7 +57,16 @@
                         <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">登录</button>
                     </div>
                 </div>
-                <a href="{% url 'register' %}" class="register-link">注册新账号</a>
+                {% if close_register == 'on' %}
+                本站暂不开放注册
+                {% else %}
+                <a href="{% url 'register' %}" class="register-link">注册账号</a>&nbsp;
+                {% endif %}
+
+                {% if enable_email == 'on' %}
+                <a href="{% url 'forget_pwd' %}" class="register-link">忘记密码</a>
+                {% endif %}
+
             </form>
         </div>
     </div>

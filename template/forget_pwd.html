@@ -1,0 +1,129 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+	<title>忘记密码 - MrDoc</title>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
+    <style>
+        body{
+            background-color: #fafafa;
+            text-align: center;
+        }
+        .container{
+            display: flex;
+            display: -webkit-flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-form{
+            margin-top: 15%;
+            {#width: 400px;#}
+            padding: 20px 50px 20px 60px;
+            background-color: #fff;
+            -webkit-box-shadow: #666 0px 0px 10px;
+           -moz-box-shadow: #666 0px 0px 10px;
+           box-shadow: #666 0px 0px 10px;
+        }
+        .register-link{
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div></div>
+        <div></div>
+        <div class="login-form">
+            <form class="layui-form" action="{% url 'forget_pwd' %}"  method='POST'>
+                {% csrf_token %}
+                <div class="layui-form-item">
+                    <h2><strong>忘记密码 - MrDoc</strong></h2>
+                </div>
+                <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                      <input type="text" name="email" id="email" required  lay-verify="required" placeholder="请输入注册邮箱"  class="layui-input">
+                    </div>
+                    <button class="layui-btn layui-btn-normal" type="button" id="send_email_vcode" onclick="getCode(this)">发送验证码</button>
+                </div>
+                <div class="layui-form-item">
+                  <input type="text" name="vcode" required  lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                  <input type="password" name="password" required  lay-verify="required" placeholder="请输入新密码" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                  <input type="password" name="confirm_password" required  lay-verify="required" placeholder="请确认新密码" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit type="submit">修改密码</button>
+                </div>
+                <a href="{% url 'login' %}" class="register-link">返回登录</a>&nbsp;
+            </form>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    layer = layui.layer;
+    btn = $("#send_email_vcode");
+    // 发送验证码倒计时60s
+    function getCode(e) {
+        email = document.getElementById("email");
+        if(email.value.length == 0){
+           layer.msg("请输入电子邮箱");
+        }else{
+            if(!(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(email.value))){
+                layer.msg("电子邮箱有误，请重填")
+            }else{
+                //调用获取验证码的接口
+                $.post("{% url 'send_email_vcode' %}",{'email':email.value},function(r){
+                    if(r.status){
+                        layer.msg("验证码发送成功，请查收！");
+                    }else{
+                        layer.msg(r.data)
+                    }
+                });
+                //按照指定的周期（以毫秒计）来调用函数或计算表达式。
+                //在ajax请求之后再调用函数
+                t = setInterval(function () {
+                        countdown(e)
+                    }, 1000)
+                //获取验证码成功后调用倒计时函数
+                countdown(e);
+            }
+        }
+    }
+    var time = 60;
+    function countdown(e){
+        if (time == 0) {
+            //这里时设置当时间到0的时候重新设置点击事件，并且默认time修改为60
+            //e.setAttribute("onclick","getcode(this)");
+
+            btn.attr("disabled", false);
+			btn.html("获取验证码");
+			btn.removeClass("disabled");
+			btn.removeClass("layui-btn-disabled")
+            time = 60;
+            clearInterval(t);
+        }else{
+            //这里是显示时间倒计时的时候点击不生效
+            //e.setAttribute("onclick", '');
+
+            btn.addClass("disabled");
+            btn.addClass("layui-btn-disabled")
+			btn.attr("disabled", true);
+			btn.html("重新发送(" + time + ")");
+
+            //document.getElementById("getcode").innerHTML="重新发送"+time;
+            time--;
+        }
+    }
+</script>
+</html>

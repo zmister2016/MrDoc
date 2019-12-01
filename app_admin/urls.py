@@ -11,7 +11,11 @@ urlpatterns = [
     path('change_pwd',views.admin_change_pwd,name="change_pwd"), # 管理员修改用户密码
     path('modify_pwd',views.change_pwd,name="modify_pwd"), # 普通用户修改密码
     path('project_manage/',views.admin_project,name='project_manage'), # 文集管理
-    path('doc_manage/',views.admin_doc,name='doc_manage'), # 文集管理
-    path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文集管理
-    path('check_code/',views.check_code,name='check_code'), # 验证码
+    path('doc_manage/',views.admin_doc,name='doc_manage'), # 文档管理
+    path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文档模板管理
+    path('setting/',views.admin_setting,name="sys_setting"), # 应用设置
+    path('check_code/',views.check_code,name='check_code'), # 注册验证码
+    path('forget_pwd/',views.forget_pwd,name='forget_pwd'), # 忘记密码
+    path('send_email_vcode/',views.send_email_vcode,name='send_email_vcode'), # 忘记密码发送邮件验证码
+
 ]

@@ -40,8 +40,8 @@
           <td>{{ temp.create_time }}</td>
           <td>
 {#              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">查看</a>#}
-              <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank">修改</a>
-              <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');">删除</a>
+              <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
+              <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
           </td>
         </tr>
         {% endfor %}

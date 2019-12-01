@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - 后台管理 - MrDoc</title>
+    <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <style>
         .logo img{
@@ -52,6 +53,9 @@
                <li class="layui-nav-item layui-nav-itemed">
                   <a href="{% url 'user_manage' %}"><i class="layui-icon layui-icon-user"></i> 用户管理</a>
                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                  <a href="{% url 'sys_setting' %}"><i class="layui-icon layui-icon-user"></i> 应用设置</a>
+               </li>
               {% endif %}
           </ul>
         </div>
@@ -64,7 +68,7 @@
 
       <div class="layui-footer" style="text-align:center;">
         <!-- 底部固定区域 -->
-          © <a href="">MrDoc</a>
+          © 2019 <a href="http://mrdoc.zmister.com" target="_blank">MrDoc</a> - 一个简单的文档系统
       </div>
 </div>
 

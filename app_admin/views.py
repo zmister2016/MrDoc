@@ -4,10 +4,12 @@ from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
-from app_admin.decorators import superuser_only
-import json
-import datetime
+from app_admin.decorators import superuser_only,open_register
+import json,datetime,hashlib
 from app_doc.models import *
+from app_admin.models import *
+from app_admin.utils import *
+
 
 # 返回验证码图片
 def check_code(request):
@@ -53,6 +55,7 @@ def log_in(request):
 
 
 # 注册视图
+@open_register
 def register(request):
     if request.user.is_authenticated:
         return redirect('/')
@@ -69,10 +72,10 @@ def register(request):
                     email_exit = User.objects.filter(email=email)
                     username_exit = User.objects.filter(username=username)
                     if email_exit.count() > 0:
-                        errormsg = '电子邮箱已经被注册使用，请更换电子邮箱地址！'
+                        errormsg = '此电子邮箱已被注册！'
                         return render(request, 'register.html', locals())
                     elif username_exit.count() > 0:
-                        errormsg = '用户名已存在，请换一个用户名！'
+                        errormsg = '用户名已被使用！'
                         return render(request, 'register.html', locals())
                     elif len(password) < 6:
                         errormsg = '密码必须大于等于6位！'
@@ -109,6 +112,62 @@ def log_out(request):
         # logger.error(e)
     return redirect(request.META['HTTP_REFERER'])
 
+
+# 忘记密码
+def forget_pwd(request):
+    if request.method == 'GET':
+        return render(request,'forget_pwd.html',locals())
+    elif request.method == 'POST':
+        email = request.POST.get("email",None) # 邮箱
+        vcode = request.POST.get("vcode",None) # 验证码
+        new_pwd= request.POST.get('password',None) # 密码
+        new_pwd_confirm = request.POST.get('confirm_password')
+        # 查询验证码和邮箱是否匹配
+        try:
+            data = EmaiVerificationCode.objects.get(email_name=email,verification_code=vcode,verification_type='忘记密码')
+            expire_time = data.expire_time
+            print(expire_time)
+            if expire_time > datetime.datetime.now():
+                user = User.objects.get(email=email)
+                user.set_password(new_pwd)
+                user.save()
+                errormsg = "修改密码成功，请返回登录！"
+                return render(request, 'forget_pwd.html', locals())
+            else:
+                errormsg = "验证码已过期"
+                return render(request, 'forget_pwd.html', locals())
+        except Exception as e:
+            print(repr(e))
+            errormsg = "验证码错误"
+            return render(request,'forget_pwd.html',locals())
+
+
+# 发送电子邮箱验证码
+def send_email_vcode(request):
+    if request.method == 'POST':
+        email = request.POST.get('email',None)
+        is_email = User.objects.filter(email=email)
+        if is_email.count() != 0:
+            vcode_str = generate_vcode()
+            # 发送邮件
+            send_status = send_email(to_email=email, vcode_str=vcode_str)
+            if send_status:
+                # 生成过期时间
+                now_time = datetime.datetime.now()
+                expire_time = now_time + datetime.timedelta(minutes=30)
+                # 创建数据库记录
+                EmaiVerificationCode.objects.create(
+                    email_name = email,
+                    verification_type = '忘记密码',
+                    verification_code = vcode_str,
+                    expire_time = expire_time
+                )
+                return JsonResponse({'status':True,'data':'发送成功'})
+            else:
+                return JsonResponse({'status':False,'data':'发送验证码出错，请重试！'})
+
+        else:
+            return JsonResponse({'status':False,'data':'电子邮箱不存在！'})
 
 # 管理员后台首页 - 用户管理
 @superuser_only
@@ -317,3 +376,109 @@ def change_pwd(request):
             return JsonResponse({'status':False,'data':'修改出错'})
     else:
         return HttpResponse('方法错误')
+
+
+# 管理员后台 - 应用设置
+@superuser_only
+def admin_setting(request):
+    email_settings = SysSetting.objects.filter(types="email")
+    if email_settings.count() == 6:
+        emailer = email_settings.get(name='send_emailer')
+        email_host = email_settings.get(name='smtp_host')
+        email_port = email_settings.get(name='smtp_port')
+        email_username = email_settings.get(name="username")
+        email_ssl = email_settings.get(name="smtp_ssl")
+        email_pwd = email_settings.get(name="pwd")
+    if request.method == 'GET':
+        return render(request,'app_admin/admin_setting.html',locals())
+    elif request.method == 'POST':
+        types = request.POST.get('type',None)
+        # 基础设置
+        if types == 'basic':
+            close_register = request.POST.get('close_register',None)
+            static_code = request.POST.get('static_code',None)
+            ad_code = request.POST.get('ad_code',None)
+            beian_code = request.POST.get('beian_code',None)
+            enbale_email = request.POST.get("enable_email",None)
+            # 更新开放注册状态
+            SysSetting.objects.update_or_create(
+                name='close_register',
+                defaults={'value':close_register,'types':'basic'}
+            )
+            # 更新统计代码状态
+            SysSetting.objects.update_or_create(
+                name = 'static_code',
+                defaults={'value':static_code,'types':'basic'}
+            )
+            # 更新广告代码状态
+            SysSetting.objects.update_or_create(
+                name = 'ad_code',
+                defaults={'value':ad_code,'types':'basic'}
+            )
+            # 更新备案号
+            SysSetting.objects.update_or_create(
+                name='beian_code',
+                defaults={'value':beian_code,'types':'basic'}
+            )
+            # 更新邮箱启用状态
+            SysSetting.objects.update_or_create(
+                name='enable_email',
+                defaults={'value': enbale_email, 'types': 'basic'}
+            )
+
+            return render(request,'app_admin/admin_setting.html',locals())
+        elif types == 'email':
+            # 读取上传的参数
+            emailer = request.POST.get("send_emailer",None)
+            host = request.POST.get("smtp_host",None)
+            port = request.POST.get("smtp_port",None)
+            username = request.POST.get("smtp_username",None)
+            pwd = request.POST.get("smtp_pwd",None)
+            ssl = request.POST.get("smtp_ssl",None)
+            # 对密码进行加密
+            pwd = enctry(pwd)
+            if emailer != None:
+                # 更新发件箱
+                SysSetting.objects.update_or_create(
+                    name = 'send_emailer',
+                    defaults={"value":emailer,"types":'email'}
+                )
+            if host != None:
+                # 更新邮箱主机
+                SysSetting.objects.update_or_create(
+                    name='smtp_host',
+                    defaults={"value": host, "types": 'email'}
+                )
+            if port != None:
+                # 更新邮箱主机端口
+                SysSetting.objects.update_or_create(
+                    name='smtp_port',
+                    defaults={"value": port, "types": 'email'}
+                )
+            if username != None:
+                # 更新用户名
+                SysSetting.objects.update_or_create(
+                    name='username',
+                    defaults={"value": username, "types": 'email'}
+                )
+            if pwd != None:
+                # 更新密码
+                SysSetting.objects.update_or_create(
+                    name='pwd',
+                    defaults={"value": pwd, "types": 'email'}
+                )
+            if ssl != None:
+                # 更新SSL
+                SysSetting.objects.update_or_create(
+                    name='smtp_ssl',
+                    defaults={"value": ssl, "types": 'email'}
+                )
+            email_settings = SysSetting.objects.filter(types="email")
+            if email_settings.count() == 6:
+                emailer = email_settings.get(name='send_emailer')
+                email_host = email_settings.get(name='smtp_host')
+                email_port = email_settings.get(name='smtp_port')
+                email_username = email_settings.get(name="username")
+                email_ssl = email_settings.get(name="smtp_ssl")
+                email_pwd = email_settings.get(name="pwd")
+            return render(request, 'app_admin/admin_setting.html',locals())

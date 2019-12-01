@@ -1,4 +1,6 @@
 from django.core.exceptions import PermissionDenied # 权限拒绝异常
+from django.http import Http404
+from app_admin.models import SysSetting
 
 # 超级管理员用户需求
 def superuser_only(function):
@@ -9,6 +11,21 @@ def superuser_only(function):
                 raise PermissionDenied
         else:
             raise PermissionDenied
+        return function(request, *args, **kwargs)
+
+    return _inner
+
+# 开放注册需求
+def open_register(function):
+    '''只有开放注册才能访问'''
+    def _inner(request,*args,**kwargs):
+        try:
+            status = SysSetting.objects.get(name='close_register')
+        except:
+            # 如果不存在close_register这个属性，那么表示是开放注册的
+            return function(request, *args, **kwargs)
+        if status.value == 'on':
+            raise Http404
         return function(request, *args, **kwargs)
 
     return _inner

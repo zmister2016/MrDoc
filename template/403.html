@@ -3,7 +3,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>404 页面未找到 -  MrDoc</title>
+    <title>拒绝访问 -  MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc.css' %}" rel="stylesheet">
 </head>
@@ -11,12 +11,13 @@
 <!-- 页头 -->
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
+
 <div class="layui-main">
     <div style="text-align: center;margin-top: 40px;">
-        <!--<h1>-->
-            <!--<strong>页面未找到……</strong>-->
-        <!--</h1>-->
-        <img src="{% static '404.png' %}">
+        <h1>
+            <strong>你无权访问当前页面……</strong>
+        </h1>
+        <!--<img src="{% static '404.png' %}">-->
         <p><a href="{% url 'pro_list' %}" >返回首页</a></p>
     </div>
 </div>

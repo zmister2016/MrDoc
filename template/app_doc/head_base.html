@@ -1,0 +1,40 @@
+<div class="layui-header">
+    <div class="layui-main">
+        <a class="logo" href="{% url 'pro_list' %}">
+            <h1><strong>MrDoc</strong></h1>
+        </a>
+        <ul class="layui-nav layui-layout-right">
+            {% if request.user.is_authenticated %}
+          <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
+            </a>
+            <dl class="layui-nav-child">
+              <!-- <dd><a href="">基本资料</a></dd> -->
+                {% if request.user.is_superuser %}
+                    <dd><a href="{% url 'user_manage' %}">进入后台</a></dd>
+                {% endif %}
+                <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
+                <dd><a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">修改密码</a></dd>
+                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
+            </dl>
+          </li>
+            {% else %}
+            <li class="layui-nav-item">
+            <a href="javascript:void(0);">
+              <i class="layui-icon layui-icon-username"></i> 游客
+            </a>
+            <dl class="layui-nav-child">
+              <!-- <dd><a href="">基本资料</a></dd> -->
+                {% if close_register == 'on' %}
+                <dd><a href="{% url 'login' %}">登录</a></dd>
+                {% else %}
+                <dd><a href="{% url 'register' %}">注册</a></dd>
+                <dd><a href="{% url 'login' %}">登录</a></dd>
+                {% endif %}
+            </dl>
+          </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="{% static 'prism/prism.css' %}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}" />
     <link rel="stylesheet" href="{% static 'share.js/css/share.min.css' %}" />
-    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+    <link href="{% static 'mrdoc.css' %}" rel="stylesheet">
     <style>
         .doc-content ul li{
             list-style:disc;
@@ -69,6 +70,7 @@
         </div>
     </div>
     <!-- 左侧目录栏结束 -->
+
     <!-- 右侧文档栏 -->
     <div class="doc-body">
         <!-- 文档导航 -->
@@ -105,11 +107,12 @@
             <div class="doc-body-content-div">
                 <!-- 文档内容 -->
                 <div class="doc-content">
+                    <!-- 标题 -->
                     <div class="doc-info">
                         {% if doc %}
                         <h1>{{ doc.name }}</h1>
                         <hr>
-                        <p style="color: #cccccc;">
+                        <p style="color: #666;">
                             <i class="layui-icon layui-icon-date"></i> {{ doc.create_time }}&nbsp;&nbsp;&nbsp;&nbsp;
                             <i class="layui-icon layui-icon-user"></i> {{ doc.create_user.username }}
                         </p>
@@ -117,7 +120,16 @@
                             <h1>共有{{ search_result.count }}个搜索结果</h1>
                             <hr>
                         {% endif %}
+                        <!-- 广告代码开始 -->
+                        {% if ad_code %}
+                            <div class="ad-code">
+                            {{ ad_code | safe }}
+                            </div>
+                        {% endif %}
+                        <!-- 广告代码结束 -->
                     </div>
+                    <!-- 标题结束 -->
+                    <!-- 正文开始 -->
                     <div class="markdown-body" id="content">
                         {% if doc %}
 {#                        {{ doc.content | safe }}#}
@@ -136,6 +148,7 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    <!-- 正文结束 -->
                 </div>
                 <!-- 文档目录 -->
                 <div class="doc-cata">
@@ -170,6 +183,17 @@
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
+        //解析Markdown为HTML
+        editormd.markdownToHTML("content", {
+            htmlDecode      : "style,script,iframe",
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 科学公式
+            flowChart       : true,  // 流程图
+            sequenceDiagram : true,  // 默认不解析
+            tocm            : true, //目录
+            //tocContainer    : "#toc-container"
+        });
         //为当前页面的目录链接添加样式
         $("nav li a").each(function (i) {
             var $me = $(this);
@@ -182,17 +206,6 @@
                 //console.log(lochref,mehref)
                 $me.parent().removeClass("active");
             }
-        });
-        //解析Markdown为HTML
-        editormd.markdownToHTML("content", {
-            htmlDecode      : "style,script,iframe",
-            emoji           : true,
-            taskList        : true,
-            tex             : true,  // 科学公式
-            flowChart       : true,  // 流程图
-            sequenceDiagram : true,  // 默认不解析
-            tocm            : true, //目录
-            //tocContainer    : "#toc-container"
         });
     </script>
     <!-- 页面初始化字体设置 -->
@@ -294,6 +307,9 @@
             }
         };
     </script>
+    <!-- 统计代码开始 -->
+        {{ static | safe }}
+    <!-- 统计代码结束 -->
 {% endblock %}
 </body>
 </html>

@@ -1,0 +1,121 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load staticfiles %}
+{% block title %}应用设置{% endblock %}
+{% block content %}
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+      <div class="layui-row">
+          <span style="font-size:18px;">应用设置
+          </span>
+      </div>
+  </div>
+    <div class="layui-row">
+        <div class="layui-tab">
+          <ul class="layui-tab-title">
+            <li class="layui-this">基础设置</li>
+            <li>邮箱设置</li>
+            <!--<li>广告设置</li>-->
+          </ul>
+          <div class="layui-tab-content">
+              <!-- 网站设置 -->
+            <div class="layui-tab-item layui-show">
+               <form class="layui-form" action="{% url 'sys_setting' %}" method="post">
+                   {% csrf_token %}
+                    <input type="text" name="type" hidden value="basic">
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">禁止注册</label>
+                    <div class="layui-input-block">
+                      <input type="checkbox" name="close_register" lay-skin="switch" lay-text="开启|关闭"  {% if close_register %}checked{% endif %}>
+                    </div>
+                  </div>
+
+                   <div class="layui-form-item">
+                    <label class="layui-form-label">启用邮箱</label>
+                    <div class="layui-input-block">
+                      <input type="checkbox" name="enable_email" lay-skin="switch" lay-text="开启|关闭"  {% if enable_email %}checked{% endif %}>
+                    </div>
+                  </div>
+
+                   <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">统计代码</label>
+                    <div class="layui-input-block">
+                      <textarea name="static_code" placeholder="如果需要调用第三方的统计功能，请将第三方统计工具代码输入至此，可以包含<script>标签" class="layui-textarea"></textarea>
+                    </div>
+                  </div>
+
+                   <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">广告代码</label>
+                    <div class="layui-input-block">
+                      <textarea name="ad_code" placeholder="如果需要在文档正文上方添加广告，请将广告相关代码输入至此，可以包含<script>标签" class="layui-textarea">{{ad_code}}</textarea>
+                    </div>
+                  </div>
+
+                  <div class="layui-form-item">
+                    <div class="layui-input-block">
+                      <button class="layui-btn" lay-submit lay-filter="formDemo">保存</button>
+                    </div>
+                  </div>
+                </form>
+            </div>
+              <!-- 网站设置结束 -->
+              <!-- 邮箱设置 -->
+            <div class="layui-tab-item">
+                <form class="layui-form" action="" method="post">
+                   {% csrf_token %}
+                    <input type="text" name="type" hidden value="email">
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">发件邮箱</label>
+                    <div class="layui-input-block">
+                      <input type="email" name="send_emailer" class="layui-input" required value="{{emailer.value}}">
+                    </div>
+                  </div>
+
+                   <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">SMTP 主机</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="smtp_host" class="layui-input" required value="{{email_host.value}}">
+                    </div>
+                  </div>
+
+                    <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">SMTP 端口</label>
+                    <div class="layui-input-block">
+                      <input type="number" name="smtp_port" class="layui-input" required value="{{email_port.value}}">
+                    </div>
+                  </div>
+
+                   <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">SMTP 用户名</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="smtp_username" class="layui-input" required value="{{email_username.value}}">
+                    </div>
+                  </div>
+
+                    <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">SMTP 密码</label>
+                    <div class="layui-input-block">
+                      <input type="password" name="smtp_pwd" class="layui-input" required value="{{email_pwd.value}}">
+                    </div>
+                  </div>
+
+                    <div class="layui-form-item">
+                    <label class="layui-form-label">使用SSL</label>
+                    <div class="layui-input-block">
+                      <input type="checkbox" name="smtp_ssl" lay-skin="switch" lay-text="开启|关闭"  {% if email_ssl %}checked{% endif %}>
+                    </div>
+                  </div>
+
+                  <div class="layui-form-item">
+                    <div class="layui-input-block">
+                      <button class="layui-btn" lay-submit lay-filter="formDemo">保存邮箱设置</button>
+                    </div>
+                  </div>
+                </form>
+            </div>
+              <!-- 邮箱设置结束 -->
+              <!-- 广告设置 -->
+            <div class="layui-tab-item">内容3</div>
+              <!-- 广告设置结束 -->
+          </div>
+        </div>
+    </div>
+{% endblock %}
