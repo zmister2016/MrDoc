@@ -10,6 +10,7 @@ urlpatterns = [
     path('modify_pro/',views.modify_project,name='modify_project'), # 修改文集
     path('manage_project',views.manage_project,name="manage_project"), # 管理文集
     path('del_project/',views.del_project,name='del_project'), # 删除文集
+    path('report_project_md/',views.report_md,name='report_md'), # 导出文集MD文件
     #################文档相关
     path('project/<int:pro_id>/<int:doc_id>/', views.doc, name='doc'),  # 文档浏览页
     path('create_doc/', views.create_doc, name="create_doc"),  # 新建文档

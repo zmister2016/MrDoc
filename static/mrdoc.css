@@ -250,7 +250,7 @@ body, html {
 .doc-summary ul.summary li a:hover,.bq a:hover{
     text-decoration: underline;
 }
-li.active > a{
+li.active > a,li.active > div > a{
   color: #008cff;
 }
 .bq a {
@@ -261,6 +261,7 @@ li.active > a{
     border-top: 1px solid #dcdcdc;
     margin-top: 10px;
     font-size: 12px;
+    text-align:center;
 }
 .doc-header {
     font-family: helvetica neue,Helvetica,Arial,sans-serif;
@@ -353,4 +354,12 @@ li.active > a{
 /* 广告样式 */
 .ad-code{
     margin:10px;
+}
+
+/* 左边侧栏目录样式 */
+.toc-open{
+    display:block;
+}
+.toc-close{
+    display:none;
 }

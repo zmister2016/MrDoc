@@ -5,6 +5,9 @@ from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPa
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
+import datetime
+import traceback
+from app_doc.report_utils import *
 
 
 # 文集列表
@@ -36,7 +39,7 @@ def create_project(request):
         return JsonResponse({'status':False})
 
 
-# 文集浏览页
+# 文集页
 def project_index(request,pro_id):
     # 获取文集
     if request.method == 'GET':
@@ -45,19 +48,16 @@ def project_index(request,pro_id):
             project = Project.objects.get(id=int(pro_id))
             # 获取搜索词
             kw = request.GET.get('kw','')
-            if kw == '':
-                doc = Doc.objects.filter(top_doc=int(pro_id)).order_by('sort')
-                # 获取文集第一篇文档作为默认内容
-                if doc.count() > 0:
-                    doc = doc[0]
-                else:
-                    doc = None
-            else: # 搜索结果
-                search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
             # 获取文集下所有一级文档
             project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0).order_by('sort')
-            return render(request,'app_doc/project.html',locals())
+            if kw != '':
+                search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
+                # if search_result.count() == 0:
+                #     search_result = {'count':0}
+                return render(request,'app_doc/project_doc_search.html',locals())
+            return render(request, 'app_doc/project.html', locals())
         except Exception as e:
+            print(traceback.print_exc())
             return HttpResponse('请求出错')
     else:
         return HttpResponse('方法不允许')
@@ -152,7 +152,7 @@ def doc(request,pro_id,doc_id):
                 doc = Doc.objects.get(id=int(doc_id))
                 # 获取文集下一级文档
                 project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0).order_by('sort')
-                return render(request,'app_doc/project.html',locals())
+                return render(request,'app_doc/doc.html',locals())
             else:
                 return HttpResponse('参数错误')
         except Exception as e:
@@ -233,6 +233,7 @@ def modify_doc(request,doc_id):
                     pre_content=pre_content,
                     parent_doc=int(parent_doc) if parent_doc != '' else 0,
                     sort=sort if sort != '' else 99,
+                    modify_time = datetime.datetime.now()
                 )
                 return JsonResponse({'status': True,'data':'修改成功'})
             else:
@@ -448,3 +449,28 @@ def get_pro_doc(request):
 # 404页面
 def handle_404(request):
     return render(request,'404.html')
+
+
+# 导出文集MD文件
+@login_required()
+def report_md(request):
+    if request.method == 'POST':
+        pro_id = request.POST.get('project_id','')
+        user = request.user
+        try:
+            project = Project.objects.get(id=int(pro_id))
+            if project.create_user == user:
+                project_md = ReportMD(
+                    project_id=int(pro_id)
+                )
+                md_file_path = project_md.work() # 生成并获取MD文件压缩包绝对路径
+                md_file_filename = os.path.split(md_file_path)[-1] # 提取文件名
+                md_file = "/media/reportmd_temp/"+ md_file_filename # 拼接相对链接
+                return JsonResponse({'status':True,'data':md_file})
+            else:
+                return JsonResponse({'status':False,'data':'无权限'})
+        except:
+            return JsonResponse({'status':False,'data':'文集不存在'})
+
+    else:
+        return Http404

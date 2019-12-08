@@ -24,13 +24,15 @@
             <colgroup>
             <col width="100">
             <col width="400">
+            <col width="50">
             <col width="100">
-            <col width="100">
+            <col width="150">
             </colgroup>
       <thead>
         <tr>
           <th>文集名称</th>
-            <th>文集简介</th>
+          <th>文集简介</th>
+          <th>文档数量</th>
           <th>创建时间</th>
           <th>操作</th>
         </tr>
@@ -38,13 +40,16 @@
       <tbody>
         {% for pro in pros %}
         <tr>
-          <td>{{ pro.name }}</td>
-            <td>{{ pro.intro }}</td>
+            <td><a href="{% url 'pro_index' pro_id=pro.id %}" target="_blank">{{ pro.name }}</a></td>
+          <td>{{ pro.intro }}</td>
+          {% load project_filter %}
+          <td>{{ pro.id | get_doc_count }}</td>
           <td>{{ pro.create_time }}</td>
           <td>
-              <a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">查看</a>
+              <!--<a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">查看</a>-->
               <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
               <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
+              <a href="javascript:void(0);" onclick="reportMd('{{pro.id}}')" class="layui-btn layui-btn-normal layui-btn-xs">导出</a>
           </td>
         </tr>
         {% endfor %}
@@ -157,5 +162,48 @@
             },
         });
     }
+    //导出MD
+    reportMd = function(pro_id){
+        layer.open({
+            type:1,
+            title:"导出文集",
+            area:"300px",
+            id:"reportMd",
+            content:'<div style="margin-left:10px;">将此文集下所有文档导出为MD文件并打包？</div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                var load = layer.load()
+                data = {
+                    'project_id':pro_id,
+                }
+                $.post("{% url 'report_md' %}",data,function(r){
+                    if(r.status){
+                        //导出成功
+                        layer.close(index)
+                        //文件下载提示
+                        downloadMd(r.data)
+                    }else{
+                        //导出失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                    layer.close(load)
+                })
+            },
+        })
+    }
+    //下载文件弹出框
+    downloadMd = function(download_link){
+        layer.open({
+            type:1,
+            title:"下载导出文档",
+            area:"300px",
+            id:"downloadMd",
+            content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a>',
+            //btn:['确定','取消'], //添加按钮
+            //btnAlign:'c', //按钮居中
+        })
+    };
 </script>
 {% endblock %}

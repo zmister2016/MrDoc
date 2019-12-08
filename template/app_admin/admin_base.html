@@ -31,6 +31,7 @@
             </a>
             <dl class="layui-nav-child">
               <!-- <dd><a href="">基本资料</a></dd> -->
+              <dd><a href="{% url 'manage_project' %}">个人中心</a></dd>
               <dd><a href="{% url 'logout' %}">退出登录</a></dd>
             </dl>
           </li>
@@ -54,7 +55,7 @@
                   <a href="{% url 'user_manage' %}"><i class="layui-icon layui-icon-user"></i> 用户管理</a>
                </li>
                 <li class="layui-nav-item layui-nav-itemed">
-                  <a href="{% url 'sys_setting' %}"><i class="layui-icon layui-icon-user"></i> 应用设置</a>
+                  <a href="{% url 'sys_setting' %}"><i class="layui-icon layui-icon-set-sm"></i> 应用设置</a>
                </li>
               {% endif %}
           </ul>

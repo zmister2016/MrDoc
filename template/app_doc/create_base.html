@@ -85,7 +85,13 @@
             }
         }
     });
-
+    //未保存离开提示
+    window.onbeforeunload =function() {
+    　　 // code...
+        //return null;
+        console.log("xx")
+        return 1
+    }
 </script>
 <script src="{% static 'mrdoc.js' %}"></script>
 {% block custom_script %}

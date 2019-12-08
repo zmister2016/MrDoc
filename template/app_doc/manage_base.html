@@ -34,7 +34,9 @@
               <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
             </a>
             <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
+                {% if request.user.is_superuser %}
+                <dd><a href="{% url 'doctemp_manage' %}">后台管理</a></dd>
+                {% endif %}
               <dd><a href="{% url 'logout' %}">退出登录</a></dd>
             </dl>
           </li>

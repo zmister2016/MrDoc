@@ -43,9 +43,9 @@
         {% for pro in projects %}
         <tr>
           <td>{{ pro.name }}</td>
-            <td>{{ pro.intro }}</td>
-            {% load project_filter %}
-            <td>{{ pro.id | get_doc_count }}</td>
+          <td>{{ pro.intro }}</td>
+          {% load project_filter %}
+          <td>{{ pro.id | get_doc_count }}</td>
           <td>{{ pro.create_time }}</td>
           <td>{{ pro.create_user }}</td>
           <td>

@@ -1,6 +1,6 @@
 # MrDoc - 一个简单的文档写作应用
 
-![Mrdoc首页](./docs/mrdoc_index.png)
+![Mrdoc首页](./docs/mrdoc_2019080101.gif)
 
 ## 介绍
 一个简单的MarkDown文档写作系统。
@@ -35,7 +35,61 @@ Markdown科学公式：Katex.js
 
 ## 安装教程
 
-详见MrDoc使用文档:http://mrdoc.zmister.com
+### 1、安装依赖库
+```
+pip install -r requirements.txt
+```
+
+### 2、配置数据库信息
+默认情况下，MrDoc使用Django的SQLite数据库，如果你使用的是MrDoc源码附带的Sqlite数据库，则无需另外配置数据库。
+如果有配置其他数据库的需求，请在/MrDoc/MrDoc目录下打开settings.py文件，在约80行的位置，将如下代码：
+```
+DATABASES = {
+ 'default': {
+ 'ENGINE': 'django.db.backends.sqlite3',
+ 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+ }
+}
+```
+按照自己数据库的信息，将其修改如下格式，下面以MySQL为例：
+```
+DATABASES = {
+ 'default': {
+ 'ENGINE': 'django.db.backends.mysql', # 使用的数据库后端
+ 'NAME': 'mrdoc', # 数据库名
+ 'USER':'root', # 数据库用户
+ 'PASSWORD':'123456789', # 数据库用户密码
+ 'HOST':'', # 数据库主机地址
+ 'PORT':'3306', # 数据库端口
+ }
+}
+```
+### 3、初始化数据库
+在安装完所需的第三方库并配置好数据库信息之后，我们需要对数据库进行初始化。
+
+在项目路径下打开命令行界面，运行如下命令生成数据库迁移：
+```
+python manage.py makemigrations
+```
+接着，运行如下命令执行数据库迁移：
+```
+python manage.py migrate
+```
+执行完毕之后，数据库就初始化完成了。
+
+### 4、创建管理员账户
+在初始化完数据库之后，需要创建一个管理员账户来管理整个MrDoc，在项目路径下打开命令行终端，运行如下命令：
+```
+python manage.py createsuperuser
+```
+按照提示输入用户名、电子邮箱地址和密码即可。
+### 5、测试运行
+在完成上述步骤之后，即可运行使用MrDoc。
+
+在测试环境中，可以使用Django自带的服务器运行MrDoc，其命令为：
+```
+python manage.py runserver
+```
 
 ## 使用说明
 
@@ -61,7 +115,7 @@ Markdown科学公式：Katex.js
 
 ## 版本更新
 
-关注州的先生微信公众号（ID：zmister2016）、博客 https://zmister.com,及时获取MrDoc版本更新信息。
+关注州的先生微信公众号（ID：zmister2016）、博客 https://zmister.com，及时获取MrDoc版本更新信息。
 
 ## 更多截图
 
