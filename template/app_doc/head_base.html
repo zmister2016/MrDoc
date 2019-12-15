@@ -1,22 +1,71 @@
-<div class="layui-header">
-    <div class="layui-main">
-        <a class="logo" href="{% url 'pro_list' %}">
-            <h1><strong>MrDoc</strong></h1>
-        </a>
+<div class="layui-header layui-fluid">
+    <div class="" style="display:flex;flex-direction:row;justify-content:space-between;">
+        <!-- LOGO -->
+        <div class="">
+            <a class="logo" href="{% url 'pro_list' %}">
+                <h1><strong>MrDoc</strong></h1>
+            </a>
+        </div>
+        <!-- 搜索框 -->
+        <!--<div style="margin:12px;" class="layui-hide-xs">-->
+            <!--<form method="get" target="_blank" action="">-->
+            <!--<div class="layui-input-inline">-->
+                <!--<input class="layui-input mrdoc-search-input" placeholder="搜索文集或文档" name="kw"/>-->
+                <!--<i class="layui-icon layui-icon-search" style="position: absolute;top:12px;right: 8px;"></i>-->
+            <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+        <!-- 新建文档按钮 -->
+        <div class="layui-hide-xs" style="">
+            <ul class="layui-nav" style="">
+                <li class="layui-nav-item">
+                    <a href="{% url 'create_doc' %}" target="_blank">
+                        <i class="layui-icon layui-icon-add-1"></i> <span class="">新建文档</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 用户菜单 -->
+        <div class="">
         <ul class="layui-nav layui-layout-right">
             {% if request.user.is_authenticated %}
           <li class="layui-nav-item">
             <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> {{request.user.username}}
+                <i class="layui-icon layui-icon-friends"></i> <span class="layui-hide-xs">{{request.user.username}}</span>
             </a>
             <dl class="layui-nav-child">
               <!-- <dd><a href="">基本资料</a></dd> -->
                 {% if request.user.is_superuser %}
-                    <dd><a href="{% url 'user_manage' %}">进入后台</a></dd>
+                <dd>
+                    <a href="{% url 'user_manage' %}">
+                        <i class="layui-icon layui-icon-console layui-hide-md"></i>
+                        <span class="layui-hide-xs">进入后台</span>
+                    </a>
+                </dd>
                 {% endif %}
-                <dd><a href="{% url 'manage_doc' %}">管理文档</a></dd>
-                <dd><a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">修改密码</a></dd>
-                <dd><a href="{% url 'logout' %}">退出登录</a></dd>
+                <dd class="layui-hide-md">
+                    <a href="{% url 'create_doc' %}">
+                        <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
+                    </a>
+                </dd>
+                <dd>
+                    <a href="{% url 'manage_doc' %}">
+                        <i class="layui-icon layui-icon-app layui-hide-md"></i>
+                        <span class="layui-hide-xs">管理文档</span>
+                    </a>
+                </dd>
+                <dd>
+                    <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">
+                        <i class="layui-icon layui-icon-password layui-hide-md"></i>
+                        <span class="layui-hide-xs">修改密码</span>
+                    </a>
+                </dd>
+                <dd>
+                    <a href="{% url 'logout' %}">
+                        <i class="layui-icon layui-icon-release layui-hide-md"></i>
+                        <span class="layui-hide-xs">退出登录</span>
+                    </a>
+                </dd>
             </dl>
           </li>
             {% else %}
@@ -36,5 +85,6 @@
           </li>
             {% endif %}
         </ul>
+        </div>
     </div>
 </div>

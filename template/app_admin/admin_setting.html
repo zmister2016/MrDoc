@@ -23,16 +23,18 @@
                     <input type="text" name="type" hidden value="basic">
                   <div class="layui-form-item">
                     <label class="layui-form-label">禁止注册</label>
-                    <div class="layui-input-block">
+                    <div class="layui-input-inline">
                       <input type="checkbox" name="close_register" lay-skin="switch" lay-text="开启|关闭"  {% if close_register %}checked{% endif %}>
                     </div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项将全站禁止新用户注册</div>
                   </div>
 
                    <div class="layui-form-item">
                     <label class="layui-form-label">启用邮箱</label>
-                    <div class="layui-input-block">
+                    <div class="layui-input-inline">
                       <input type="checkbox" name="enable_email" lay-skin="switch" lay-text="开启|关闭"  {% if enable_email %}checked{% endif %}>
                     </div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项后还需进行邮箱信息配置</div>
                   </div>
 
                    <div class="layui-form-item layui-form-text">

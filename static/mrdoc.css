@@ -24,7 +24,7 @@
     background-color:transparent;
 }
 .layui-header .layui-nav{
-    position: absolute;
+    /*position: absolute;*/
     right: 0;
     top: 0;
     padding: 0;
@@ -41,9 +41,15 @@
     text-align: center;
     font-weight: 300;
 }
+/* 首页搜索 */
+.mrdoc-search-input{
+    width:300px;
+    border-radius: 15px
+}
+
 .project-item{
-    float: left;
-    width: 200px;
+    /*float: left;*/
+    /*width: 200px;*/
     height: 140px;
     margin-top: 20px;
     margin-left: 20px;
@@ -148,10 +154,6 @@ body, html {
     height: 100%;
 }
 .doc{
-    /*position: relative;*/
-    /*width: 100%;*/
-    /*height: 100%;*/
-
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -307,7 +309,7 @@ li.active > a,li.active > div > a{
     position: relative;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px 15px 40px 15px;
+    padding: 20px 15px 40px 5px;
 }
 .doc-content{
     outline: 0;
@@ -362,4 +364,18 @@ li.active > a,li.active > div > a{
 }
 .toc-close{
     display:none;
+}
+
+
+/* 移动端小屏幕样式 */
+@media screen and (max-width:768px){
+    /* 文档浏览页 顶部控制按钮 */
+    .doc-header .btn{
+        padding:0 10px;
+    }
+    /* 代码超长出现横向滚动条 */
+    .editormd-preview-container pre.prettyprint, .editormd-html-preview pre.prettyprint , pre{
+        white-space: pre;
+        word-wrap: break-word;
+    }
 }

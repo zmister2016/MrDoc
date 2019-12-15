@@ -3,23 +3,30 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>MrDoc - 一个简单的文档写作系统</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
 </head>
-<body class="layui-layout-body">
+<body class="layui-container">
 <!-- 页头 -->
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
 
 <!-- 主体 -->
-<div class="layui-main">
+<div class="" style="display:flex;flex-wrap:wrap;">
+    <!-- 遍历文集列表 -->
     {% for p in project_list %}
-        <div class="project-item">
+        <div class="project-item layui-col-md3 layui-col-xs12">
             <a href="{% url 'pro_index' p.id %}">
                 <div class="layui-card">
-                    <div class="layui-card-header"><strong><i class="layui-icon layui-icon-read"></i> {{ p.name }}</strong>
+                    <div class="layui-card-header">
+                        <strong>{{ p.name }}</strong>
                     </div>
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>
@@ -27,7 +34,7 @@
                           {% if p.intro == "" %}
                           <span class="">此文集没有填写简介</span>
                           {% else %}
-                          <span class="">{{ p.intro | slice:'16' }}…</span>
+                          <span class="">{{ p.intro | slice:'30' }}…</span>
                           <span class="tooltip-content clearfix">{{ p.intro }}</span>
                           {% endif %}
                       </p>
@@ -37,26 +44,17 @@
             </a>
         </div>
     {% endfor %}
-{#    <div class="project-item">#}
-{#        <a href="javascript:void(0);" onclick="createPro();">#}
-{#            <div class="layui-card">#}
-{#                <div class="layui-card-header"><i class="layui-icon layui-icon-add-1"></i> 创建文集</div>#}
-{#              <div class="layui-card-body">#}
-{#                新建一个文集，开始愉快的写作……#}
-{#              </div>#}
-{#            </div>#}
-{#        </a>#}
-{#    </div>#}
-    <div class="project-item">
-        <a href="{% url 'create_doc' %}" target="_blank">
-            <div class="layui-card">
-                <div class="layui-card-header"><i class="layui-icon layui-icon-add-1"></i> 创建文档</div>
-              <div class="layui-card-body">
-                新建一个文档，马上开始写作……
-              </div>
-            </div>
-        </a>
-    </div>
+    <!-- 新建文档 -->
+    <!--<div class="project-item layui-hide-xs">-->
+        <!--<a href="{% url 'create_doc' %}" target="_blank">-->
+            <!--<div class="layui-card">-->
+                <!--<div class="layui-card-header"><i class="layui-icon layui-icon-add-1"></i> 创建文档</div>-->
+              <!--<div class="layui-card-body">-->
+                <!--新建一个文档，马上开始写作……-->
+              <!--</div>-->
+            <!--</div>-->
+        <!--</a>-->
+    <!--</div>-->
 </div>
 <!-- 主体结束 -->
 <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>

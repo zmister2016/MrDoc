@@ -3,6 +3,11 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{% block title %}{% endblock %} - MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
@@ -10,13 +15,13 @@
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     {% block custom_style %}{% endblock %}
 </head>
-<body class="layui-layout-body">
+<body class="layui-fluid">
 <!-- 页头 -->
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
 
 <!-- 主体开始 -->
-<div class="layui-main">
+<div class="layui-fluid">
     {% block content %}
     {% endblock %}
 </div>
@@ -89,7 +94,6 @@
     window.onbeforeunload =function() {
     　　 // code...
         //return null;
-        console.log("xx")
         return 1
     }
 </script>

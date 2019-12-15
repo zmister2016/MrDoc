@@ -2,6 +2,12 @@
 <!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<title>用户登录 - MrDoc</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,6 +35,16 @@
         .register-link{
             font-size: 12px;
         }
+        /* 移动端输入框样式 */
+        @media screen and (max-width: 450px){
+            .layui-form-item .layui-input-inline {
+                display: block;
+                float: none;
+                left: -3px;
+                width: auto;
+                margin: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -43,17 +59,17 @@
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
-                    <div class="layui-input-inline">
+                    <div class="layui-input-inline login-input">
                       <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-input-inline">
+                    <div class="layui-input-inline login-input">
                       <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-input-inline">
+                    <div class="layui-input-inline login-input">
                         <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">登录</button>
                     </div>
                 </div>

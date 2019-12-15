@@ -5,40 +5,57 @@
 
 {% block content %}
     <div class="create-doc-form">
-        <div class="layui-form">
-            <label class="layui-form-label">标题</label>
-            <div class="layui-input-inline">
-              <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
+        <div class="layui-form" style="">
+            <!-- 标题 -->
+            <div>
+                <label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="layui-icon layui-icon-edit"></i> 文档标题</label>
+                <div class="layui-input-block" style="margin-left:95px;">
+                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
+                </div>
+            </div><br>
+
+            <div class="layui-row">
+
+                <div class="layui-col-md3 layui-col-sm6 " style="padding-bottom:10px;">
+                    <label class="doc-form-label"><i class="fa fa-file-text"></i> 所属文集</label>
+                    <div class="layui-input-inline">
+                      <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
+                        <option value=""></option>
+                        <option value="-1">新建文集</option>
+                          {% for p in project_list %}
+                        <option value="{{ p.id }}">《{{ p.name }}》</option>
+                          {% endfor %}
+                      </select>
+                    </div>
+                </div>
+
+                <div class="layui-col-md3 layui-col-sm6" style="padding-bottom:10px;">
+                    <label class="doc-form-label"><i class="fa fa-chevron-circle-up"></i> 所属上级</label>
+                    <div class="layui-input-inline">
+                      <select name="parent_id" lay-verify="required" id="parent-doc">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                </div>
+
+                <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+                    <label class="doc-form-label"><i class="fa fa-list-ol"></i> 文档排序</label>
+                    <div class="layui-input-inline">
+                      <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort"/>
+                    </div>
+
+                    <label class="doc-form-label">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp">插入模板</button>
+                    </label>
+
+                    <label class="doc-form-label">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">保存文档</button>
+                    </label>
+                </div>
             </div>
-            <label class="doc-form-label">所属</label>
-            <div class="layui-input-inline">
-              <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
-                <option value=""></option>
-                <option value="-1">新建文集</option>
-                  {% for p in project_list %}
-                <option value="{{ p.id }}">《{{ p.name }}》</option>
-                  {% endfor %}
-              </select>
-            </div>
-            <label class="doc-form-label">上级文档</label>
-            <div class="layui-input-inline">
-              <select name="parent_id" lay-verify="required" id="parent-doc">
-                <option value=""></option>
-              </select>
-            </div>
-            <label class="doc-form-label">排序</label>
-            <div class="layui-input-inline">
-              <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort"/>
-            </div>
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-primary layui-btn-sm" id="sel-doctemp">插入模板</button>
-            </label>
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">保存</button>
-            </label>
         </div>
     </div>
-    <div id="editor-md">
+    <div id="editor-md" class="layui-col-xs12">
         <textarea style="display:none;"></textarea>
         <textarea class="editormd-html-textarea" name="$id-html-code"></textarea>
     </div>
@@ -131,9 +148,10 @@
         $("#sel-doctemp").click(function(){
             layer.open({
               type: 1,
-                id:'temp-div',
+              id:'temp-div',
               content: $('#doctemp-list'),
-                area:['530px','300px'],
+              //area:['530px','300px'],
+              area:['50%','50%'],
             });
         });
         //插入模板
@@ -162,21 +180,21 @@
 {% endblock %}
 
 {% block custom_div %}
-    <div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
+<div class="doctemp-list " id="doctemp-list" style="display: none;padding:5px;">
     <div style="margin: 10px 0 0 10px;">
-        <a class="layui-btn layui-btn-normal" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
-        <a class="layui-btn layui-btn-normal" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">新建模板</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_doctemp' %}" target="_blank">管理模板</a>
     </div>
-    <table class="layui-table" style="margin: 10px;">
+    <table class="layui-table" style="margin: 10px;width:90%;">
       <colgroup>
-        <col width="150">
-        <col width="200">
+        <col width="">
+        <col width="">
         <col>
       </colgroup>
       <thead>
         <tr>
           <th>模板名称</th>
-          <th>创建时间</th>
+          <th class="layui-hide-xs">创建时间</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -184,9 +202,9 @@
         {% for temp in doctemp_list %}
         <tr>
           <td>{{ temp.name }}</td>
-          <td>{{ temp.create_time }}</td>
+          <td class="layui-hide-xs">{{ temp.create_time }}</td>
           <td>
-              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
+              <a class="layui-btn layui-btn-normal layui-btn-sm" href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
 {#              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>#}
 {#              <a href="javascript:void(0);" onclick="delTemp();">删除</a>#}
           </td>

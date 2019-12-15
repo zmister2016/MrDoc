@@ -6,12 +6,13 @@
 {% block content %}
     <div class="create-doc-form">
         <div class="layui-form">
-            <label class="layui-form-label">模板标题</label>
+            <label class="doc-form-label layui-hide-xs">模板标题</label>
             <div class="layui-input-inline">
               <input type="text" name="doc-name" id="doctemp-name" required lay-verify="required" placeholder="请输入模板名称" autocomplete="off" class="layui-input">
             </div>
             <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal" onclick="createDocTemp()">保存</button>
+                <button class="layui-btn layui-btn-normal" onclick="createDocTemp()">
+                    <i class="fa fa-save "></i><span class="layui-hide-xs"> 保存</span></button>
             </label>
         </div>
     </div>
