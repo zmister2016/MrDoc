@@ -36,6 +36,7 @@
         });
     var layer = layui.layer;
     var form = layui.form;
+    var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
     //初始化editormd
     var editor = editormd("editor-md", {
         width       :   "100%",
@@ -65,6 +66,9 @@
         imageUpload    : true, //开启图片上传
         imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL : "{% url 'upload_doc_img' %}",
+        onchange:function(){
+            md_changed = true
+        },
     });
     //粘贴上传图片
     $("#editor-md").on('paste', function (ev) {
@@ -92,9 +96,11 @@
     });
     //未保存离开提示
     window.onbeforeunload =function() {
-    　　 // code...
-        //return null;
-        return 1
+    　　 if(md_changed){
+            return 1;
+        }else{
+            return null;
+        }
     }
 </script>
 <script src="{% static 'mrdoc.js' %}"></script>

@@ -27,6 +27,8 @@ class Doc(models.Model):
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)
+    # 文档状态说明：0表示草稿状态，1表示发布状态
+    status = models.IntegerField(choices=((0,0),(1,1)),default=1,verbose_name='文档状态')
 
     def __str__(self):
         return self.name

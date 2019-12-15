@@ -49,7 +49,7 @@ def project_index(request,pro_id):
             # 获取搜索词
             kw = request.GET.get('kw','')
             # 获取文集下所有一级文档
-            project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0).order_by('sort')
+            project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0, status=1).order_by('sort')
             if kw != '':
                 search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
                 # if search_result.count() == 0:
@@ -149,9 +149,9 @@ def doc(request,pro_id,doc_id):
                 # 获取文集信息
                 project = Project.objects.get(id=int(pro_id))
                 # 获取文档内容
-                doc = Doc.objects.get(id=int(doc_id))
+                doc = Doc.objects.get(id=int(doc_id),status=1)
                 # 获取文集下一级文档
-                project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0).order_by('sort')
+                project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
                 return render(request,'app_doc/doc.html',locals())
             else:
                 return HttpResponse('参数错误')
@@ -181,6 +181,7 @@ def create_doc(request):
             doc_content = request.POST.get('content','')
             pre_content = request.POST.get('pre_content','')
             sort = request.POST.get('sort','')
+            status = request.POST.get('status',1)
             if project != '' and doc_name != '' and project != '-1':
                 doc = Doc.objects.create(
                     name=doc_name,
@@ -189,7 +190,8 @@ def create_doc(request):
                     parent_doc= int(parent_doc) if parent_doc != '' else 0,
                     top_doc= int(project),
                     sort = sort if sort != '' else 99,
-                    create_user=request.user
+                    create_user=request.user,
+                    status = status
                 )
                 return JsonResponse({'status':True,'data':doc.id})
             else:
@@ -225,6 +227,7 @@ def modify_doc(request,doc_id):
             doc_content = request.POST.get('content', '') # 文档内容
             pre_content = request.POST.get('pre_content', '') # 文档Markdown格式内容
             sort = request.POST.get('sort', '') # 文档排序
+            status = request.POST.get('status',1) # 文档状态
             if doc_id != '' and project != '' and doc_name != '' and project != '-1':
                 # 更新文档内容
                 Doc.objects.filter(id=int(doc_id)).update(
@@ -233,7 +236,8 @@ def modify_doc(request,doc_id):
                     pre_content=pre_content,
                     parent_doc=int(parent_doc) if parent_doc != '' else 0,
                     sort=sort if sort != '' else 99,
-                    modify_time = datetime.datetime.now()
+                    modify_time = datetime.datetime.now(),
+                    status = status
                 )
                 return JsonResponse({'status': True,'data':'修改成功'})
             else:
@@ -266,7 +270,7 @@ def manage_doc(request):
     if request.method == 'GET':
         search_kw = request.GET.get('kw',None)
         if search_kw:
-            doc_list = Doc.objects.filter(create_user=request.user,content__icontains=search_kw)
+            doc_list = Doc.objects.filter(create_user=request.user,content__icontains=search_kw).order_by('-modify_time')
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:
@@ -277,7 +281,7 @@ def manage_doc(request):
                 docs = paginator.page(paginator.num_pages)
             docs.kw = search_kw
         else:
-            doc_list = Doc.objects.filter(create_user=request.user)
+            doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:

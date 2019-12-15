@@ -57,7 +57,7 @@
                 <li>
                     {% if docs.id|get_next_doc %}
                         <div style="display:flex;justify-content:space-between;">
-                            <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
+                            <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
                             <i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>
                         </div>
                         <ul class="sub-menu toc-close">
@@ -66,23 +66,23 @@
                             <li>
                                 {% if node.id|get_next_doc %}
                                     <div style="display:flex;justify-content:space-between;">
-                                        <a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}">{{ node.name }}</a>
+                                        <a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
                                         <i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>
                                     </div>
                                     <ul class="sub-menu toc-close">
                                     <!-- 三级目录 -->
                                     {% for doc in node.id|get_next_doc %}
-                                        <li><a href="{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}">{{ doc.name }}</a></li>
+                                        <li><a href="{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}" title="{{doc.name}}">{{ doc.name }}</a></li>
                                     {% endfor %}
                                     </ul>
                                 {% else %}
-                                    <a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}">{{ node.name }}</a>
+                                    <a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
                                 {% endif %}
                             </li>
                         {% endfor %}
                         </ul>
                     {% else %}
-                        <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
+                        <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
                     {% endif %}
                 </li>
             {% endfor %}

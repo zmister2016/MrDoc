@@ -21,28 +21,35 @@
     </div>
     <!-- 表格数据 -->
     <div class="layui-row" lay-skin="line">
-        <table class="layui-table"  id="doctemp-list" lay-skin="line">
+        <table class="layui-table"  id="doctemp-list" lay-skin="">
       <thead>
         <tr>
-          <th>文档名称</th>
+            <th>文档名称</th>
             <th>上级文档</th>
             <th>所属文集</th>
             <th>创建人</th>
-          <th>创建时间</th>
-          <th>操作</th>
+            <th>创建时间</th>
+            <th>操作</th>
         </tr>
       </thead>
       <tbody>
         {% load doc_filter %}
         {% for doc in docs %}
         <tr>
-          <td>{{ doc.name }}</td>
+            {% if doc.status == 1 %}
+                <td>
+                    <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} <span class="layui-badge layui-bg-black">已发布</span></a>
+                </td>
+            {% else %}
+                <td>
+                    <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} <span class="layui-badge">草稿</span></a>
+                </td>
+            {% endif %}
             <td>{{ doc.parent_doc|get_doc_parent }}</td>
             <td>{{ doc.top_doc|get_doc_top }}</td>
             <td>{{ doc.create_user }}</td>
           <td>{{ doc.create_time }}</td>
           <td>
-{#              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">查看</a>#}
               <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
               <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
           </td>

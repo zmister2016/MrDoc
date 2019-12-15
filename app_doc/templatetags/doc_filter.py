@@ -8,7 +8,7 @@ register = template.Library()
 # 获取文档的子文档
 @register.filter(name='get_next_doc')
 def get_next_doc(value):
-    return Doc.objects.filter(parent_doc=value).order_by('sort')
+    return Doc.objects.filter(parent_doc=value,status=1).order_by('sort')
 
 # 获取文档的所属文集
 @register.filter(name='get_doc_top')

@@ -44,7 +44,10 @@
                 <button class="layui-btn layui-btn-primary layui-btn-sm" id="sel-doctemp">插入模板</button>
             </label>
             <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">保存</button>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()">保存草稿</button>
+            </label>
+            <label class="doc-form-label">
+                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">发布文档</button>
             </label>
         </div>
     </div>
@@ -76,7 +79,7 @@
                 }
             });
         });
-        //保存文档
+        //发布文档
         createDoc = function(){
             var data = {
                 'doc_id':{{ doc.id }},
@@ -92,6 +95,30 @@
                     //修改成功
                     layer.msg('保存成功，即将跳转',function(){
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
+                    });
+                }else{
+                    //修改失败
+                    layer.msg('保存失败');
+                }
+            });
+        };
+        //保存文档草稿
+        saveDoc = function(){
+            var data = {
+                'doc_id':{{ doc.id }},
+                'project':$("#project").val(),
+                'parent_doc':$("#parent-doc").val(),
+                'doc_name':$("#doc-name").val(),
+                'content':editor.getHTML(),
+                'pre_content':editor.getMarkdown(),
+                'sort':$("#sort").val(),
+                'status':0
+            }
+            $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
+                if(r.status){
+                    //修改成功
+                    layer.msg('保存成功',function(){
+                        window.location.href = "{% url 'modify_doc' doc.id %}";
                     });
                 }else{
                     //修改失败

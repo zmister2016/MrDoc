@@ -302,7 +302,7 @@ def admin_doc(request):
     if request.method == 'GET':
         kw = request.GET.get('kw','')
         if kw == '':
-            doc_list = Doc.objects.all()
+            doc_list = Doc.objects.all().order_by('-modify_time')
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:
@@ -312,7 +312,7 @@ def admin_doc(request):
             except EmptyPage:
                 docs = paginator.page(paginator.num_pages)
         else:
-            doc_list = Doc.objects.filter(pre_content__icontains=kw)
+            doc_list = Doc.objects.filter(pre_content__icontains=kw).order_by('-modify_time')
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:

@@ -49,7 +49,10 @@
                     </label>
 
                     <label class="doc-form-label">
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">保存文档</button>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()">保存草稿</button>
+                    </label>
+                    <label class="doc-form-label">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">发布文档</button>
                     </label>
                 </div>
             </div>
@@ -134,8 +137,40 @@
                 $.post("{% url 'create_doc' %}",data,function(r){
                     if(r.status){
                         //创建成功
-                        layer.msg('保存成功',function(){
+                        layer.msg('发布成功',function(){
                             window.location.href = "{% url 'pro_list' %}";
+                        });
+                    }else{
+                        //创建失败
+                        layer.msg('保存失败:'+r.data);
+                    }
+                });
+            }
+        };
+        //保存文档草稿
+        saveDoc = function(){
+            var data = {
+                'project':$("#project").val(),
+                'parent_doc':$("#parent-doc").val(),
+                'doc_name':$("#doc-name").val(),
+                'content':editor.getHTML(),
+                'pre_content':editor.getMarkdown(),
+                'sort':$("#sort").val(),
+                'status':0
+            }
+            console.log(data)
+            if(data.doc_name == ""){
+                layer.msg('请输入文档标题！');
+            }
+            else if(data.project == ""){
+                layer.msg('请选择文集！');
+            }
+            else{
+                $.post("{% url 'create_doc' %}",data,function(r){
+                    if(r.status){
+                        //创建成功
+                        layer.msg('保存成功',function(){
+                            window.location.href = "/modify_doc/"+r.data+"/";
                         });
                     }else{
                         //创建失败
