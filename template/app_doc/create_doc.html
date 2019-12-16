@@ -16,7 +16,7 @@
 
             <div class="layui-row">
 
-                <div class="layui-col-md3 layui-col-sm6 " style="padding-bottom:10px;">
+                <div class="layui-col-md4 layui-col-sm6 " style="padding-bottom:10px;">
                     <label class="doc-form-label"><i class="fa fa-file-text"></i> 所属文集</label>
                     <div class="layui-input-inline">
                       <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div class="layui-col-md3 layui-col-sm6" style="padding-bottom:10px;">
+                <div class="layui-col-md4 layui-col-sm6" style="padding-bottom:10px;">
                     <label class="doc-form-label"><i class="fa fa-chevron-circle-up"></i> 所属上级</label>
                     <div class="layui-input-inline">
                       <select name="parent_id" lay-verify="required" id="parent-doc">
@@ -38,16 +38,23 @@
                     </div>
                 </div>
 
-                <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+                <div class="layui-col-md4 layui-col-sm6 layui-col-xs12" style="padding-bottom:10px;">
                     <label class="doc-form-label"><i class="fa fa-list-ol"></i> 文档排序</label>
                     <div class="layui-input-inline">
                       <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort"/>
                     </div>
 
-                    <label class="doc-form-label">
+                    <label class="doc-form-label" style="margin-right:0px;">
                         <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp">插入模板</button>
                     </label>
 
+                    <label class="doc-form-label" style="margin-right:0px;">
+                        <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-local" onclick="selectLocalFile()">插入本地文本</button>
+                    </label>
+
+                </div>
+                <div class="layui-row">
                     <label class="doc-form-label">
                         <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()">保存草稿</button>
                     </label>
@@ -211,6 +218,44 @@
                 },
             });
         };
+        //插入本地文本文件
+        function insertLocalFile(input) {
+			var file = input.files[0];
+			//filename = file.name.split(".")[0]; // 文件名
+			//支持chrome IE10
+			if (window.FileReader) {
+				var reader = new FileReader();
+				reader.onload = function() {
+					console.log(this.result);
+					editor.insertValue(this.result);
+				}
+				reader.readAsText(file);
+			}
+			//支持IE 7 8 9 10
+			else if (typeof window.ActiveXObject != 'undefined'){
+				var xmlDoc;
+				xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+				xmlDoc.async = false;
+				xmlDoc.load(input.value);
+				console.log(xmlDoc.xml);
+				editor.insertValue(xmlDoc.xml);
+			}
+			//支持FF
+			else if (document.implementation && document.implementation.createDocument) {
+				var xmlDoc;
+				xmlDoc = document.implementation.createDocument("", "", null);
+				xmlDoc.async = false;
+				xmlDoc.load(input.value);
+				console.log(xmlDoc.xml);
+				editor.insertValue(xmlDoc.xml);
+			} else {
+				alert('error');
+			}
+        };
+		//选择本地文本文件
+		function selectLocalFile(){
+			$("#insert-local-file").trigger("click");
+		};
     </script>
 {% endblock %}
 

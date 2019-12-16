@@ -15,13 +15,13 @@
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     {% block custom_style %}{% endblock %}
 </head>
-<body class="layui-fluid">
+<body class="layui-container">
 <!-- 页头 -->
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
 
 <!-- 主体开始 -->
-<div class="layui-fluid">
+<div class="layui-container">
     {% block content %}
     {% endblock %}
 </div>
