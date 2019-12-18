@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}" />
     <link rel="stylesheet" href="{% static 'share.js/css/share.min.css' %}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
-    <link href="{% static 'mrdoc.css' %}" rel="stylesheet">
+    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
         .doc-content ul li{
             list-style:disc;
@@ -34,7 +34,7 @@
 
 </head>
 <body>
-<div class="doc layui-fluid" style="">
+<div class="doc layui-fluid" style="padding-left:0px;">
     <!-- 左侧目录栏 -->
     <div class="doc-summary">
         <!-- 文档搜索 -->

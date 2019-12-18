@@ -263,7 +263,6 @@ li.active > a,li.active > div > a{
     border-top: 1px solid #dcdcdc;
     margin-top: 10px;
     font-size: 12px;
-    text-align:center;
 }
 .doc-header {
     font-family: helvetica neue,Helvetica,Arial,sans-serif;
