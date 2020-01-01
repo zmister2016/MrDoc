@@ -1,0 +1,96 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load staticfiles %}
+{% block title %}文集权限管理{% endblock %}
+{% block content %}
+    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
+        <span class="layui-breadcrumb" lay-separator=">">
+          <a href="{% url 'project_manage' %}">文集管理</a>
+          <a><cite>权限管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+
+      <div class="layui-row">
+          <span style="font-size:18px;">修改文集权限
+          </span>
+      </div>
+  </div>
+    <div class="layui-row">
+        <form action="{% url 'admin_project_role' pro.id %}" method="post" class="layui-form">
+            {% csrf_token %}
+            <div class="layui-form-item">
+                <label class="layui-form-label">文集作者</label>
+                <div class="layui-input-block">
+                  <input type="text" name="title" required value="{{pro.create_user.username}}"  disabled class="layui-input">
+                    <!--<span>{{pro.name}}</span>-->
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文集名称</label>
+                <div class="layui-input-block">
+                  <input type="text" name="title" required value="{{pro.name}}"  disabled class="layui-input">
+                    <!--<span>{{pro.name}}</span>-->
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限选择</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="role" value="0" title="公开" {% if pro.role == 0 %} checked {%endif%} lay-filter="role">
+                    <input type="radio" name="role" value="1" title="私密" {% if pro.role == 1 %} checked {%endif%} lay-filter="role">
+                    <input type="radio" name="role" value="2" title="指定用户可见" {% if pro.role == 2 %} checked {%endif%} lay-filter="role">
+                    <input type="radio" name="role" value="3" title="访问码可见" {% if pro.role == 3 %} checked {%endif%} lay-filter="role">
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="{% if pro.role == 3 %}{% else %}display:none;{% endif %}" id="role-pwd">
+                <label class="layui-form-label">访问码</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="viewcode"  placeholder="请输入访问码" autocomplete="off" class="layui-input" value="{{pro.role_value}}">
+                </div>
+                <div class="layui-form-mid layui-word-aux">不少于4位数</div>
+            </div>
+
+            <div class="layui-form-item" style="{% if pro.role == 2 %}{% else %}display:none;{% endif %}" id="role-user">
+                <label class="layui-form-label">允许用户</label>
+                <div class="layui-input-block">
+                    <div class="tagsinput-primary form-group">
+                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{{pro.role_value}}" placeholder="请输入用户名，回车输入多个用户">
+                        <!--<button class="btn" onClick="getinput()">查询</button>-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block custom_script %}
+<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
+<script>
+    $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+    var form = layui.form;
+    //监听单选事件
+    form.on('radio(role)', function(data){
+      console.log(data.elem); //得到radio原始DOM对象
+      console.log(data.value); //被点击的radio的value值
+      if(data.value in [0,1]){
+            $("#role-pwd").css("display","none");
+            $("#role-user").css("display","none");
+      }else if(data.value == 2){
+            $("#role-user").css("display","block");
+            $("#role-pwd").css("display","none");
+      }else if(data.value == 3){
+            $("#role-user").css("display","none");
+            $("#role-pwd").css("display","block");
+      }
+    });
+</script>
+{% endblock %}

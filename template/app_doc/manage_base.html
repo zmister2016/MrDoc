@@ -35,7 +35,7 @@
             </a>
             <dl class="layui-nav-child">
                 {% if request.user.is_superuser %}
-                <dd><a href="{% url 'doctemp_manage' %}">后台管理</a></dd>
+                <dd><a href="{% url 'project_manage' %}">后台管理</a></dd>
                 {% endif %}
               <dd><a href="{% url 'logout' %}">退出登录</a></dd>
             </dl>

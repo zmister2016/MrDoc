@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 class Project(models.Model):
     name = models.CharField(verbose_name="文档名称",max_length=50)
     intro = models.TextField(verbose_name="介绍")
+    # 文集权限说明：0表示公开，1表示私密,2表示指定用户可见,3表示访问码可见 默认公开
+    role = models.IntegerField(choices=((0,0),(1,1),(2,2),(3,3)), default=0,verbose_name="文集权限")
+    role_value = models.TextField(verbose_name="文集权限值",blank=True,null=True)
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)

@@ -11,6 +11,7 @@ urlpatterns = [
     path('change_pwd',views.admin_change_pwd,name="change_pwd"), # 管理员修改用户密码
     path('modify_pwd',views.change_pwd,name="modify_pwd"), # 普通用户修改密码
     path('project_manage/',views.admin_project,name='project_manage'), # 文集管理
+    path('project_role_manage/<int:pro_id>/',views.admin_project_role,name="admin_project_role"), # 管理文集权限
     path('doc_manage/',views.admin_doc,name='doc_manage'), # 文档管理
     path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文档模板管理
     path('setting/',views.admin_setting,name="sys_setting"), # 应用设置

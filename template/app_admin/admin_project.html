@@ -26,6 +26,7 @@
                 <col width="300">
                 <col width="40">
                 <col width="50">
+                <col width="100">
                 <col width="50">
                 <col width="50">
             </colgroup>
@@ -34,6 +35,7 @@
             <th>文集名称</th>
             <th>文集简介</th>
             <th>文档数量</th>
+            <th>权限</th>
             <th>创建时间</th>
             <th>所属用户</th>
             <th>操作</th>
@@ -46,6 +48,19 @@
           <td>{{ pro.intro }}</td>
           {% load project_filter %}
           <td>{{ pro.id | get_doc_count }}</td>
+            <td>
+              <div class="layui-input-inline">
+              {% if pro.role == 0 %}
+                  <i class="layui-icon layui-icon-circle"></i> 公开 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+              {% elif pro.role == 1 %}
+                  <i class="layui-icon layui-icon-menu-fill"></i> 私密 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+              {% elif pro.role == 2 %}
+                  <i class="layui-icon layui-icon-group"></i> 指定用户可见 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+              {% elif pro.role == 3 %}
+                  <i class="layui-icon layui-icon-password"></i> 访问码可见 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+              {% endif %}
+              </div>
+          </td>
           <td>{{ pro.create_time }}</td>
           <td>{{ pro.create_user }}</td>
           <td>

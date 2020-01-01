@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http.response import JsonResponse,Http404,HttpResponseNotAllowed,HttpResponse
+from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
+from django.core.exceptions import PermissionDenied
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -12,7 +15,14 @@ from app_doc.report_utils import *
 
 # 文集列表
 def project_list(request):
-    project_list = Project.objects.all()
+    # 登录用户
+    if request.user.is_authenticated:
+        project_list = Project.objects.filter(
+            Q(role=0) | Q(role=2,role_value__contains=str(request.user.username)) | Q(create_user=request.user)
+        )
+    else:
+        # 非登录用户只显示公开文集
+        project_list = Project.objects.filter(role=0)
     return render(request, 'app_doc/pro_list.html', locals())
 
 
@@ -23,11 +33,13 @@ def create_project(request):
         try:
             name = request.POST.get('pname','')
             desc = request.POST.get('desc','')
+            role = request.POST.get('role','')
             if name != '':
                 project = Project.objects.create(
                     name=name,
                     intro=desc[:100],
-                    create_user=request.user
+                    create_user=request.user,
+                    role = int(role)
                 )
                 project.save()
                 return JsonResponse({'status':True,'data':{'id':project.id,'name':project.name}})
@@ -40,27 +52,46 @@ def create_project(request):
 
 
 # 文集页
+@require_http_methods(['GET'])
 def project_index(request,pro_id):
     # 获取文集
-    if request.method == 'GET':
-        try:
-            # 获取文集信息
-            project = Project.objects.get(id=int(pro_id))
-            # 获取搜索词
-            kw = request.GET.get('kw','')
-            # 获取文集下所有一级文档
-            project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0, status=1).order_by('sort')
-            if kw != '':
-                search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
-                # if search_result.count() == 0:
-                #     search_result = {'count':0}
-                return render(request,'app_doc/project_doc_search.html',locals())
-            return render(request, 'app_doc/project.html', locals())
-        except Exception as e:
-            print(traceback.print_exc())
-            return HttpResponse('请求出错')
-    else:
-        return HttpResponse('方法不允许')
+    try:
+        # 获取文集信息
+        project = Project.objects.get(id=int(pro_id))
+
+        # 私密文集并且访问者非创建者
+        if project.role == 1 and request.user != project.create_user:
+            return render(request,'404.html')
+        # 指定用户可见文集
+        elif project.role == 2:
+            user_list = project.role_value
+            if request.user.is_authenticated: # 认证用户判断是否在许可用户列表中
+                if request.user.username not in user_list and request.user != project.create_user: # 访问者不在指定用户之中
+                    return render(request, '404.html')
+            else:# 游客直接返回404
+                return render(request, '404.html')
+        # 访问码可见
+        elif project.role == 3:
+            # 浏览用户不为创建者
+            if request.user != project.create_user:
+                viewcode = project.role_value
+                viewcode_name = 'viewcode-{}'.format(project.id)
+                r_viewcode = request.COOKIES[viewcode_name] if viewcode_name in request.COOKIES.keys() else 0 # 从cookie中获取访问码
+                if viewcode != r_viewcode: # cookie中的访问码不等于文集访问码，跳转到访问码认证界面
+                    return redirect('/check_viewcode/?to={}'.format(request.path))
+
+        # 获取搜索词
+        kw = request.GET.get('kw','')
+        # 获取文集下所有一级文档
+        project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0, status=1).order_by('sort')
+        if kw != '':
+            search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
+            return render(request,'app_doc/project_doc_search.html',locals())
+        return render(request, 'app_doc/project.html', locals())
+    except Exception as e:
+        print(traceback.print_exc())
+        print(repr(e))
+        return HttpResponse('请求出错')
 
 
 # 修改文集
@@ -83,6 +114,68 @@ def modify_project(request):
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法不允许'})
+
+
+# 修改文集权限
+@login_required()
+def modify_project_role(request,pro_id):
+    pro = Project.objects.get(id=pro_id)
+    if (pro.create_user != request.user) and (request.user.is_superuser is False):
+        return render(request,'403.html')
+    else:
+        if request.method == 'GET':
+            return render(request,'app_doc/manage_project_role.html',locals())
+        elif request.method == 'POST':
+            role_type = request.POST.get('role','')
+            if role_type != '':
+                if int(role_type) in [0,1]:# 公开或私密
+                    Project.objects.filter(id=int(pro_id)).update(
+                        role = role_type,
+                        modify_time = datetime.datetime.now()
+                    )
+                if int(role_type) == 2: # 指定用户可见
+                    role_value = request.POST.get('tagsinput','')
+                    Project.objects.filter(id=int(pro_id)).update(
+                        role=role_type,
+                        role_value = role_value,
+                        modify_time = datetime.datetime.now()
+                    )
+                if int(role_type) == 3: # 访问码可见
+                    role_value = request.POST.get('viewcode','')
+                    Project.objects.filter(id=int(pro_id)).update(
+                        role=role_type,
+                        role_value=role_value,
+                        modify_time=datetime.datetime.now()
+                    )
+                pro = Project.objects.get(id=int(pro_id))
+                return render(request, 'app_doc/manage_project_role.html', locals())
+            else:
+                return Http404
+
+
+# 验证文集访问码
+@require_http_methods(['GET',"POST"])
+def check_viewcode(request):
+    try:
+        if request.method == 'GET':
+            project_id = request.GET.get('to','').split("/")[2]
+            project = Project.objects.get(id=int(project_id))
+            return render(request,'app_doc/check_viewcode.html',locals())
+        else:
+            viewcode = request.POST.get('viewcode','')
+            project_id = request.POST.get('project_id','')
+            project = Project.objects.get(id=int(project_id))
+            if project.role == 3 and project.role_value == viewcode:
+                obj = redirect("/project/{}/".format(project_id))
+                obj.set_cookie('viewcode-{}'.format(project_id),viewcode)
+                return obj
+            else:
+                errormsg = "访问码错误"
+                return render(request, 'app_doc/check_viewcode.html', locals())
+
+    except Exception as e:
+        print(repr(e))
+        return render(request,'404.html')
 
 
 # 删除文集
@@ -142,23 +235,44 @@ def manage_project(request):
 
 
 # 文档浏览页页
+@require_http_methods(['GET'])
 def doc(request,pro_id,doc_id):
-    if request.method == 'GET':
-        try:
-            if pro_id != '' and doc_id != '':
-                # 获取文集信息
-                project = Project.objects.get(id=int(pro_id))
-                # 获取文档内容
-                doc = Doc.objects.get(id=int(doc_id),status=1)
-                # 获取文集下一级文档
-                project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
-                return render(request,'app_doc/doc.html',locals())
-            else:
-                return HttpResponse('参数错误')
-        except Exception as e:
-            return HttpResponse('请求出错')
-    else:
-        return HttpResponse('方法不允许')
+    try:
+        if pro_id != '' and doc_id != '':
+            # 获取文集信息
+            project = Project.objects.get(id=int(pro_id))
+
+            # 私密文集并且访问者非创建者
+            if project.role == 1 and request.user != project.create_user:
+                return render(request, '404.html')
+            # 指定用户可见文集
+            elif project.role == 2:
+                user_list = project.role_value
+                if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
+                    if request.user.username not in user_list and request.user != project.create_user:  # 访问者不在指定用户之中
+                        return render(request, '404.html')
+                else:  # 游客直接返回404
+                    return render(request, '404.html')
+            # 访问码可见
+            elif project.role == 3:
+                # 浏览用户不为创建者
+                if request.user != project.create_user:
+                    viewcode = project.role_value
+                    viewcode_name = 'viewcode-{}'.format(project.id)
+                    r_viewcode = request.COOKIES[
+                        viewcode_name] if viewcode_name in request.COOKIES.keys() else 0  # 从cookie中获取访问码
+                    if viewcode != r_viewcode:  # cookie中的访问码不等于文集访问码，跳转到访问码认证界面
+                        return redirect('/check_viewcode/?to={}'.format(request.path))
+
+            # 获取文档内容
+            doc = Doc.objects.get(id=int(doc_id),status=1)
+            # 获取文集下一级文档
+            project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
+            return render(request,'app_doc/doc.html',locals())
+        else:
+            return HttpResponse('参数错误')
+    except Exception as e:
+        return HttpResponse('请求出错')
 
 
 # 创建文档

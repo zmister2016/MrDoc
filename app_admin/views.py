@@ -1,5 +1,6 @@
+# coding:utf-8
 from django.shortcuts import render,redirect
-from django.http.response import JsonResponse,HttpResponse
+from django.http.response import JsonResponse,HttpResponse,Http404
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
@@ -294,6 +295,39 @@ def admin_project(request):
         return render(request,'app_admin/admin_project.html',locals())
     else:
         return HttpResponse('方法错误')
+
+# 管理员后台 - 修改文集权限
+@superuser_only
+def admin_project_role(request,pro_id):
+    pro = Project.objects.get(id=pro_id)
+    if request.method == 'GET':
+        return render(request,'app_admin/admin_project_role.html',locals())
+    elif request.method == 'POST':
+        role_type = request.POST.get('role','')
+        if role_type != '':
+            if int(role_type) in [0,1]:# 公开或私密
+                Project.objects.filter(id=int(pro_id)).update(
+                    role = role_type,
+                    modify_time = datetime.datetime.now()
+                )
+            if int(role_type) == 2: # 指定用户可见
+                role_value = request.POST.get('tagsinput','')
+                Project.objects.filter(id=int(pro_id)).update(
+                    role=role_type,
+                    role_value = role_value,
+                    modify_time = datetime.datetime.now()
+                )
+            if int(role_type) == 3: # 访问码可见
+                role_value = request.POST.get('viewcode','')
+                Project.objects.filter(id=int(pro_id)).update(
+                    role=role_type,
+                    role_value=role_value,
+                    modify_time=datetime.datetime.now()
+                )
+            pro = Project.objects.get(id=int(pro_id))
+            return render(request, 'app_admin/admin_project_role.html', locals())
+        else:
+            return Http404
 
 
 # 管理员后台 - 文档管理

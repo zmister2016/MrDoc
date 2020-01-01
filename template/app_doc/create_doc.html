@@ -83,13 +83,15 @@
                     title:'新建文集',
                     area:'300px;',
                     id:'createPro',//配置ID
-                    content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea></div>',
+                    //content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea></div>',
+                    content: $('#create-project-div'),
                     btn:['确定','取消'], //添加按钮
                     btnAlign:'c', //按钮居中
                     yes:function (index,layero) {
                         data = {
                             'pname':$("#pname").val(),
                             'desc':$("#desc").val(),
+                            'role':$("#project-role").val(),
                         }
                         $.post("{% url 'create_project' %}",data,function(r){
                             if(r.status){
@@ -260,6 +262,7 @@
 {% endblock %}
 
 {% block custom_div %}
+<!-- 插入文档模板div块 -->
 <div class="doctemp-list " id="doctemp-list" style="display: none;padding:5px;">
     <div style="margin: 10px 0 0 10px;">
         <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">新建模板</a>
@@ -293,4 +296,23 @@
       </tbody>
     </table>
 </div>
+<!-- 结束插入文档模板div块 -->
+
+<!-- 新建文集div块 -->
+<div style="padding: 20px;display:none;" id="create-project-div">
+    <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required">
+    <textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea>
+    <div class="layui-form-item" style="margin-top:10px;">
+        <label class="layui-form-label" style="text-align:left;padding:9px 0px;">文集权限</label>
+        <div class="layui-input-block">
+            <select name="project-role" lay-verify="" class="layui-select" id="project-role">
+                <!--<option value="">选择文集权限</option>-->
+                <option value="0">公开</option>
+                <option value="1">私密</option>
+            </select>
+        </div>
+    </div>
+    <div style="color:red;font-size:12px;">*在可后台对文集权限进行进一步控制</div>
+</div>
+<!-- 结束新建文集div块 -->
 {% endblock %}
