@@ -34,3 +34,23 @@
     </style>
     <textarea id="" style="display: none;">{{ doc.pre_content }}</textarea>
 {% endblock %}
+
+{% block doc_previous_next %}
+    {% load doc_filter %}
+    <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;">
+        <div>
+            {% if doc.id|get_doc_previous == None %}
+                <button class="layui-btn layui-btn-disabled layui-btn-sm"><i class="layui-icon layui-icon-prev "></i>上一篇</button>
+            {% else %}
+                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_previous %}" class="layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-prev "></i>上一篇</a>
+            {% endif %}
+        </div>
+        <div>
+            {% if doc.id|get_doc_next == None %}
+                <button class="layui-btn layui-btn-disabled layui-btn-sm">下一篇<i class="layui-icon layui-icon-next"></i></button>
+            {% else %}
+                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_next %}" class="layui-btn layui-btn-normal layui-btn-sm">下一篇<i class="layui-icon layui-icon-next"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

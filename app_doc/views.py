@@ -11,6 +11,7 @@ from django.db.models import Q
 import datetime
 import traceback
 from app_doc.report_utils import *
+from app_admin.decorators import check_headers
 
 
 # 文集列表
@@ -53,6 +54,7 @@ def create_project(request):
 
 # 文集页
 @require_http_methods(['GET'])
+@check_headers
 def project_index(request,pro_id):
     # 获取文集
     try:

@@ -45,7 +45,11 @@
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
-            <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}</a>
+            <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}
+                {% if project.role == 1 %}
+                    <i class="layui-icon layui-icon-password"></i>
+                {% endif %}
+            </a>
         </div>
         <hr>
         <!-- 遍历文集大纲 -->
@@ -89,7 +93,7 @@
             </ul>
         </nav>
         <div class="bq">
-            <a href="" class="mrdoc-link">本文档使用MrDoc发布</a>
+            <a href="https://gitee.com/zmister/MrDoc" target="_blank" class="mrdoc-link">本文档使用MrDoc发布</a>
         </div>
     </div>
     <!-- 左侧目录栏结束 -->
@@ -132,10 +136,13 @@
                         {% endblock %}
 
                         <!-- 广告代码开始 -->
-                        {% if ad_code %}
-                            <div class="ad-code">
-                            {{ ad_code | safe }}
-                            </div>
+                        {% if debug %}
+                        {% else %}
+                            {% if ad_code %}
+                                <div class="ad-code">
+                                {{ ad_code | safe }}
+                                </div>
+                            {% endif %}
                         {% endif %}
                         <!-- 广告代码结束 -->
                     </div>
@@ -151,6 +158,7 @@
                 <div class="doc-cata">
                     <div id="toc-container"></div>
                 </div>
+                {% block doc_previous_next %}{% endblock %}
                 <!-- 社交分享 -->
                 <div class="share-div" style="margin-top: 10px;padding:10px;text-align: center;background-color: #fafafa">
                     分享到：<span class="social-share"></span>
@@ -342,7 +350,10 @@
     </script>
 
     <!-- 统计代码开始 -->
-        {{ static | safe }}
+        {% if debug %}
+        {% else %}
+            {{ static_code | safe }}
+        {% endif %}
     <!-- 统计代码结束 -->
 {% endblock %}
 </body>

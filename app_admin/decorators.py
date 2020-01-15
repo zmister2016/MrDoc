@@ -29,3 +29,14 @@ def open_register(function):
         return function(request, *args, **kwargs)
 
     return _inner
+
+# 请求头验证
+def check_headers(function):
+    def _inner(request,*args,**kwargs):
+        metas = request.META
+        if 'HTTP_COOKIE' not in metas:
+            raise Http404
+        elif 'HTTP_USER_AGENT' not in metas:
+            raise Http404
+        return function(request, *args, **kwargs)
+    return _inner

@@ -26,7 +26,14 @@
             <a href="{% url 'pro_index' p.id %}">
                 <div class="layui-card">
                     <div class="layui-card-header">
-                        <strong>{{ p.name }}</strong>
+                        {% if p.role == 1 %}
+                        <strong><i class="layui-icon layui-icon-password"></i> {{ p.name }}</strong>
+                        {% elif p.role == 2 %}
+                        <strong><i class="layui-icon layui-icon-user"></i> {{ p.name }}</strong>
+                        {% else %}
+                            <strong>{{ p.name }}</strong>
+                        {% endif %}
+
                     </div>
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>
@@ -151,7 +158,10 @@
         };
     </script>
     <!-- 统计代码开始 -->
-        {{ static | safe }}
+        {% if debug %}
+        {% else %}
+            {{ static_code | safe }}
+        {% endif %}
     <!-- 统计代码结束 -->
 {% endblock %}
 </body>

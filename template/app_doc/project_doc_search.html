@@ -3,7 +3,7 @@
 <!-- 引入静态文件 -->
 {% load staticfiles %}
 
-{% block title %}搜索{{kw}}结果 - {{ project.name }}{% endblock %}
+{% block title %}搜索“{{kw}}”的结果 - {{ project.name }}{% endblock %}
 
 {% block head_toolbar %}
     {% if request.user == project.create_user %}
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content_head %}
-    <h1>搜索{{kw}}共有{{ search_result.count }}个结果 - {{project.name}}</h1><hr>
+    <h1>搜索“{{kw}}”共有{{ search_result.count }}个结果 - {{project.name}}</h1><hr>
 {% endblock %}
 
 {% block page_content %}

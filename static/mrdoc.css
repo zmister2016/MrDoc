@@ -223,7 +223,7 @@ body, html {
     background: #fff;
     border-bottom: 1px solid rgba(0,0,0,.07);
     border-top: 1px solid rgba(0,0,0,.07);
-    /*margin-bottom: 10px;*/
+    border-radius:9px;
     margin-top: -1px;
 }
 .doc-summary ul.summary {
