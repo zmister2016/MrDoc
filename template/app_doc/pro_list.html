@@ -7,6 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="keywords" content="mrdoc,markdown,文档写作,在线教程"/>
+    <meta name="description" content="MrDoc是由州的先生（zmister.com）开发的，基于Python的Django框架的在线MarkDown文档写作系统。" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>MrDoc - 一个简单的文档写作系统</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
@@ -19,7 +21,7 @@
 <!-- 页头结束 -->
 
 <!-- 主体 -->
-<div class="" style="display:flex;flex-wrap:wrap;">
+<div class="layui-container project-list-content" style="display:flex;flex-wrap:wrap;">
     <!-- 遍历文集列表 -->
     {% for p in project_list %}
         <div class="project-item layui-col-md3 layui-col-xs12">
@@ -51,20 +53,14 @@
             </a>
         </div>
     {% endfor %}
-    <!-- 新建文档 -->
-    <!--<div class="project-item layui-hide-xs">-->
-        <!--<a href="{% url 'create_doc' %}" target="_blank">-->
-            <!--<div class="layui-card">-->
-                <!--<div class="layui-card-header"><i class="layui-icon layui-icon-add-1"></i> 创建文档</div>-->
-              <!--<div class="layui-card-body">-->
-                <!--新建一个文档，马上开始写作……-->
-              <!--</div>-->
-            <!--</div>-->
-        <!--</a>-->
-    <!--</div>-->
 </div>
 <!-- 主体结束 -->
-<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- 页脚 -->
+{% include 'app_doc/foot_base.html' %}
+<!-- 页脚结束 -->
+
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 {% block custom_script %}
     <script>
@@ -163,6 +159,32 @@
             {{ static_code | safe }}
         {% endif %}
     <!-- 统计代码结束 -->
+    <script>
+        $(window).bind("load", function() {
+            var footerHeight = 0;
+            var footerTop = 0;
+            positionFooter();
+            function positionFooter() {
+                // 获取页脚的高度
+                footerHeight = $(".layui-footer").height();
+                // 获取页脚的高度
+                /*
+                    scrollTop() 设置或获取位于对象最顶端和窗口中可见内容的最顶端之间的距离
+                */
+                footerTop = ($(window).scrollTop()+$(window).height()-footerHeight-40)+"px";
+                console.log(footerHeight)
+                console.log(footerTop)
+                console.log($(".layui-header").height()+$(".layui-container").height())
+                console.log($(window).height())
+                //如果页面内容高度小于屏幕高度，div#footer将绝对定位到屏幕底部，否则div#footer保留它的正常静态定位
+                if(($(".layui-header").height()+$(".project-list-content").height()) < $(window).height()) {
+                    console.log("页脚置底")
+                    $(".layui-footer").css({ position: "absolute",left:"0" }).stop().css({top:footerTop});
+                }
+            }
+            //$(window).scroll(positionFooter).resize(positionFooter);
+        });
+    </script>
 {% endblock %}
 </body>
 </html>

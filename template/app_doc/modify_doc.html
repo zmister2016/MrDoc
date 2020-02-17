@@ -20,26 +20,40 @@
 {% block content %}
     <div class="create-doc-form">
         <div class="layui-form">
-            <label class="doc-form-label">标题</label>
-            <div class="layui-input-inline">
-              <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input" >
-            </div>
+
+            <!-- 标题 -->
+            <div>
+                <label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="layui-icon layui-icon-edit"></i> 文档标题</label>
+                <div class="layui-input-block" style="margin-left:95px;">
+                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input">
+                </div>
+            </div><br>
+
+            <!--<label class="doc-form-label">标题</label>-->
+            <!--<div class="layui-input-inline">-->
+              <!--<input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input" >-->
+            <!--</div>-->
+
+
             <label class="doc-form-label">文集</label>
             <div class="layui-input-inline">
               <select name="pro_id" lay-verify="required"  lay-filter="project" id="project" disabled>
                 <option value="{{ project.id }}">{{ project.name }}</option>
               </select>
             </div>
+
             <label class="doc-form-label">上级文档</label>
             <div class="layui-input-inline">
               <select name="parent_id" lay-verify="required" id="parent-doc">
                   <option value="0"></option>
               </select>
             </div>
+
             <label class="doc-form-label">排序</label>
             <div class="layui-input-inline">
               <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort" value="{{doc.sort}}"/>
             </div>
+
             <label class="doc-form-label">
                 <button class="layui-btn layui-btn-primary layui-btn-sm" id="sel-doctemp">插入模板</button>
             </label>
@@ -49,6 +63,7 @@
             <label class="doc-form-label">
                 <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">发布文档</button>
             </label>
+
         </div>
     </div>
     <div id="editor-md">

@@ -15,7 +15,6 @@
             </div><br>
 
             <div class="layui-row">
-
                 <div class="layui-col-md4 layui-col-sm6 " style="padding-bottom:10px;">
                     <label class="doc-form-label"><i class="fa fa-file-text"></i> 所属文集</label>
                     <div class="layui-input-inline">
@@ -23,7 +22,15 @@
                         <option value=""></option>
                         <option value="-1">新建文集</option>
                           {% for p in project_list %}
-                        <option value="{{ p.id }}">《{{ p.name }}》</option>
+                          {% if p.role == 1 %}
+                          <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
+                          {% elif p.role == 2 %}
+                          <option value="{{ p.id }}">[指定用户]《{{ p.name }}》</option>
+                          {% elif p.role == 3 %}
+                          <option value="{{ p.id }}">[访问码]《{{ p.name }}》</option>
+                          {% else %}
+                        <option value="{{ p.id }}">[公开]《{{ p.name }}》</option>
+                          {% endif %}
                           {% endfor %}
                       </select>
                     </div>
@@ -146,12 +153,16 @@
                 $.post("{% url 'create_doc' %}",data,function(r){
                     if(r.status){
                         //创建成功
-                        layer.msg('发布成功',function(){
-                            window.location.href = "{% url 'pro_list' %}";
+                        layer.msg('发布文档成功，即将跳转到文档页面',function(){
+                            md_changed = false;
+                            //跳转到首页
+                            //window.location.href = "{% url 'pro_list' %}";
+                            //跳转到发布的文档
+                            window.location.href = "/project/" + r.data.pro + "/" + r.data.doc
                         });
                     }else{
                         //创建失败
-                        layer.msg('保存失败:'+r.data);
+                        layer.msg('发布文档失败:'+r.data);
                     }
                 });
             }
@@ -178,12 +189,12 @@
                 $.post("{% url 'create_doc' %}",data,function(r){
                     if(r.status){
                         //创建成功
-                        layer.msg('保存成功',function(){
+                        layer.msg('保存草稿成功',function(){
                             window.location.href = "/modify_doc/"+r.data+"/";
                         });
                     }else{
                         //创建失败
-                        layer.msg('保存失败:'+r.data);
+                        layer.msg('保存草稿失败:'+r.data);
                     }
                 });
             }

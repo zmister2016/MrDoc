@@ -309,7 +309,7 @@ def create_doc(request):
                     create_user=request.user,
                     status = status
                 )
-                return JsonResponse({'status':True,'data':doc.id})
+                return JsonResponse({'status':True,'data':{'pro':project,'doc':doc.id}})
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:

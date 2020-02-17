@@ -3,6 +3,8 @@
 <!-- 引入静态文件 -->
 {% load staticfiles %}
 
+{% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
+{% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
 {% block title %}{{ doc.name }} - {{ project.name }}{% endblock %}
 
 {% block head_toolbar %}
@@ -37,7 +39,8 @@
 
 {% block doc_previous_next %}
     {% load doc_filter %}
-    <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;">
+    <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;border-top: 1px #e6e6e6 solid;">
+        <hr>
         <div>
             {% if doc.id|get_doc_previous == None %}
                 <button class="layui-btn layui-btn-disabled layui-btn-sm"><i class="layui-icon layui-icon-prev "></i>上一篇</button>
