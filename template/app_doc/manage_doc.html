@@ -19,6 +19,20 @@
         </div>
         </form>
     </div>
+    <div class="layui-row">
+        <form action="{% url 'manage_doc' %}" method="get" class="layui-form">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态筛选</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="doc_status" value="全部" title="全部（{{all_cnt}}）" checked>
+                    <input type="radio" name="doc_status" value="已发布" title="已发布（{{published_doc_cnt}}）" disabled>
+                    <input type="radio" name="doc_status" value="草稿" title="草稿（{{draft_doc_cnt}}）" disabled>
+                </div>
+            </div>
+
+        </form>
+    </div>
     <div class="layui-row" lay-skin="line">
         <table class="layui-table"  id="doctemp-list" lay-skin="">
       <thead>

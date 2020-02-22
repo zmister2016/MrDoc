@@ -6,7 +6,8 @@ from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from app_admin.decorators import superuser_only,open_register
-import json,datetime,hashlib
+from django.core.exceptions import ObjectDoesNotExist
+import json,datetime,hashlib,random
 from app_doc.models import *
 from app_admin.models import *
 from app_admin.utils import *
@@ -68,20 +69,29 @@ def register(request):
             email = request.POST.get('email',None)
             password = request.POST.get('password',None)
             checkcode = request.POST.get("check_code",None)
+            register_code = request.POST.get("register_code",None)
+            is_register_code = SysSetting.objects.filter(types='basic', name='enable_register_code', value='on')
+            if is_register_code.count() > 0: # 开启了注册码设置
+                try:
+                    register_code_value = RegisterCode.objects.get(code=register_code,status=1)
+                except ObjectDoesNotExist:
+                    errormsg = '注册码无效!'
+                    return render(request, 'register.html', locals())
+            # 判断是否输入了用户名、邮箱和密码
             if username and email and password:
                 if '@'in email:
                     email_exit = User.objects.filter(email=email)
                     username_exit = User.objects.filter(username=username)
-                    if email_exit.count() > 0:
+                    if email_exit.count() > 0: # 验证电子邮箱
                         errormsg = '此电子邮箱已被注册！'
                         return render(request, 'register.html', locals())
-                    elif username_exit.count() > 0:
+                    elif username_exit.count() > 0: # 验证用户名
                         errormsg = '用户名已被使用！'
                         return render(request, 'register.html', locals())
-                    elif len(password) < 6:
+                    elif len(password) < 6: # 验证密码长度
                         errormsg = '密码必须大于等于6位！'
                         return render(request, 'register.html', locals())
-                    elif checkcode != request.session['CheckCode'].lower():
+                    elif checkcode != request.session['CheckCode'].lower(): # 验证验证码
                         errormsg = "验证码错误"
                         return render(request, 'register.html', locals())
                     else:
@@ -90,11 +100,27 @@ def register(request):
                         user.save()
                         # 登录用户
                         user = authenticate(username=username, password=password)
+                        # 注册码数据更新
+                        if is_register_code.count() > 0:
+                            r_all_cnt = register_code_value.all_cnt # 注册码的最大使用次数
+                            r_used_cnt = register_code_value.used_cnt + 1 # 更新注册码的已使用次数
+                            r_use_user = register_code_value.user_list # 注册码的使用用户
+                            if r_used_cnt >= r_all_cnt: # 如果注册码已使用次数大于等于注册码的最大使用次数，则注册码失效
+                                RegisterCode.objects.filter(code=register_code).update(
+                                    status=0,# 注册码状态设为失效
+                                    used_cnt = r_used_cnt, # 更新注册码的已使用次数
+                                    user_list = r_use_user + email + ',',
+                                )
+                            else:
+                                RegisterCode.objects.filter(code=register_code).update(
+                                    used_cnt=r_used_cnt, # 更新注册码的已使用次数
+                                    user_list = r_use_user + email + ',',
+                                )
                         if user.is_active:
                             login(request, user)
                             return redirect('/')
                         else:
-                            errormsg = '用户被禁用！'
+                            errormsg = '用户被禁用，请联系管理员！'
                             return render(request, 'register.html', locals())
                 else:
                     errormsg = '请输入正确的电子邮箱格式！'
@@ -388,6 +414,62 @@ def admin_doctemp(request):
         return render(request,'app_admin/admin_doctemp.html',locals())
 
 
+# 管理员后台 - 注册邀请码管理
+@superuser_only
+def admin_register_code(request):
+    # 返回注册邀请码管理页面
+    if request.method == 'GET':
+        register_codes = RegisterCode.objects.all()
+        paginator = Paginator(register_codes, 10)
+        page = request.GET.get('page', 1)
+        try:
+            codes = paginator.page(page)
+        except PageNotAnInteger:
+            codes = paginator.page(1)
+        except EmptyPage:
+            codes = paginator.page(paginator.num_pages)
+        return render(request,'app_admin/admin_register_code.html',locals())
+    elif request.method == 'POST':
+        types = request.POST.get('types',None)
+        if types is None:
+            return JsonResponse({'status':False,'data':'参数错误'})
+        # types表示注册码操作的类型，1表示新增、2表示删除
+        if int(types) == 1:
+            try:
+                all_cnt = int(request.POST.get('all_cnt',1)) # 注册码的最大使用次数
+                is_code = False
+                while is_code is False:
+                    code_str = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
+                    random_code = ''.join(random.choices(code_str, k=10))
+                    random_code_used = RegisterCode.objects.filter(code=random_code).count()
+                    if random_code_used > 0: # 已存在此注册码，继续生成一个注册码
+                        is_code = False
+                    else:# 数据库中不存在此注册码，跳出循环
+                        is_code = True
+                # 创建一个注册码
+                RegisterCode.objects.create(
+                    code = random_code,
+                    all_cnt = all_cnt,
+                    create_user = request.user
+                )
+                return JsonResponse({'status':True,'data':'新增成功'})
+            except Exception as e:
+                return JsonResponse({'status': False,'data':'系统异常'})
+        elif int(types) == 2:
+            code_id = request.POST.get('code_id',None)
+            try:
+                register_code = RegisterCode.objects.get(id=int(code_id))
+                register_code.delete()
+                return JsonResponse({'status':True,'data':'删除成功'})
+            except ObjectDoesNotExist:
+                return JsonResponse({'status':False,'data':'注册码不存在'})
+            except:
+                return JsonResponse({'status':False,'data':'系统异常'})
+        else:
+            return JsonResponse({'status':False,'data':'类型错误'})
+    else:
+        return JsonResponse({'status': False,'data':'方法错误'})
+
 # 普通用户修改密码
 @login_required()
 def change_pwd(request):
@@ -429,11 +511,12 @@ def admin_setting(request):
         types = request.POST.get('type',None)
         # 基础设置
         if types == 'basic':
-            close_register = request.POST.get('close_register',None)
-            static_code = request.POST.get('static_code',None)
-            ad_code = request.POST.get('ad_code',None)
-            beian_code = request.POST.get('beian_code',None)
-            enbale_email = request.POST.get("enable_email",None)
+            close_register = request.POST.get('close_register',None) # 禁止注册
+            static_code = request.POST.get('static_code',None) # 统计代码
+            ad_code = request.POST.get('ad_code',None) # 广告代码
+            beian_code = request.POST.get('beian_code',None) # 备案号
+            enbale_email = request.POST.get("enable_email",None) # 启用邮箱
+            enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
             # 更新开放注册状态
             SysSetting.objects.update_or_create(
                 name='close_register',
@@ -458,6 +541,11 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name='enable_email',
                 defaults={'value': enbale_email, 'types': 'basic'}
+            )
+            # 更新注册码启停状态
+            SysSetting.objects.update_or_create(
+                name = 'enable_register_code',
+                defaults= {'value': enable_register_code, 'types':'basic'}
             )
 
             return render(request,'app_admin/admin_setting.html',locals())

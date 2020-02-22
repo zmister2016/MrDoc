@@ -398,6 +398,11 @@ def manage_doc(request):
             docs.kw = search_kw
         else:
             doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
+            all_cnt = doc_list.count() # 所有文档数量
+            published_doc_cnt = Doc.objects.filter(create_user=request.user,status=1).count() # 已发布文档数量
+            draft_doc_cnt = Doc.objects.filter(create_user=request.user,status=0).count() # 草稿文档数据
+            pro_list = Project.objects.filter(create_user=request.user)
+
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:

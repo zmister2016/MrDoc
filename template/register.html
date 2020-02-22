@@ -52,6 +52,13 @@
                     <h2><strong>注册 - MrDoc</strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
+                {% if enable_register_code %}
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                      <input type="text" name="register_code" required  lay-verify="required" placeholder="请输入注册码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                {% endif %}
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
                       <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">

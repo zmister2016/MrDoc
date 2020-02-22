@@ -63,6 +63,13 @@
             <label class="doc-form-label">
                 <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">发布文档</button>
             </label>
+            <label class="doc-form-label">
+                {% if doc.status == 0 %}
+                <span>*当前状态：草稿</span>
+                {% elif doc.status == 1 %}
+                <span>*当前状态：已发布</span>
+                {% endif %}
+            </label>
 
         </div>
     </div>
@@ -108,7 +115,7 @@
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 if(r.status){
                     //修改成功
-                    layer.msg('保存成功，即将跳转',function(){
+                    layer.msg('发布成功，即将跳转',function(){
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                     });
                 }else{

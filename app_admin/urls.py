@@ -18,5 +18,6 @@ urlpatterns = [
     path('check_code/',views.check_code,name='check_code'), # 注册验证码
     path('forget_pwd/',views.forget_pwd,name='forget_pwd'), # 忘记密码
     path('send_email_vcode/',views.send_email_vcode,name='send_email_vcode'), # 忘记密码发送邮件验证码
+    path('admin_register_code/',views.admin_register_code,name='register_code_manage'), # 注册邀请码管理
 
 ]
