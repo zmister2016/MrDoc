@@ -4,14 +4,20 @@
 {% block content %}
     <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
-          <span style="font-size:18px;">文档管理
-          </span>
+          <span style="font-size:18px;">文档管理</span>
+          {% if search_kw %} - 搜索“{{search_kw}}”的结果{% endif %}
       </div>
   </div>
     <div class="layui-row">
         <form action="{% url 'manage_doc' %}" method="get">
         <div class="layui-form-item">
-            <div class="layui-input-inline">
+            <span class="layui-breadcrumb doc_status_condition" lay-separator="|">
+              <a href="{% url 'manage_doc' %}?status=all" class="{% if doc_status == 'all' %}current{% endif %}">全部（{{all_cnt}}）</a>
+              <a href="{% url 'manage_doc' %}?status=published" class="{% if doc_status == 'published' %}current{% endif %}">已发布（{{published_doc_cnt}}）</a>
+              <a href="{% url 'manage_doc' %}?status=draft" class="{% if doc_status == 'draft' %}current{% endif %}">草稿（{{draft_doc_cnt}}）</a>
+              <input name="status" value="{% if doc_status == 'all' %}all{% elif doc_status == 'published' %}published{% elif doc_status == 'draft' %}draft{% endif %}" hidden>
+            </span>
+            <div class="layui-input-inline" style="float:inherit;">
                 <input type="text" name="kw" id="kw" placeholder="输入文档内容" autocomplete="off" class="layui-input">
             </div>
             <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
@@ -21,14 +27,12 @@
     </div>
     <div class="layui-row">
         <form action="{% url 'manage_doc' %}" method="get" class="layui-form">
-
             <div class="layui-form-item">
-                <label class="layui-form-label">状态筛选</label>
-                <div class="layui-input-block">
-                    <input type="radio" name="doc_status" value="全部" title="全部（{{all_cnt}}）" checked>
-                    <input type="radio" name="doc_status" value="已发布" title="已发布（{{published_doc_cnt}}）" disabled>
-                    <input type="radio" name="doc_status" value="草稿" title="草稿（{{draft_doc_cnt}}）" disabled>
-                </div>
+                <!--<span class="layui-breadcrumb doc_status_condition" lay-separator="|">-->
+                  <!--<a href="{% url 'manage_doc' %}?status=all" class="{% if doc_status == 'all' %}current{% endif %}">全部（{{all_cnt}}）</a>-->
+                  <!--<a href="{% url 'manage_doc' %}?status=published" class="{% if doc_status == 'published' %}current{% endif %}">已发布（{{published_doc_cnt}}）</a>-->
+                  <!--<a href="{% url 'manage_doc' %}?status=draft" class="{% if doc_status == 'draft' %}current{% endif %}">草稿（{{draft_doc_cnt}}）</a>-->
+                <!--</span>-->
             </div>
 
         </form>
@@ -50,11 +54,11 @@
         <tr>
             {% if doc.status == 1 %}
                 <td>
-                    <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} <span class="layui-badge layui-bg-black">已发布</span></a>
+                    <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} —— <span class="layui-badge layui-bg-black">已发布</span></a>
                 </td>
             {% else %}
                 <td>
-                    <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} <span class="layui-badge">草稿</span></a>
+                    <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} —— <span class="layui-badge">草稿</span></a>
                 </td>
             {% endif %}
             <td>{{ doc.parent_doc|get_doc_parent }}</td>
@@ -74,13 +78,13 @@
         <div class="pagination">
             <span class="step-links">
                 {% if docs.has_previous %}
-                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
                 {% endif %}
                 <span class="current">
                     当前页： {{ docs.number }} 共 {{ docs.paginator.num_pages }} 页
                 </span>
                 {% if docs.has_next %}
-                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
                 {% endif %}
             </span>
         </div>

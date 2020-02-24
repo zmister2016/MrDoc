@@ -4,7 +4,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -267,7 +267,10 @@ def doc(request,pro_id,doc_id):
                         return redirect('/check_viewcode/?to={}'.format(request.path))
 
             # 获取文档内容
-            doc = Doc.objects.get(id=int(doc_id),status=1)
+            try:
+                doc = Doc.objects.get(id=int(doc_id),status=1)
+            except ObjectDoesNotExist:
+                return render(request, '404.html')
             # 获取文集下一级文档
             project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
             return render(request,'app_doc/doc.html',locals())
@@ -366,11 +369,19 @@ def modify_doc(request,doc_id):
 @login_required()
 def del_doc(request):
     try:
+        # 获取文档ID
         doc_id = request.POST.get('doc_id',None)
         if doc_id:
-            doc = Doc.objects.get(id=doc_id)
+            # 查询文档
+            try:
+                doc = Doc.objects.get(id=doc_id)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status': False, 'data': '文档不存在'})
             if request.user == doc.create_user:
+                # 删除
                 doc.delete()
+                # 修改其子文档为顶级文档
+                Doc.objects.filter(parent_doc=doc_id).update(parent_doc=0)
                 return JsonResponse({'status': True, 'data': '删除完成'})
             else:
                 return JsonResponse({'status': False, 'data': '非法请求'})
@@ -384,9 +395,41 @@ def del_doc(request):
 @login_required()
 def manage_doc(request):
     if request.method == 'GET':
+        # 文档内容搜索参数
         search_kw = request.GET.get('kw',None)
         if search_kw:
-            doc_list = Doc.objects.filter(create_user=request.user,content__icontains=search_kw).order_by('-modify_time')
+            # 已发布文档数量
+            published_doc_cnt = Doc.objects.filter(
+                create_user=request.user, status=1
+            ).count()
+            # 草稿文档数量
+            draft_doc_cnt = Doc.objects.filter(
+                create_user=request.user, status=0
+            ).count()
+            # 所有文档数量
+            all_cnt = published_doc_cnt + draft_doc_cnt
+            # 获取文档状态筛选参数
+            doc_status = request.GET.get('status', 'all')
+
+            # 查询文档
+            if doc_status == 'all':
+                doc_list = Doc.objects.filter(
+                    create_user=request.user,
+                    content__icontains=search_kw
+                ).order_by('-modify_time')
+            elif doc_status == 'published':
+                doc_list = Doc.objects.filter(
+                    create_user=request.user,
+                    content__icontains=search_kw,
+                    status = 1
+                ).order_by('-modify_time')
+            elif doc_status == 'draft':
+                doc_list = Doc.objects.filter(
+                    create_user=request.user,
+                    content__icontains=search_kw,
+                    status = 0
+                ).order_by('-modify_time')
+            # 分页处理
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:
@@ -396,13 +439,39 @@ def manage_doc(request):
             except EmptyPage:
                 docs = paginator.page(paginator.num_pages)
             docs.kw = search_kw
+            docs.status = doc_status
         else:
-            doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
-            all_cnt = doc_list.count() # 所有文档数量
-            published_doc_cnt = Doc.objects.filter(create_user=request.user,status=1).count() # 已发布文档数量
-            draft_doc_cnt = Doc.objects.filter(create_user=request.user,status=0).count() # 草稿文档数据
-            pro_list = Project.objects.filter(create_user=request.user)
-
+            # 已发布文档数量
+            published_doc_cnt = Doc.objects.filter(
+                create_user=request.user,status=1
+            ).count()
+            # 草稿文档数量
+            draft_doc_cnt = Doc.objects.filter(
+                create_user=request.user,status=0
+            ).count()
+            # 所有文档数量
+            all_cnt = published_doc_cnt + draft_doc_cnt
+            # 获取文档状态筛选参数
+            doc_status = request.GET.get('status','all')
+            if len(doc_status) == 0:
+                doc_status = 'all'
+            print('status:', doc_status,type(doc_status))
+            # 返回所有文档
+            if doc_status == 'all':
+                doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
+            # 返回已发布文档
+            elif doc_status == 'published':
+                doc_list = Doc.objects.filter(
+                    create_user=request.user,status=1
+                ).order_by('-modify_time')
+            # 返回草稿文档
+            elif doc_status == 'draft':
+                doc_list = Doc.objects.filter(
+                    create_user=request.user, status=0
+                ).order_by('-modify_time')
+            else:
+                doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
+            # 分页处理
             paginator = Paginator(doc_list, 10)
             page = request.GET.get('page', 1)
             try:
@@ -411,6 +480,7 @@ def manage_doc(request):
                 docs = paginator.page(1)
             except EmptyPage:
                 docs = paginator.page(paginator.num_pages)
+            docs.status = doc_status
         return render(request,'app_doc/manage_doc.html',locals())
     else:
         return HttpResponse('方法不允许')
@@ -549,16 +619,26 @@ def get_pro_doc(request):
     if request.method == 'POST':
         pro_id = request.POST.get('pro_id','')
         if pro_id != '':
+            # 获取文集所有文档的id、name和parent_doc3个字段
             doc_list = Doc.objects.filter(top_doc=int(pro_id)).values_list('id','name','parent_doc').order_by('parent_doc')
             item_list = []
+            # 遍历文档
             for doc in doc_list:
+                # 如果文档为顶级文档
                 if doc[2] == 0:
+                    # 将其数据添加到列表中
                     item = [
                         doc[0],doc[1],doc[2],''
                     ]
                     item_list.append(item)
+                # 如果文档不是顶级文档
                 else:
-                    parent = Doc.objects.get(id=doc[2])
+                    # 查询文档的上级文档
+                    try:
+                        parent = Doc.objects.get(id=doc[2])
+                    except ObjectDoesNotExist:
+                        return JsonResponse({'status':False,'data':'文档id不存在'})
+                    # 如果文档上级文档的上级是顶级文档，那么将其添加到列表
                     if parent.parent_doc == 0: # 只要二级目录
                         item = [
                             doc[0],doc[1],doc[2],parent.name+' --> '

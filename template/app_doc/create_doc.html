@@ -138,7 +138,8 @@
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
-                'content':editor.getHTML(),
+                //'content':editor.getHTML(),//获取editor解析的HTML
+                'content':editor.getPreviewedHTML(),//获取预览的HTML
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
             }

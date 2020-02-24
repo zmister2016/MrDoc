@@ -23,6 +23,9 @@
         .markdown-body ol li{
             list-style-type: decimal;
         }
+        .markdown-body ol ol ul,.markdown-body ol ul ul,.markdown-body ul ol ul,.markdown-body ul ul ul li{
+            list-style-type: square;
+        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -44,7 +47,7 @@
 </div>
 <!-- 主体结束 -->
 
-<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 <script src="{% static 'editor.md/editormd.min.js' %}"></script>
 <script>
@@ -58,11 +61,11 @@
     var editor = editormd("editor-md", {
         width       :   "100%",
         height      :   "1000px;",
-        placeholder :   "开始使用Markdown书写MrDoc文档……\n编辑器支持粘贴上传图片",
+        placeholder :   "开始使用Markdown书写MrDoc文档，编辑器支持以下功能：\n1.粘贴上传图片\n2.六级标题\n3.代码高亮\n4.本地图片和外链图片\n5.表格\n6.多级列表和任务列表\n7.Katex公式\n8.流程图\n9.时序图\n……",
         toolbarIcons : function() {
             return [
                 "undo", "redo", "|",
-                "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|",
+                "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase","kaiSpan", "|",
                 "h1", "h2", "h3", "h4", "h5", "h6", "|",
                 "list-ul", "list-ol", "hr", "|",
                 "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
@@ -70,9 +73,42 @@
                 "help"
             ]
         },
+        //自定义工具栏添加楷体按钮
+        toolbarIconTexts : {
+            kaiSpan : "楷"
+        },
+        //设置自定义工具栏按钮的事件
+        toolbarHandlers : {
+            /**
+             * @param {Object}      cm         CodeMirror对象
+             * @param {Object}      icon       图标按钮jQuery元素对象
+             * @param {Object}      cursor     CodeMirror的光标对象，可获取光标所在行和位置
+             * @param {String}      selection  编辑器选中的文本
+             */
+            kaiSpan : function(cm, icon, cursor, selection) {
+                //var cursor    = cm.getCursor();     //获取当前光标对象，同cursor参数
+                //var selection = cm.getSelection();  //获取当前选中的文本，同selection参数
+                // 替换选中文本，如果没有选中文本，则直接插入
+                cm.replaceSelection('<span style="font-family:楷体">' + selection + "</span>");
+                // 如果当前没有选中的文本，将光标移到要输入的位置
+                if(selection === "") {
+                    cm.setCursor(cursor.line, cursor.ch + 1);
+                }
+                // this == 当前editormd实例
+                //console.log("testIcon =>", this, cm, icon, cursor, selection);
+            },
+        },
+        //设置语言
+        lang : {
+            toolbar : {
+                kaiSpan : "添加楷体span标签",
+            }
+        },
+        //配置项
         pageBreak : true, //分页符
         path        :   "/static/editor.md/lib/",
         saveHTMLToTextarea : true,
+        atLink      :   false,//禁用@链接
         tex         :   true,//开启科学公式
         tocm        :   true,//开启下拉目录
         taskList    :   true,//开启任务列表
@@ -80,7 +116,10 @@
         tocContainer:   '',
         tocDropdown :   false,
         emoji       :   true,//开启Emoji
+        flowChart   :   true, //开启流程图
+        sequenceDiagram : true, //开启序列图
         imageUpload    : true, //开启图片上传
+        htmlDecode     : "link,style,script,iframe|on*", //解析部分HTML标签
         imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL : "{% url 'upload_doc_img' %}",
         onchange:function(){

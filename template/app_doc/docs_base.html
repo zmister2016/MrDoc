@@ -13,20 +13,34 @@
     <title>{% block title %}{% endblock %} - MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
-    <link rel="stylesheet" href="{% static 'prism/prism.css' %}" />
+    <!--<link rel="stylesheet" href="{% static 'prism/prism.css' %}" />-->
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}" />
     <link rel="stylesheet" href="{% static 'share.js/css/share.min.css' %}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
+        /*一级无序li显示实心圆点*/
         .doc-content ul li{
             list-style:disc;
         }
+        /*二级无序li显示空心圆点*/
         .doc-content ul > li > ul > li{
             list-style-type: circle;
         }
+        /*有序li显示数字*/
         .doc-content ol li{
             list-style-type: decimal;
+        }
+        .doc-content ol ol ul,.doc-content ol ul ul,.doc-content ul ol ul,.doc-content ul ul ul {
+            list-style-type: square;
+        }
+        /* 三级及以下无序li显示小方块 */
+        .doc-content ul ul ul li{
+            list-style-type: square;
+        }
+        /* 下拉目录隐藏li样式 */
+        .editormd-toc-menu ul.markdown-toc-list li{
+            list-style:none;
         }
     </style>
     <!--[if lt IE 9]>
@@ -173,9 +187,9 @@
     <div class="toTop"><i class="layui-icon layui-icon-top" style="font-size: 50px;"></i></div>
 </div>
 
-<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static 'prism/prism.js' %}"></script>
+<!--<script src="{% static 'prism/prism.js' %}"></script>-->
 <script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
@@ -213,12 +227,13 @@
         //解析Markdown为HTML
         editormd.markdownToHTML("content", {
             htmlDecode      : "style,script,iframe",
-            emoji           : true,
-            taskList        : true,
+            emoji           : true,  //emoji表情
+            taskList        : true,  // 任务列表
             tex             : true,  // 科学公式
             flowChart       : true,  // 流程图
-            sequenceDiagram : true,  // 默认不解析
+            sequenceDiagram : true,  // 时序图
             tocm            : true, //目录
+            atLink    : false,//禁用@链接
             //tocContainer    : "#toc-container"
         });
         //为当前页面的目录链接添加蓝色样式

@@ -108,7 +108,8 @@
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
-                'content':editor.getHTML(),
+                //'content':editor.getHTML(),
+                'content':editor.getPreviewedHTML(),
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
             }
@@ -116,6 +117,7 @@
                 if(r.status){
                     //修改成功
                     layer.msg('发布成功，即将跳转',function(){
+                        md_changed = false;
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                     });
                 }else{
