@@ -70,7 +70,6 @@
 }
 
 /* Gap filler */
-
 .tooltip-item::after {
 	content: '';
 	position: absolute;
@@ -88,7 +87,6 @@
 }
 
 /* 文集简介提示工具 */
-
 .tooltip-content {
 	position: absolute;
 	z-index: 9999;
@@ -121,7 +119,6 @@
 }
 
 /* 箭头 */
-
 .tooltip-content::after {
 	content: '';
 	bottom: 100%; /* 箭头在头部 */
@@ -147,7 +144,7 @@
 }
 .doc-form-label{
     margin-left: 10px;
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 /* 文档浏览页 */
 body, html {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/static/xml-sitemap-feed/styles/sitemap-index.xsl?version={{mrdoc_version}}"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for location in sitemaps %}<sitemap><loc>{{ location }}</loc></sitemap>{% endfor %}
+</sitemapindex>

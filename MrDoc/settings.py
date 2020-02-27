@@ -25,7 +25,7 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-VERSIONS = '0.2.11'
+VERSIONS = '0.2.12'
 
 ALLOWED_HOSTS = ['*']
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	'app_admin',
     'app_doc',
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [

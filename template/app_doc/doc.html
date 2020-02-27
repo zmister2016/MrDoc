@@ -12,7 +12,7 @@
         <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
             <i class="fa fa-edit"></i> 修改
         </a>
-        <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}" target="_blank">
+        <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
             <i class="fa fa-file"></i> 新建
         </a>
     {% endif %}

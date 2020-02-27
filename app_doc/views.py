@@ -285,6 +285,7 @@ def doc(request,pro_id,doc_id):
 def create_doc(request):
     if request.method == 'GET':
         try:
+            pid = request.GET.get('pid',-999)
             # doc_list = Doc.objects.filter(create_user=request.user)
             project_list = Project.objects.filter(create_user=request.user)
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')

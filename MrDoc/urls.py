@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path,include,re_path
 from django.views.static import serve
 from django.conf import settings
+from django.contrib.sitemaps import views
+from app_doc.sitemaps import all_sitemaps as sitemaps
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +26,7 @@ urlpatterns = [
     path('user/',include('app_admin.urls'),),
     re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
     re_path('^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
+    path('sitemap.xml', views.index, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap-index.xml'},name='sitemap',), # 站点地图索引
+    path('sitemap-<section>.xml', views.sitemap, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap.xml'}, # 站点地图
+         name='django.contrib.sitemaps.views.sitemap')
 ]

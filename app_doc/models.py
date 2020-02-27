@@ -19,6 +19,13 @@ class Project(models.Model):
         verbose_name = '文集'
         verbose_name_plural = verbose_name
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse("pro_index",
+                       kwargs={
+                           "pro_id":self.pk}
+                       )
+
 # 文档模型
 class Doc(models.Model):
     name = models.CharField(verbose_name="文档标题",max_length=50)
@@ -40,6 +47,14 @@ class Doc(models.Model):
         verbose_name = '文档'
         verbose_name_plural = verbose_name
         # ordering = ['-create_time','sort']
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse("doc",
+                       kwargs={
+                           "pro_id": str(self.top_doc),
+                           "doc_id":self.pk}
+                       )
 
 # 文档模板模型
 class DocTemp(models.Model):

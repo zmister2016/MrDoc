@@ -7,16 +7,16 @@
     <div class="create-doc-form">
         <div class="layui-form" style="">
             <!-- 标题 -->
-            <div>
-                <label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="layui-icon layui-icon-edit"></i> 文档标题</label>
+            <div style="padding-bottom:10px;">
+                <label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="fa fa-header"></i> 文档标题</label>
                 <div class="layui-input-block" style="margin-left:95px;">
                   <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
                 </div>
-            </div><br>
+            </div>
 
             <div class="layui-row">
                 <div class="layui-col-md4 layui-col-sm6 " style="padding-bottom:10px;">
-                    <label class="doc-form-label"><i class="fa fa-file-text"></i> 所属文集</label>
+                    <label class="doc-form-label">所属文集</label>
                     <div class="layui-input-inline">
                       <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
                         <option value=""></option>
@@ -25,19 +25,19 @@
                           {% if p.role == 1 %}
                           <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
                           {% elif p.role == 2 %}
-                          <option value="{{ p.id }}">[指定用户]《{{ p.name }}》</option>
+                          <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
                           {% elif p.role == 3 %}
-                          <option value="{{ p.id }}">[访问码]《{{ p.name }}》</option>
+                          <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
                           {% else %}
-                        <option value="{{ p.id }}">[公开]《{{ p.name }}》</option>
+                        <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
                           {% endif %}
                           {% endfor %}
                       </select>
                     </div>
                 </div>
 
-                <div class="layui-col-md4 layui-col-sm6" style="padding-bottom:10px;">
-                    <label class="doc-form-label"><i class="fa fa-chevron-circle-up"></i> 所属上级</label>
+                <div class="layui-col-md3 layui-col-sm6" style="padding-bottom:10px;">
+                    <label class="doc-form-label">所属上级</label>
                     <div class="layui-input-inline">
                       <select name="parent_id" lay-verify="required" id="parent-doc">
                         <option value=""></option>
@@ -45,29 +45,36 @@
                     </div>
                 </div>
 
-                <div class="layui-col-md4 layui-col-sm6 layui-col-xs12" style="padding-bottom:10px;">
-                    <label class="doc-form-label"><i class="fa fa-list-ol"></i> 文档排序</label>
+                <div class="layui-col-md5 layui-col-sm12 layui-col-xs12" style="padding-bottom:10px;">
+                    <label class="doc-form-label"><i class="fa fa-list-ol"></i> 排序</label>
                     <div class="layui-input-inline">
                       <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort"/>
                     </div>
 
                     <label class="doc-form-label" style="margin-right:0px;">
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp">插入模板</button>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp" title="插入模板内容">
+                            <i class="fa fa-clipboard"></i> 模板
+                        </button>
                     </label>
 
                     <label class="doc-form-label" style="margin-right:0px;">
                         <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-local" onclick="selectLocalFile()">插入本地文本</button>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
+                            <i class="fa fa-clipboard"></i> 文本
+                        </button>
                     </label>
 
-                </div>
-                <div class="layui-row">
                     <label class="doc-form-label">
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()">保存草稿</button>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                            <i class="fa fa-save"></i> 保存
+                        </button>
                     </label>
                     <label class="doc-form-label">
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">发布文档</button>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                            <i class="fa fa-save"></i> 发布
+                        </button>
                     </label>
+
                 </div>
             </div>
         </div>
@@ -81,6 +88,7 @@
 
 {% block custom_script %}
     <script>
+
         //选择文集
         form.on('select(project)', function(data){
             console.log(data.value); //得到被选中的值
@@ -132,7 +140,15 @@
                 });
             }
         });
-        //保存文档
+        //带pid参数自动选择文集
+        var sel_pro_list = $('dl.layui-anim dd');
+        for(var i = 0;i < sel_pro_list.length; i++){
+            if(sel_pro_list[i].getAttribute('lay-value') == {{pid}}){
+                var sel_pro = 'dd[lay-value=' + sel_pro_list[i].getAttribute('lay-value') + ']';
+                $('#project').siblings("div.layui-form-select").find('dl').find(sel_pro).click();
+            }
+        }
+        //发布文档
         createDoc = function(){
             var data = {
                 'project':$("#project").val(),
@@ -151,6 +167,8 @@
                 layer.msg('请选择文集！');
             }
             else{
+                //发布按钮设为禁用
+                $("#create_doc").attr({"disabled":"disabled"});
                 $.post("{% url 'create_doc' %}",data,function(r){
                     if(r.status){
                         //创建成功
@@ -164,6 +182,8 @@
                     }else{
                         //创建失败
                         layer.msg('发布文档失败:'+r.data);
+                        //恢复按钮状态
+                        $("#create_doc").removeAttr("disabled");
                     }
                 });
             }

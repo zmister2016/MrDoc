@@ -67,7 +67,12 @@
 
       <div class="layui-body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;">{% block content %}{% endblock %}</div>
+        <div style="padding: 15px;">
+            {% if debug %}
+                <blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
       </div>
 
       <div class="layui-footer" style="text-align:center;">
