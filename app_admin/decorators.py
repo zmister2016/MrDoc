@@ -34,9 +34,25 @@ def open_register(function):
 def check_headers(function):
     def _inner(request,*args,**kwargs):
         metas = request.META
-        if 'HTTP_COOKIE' not in metas:
-            raise Http404
-        elif 'HTTP_USER_AGENT' not in metas:
+        # if 'HTTP_COOKIE' not in metas:
+        #     raise Http404
+        if 'HTTP_USER_AGENT' not in metas:
             raise Http404
         return function(request, *args, **kwargs)
+    return _inner
+
+
+# 开放前台文集导出
+def allow_report_file(function):
+    def _inner(request,*args,**kwargs):
+        try:
+            status = SysSetting.objects.get(name='enable_project_report')
+        except:
+            # 如果不存在enable_project_report这个属性，那么表示是禁止导出的
+            raise Http404
+        # 启用导出
+        if status.value == 'on':
+            return function(request, *args, **kwargs)
+        else:
+            raise Http404
     return _inner

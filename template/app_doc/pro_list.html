@@ -23,15 +23,18 @@
 <!-- 主体 -->
 <div class="layui-container project-list-content" style="display:flex;flex-wrap:wrap;">
     <!-- 遍历文集列表 -->
+    {% load project_filter %}
     {% for p in project_list %}
         <div class="project-item layui-col-md3 layui-col-xs12">
-            <a href="{% url 'pro_index' p.id %}">
+            <a href="{% url 'pro_index' p.id %}" title="{{p.name}}">
                 <div class="layui-card">
-                    <div class="layui-card-header">
+                    <div class="layui-card-header" style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
                         {% if p.role == 1 %}
                         <strong><i class="layui-icon layui-icon-password"></i> {{ p.name }}</strong>
                         {% elif p.role == 2 %}
                         <strong><i class="layui-icon layui-icon-user"></i> {{ p.name }}</strong>
+                        {% elif p.role == 3 %}
+                        <strong><i class="layui-icon layui-icon-key"></i> {{ p.name }}</strong>
                         {% else %}
                             <strong>{{ p.name }}</strong>
                         {% endif %}
@@ -39,6 +42,7 @@
                     </div>
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>
+                      <p>最新：<u>{{p.id | get_new_doc}}</u></p>
                       <p class="tooltip">简介：
                           {% if p.intro == "" %}
                           <span class="">此文集没有填写简介</span>

@@ -88,7 +88,6 @@
 
 {% block custom_script %}
     <script>
-
         //选择文集
         form.on('select(project)', function(data){
             console.log(data.value); //得到被选中的值
@@ -154,8 +153,8 @@
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
-                //'content':editor.getHTML(),//获取editor解析的HTML
-                'content':editor.getPreviewedHTML(),//获取预览的HTML
+                'content':editor.getHTML(),//获取editor解析的HTML
+                //'content':editor.getPreviewedHTML(),//获取预览的HTML
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
             }
@@ -188,7 +187,7 @@
                 });
             }
         };
-        //保存文档草稿
+        //保存草稿
         saveDoc = function(){
             var data = {
                 'project':$("#project").val(),

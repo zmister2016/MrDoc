@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - 后台管理 - MrDoc</title>
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
-    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
         .logo img{
             height: 30px;
@@ -54,11 +54,11 @@
                <li class="layui-nav-item layui-nav-itemed">
                   <a href="{% url 'user_manage' %}"><i class="layui-icon layui-icon-user"></i> 用户管理</a>
                </li>
-                <li class="layui-nav-item layui-nav-itemed">
-                  <a href="{% url 'sys_setting' %}"><i class="layui-icon layui-icon-set-sm"></i> 站点设置</a>
-               </li>
               <li class="layui-nav-item layui-nav-itemed">
                   <a href="{% url 'register_code_manage' %}"><i class="layui-icon layui-icon-engine"></i> 注册码管理</a>
+               </li>
+              <li class="layui-nav-item layui-nav-itemed">
+                  <a href="{% url 'sys_setting' %}"><i class="layui-icon layui-icon-set-sm"></i> 站点设置</a>
                </li>
               {% endif %}
           </ul>
@@ -82,7 +82,7 @@
       </div>
 </div>
 
-<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 {% block custom_script %}
 {% endblock %}

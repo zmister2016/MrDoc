@@ -11,7 +11,7 @@ from django.db.models import Q
 import datetime
 import traceback
 from app_doc.report_utils import *
-from app_admin.decorators import check_headers
+from app_admin.decorators import check_headers,allow_report_file
 
 
 # 文集列表
@@ -19,11 +19,11 @@ def project_list(request):
     # 登录用户
     if request.user.is_authenticated:
         project_list = Project.objects.filter(
-            Q(role=0) | Q(role=2,role_value__contains=str(request.user.username)) | Q(create_user=request.user)
+            Q(role__in=[0,3]) | Q(role=2,role_value__contains=str(request.user.username)) | Q(create_user=request.user)
         )
     else:
-        # 非登录用户只显示公开文集
-        project_list = Project.objects.filter(role=0)
+        # 非登录用户只显示公开文集和需要访问码的文集
+        project_list = Project.objects.filter(role__in=[0,3])
     return render(request, 'app_doc/pro_list.html', locals())
 
 
@@ -61,6 +61,12 @@ def project_index(request,pro_id):
         # 获取文集信息
         project = Project.objects.get(id=int(pro_id))
 
+        # 获取问价文集前台下载权限
+        try:
+            allow_epub_download = ProjectReport.objects.get(project=project).allow_epub
+        except ObjectDoesNotExist:
+            allow_epub_download = 0
+
         # 私密文集并且访问者非创建者
         if project.role == 1 and request.user != project.create_user:
             return render(request,'404.html')
@@ -91,8 +97,9 @@ def project_index(request,pro_id):
             return render(request,'app_doc/project_doc_search.html',locals())
         return render(request, 'app_doc/project.html', locals())
     except Exception as e:
-        print(traceback.print_exc())
-        print(repr(e))
+        if settings.DEBUG:
+            print(traceback.print_exc())
+            print(repr(e))
         return HttpResponse('请求出错')
 
 
@@ -121,7 +128,10 @@ def modify_project(request):
 # 修改文集权限
 @login_required()
 def modify_project_role(request,pro_id):
-    pro = Project.objects.get(id=pro_id)
+    try:
+        pro = Project.objects.get(id=pro_id)
+    except ObjectDoesNotExist:
+        return Http404
     if (pro.create_user != request.user) and (request.user.is_superuser is False):
         return render(request,'403.html')
     else:
@@ -236,6 +246,34 @@ def manage_project(request):
         return HttpResponse('方法不允许')
 
 
+# 修改文集前台下载权限
+@login_required()
+def modify_project_download(request,pro_id):
+    try:
+        pro = Project.objects.get(id=pro_id)
+    except ObjectDoesNotExist:
+        return Http404
+    if (pro.create_user != request.user) and (request.user.is_superuser is False):
+        return render(request,'403.html')
+    else:
+        if request.method == 'GET':
+            return render(request,'app_doc/manage_project_download.html',locals())
+        elif request.method == 'POST':
+            download_epub = request.POST.get('download_epub',None)
+            # print("epub状态:",download_epub)
+            if download_epub == 'on':
+                epub_status = 1
+            else:
+                epub_status = 0
+            ProjectReport.objects.update_or_create(
+                project = pro,defaults={'allow_epub':epub_status}
+            )
+            return render(request,'app_doc/manage_project_download.html',locals())
+
+
+
+
+
 # 文档浏览页页
 @require_http_methods(['GET'])
 def doc(request,pro_id,doc_id):
@@ -270,6 +308,8 @@ def doc(request,pro_id,doc_id):
             try:
                 doc = Doc.objects.get(id=int(doc_id),status=1)
             except ObjectDoesNotExist:
+                if settings.DEBUG:
+                    print(traceback.print_exc())
                 return render(request, '404.html')
             # 获取文集下一级文档
             project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
@@ -456,7 +496,7 @@ def manage_doc(request):
             doc_status = request.GET.get('status','all')
             if len(doc_status) == 0:
                 doc_status = 'all'
-            print('status:', doc_status,type(doc_status))
+            # print('status:', doc_status,type(doc_status))
             # 返回所有文档
             if doc_status == 'all':
                 doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
@@ -675,8 +715,50 @@ def report_md(request):
                 return JsonResponse({'status':True,'data':md_file})
             else:
                 return JsonResponse({'status':False,'data':'无权限'})
-        except:
+        except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'文集不存在'})
 
+    else:
+        return Http404
+
+# 导出文集文件
+@allow_report_file
+def report_file(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('types',None)
+        if report_type in ['epub']:
+            pro_id = request.POST.get('pro_id')
+            try:
+                project = Project.objects.get(id=int(pro_id))
+                # 公开的文集 - 可以直接导出
+                if project.role == 0:
+                    report_project = ReportEPUB(
+                        project_id=project.id
+                    ).work()
+                    # print(report_project)
+                    report_file_path = report_project.split('media',maxsplit=1)[-1]
+                    epub_file = '/media' + report_file_path + '.epub'
+                    return JsonResponse({'status':True,'data':epub_file})
+                # 私密文集 - 拥有者可导出
+                elif project.role == 1:
+                    pass
+                # 指定用户可见文集 - 指定用户可导出
+                elif project.role == 2:
+                    pass
+                # 访问码可见文集 - 通过验证即可导出
+                elif project.role == 3:
+                    pass
+                else:
+                    return JsonResponse({'status':False,'data':'不存在的文集权限'})
+            except ObjectDoesNotExist:
+                return JsonResponse({'status':False,'data':'文集不存在'})
+            except Exception as e:
+                if settings.DEBUG:
+                    print(traceback.print_exc())
+                return JsonResponse({'status':False,'data':'系统异常'})
+        else:
+            return JsonResponse({'status':False,'data':'不支持的类型'})
     else:
         return Http404

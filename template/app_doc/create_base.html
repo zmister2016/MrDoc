@@ -9,8 +9,8 @@
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{% block title %}{% endblock %} - MrDoc</title>
-    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}" />
+    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <style>
@@ -160,7 +160,7 @@
         }
     }
 </script>
-<script src="{% static 'mrdoc.js' %}"></script>
+<script src="{% static 'mrdoc.js?version={{mrdoc_version}}' %}"></script>
 {% block custom_script %}
 {% endblock %}
 </body>

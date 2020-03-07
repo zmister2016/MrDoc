@@ -18,7 +18,9 @@ from django.urls import path,include,re_path
 from django.views.static import serve
 from django.conf import settings
 from django.contrib.sitemaps import views
-from app_doc.sitemaps import all_sitemaps as sitemaps
+from app_doc.sitemaps import all_sitemaps
+
+sitemaps = all_sitemaps()
 
 urlpatterns = [
     path('admin/', admin.site.urls),

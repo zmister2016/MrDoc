@@ -1,0 +1,54 @@
+{% extends 'app_doc/manage_base.html' %}
+{% load staticfiles %}
+{% block title %}文集下载状态管理{% endblock %}
+{% block content %}
+    {% if enable_project_report %}
+    {% else %}
+        <blockquote class="layui-elem-quote">当前站点未启用前台文集下载功能，修改操作将在功能启用后生效！</blockquote>
+    {% endif %}
+    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
+        <span class="layui-breadcrumb" lay-separator=">">
+          <a href="{% url 'manage_project' %}">文集管理</a>
+          <a><cite>下载状态管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+
+      <div class="layui-row">
+          <span style="font-size:18px;">修改文集前台下载导出权限
+          </span>
+      </div>
+  </div>
+    <div class="layui-row">
+        <form action="{% url 'modify_pro_download' pro.id %}" method="post" class="layui-form">
+            {% csrf_token %}
+            <div class="layui-form-item">
+                <label class="layui-form-label">文集名称</label>
+                <div class="layui-input-block">
+                  <input type="text" name="title" required value="{{pro.name}}"  disabled class="layui-input">
+                </div>
+            </div>
+            {% load project_filter %}
+            <div class="layui-form-item">
+                <label class="layui-form-label">EPUB下载</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="download_epub"
+                       {% if pro.id|get_report_status == 1 %} checked {%endif%}
+                       lay-skin="switch" lay-text="允许|禁止">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block custom_script %}
+<script>
+    var form = layui.form;
+
+</script>
+{% endblock %}

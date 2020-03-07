@@ -41,16 +41,18 @@ class DocSitemap(Sitemap):
     def lastmod(self,obj):
         return obj.modify_time
 
-all_sitemaps = {}
-all_sitemaps['home'] = HomeSitemap()
-for project in Project.objects.filter(role=0):
-
-    info_dict = {
-        'queryset': Doc.objects.filter(status=1,top_doc=project.id),
-    }
-    # sitemap = GenericSitemap(info_dict,priority=0.6)
-    sitemap = DocSitemap(pro=project.id)
-
-    # dict key is provided as 'section' in sitemap index view
-    all_sitemaps[str(project.id)] = sitemap
-# print(all_sitemaps)
+def all_sitemaps():
+    all_sitemap = {}
+    all_sitemap['home'] = HomeSitemap()
+    all_project = ProjectSitemap()
+    # print("所有文集：",all_project.items())
+    for project in all_project.items():
+    # for project in Project.objects.filter(role=0):
+        info_dict = {
+            'queryset': Doc.objects.filter(status=1,top_doc=project.id),
+        }
+        # sitemap = GenericSitemap(info_dict,priority=0.6)
+        sitemap = DocSitemap(pro=project.id)
+        all_sitemap[str(project.id)] = sitemap
+    # print(all_sitemaps)
+    return all_sitemap

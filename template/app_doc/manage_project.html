@@ -26,6 +26,7 @@
             <col width="400">
             <col width="50">
             <col width="100">
+            <col width="50">
             <col width="100">
             <col width="150">
             </colgroup>
@@ -35,7 +36,8 @@
           <th>文集简介</th>
           <th>文档数量</th>
           <th>创建时间</th>
-          <th>权限</th>
+          <th>前台下载</th>
+          <th>阅读权限</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -48,6 +50,13 @@
           <td>{{ pro.id | get_doc_count }}</td>
           <td>{{ pro.create_time }}</td>
           <td>
+              {% if pro.id|get_report_status == 1 %}
+              <span>允许</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
+              {% else %}
+              <span>禁止</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
+              {% endif %}
+          </td>
+          <td>
               <div class="layui-input-inline">
               {% if pro.role == 0 %}
                   <i class="layui-icon layui-icon-circle"></i> 公开 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
@@ -56,7 +65,7 @@
               {% elif pro.role == 2 %}
                   <i class="layui-icon layui-icon-group"></i> 指定用户可见 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
               {% elif pro.role == 3 %}
-                  <i class="layui-icon layui-icon-password"></i> 访问码可见 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+                  <i class="layui-icon layui-icon-key"></i> 访问码可见 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
               {% endif %}
               </div>
           </td>
@@ -218,9 +227,14 @@
             title:"下载导出文档",
             area:"300px",
             id:"downloadMd",
-            content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a>',
+            content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a>',
             //btn:['确定','取消'], //添加按钮
             //btnAlign:'c', //按钮居中
+            success: function (layero, index) {
+                $(layero).find('.download-md-link').click(function () {
+                    layer.close(index);
+                })
+        }
         })
     };
     //修改文集权限

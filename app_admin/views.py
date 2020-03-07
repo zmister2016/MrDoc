@@ -517,6 +517,7 @@ def admin_setting(request):
             beian_code = request.POST.get('beian_code',None) # 备案号
             enbale_email = request.POST.get("enable_email",None) # 启用邮箱
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
+            enable_project_report = request.POST.get('enable_project_report',None) # 文集导出
             # 更新开放注册状态
             SysSetting.objects.update_or_create(
                 name='close_register',
@@ -546,6 +547,11 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name = 'enable_register_code',
                 defaults= {'value': enable_register_code, 'types':'basic'}
+            )
+            # 更新文集导出状态
+            SysSetting.objects.update_or_create(
+                name = 'enable_project_report',
+                defaults={'value':enable_project_report,'types':'basic'}
             )
 
             return render(request,'app_admin/admin_setting.html',locals())

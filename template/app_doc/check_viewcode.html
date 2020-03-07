@@ -15,7 +15,7 @@
     <style>
         body{
             background-color: #fafafa;
-            text-align: center;
+            /*text-align: center;*/
         }
         .container{
             display: flex;
@@ -55,7 +55,8 @@
             <form class="layui-form" action=""  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h4>你正在访问：<strong><u>{{ project.name }}</u></strong></h4>
+                    <h4>你正在访问：</h4><br>
+                    <strong><u>{{ project.name }}</u></strong>
                     <br><span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 </div>
                 <div class="layui-form-item">

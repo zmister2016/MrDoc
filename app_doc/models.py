@@ -70,3 +70,17 @@ class DocTemp(models.Model):
     class Meta:
         verbose_name = '文档模板'
         verbose_name_plural = verbose_name
+
+
+# 文集导出模型
+class ProjectReport(models.Model):
+    project = models.ForeignKey(Project,unique=True,on_delete=models.CASCADE)
+    # 允许导出，默认为0-允许，1-不允许
+    allow_epub = models.IntegerField(default=0,verbose_name="前台导出EPUB")
+
+    def __str__(self):
+        self.project.name
+
+    class Meta:
+        verbose_name = '文集导出'
+        verbose_name_plural = verbose_name

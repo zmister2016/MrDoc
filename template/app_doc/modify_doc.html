@@ -108,8 +108,8 @@
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
-                //'content':editor.getHTML(),
-                'content':editor.getPreviewedHTML(),
+                'content':editor.getHTML(),
+                //'content':editor.getPreviewedHTML(),
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
             }
@@ -126,7 +126,7 @@
                 }
             });
         };
-        //保存文档草稿
+        //保存草稿
         saveDoc = function(){
             var data = {
                 'doc_id':{{ doc.id }},

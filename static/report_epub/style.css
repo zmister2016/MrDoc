@@ -1,0 +1,65 @@
+.bookname, .bookdesc {
+  text-align: center;
+}
+/*预格式*/
+pre {
+  padding: 10px;
+  background: #f6f6f6;
+  border: 1px solid #ddd;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+
+}
+/*块代码*/
+pre code {
+  border: none;
+  background: none;
+}
+pre ol {
+  padding-left: 2.5em;
+  margin: 0;
+}
+/*行内代码*/
+code {
+  border: 1px solid #ddd;
+  background: #f6f6f6;
+  padding: 3px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+/* 引用块 */
+blockquote {
+  color: #666;
+  border-left: 4px solid #ddd;
+  padding-left: 20px;
+  margin-left: 0;
+  font-size: 14px;
+  font-style: italic;
+}
+/* 表格 */
+table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+  margin-bottom: 16px;
+}
+thead {
+  display: table-header-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+table thead tr {
+  background-color: #F8F8F8;
+}
+table th, table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+/*公式*/
+p.editormd-tex {
+  text-align: center;
+}

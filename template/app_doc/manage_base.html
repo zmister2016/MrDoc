@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - 个人中心 - MrDoc</title>
-    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <style>
         .logo img{
@@ -75,7 +75,7 @@
       </div>
 </div>
 
-<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 <script>
     var form = layui.form;
