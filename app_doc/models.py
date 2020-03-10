@@ -74,7 +74,7 @@ class DocTemp(models.Model):
 
 # 文集导出模型
 class ProjectReport(models.Model):
-    project = models.ForeignKey(Project,unique=True,on_delete=models.CASCADE)
+    project = models.OneToOneField(Project,unique=True,on_delete=models.CASCADE)
     # 允许导出，默认为0-允许，1-不允许
     allow_epub = models.IntegerField(default=0,verbose_name="前台导出EPUB")
 

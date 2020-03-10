@@ -1,7 +1,5 @@
 beautifulsoup4==4.8.2
 Django==2.2.3
 Pillow==6.1.0
-pkg-resources==0.0.0
 pytz==2019.1
-soupsieve==2.0
 sqlparse==0.3.0
