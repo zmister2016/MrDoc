@@ -1,3 +1,4 @@
+# coding:utf-8
 from django.shortcuts import render,redirect
 from django.http.response import JsonResponse,Http404,HttpResponseNotAllowed,HttpResponse
 from django.http import HttpResponseForbidden
@@ -170,7 +171,7 @@ def modify_project_role(request,pro_id):
 def check_viewcode(request):
     try:
         if request.method == 'GET':
-            project_id = request.GET.get('to','').split("/")[2]
+            project_id = request.GET.get('to','').split("/")[1].split('-')[1]
             project = Project.objects.get(id=int(project_id))
             return render(request,'app_doc/check_viewcode.html',locals())
         else:
@@ -178,13 +179,12 @@ def check_viewcode(request):
             project_id = request.POST.get('project_id','')
             project = Project.objects.get(id=int(project_id))
             if project.role == 3 and project.role_value == viewcode:
-                obj = redirect("/project/{}/".format(project_id))
+                obj = redirect("pro_index",pro_id=project_id)
                 obj.set_cookie('viewcode-{}'.format(project_id),viewcode)
                 return obj
             else:
                 errormsg = "访问码错误"
                 return render(request, 'app_doc/check_viewcode.html', locals())
-
     except Exception as e:
         print(repr(e))
         return render(request,'404.html')
@@ -269,9 +269,6 @@ def modify_project_download(request,pro_id):
                 project = pro,defaults={'allow_epub':epub_status}
             )
             return render(request,'app_doc/manage_project_download.html',locals())
-
-
-
 
 
 # 文档浏览页页
