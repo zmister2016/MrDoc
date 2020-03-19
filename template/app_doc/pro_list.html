@@ -57,6 +57,9 @@
             </a>
         </div>
     {% endfor %}
+    {% if project_list.count == 0 %}
+    <img src="{% static 'non_doc.png' %}">
+    {% endif %}
 </div>
 <!-- 主体结束 -->
 
