@@ -15,9 +15,9 @@
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
             <i class="fa fa-file"></i> 新建
         </a>
+    {% endif %}
     <!-- 文档目录 -->
     <div id="toc-container" style="display:none;padding:10px;overflow:auto;"></div>
-    {% endif %}
 {% endblock %}
 
 {% block content_head %}
