@@ -27,6 +27,9 @@ urlpatterns = [
     path('get_doctemp/',views.get_doctemp,name='get_doctemp'), # 获取某一个文档模板内容
     path('del_doctemp/',views.del_doctemp,name="del_doctemp"), # 删除某一个文档模板
     path('modify_doctemp/<int:doctemp_id>/',views.modify_doctemp,name="modify_doctemp"), # 修改文档模板
+    #################文件管理相关
+    path('manage_image/',views.manage_image,name="manage_image"), # 图片管理
+    path('manage_image_group/',views.manage_img_group,name="manage_img_group"), # 图片分组管理
     ################其他功能相关
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
 ]

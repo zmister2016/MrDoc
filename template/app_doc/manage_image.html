@@ -1,0 +1,221 @@
+{% extends 'app_doc/manage_base.html' %}
+{% load staticfiles %}
+{% block title %}图片素材管理{% endblock %}
+{% block content %}
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+      <div class="layui-row">
+          <span style="font-size:18px;">图片素材管理
+          </span>
+      </div>
+  </div>
+    <div class="layui-row">
+        <form action="" method="get">
+            <div class="layui-form-item">
+                <!--<div class="layui-input-inline">-->
+                    <!--<input type="text" name="kw" id="kw"  placeholder="搜索图片" autocomplete="off" class="layui-input">-->
+                <!--</div>-->
+                <!--<button class="layui-btn layui-btn-normal" type="submit">搜索</button>-->
+                <button class="layui-btn layui-btn-normal" type="button" id="upload_img">上传图片</button>
+                <button class="layui-btn layui-btn-normal" type="button" onclick="createImgGroup()">新建分组</button>
+                <a class="layui-btn layui-btn-normal" href="{% url 'manage_img_group' %}">分组管理</a>
+            </div>
+        </form>
+
+    </div>
+    <div class="layui-row">
+        <!--<span style="font-size:16px;"><b>分组: </b></span>-->
+        <span class="layui-breadcrumb doc_status_condition" lay-separator="|">
+            {% load project_filter %}
+          <a href="{% url 'manage_image' %}?group=0" class="{% if g_id == 0 %}current{% endif %}">全部图片({{all_img_cnt}})</a>
+          <a href="{% url 'manage_image' %}?group=-1" class="{% if g_id == -1 %}current{% endif %}">未分组({{no_group_cnt}})</a>
+          {% for group in groups %}
+          <a href="{% url 'manage_image' %}?group={{group.id}}" class="{% if g_id == group.id %}current{% endif %}">{{group.group_name}}({{group.id | img_group_cnt}})</a>
+          {% endfor %}
+        </span>
+    </div>
+    <div class="layui-row" lay-skin="line">
+        <ul style="padding: 20px;" id="images">
+            {% for img in images %}
+            <li class="image-list">
+                <!--<i class="image-list-i" style="background-image: url('{{img.file_path}}');"></i>-->
+                <img class="image-list-i" src="{{img.file_path}}"  title="{{img.file_name}}">
+                <!--<span class="img-file-name" title="{{img.file_name}}">{{img.file_name}}</span>-->
+                <!--<input type="checkbox" />-->
+                <div class="opera-img-btn">
+                    <a href="javascript:void(0);" class="move-img" title="移动分组" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-transfer"></i></a>
+                    <a href="javascript:void(0);" class="del-img" title="删除图片" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-delete"></i></a>
+                </div>
+            </li>
+
+            {% endfor %}
+        </ul>
+    </div>
+    <!-- 分页 -->
+    <hr>
+    <div class="layui-row">
+        <div class="pagination">
+            <span class="step-links">
+                {% if images.has_previous %}
+                    <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                {% endif %}
+                <span class="current">
+                    当前页： {{ images.number }} 共 {{ images.paginator.num_pages }} 页
+                </span>
+                {% if images.has_next %}
+                    <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+<script src="{% static 'viewerjs/viewer.js' %}"></script>
+<script>
+    var form = layui.form;
+
+    //悬浮显示图片按钮
+    $(".image-list").mouseover(function(){
+        $(this).find(".opera-img-btn").show();
+    });
+    $(".image-list").mouseleave(function(){
+        $(this).find(".opera-img-btn").hide();
+    });
+    //删除图片
+    $(".del-img").click(function(){
+        var img_id = $(this).data("id");
+        var img_src = $(this).data("src");
+        layer.open({
+            type:1,
+            title:'删除图片',
+            area:'300px;',
+            id:'delImg',//配置ID
+            content:'<div style="margin:10px;"><img src="'+ img_src +'" style="width:50px;height:50px;margin:10px;"/><span>删除此图片后，文档中添加的该图片将不再显示！</span></div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                data = {
+                    'img_id':img_id,
+                    'types':0
+                }
+                $.post("{% url 'manage_image' %}",data,function(r){
+                    if(r.status){
+                        //删除成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //删除失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+
+        })
+    });
+    //移动分组
+    $(".move-img").click(function(){
+        var img_id = $(this).data("id");
+        var img_src = $(this).data("src");
+        layer.open({
+            type:1,
+            title:'移动图片分组',
+            area:['300px','300px'],
+            id:'moveImg',//配置ID
+            content:$("#move-group-layer"),
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                data = {
+                    'types':1,
+                    'img_id':img_id,
+                    'group_id':$("#group_id").val()
+                }
+                console.log(data)
+                $.post("{% url 'manage_image' %}",data,function(r){
+                    if(r.status){
+                        //移动成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //移动失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+            success:function(){
+                form.render();
+            }
+        })
+    });
+    //查看图片
+    var options = {
+        //inline: true,
+        url: 'data-original',
+        fullscreen:false,//全屏
+        rotatable:false,//旋转
+        scalable:false,//翻转
+        //zoomable:false,//缩放
+        button:false,//关闭按钮
+      };
+    const viewer = new Viewer(document.getElementById('images'), options);
+    //创建图片分组
+    createImgGroup = function(){
+        layer.open({
+            type:1,
+            title:'新建图片分组',
+            area:'300px;',
+            id:'createImgGroup',//配置ID
+            content:'<div style="margin:10px;"><input type="text" id="img_group_name" class="layui-input" /></div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                data = {
+                    'types':0,
+                    'group_name':$("#img_group_name").val(),
+                }
+                $.post("{% url 'manage_img_group' %}",data,function(r){
+                    if(r.status){
+                        //新建成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //新建失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+        })
+    };
+    //上传图片
+    var upload = layui.upload;
+    upload.render({
+        elem: '#upload_img',
+        url: '{% url "upload_doc_img" %}',
+        done: function(res, index, upload){ //上传后的回调
+            //上传成功，刷新页面
+            if(res.success == 1){
+                window.location.reload();
+            }else{
+                layer.msg("上传出错，请重试！")
+            }
+        },
+        accept: 'images', //允许上传的文件类型
+        acceptMime:'image/*',
+        field:'manage_upload',
+        size: 5000, //最大允许上传的文件大小
+
+    })
+</script>
+<!--移动图片分组DIV块-->
+<div style="margin:10px;display:none;" class="layui-form" id="move-group-layer">
+    <div class="layui-form-item">
+        <select id="group_id">
+            {% for group in groups %}
+            <option value="{{group.id}}">{{group.group_name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+{% endblock %}

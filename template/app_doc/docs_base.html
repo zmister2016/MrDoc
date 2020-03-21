@@ -40,7 +40,20 @@
         }
         /* 下拉目录隐藏li样式 */
         .editormd-toc-menu ul.markdown-toc-list li{
-            list-style:none;
+            /*list-style:none;*/
+        }
+        /* 弹出框文档目录样式 */
+        ul.markdown-toc-list{
+            list-style-position:inside;
+        }
+        ul.markdown-toc-list li{
+            list-style: inherit!important;
+        }
+        ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
+            padding-left:10px;
+        }
+        ul.markdown-toc-list a{
+            text-decoration: underline!important;
         }
     </style>
     <!--[if lt IE 9]>
@@ -170,10 +183,7 @@
                     </div>
                     <!-- 正文结束 -->
                 </div>
-                <!-- 文档目录 -->
-                <div class="doc-cata">
-                    <div id="toc-container"></div>
-                </div>
+
                 {% block doc_previous_next %}{% endblock %}
                 <!-- 社交分享 -->
                 <div class="share-div" style="margin-top: 10px;padding:10px;text-align: center;background-color: #fafafa">
@@ -219,7 +229,6 @@
         }
     }
     </script>
-{% block custom_script %}
     <script>
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -233,8 +242,11 @@
             flowChart       : true,  // 流程图
             sequenceDiagram : true,  // 时序图
             tocm            : true, //目录
+            toc             :true,
+            tocContainer : "#toc-container",
+            tocDropdown   : false,
             atLink    : false,//禁用@链接
-            //tocContainer    : "#toc-container"
+
         });
         //为当前页面的目录链接添加蓝色样式
         $("nav li a").each(function (i) {
@@ -372,6 +384,7 @@
             {{ static_code | safe }}
         {% endif %}
     <!-- 统计代码结束 -->
+{% block custom_script %}
 {% endblock %}
 </body>
 </html>

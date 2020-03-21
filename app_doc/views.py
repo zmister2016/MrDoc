@@ -11,9 +11,16 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 import datetime
 import traceback
+import re
 from app_doc.report_utils import *
 from app_admin.decorators import check_headers,allow_report_file
+import os.path
 
+# 替换前端传来的非法字符
+def validateTitle(title):
+  rstr = r"[\/\\\:\*\?\"\<\>\|]" # '/ \ : * ? " < > |'
+  new_title = re.sub(rstr, "_", title) # 替换为下划线
+  return new_title
 
 # 文集列表
 def project_list(request):
@@ -34,23 +41,27 @@ def create_project(request):
     if request.method == 'POST':
         try:
             name = request.POST.get('pname','')
+            name = validateTitle(name)
             desc = request.POST.get('desc','')
-            role = request.POST.get('role','')
+            role = request.POST.get('role',0)
+            role_list = ['0','1','2','3',0,1,2,3]
             if name != '':
                 project = Project.objects.create(
                     name=name,
                     intro=desc[:100],
                     create_user=request.user,
-                    role = int(role)
+                    role = int(role) if role in role_list else 0
                 )
                 project.save()
                 return JsonResponse({'status':True,'data':{'id':project.id,'name':project.name}})
             else:
-                return JsonResponse({'status':False})
+                return JsonResponse({'status':False,'data':'文集名称不能为空！'})
         except Exception as e:
-            return JsonResponse({'status':False})
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return JsonResponse({'status':False,'data':'出现异常,请检查输入值！'})
     else:
-        return JsonResponse({'status':False})
+        return JsonResponse({'status':False,'data':'请求方法不允许'})
 
 
 # 文集页
@@ -100,7 +111,6 @@ def project_index(request,pro_id):
     except Exception as e:
         if settings.DEBUG:
             print(traceback.print_exc())
-            print(repr(e))
         return HttpResponse('请求出错')
 
 
@@ -121,6 +131,8 @@ def modify_project(request):
             else:
                 return JsonResponse({'status':False,'data':'非法请求'})
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法不允许'})
@@ -186,7 +198,8 @@ def check_viewcode(request):
                 errormsg = "访问码错误"
                 return render(request, 'app_doc/check_viewcode.html', locals())
     except Exception as e:
-        print(repr(e))
+        if settings.DEBUG:
+            print(traceback.print_exc())
         return render(request,'404.html')
 
 
@@ -209,6 +222,8 @@ def del_project(request):
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
+        if settings.DEBUG:
+            print(traceback.print_exc())
         return JsonResponse({'status':False,'data':'请求出错'})
 
 
@@ -241,6 +256,8 @@ def manage_project(request):
                     pros = paginator.page(paginator.num_pages)
             return render(request,'app_doc/manage_project.html',locals())
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return HttpResponse('请求出错')
     else:
         return HttpResponse('方法不允许')
@@ -314,6 +331,8 @@ def doc(request,pro_id,doc_id):
         else:
             return HttpResponse('参数错误')
     except Exception as e:
+        if settings.DEBUG:
+            print(traceback.print_exc())
         return HttpResponse('请求出错')
 
 
@@ -328,7 +347,8 @@ def create_doc(request):
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
             return render(request,'app_doc/create_doc.html',locals())
         except Exception as e:
-            print(repr(e))
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return HttpResponse('请求出错')
     elif request.method == 'POST':
         try:
@@ -354,7 +374,8 @@ def create_doc(request):
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
-            print(repr(e))
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法不允许'})
@@ -374,6 +395,8 @@ def modify_doc(request,doc_id):
             else:
                 return HttpResponse("非法请求")
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return HttpResponse('请求出错')
     elif request.method == 'POST':
         try:
@@ -400,6 +423,8 @@ def modify_doc(request,doc_id):
             else:
                 return JsonResponse({'status': False,'data':'参数错误'})
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'请求出错'})
 
 
@@ -426,6 +451,8 @@ def del_doc(request):
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
+        if settings.DEBUG:
+            print(traceback.print_exc())
         return JsonResponse({'status':False,'data':'请求出错'})
 
 
@@ -544,6 +571,8 @@ def create_doctemp(request):
             else:
                 return JsonResponse({'status':False,'data':'模板标题不能为空'})
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法不允许'})
@@ -560,6 +589,8 @@ def modify_doctemp(request,doctemp_id):
             else:
                 return HttpResponse('非法请求')
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return HttpResponse('请求出错')
     elif request.method == 'POST':
         try:
@@ -578,6 +609,8 @@ def modify_doctemp(request,doctemp_id):
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return HttpResponse('方法不允许')
@@ -598,6 +631,8 @@ def del_doctemp(request):
         else:
             return JsonResponse({'status': False, 'data': '参数错误'})
     except Exception as e:
+        if settings.DEBUG:
+            print(traceback.print_exc())
         return JsonResponse({'status':False,'data':'请求出错'})
 
 
@@ -630,6 +665,8 @@ def manage_doctemp(request):
                     doctemps = paginator.page(paginator.num_pages)
             return render(request, 'app_doc/manage_doctemp.html', locals())
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return HttpResponse('请求出错')
     else:
         return HttpResponse('方法不允许')
@@ -647,6 +684,8 @@ def get_doctemp(request):
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法错误'})
@@ -759,3 +798,151 @@ def report_file(request):
             return JsonResponse({'status':False,'data':'不支持的类型'})
     else:
         return Http404
+
+
+# 图片素材管理
+@login_required()
+def manage_image(request):
+    # 获取图片
+    if request.method == 'GET':
+        try:
+            groups = ImageGroup.objects.filter(user=request.user) # 获取所有分组
+            all_img_cnt = Image.objects.filter(user=request.user).count()
+            no_group_cnt = Image.objects.filter(user=request.user,group_id=None).count() # 获取所有未分组的图片数量
+            g_id = int(request.GET.get('group', 0))  # 图片分组id
+            if int(g_id) == 0:
+                image_list = Image.objects.filter(user=request.user)  # 查询所有图片
+            elif int(g_id) == -1:
+                image_list = Image.objects.filter(user=request.user,group_id=None)  # 查询指定分组的图片
+            else:
+                image_list = Image.objects.filter(user=request.user,group_id=g_id)  # 查询指定分组的图片
+            paginator = Paginator(image_list, 20)
+            page = request.GET.get('page', 1)
+            try:
+                images = paginator.page(page)
+            except PageNotAnInteger:
+                images = paginator.page(1)
+            except EmptyPage:
+                images = paginator.page(paginator.num_pages)
+            images.group = g_id
+            return render(request,'app_doc/manage_image.html',locals())
+        except:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return render(request,'404.html')
+    elif request.method == 'POST':
+        try:
+            img_id = request.POST.get('img_id','')
+            types = request.POST.get('types','') # 操作类型：0表示删除，1表示修改，2表示获取
+            # 删除图片
+            if int(types) == 0:
+                img = Image.objects.get(id=img_id)
+                if img.user != request.user:
+                    return JsonResponse({'status': False, 'data': '未授权请求'})
+                file_path = settings.BASE_DIR+img.file_path
+                is_exist = os.path.exists(file_path)
+                if is_exist:
+                    os.remove(file_path)
+                img.delete() # 删除记录
+                return JsonResponse({'status':True,'data':'删除完成'})
+            # 移动图片分组
+            elif int(types) == 1:
+                group_id = request.POST.get('group_id',None)
+                if group_id is None:
+                    Image.objects.filter(id=img_id).update(group_id=None)
+                else:
+                    group = ImageGroup.objects.get(id=group_id,user=request.user)
+                    Image.objects.filter(id=img_id).update(group_id=group)
+                return JsonResponse({'status':True,'data':'移动完成'})
+            # 获取图片
+            elif int(types) == 2:
+                group_id = request.POST.get('group_id', None) # 接受分组ID参数
+                if group_id is None: #
+                    return JsonResponse({'status':False,'data':'参数错误'})
+                elif int(group_id) == 0:
+                    imgs = Image.objects.filter(user=request.user)
+                elif int(group_id) == -1:
+                    imgs = Image.objects.filter(user=request.user,group_id=None)
+                else:
+                    imgs = Image.objects.filter(user=request.user,group_id=group_id)
+                img_list = []
+                for img in imgs:
+                    item = {
+                        'path':img.file_path,
+                        'name':img.file_name,
+                    }
+                    img_list.append(item)
+                return JsonResponse({'status':True,'data':img_list})
+            else:
+                return JsonResponse({'status':False,'data':'非法参数'})
+        except ObjectDoesNotExist:
+            return JsonResponse({'status':False,'data':'图片不存在'})
+        except:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return JsonResponse({'status':False,'data':'程序异常'})
+
+# 图片分组管理
+@login_required()
+def manage_img_group(request):
+    if request.method == 'GET':
+        groups = ImageGroup.objects.filter(user=request.user)
+        return render(request,'app_doc/manage_image_group.html',locals())
+    # 操作分组
+    elif request.method == 'POST':
+        types = request.POST.get('types',None) # 请求类型，0表示创建分组，1表示修改分组，2表示删除分组，3表示获取分组
+        # 创建分组
+        if int(types) == 0:
+            group_name = request.POST.get('group_name', '')
+            if group_name not in ['','默认分组','未分组']:
+                ImageGroup.objects.create(
+                    user = request.user,
+                    group_name = group_name
+                )
+                return JsonResponse({'status':True,'data':'ok'})
+            else:
+                return JsonResponse({'status':False,'data':'名称无效'})
+        # 修改分组
+        elif int(types) == 1:
+            group_name = request.POST.get("group_name",'')
+            if group_name not in ['','默认分组','未分组']:
+                group_id = request.POST.get('group_id', '')
+                ImageGroup.objects.filter(id=group_id).update(group_name=group_name)
+                return JsonResponse({'status':True,'data':'修改成功'})
+            else:
+                return JsonResponse({'status':False,'data':'名称无效'})
+
+        # 删除分组
+        elif int(types) == 2:
+            try:
+                group_id = request.POST.get('group_id','')
+                group = ImageGroup.objects.get(id=group_id,user=request.user) # 查询分组
+                images = Image.objects.filter(group_id=group_id).update(group_id=None) # 移动图片到未分组
+                group.delete() # 删除分组
+                return JsonResponse({'status':True,'data':'删除完成'})
+            except:
+                if settings.DEBUG:
+                    print(traceback.print_exc())
+                return JsonResponse({'status':False,'data':'删除错误'})
+        # 获取分组
+        elif int(types) == 3:
+            try:
+                group_list = []
+                all_cnt = Image.objects.all().count()
+                non_group_cnt = Image.objects.filter(group_id=None).count()
+                group_list.append({'group_name':'全部图片','group_cnt':all_cnt,'group_id':0})
+                group_list.append({'group_name':'未分组','group_cnt':non_group_cnt,'group_id':-1})
+                groups = ImageGroup.objects.filter(user=request.user) # 查询所有分组
+                for group in groups:
+                    group_cnt = Image.objects.filter(group_id=group).count()
+                    item = {
+                        'group_id':group.id,
+                        'group_name':group.group_name,
+                        'group_cnt':group_cnt
+                    }
+                    group_list.append(item)
+                return JsonResponse({'status':True,'data':group_list})
+            except:
+                if settings.DEBUG:
+                    print(traceback.print_exc())
+                return JsonResponse({'status':False,'data':'出现错误'})

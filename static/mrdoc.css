@@ -198,7 +198,7 @@ body, html {
     min-width: 0;
     background: #fff;
     flex-direction: column;
-    padding-bottom: 64px;
+    /*padding-bottom: 64px;*/
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     left:300px;

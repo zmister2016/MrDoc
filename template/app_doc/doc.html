@@ -15,26 +15,26 @@
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
             <i class="fa fa-file"></i> 新建
         </a>
+    <!-- 文档目录 -->
+    <div id="toc-container" style="display:none;padding:10px;overflow:auto;"></div>
     {% endif %}
 {% endblock %}
 
 {% block content_head %}
     <h1>{{ doc.name }}</h1><hr>
+
     <p style="color: #666;font-size:12px;">
         <!--<i class="fa fa-th-large"></i> 发表：{{ doc.create_time }}-->
+        <i class="fa fa-user"></i> 作者：{{ doc.create_user.username }}
     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i> 最后修改于：{{ doc.modify_time }}
-        <!--<i class="fa fa-user"></i> {{ doc.create_user.username }}-->
     </p>
+
 {% endblock %}
 
 {% block page_content %}
     {# {{ doc.content | safe }} #}
-    <!--<style>
-        div.editormd-toc-menu ul.markdown-toc-list li,ul.markdown-toc-list > li > ul  li{
-            <!--list-style: none;
-        }
-    </style>-->
-    <textarea id="" style="display: none;">{{ doc.pre_content }}</textarea>
+    <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+
 {% endblock %}
 
 {% block doc_previous_next %}
@@ -56,4 +56,23 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block custom_script %}
+<script>
+    var layer = layui.layer;
+    var toc = $("#toc-container").find('li');
+    if(toc.length > 0){
+        layer.open({
+             title: '目录',
+             type:1,
+             offset:'r',//坐标
+             maxmin:true, //最大最小化
+             area: ['200px','200px'],
+             shade: 0,
+             content: $("#toc-container"),
+        });
+    }
+
+</script>
 {% endblock %}

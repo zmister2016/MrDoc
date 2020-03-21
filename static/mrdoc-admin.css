@@ -1,0 +1,58 @@
+/* 用户中心 图片管理 */
+.image-list{
+    cursor: pointer;
+    position: relative;
+    display:flex;
+    float: left;
+    align-items:center;
+    width: 160px;
+    height:180px;
+    margin: 0 20px 30px 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.image-list:hover{
+    background-color: #EAFFEA;
+}
+.image-list-i{
+    display: block;
+    width: 100%;
+    height: auto;
+    -webkit-background-size: contain;
+    /*background-size: contain;*/
+    /*background-position: 50% 50%;*/
+    /*background-repeat: no-repeat;*/
+    /*padding-bottom: 100%;*/
+    border: 1px solid transparent;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.img-file-name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    white-space:nowrap;
+    width:160px;
+    height:24px;
+    display:block;
+}
+/* 图片管理按钮 */
+.opera-img-btn{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 160px;
+    height: 25px;
+    display: none;
+    background:#393D49;
+    opacity:0.5;
+}
+.opera-img-btn i{
+    font-size:20px;
+    color:white;
+}
+.opera-img-btn i:hover{
+    color:red;
+}

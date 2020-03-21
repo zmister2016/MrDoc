@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - 个人中心 - MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <style>
         .logo img{
@@ -14,7 +16,7 @@
         .layui-btn a{
             color:white;
         }
-        /* 管理文档 文档状态条件筛选 */
+        /* 管理文档文档状态条件筛选 管理图片图片分组筛选 */
         .doc_status_condition > a.current{
             color: #000!important;
         }
@@ -56,8 +58,11 @@
             <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'manage_doc' %}"><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
             </li>
-              <li class="layui-nav-item layui-nav-itemed">
+            <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'manage_doctemp' %}"><i class="layui-icon layui-icon-template"></i> 文档模板管理</a>
+            </li>
+            <li class="layui-nav-item layui-nav-itemed">
+              <a href="{% url 'manage_image' %}"><i class="layui-icon layui-icon-picture"></i> 图片素材管理</a>
             </li>
           </ul>
         </div>

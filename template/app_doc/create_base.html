@@ -26,6 +26,31 @@
         .markdown-body ol ol ul,.markdown-body ol ul ul,.markdown-body ul ol ul,.markdown-body ul ul ul li{
             list-style-type: square;
         }
+        .select-img-list{
+            cursor: pointer;
+            position: relative;
+            display:flex;
+            float: left;
+            align-items:center;
+            width: 120px;
+            height:120px;
+            margin: 0 20px 30px 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .select-img-list:hover{
+            background-color: #EAFFEA;
+        }
+        .select-img-list-i{
+            display: block;
+            width: 100%;
+            height: auto;
+            -webkit-background-size: contain;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            overflow: hidden;
+        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -56,6 +81,8 @@
         });
     var layer = layui.layer;
     var form = layui.form;
+    var element = layui.element;
+    var laypage = layui.laypage;
     var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
     //初始化editormd
     var editor = editormd("editor-md", {
@@ -68,14 +95,19 @@
                 "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase","kaiSpan", "|",
                 "h1", "h2", "h3", "h4", "h5", "h6", "|",
                 "list-ul", "list-ol", "hr", "|",
-                "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
+                "link", "reference-link","imgUpload", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
                 "watch", "preview", "|",
                 "help"
             ]
         },
         //自定义工具栏添加楷体按钮
         toolbarIconTexts : {
-            kaiSpan : "楷"
+            kaiSpan : "楷",
+            imgUpload:'fa-image',
+        },
+        //自定义工具栏添加图片按钮
+        toolbarIconsClass : {
+            imgUpload:'fa-image',
         },
         //设置自定义工具栏按钮的事件
         toolbarHandlers : {
@@ -97,11 +129,25 @@
                 // this == 当前editormd实例
                 //console.log("testIcon =>", this, cm, icon, cursor, selection);
             },
+            // 点击工具栏图片图标的响应函数 - 上传图片和选择图片
+            imgUpload : function(cm,icon,cursor,selection){
+                layer.ready(function(){
+                  element.init();
+                });
+                layer.open({
+                    type:'1',
+                    title:'添加图片',
+                    area:['800px','600px'],
+                    id:'uploadImg',//配置ID,
+                    content:$('#upload-img'),
+                })
+            }
         },
         //设置语言
         lang : {
             toolbar : {
                 kaiSpan : "添加楷体span标签",
+                imgUpload:"添加图片到文档",
             }
         },
         //配置项
@@ -158,45 +204,147 @@
         }else{
             return null;
         }
+    };
+    //监听图片Tab选项卡切换
+    element.on('tab(img-tab)', function(data){
+      //console.log(this); //当前Tab标题所在的原始DOM元素
+      //console.log(data.index); //得到当前Tab的所在下标
+      //console.log(data.elem); //得到当前的Tab大容器
+      if(data.index == 1){
+        console.log('选择图片')
+        $("#select-img-group").empty(); //删除已有分组按钮
+        //请求新的分组数据
+        $.post("{% url 'manage_img_group' %}",{'types':3},function(r){
+            if(r.status){
+                //console.log(r.data)
+                group_btn_str = ''
+                for(let i in r.data){
+                    group_btn_str += '<button class="layui-btn layui-btn-normal" onclick="switchImgGroup(' + r.data[i].group_id +')">' + r.data[i].group_name + '(' + r.data[i].group_cnt + ')</button>'
+                };
+                $("#select-img-group").append(group_btn_str)
+            }
+        });
+        //请求全部图片数据
+        var loading = layer.load();
+        $.post("{% url 'manage_image' %}",{'types':2,'group_id':0},function(r){
+            if(r.status){
+                //img_list_str = '<ul>'
+                //for(let i in r.data){
+                //    img_list_str += '<li class="select-img-list"><img class="select-img-list-i" src="' + r.data[i].path + '" title="' + r.data[i].name + '" /></li>'
+                //}
+                //img_list_str += '</ul>'
+                //$("#select-img").append(img_list_str);
+                //调用分页显示
+                laypage.render({
+                    elem: 'select-img-page',//分页的div
+                    count: r.data.length, //数据总数
+                    limit:15, //单页数
+                    jump: function(obj){
+                        //渲染HTML
+                        document.getElementById('select-img').innerHTML = function(){
+                            var arr = []
+                            var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                            layui.each(thisData, function(index, item){
+                                arr.push('<li class="select-img-list"><img class="select-img-list-i" onclick="insertImg(this);" src="' + item.path + '" title="' + item.name + '" /></li>');
+                            });
+                        return arr.join('');
+                        }();
+                    }
+                });
+                layer.close(loading);//关闭加载提示
+            }else{
+                layer.close(loading);
+                layer.msg("获取图片失败")
+            }
+        })
+      }
+    });
+    //插入选择的图片到编辑器
+    insertImg = function(e){
+        console.log(e.src);
+        editor.insertValue("\n![](" + e.src + ")");
+    };
+    //切换图片分组
+    switchImgGroup = function(e){
+        var switch_loading = layer.load();
+        $.post("{% url 'manage_image' %}", {
+            'types': 2,
+            'group_id': e
+        },
+        function(r) {
+            if (r.status) {
+                //调用分页显示
+                laypage.render({
+                    elem: 'select-img-page',//分页的div
+                    count: r.data.length,//数据总数
+                    limit: 15,//单页数
+                    jump: function(obj) {
+                        //渲染HTML
+                        document.getElementById('select-img').innerHTML = function() {
+                            var arr = []
+                            var thisData = r.data.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
+                            layui.each(thisData,
+                            function(index, item) {
+                                arr.push('<li class="select-img-list"><img class="select-img-list-i" onclick="insertImg(this);" src="' + item.path + '" title="' + item.name + '" /></li>');
+                            });
+                            return arr.join('');
+                        } ();
+                    }
+                });
+                layer.close(switch_loading); //关闭加载提示
+            } else {
+                layer.close(switch_loading);
+                layer.msg("获取分组图片失败")
+            }
+        })
     }
 </script>
-<script src="{% static 'mrdoc.js?version={{mrdoc_version}}' %}"></script>
+<script src="{% static 'mrdoc.js' %}?version={{mrdoc_version}}"></script>
 {% block custom_script %}
 {% endblock %}
 </body>
 {% block custom_div %}
-<div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
-    <div style="margin: 10px 0 0 10px;">
-        <a class="layui-btn layui-btn-normal" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
-        <a class="layui-btn layui-btn-normal" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
-    </div>
-    <table class="layui-table" style="margin: 10px;">
-      <colgroup>
-        <col width="150">
-        <col width="200">
-        <col>
-      </colgroup>
-      <thead>
-        <tr>
-          <th>模板名称</th>
-          <th>创建时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for temp in doctemp_list %}
-        <tr>
-          <td>{{ temp.name }}</td>
-          <td>{{ temp.create_time }}</td>
-          <td>
-              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
-{#              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>#}
-{#              <a href="javascript:void(0);" onclick="delTemp();">删除</a>#}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</div>
 {% endblock %}
+<div id="upload-img" style="display:none;margin:20px;">
+    <div class="layui-tab" lay-filter="img-tab">
+      <ul class="layui-tab-title">
+        <li class="layui-this">上传图片</li>
+        <li>选择图片</li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <button class="layui-btn layui-btn-normal layui-btn-lg" id="upload_img">点击上传图片</button>
+        </div>
+        <div class="layui-tab-item">
+            <div class="layui-row" id="select-img-group">
+            </div><hr>
+            <div class="layui-row" id="select-img"></div>
+            <div id="select-img-page"></div>
+        </div>
+      </div>
+    </div>
+</div>
+<script>
+    //按钮选择上传图片
+    var upload = layui.upload;
+    upload.render({
+        elem: '#upload_img',
+        url: '{% url "upload_doc_img" %}',
+        done: function(res, index, upload){ //上传后的回调
+            //上传成功
+            if(res.success == 1){
+                editor.insertValue("\n![](" + res.url + ")");
+                layer.closeAll();
+                layer.msg("上传成功");
+            }else{
+                layer.msg("上传出错，请重试！")
+            }
+        },
+        accept: 'images', //允许上传的文件类型
+        acceptMime:'image/*',
+        field:'manage_upload',
+        size: 5000, //最大允许上传的文件大小
+
+    })
+</script>
 </html>
