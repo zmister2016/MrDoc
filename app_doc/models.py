@@ -26,11 +26,27 @@ class Project(models.Model):
                            "pro_id":self.pk}
                        )
 
+# # 文集协作模型
+# class ProjectCollaborator(models.Model):
+#     project = models.ForeignKey(Project,on_delete=models.CASCADE)
+#     user = models.ForeignKey(User,on_delete=models.CASCADE)
+#     # 用户的协作模式：0表示可新建文档可修改删除自己新建的文档，1表示可新建文档可修改删除所有文档
+#     role = models.IntegerField(choices=((0,0),(1,1)),default=0,verbose_name='协作模式')
+#     create_time = models.DateTimeField(auto_now=True,verbose_name='添加时间')
+#     modify_time = models.DateTimeField(auto_now_add=True,verbose_name='修改时间')
+#
+#     def __str__(self):
+#         return self.project
+#
+#     class Meta:
+#         verbose_name = '文集协作'
+#         verbose_name_plural = verbose_name
+
 # 文档模型
 class Doc(models.Model):
     name = models.CharField(verbose_name="文档标题",max_length=50)
-    pre_content = models.TextField(verbose_name="编辑内容")
-    content = models.TextField(verbose_name="文档内容")
+    pre_content = models.TextField(verbose_name="编辑内容",null=True,blank=True)
+    content = models.TextField(verbose_name="文档内容",null=True,blank=True)
     parent_doc = models.IntegerField(default=0,verbose_name="上级文档")
     top_doc = models.IntegerField(default=0,verbose_name="所属项目")
     sort = models.IntegerField(verbose_name='排序',default=99)
@@ -65,7 +81,7 @@ class DocTemp(models.Model):
     modify_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        self.name
+        return self.name
 
     class Meta:
         verbose_name = '文档模板'
@@ -78,7 +94,7 @@ class ProjectReport(models.Model):
     allow_epub = models.IntegerField(default=0,verbose_name="前台导出EPUB")
 
     def __str__(self):
-        self.project.name
+        return self.project.name
 
     class Meta:
         verbose_name = '文集导出'

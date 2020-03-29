@@ -50,9 +50,9 @@ def img_upload(files, dir_name, user):
     file_name = files.name.replace(file_suffix,'').replace('.','') + '_' +str(int(time.time())) + '.' + file_suffix
     path_file=os.path.join(relative_path, file_name)
     path_file = settings.MEDIA_ROOT + path_file
-    print('文件路径：',path_file)
+    # print('文件路径：',path_file)
     file_url = settings.MEDIA_URL + relative_path + file_name
-    print("文件URL：",file_url)
+    # print("文件URL：",file_url)
     with open(path_file, 'wb') as f:
         for chunk in files.chunks():
             f.write(chunk) # 保存文件
@@ -72,9 +72,9 @@ def base_img_upload(files,dir_name, user):
     file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').split('.')[0] + '.png' # 日期时间
     path_file = os.path.join(relative_path, file_name)
     path_file = settings.MEDIA_ROOT + path_file
-    print('文件路径：', path_file)
+    # print('文件路径：', path_file)
     file_url = settings.MEDIA_URL + relative_path + file_name
-    print("文件URL：", file_url)
+    # print("文件URL：", file_url)
     with open(path_file, 'wb') as f:
         f.write(files_base)  # 保存文件
     Image.objects.create(

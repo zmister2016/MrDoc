@@ -1,16 +1,14 @@
-# MrDoc - 记录文档，汇聚思想，一个简单的文档记录和管理应用
-
-**PC端文档阅读界面：**
+# MrDoc - 记录文档，汇聚思想
 
 ![Mrdoc首页](./docs/mrdoc_2019080101.gif)
 
 ## 介绍
 
-州的先生 - https://zmister.com - 自用并完全开源、基于Python编写的文档写作系统。
+基于Python编写的文档写作系统，适合作为文档、知识和笔记管理工具。
 
-使用MarkDown快速记录你所思所想，仿GitBook两栏式阅读界面，清晰高效浏览。
+MarkDown快速书写，两栏式阅读布局，清晰高效浏览。
 
-当前版本为：**v0.3.3**，版本发布时间为**2020-03-21**，此版本主要更新了如下内容：
+当前版本为：**v0.3.4**，版本发布时间为**2020-03-29**，此版本主要更新了如下内容：
 
 - 修复后台管理无法删除文档的错误；
 - 修复后台新建无法新建文集的错误；
@@ -25,14 +23,14 @@
 
 MrDoc拥有以下特点：
 
-- 站点与用户系统简洁
+- 简洁的站点与用户系统
     - 基于Django自带的用户模型，实现简单高效的用户管理，支持用户注册、用户登录、管理员等控制等功能；
     - 支持全站关闭注册；
     - 支持注册邀请码配置；
     - 支持广告位自定义配置；
     - 支持统计代码自定义配置；
     
-- 文档系统清晰
+- 结构清晰地文档系统
     - 基于文集的文档撰写和阅读；
     - 基于Editormd的Markdown编辑器，支持Markdown语法的文档写作，支持图片粘贴上传，支持从本地MD文件中插入内容；
     - 提供文档模板功能，支持文档模板的创建、修改；
@@ -41,15 +39,15 @@ MrDoc拥有以下特点：
     - 支持文集后台导出为markdown文本格式.md文件、前台导出为EPUB电子书；
     - 基于文集进行权限控制，提供公开、私密、指定用户可见、访问码可见4种权限模式；
 
-
 在开发过程中，参考和借鉴了GitBook、ShowDoc、Wordbook等应用和网站的功能与样式，并使用了众多开源组件、插件。
 
 ## 应用核心依赖环境
 
-- 编程语言：Python 3+
-- Django框架：2.0+
+MrDoc基于Python语言的Django Web框架配合前端的LayUI、JQuery等库进行开发。
 
-## 安装教程
+后端环境推荐使用Python3.4+、Django2.1+的版本。
+
+## 安装简明教程
 
 ### 1、安装依赖库
 ```
@@ -57,7 +55,9 @@ pip install -r requirements.txt
 ```
 
 ### 2、配置数据库信息
-默认情况下，MrDoc使用Django的SQLite数据库，在旧版本MrDoc附带了一个Sqlit数据库，如果你使用的是MrDoc源码附带的Sqlite数据库，或使用Sqlite数据库，则无需另外配置数据库。
+
+默认情况下，MrDoc使用Django的SQLite数据库，如果你使用Sqlite数据库，则无需另外配置数据库。
+
 如果有配置其他数据库的需求，请在/MrDoc/MrDoc目录下打开settings.py文件，在约80行的位置，将如下代码：
 ```
 DATABASES = {
@@ -81,6 +81,7 @@ DATABASES = {
 }
 ```
 ### 3、初始化数据库
+
 在安装完所需的第三方库并配置好数据库信息之后，我们需要对数据库进行初始化。
 
 在项目路径下打开命令行界面，运行如下命令生成数据库迁移：
@@ -107,13 +108,10 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## 使用说明
+## 使用说明文档
 
 详见MrDoc使用文档:http://mrdoc.zmister.com
 
-## 二次开发说明
-
-详见MrDoc使用文档:http://mrdoc.zmister.com
 
 ## 问题提交和反馈
 
@@ -123,32 +121,31 @@ python manage.py runserver
 
 ### 2、加入MrDoc交流群
 
-加入MrDoc交流QQ群，群号为735507293，入群密码：mrdoc
+加入MrDoc交流QQ群，群号为**735507293**，入群密码：**mrdoc**
 
 
-## 版本更新
+## 更多应用截图
 
-关注州的先生微信公众号（ID：zmister2016）、博客 https://zmister.com 及时获取MrDoc版本更新信息。
+### 首页
+![MrDoc首页](./docs/mrdoc_index.jpg)
 
-## 更多截图
+### 文集页
+![](./docs/mrdoc_project.jpg)
 
 ### 文档界面
-![MrDoc文档页](./docs/mrdoc_docdetail.png)
+![MrDoc文档页](./docs/mrdoc_doc.jpg)
+
+### 文档编写界面
+![](./docs/mrdoc_doc_write.jpg)
+
+### 普通用户后台界面
+![MrDoc普通用户后台](./docs/mrdoc_user.jpg)
+
+### 管理员后台界面
+![MrDoc管理员后台](./docs/mrdoc_admin.jpg)
 
 ### 登录界面
 ![MrDoc登录页](./docs/mrdoc_login.png)
 
 ### 注册界面
 ![MrDoc注册页](./docs/mrdoc_register.png)
-
-### 文档写作界面
-![MrDoc写作页](./docs/mrdoc_write.png)
-
-### 文档模板界面
-![MrDoc文档模板页](./docs/mrdoc_doctemp.png)
-
-### 管理员后台界面
-![MrDoc管理员后台](./docs/mrdoc_admin.png)
-
-### 普通用户后台界面
-![MrDoc普通用户后台](./docs/mrdoc_user.png)

@@ -1,6 +1,8 @@
 from django.core.exceptions import PermissionDenied # 权限拒绝异常
-from django.http import Http404
+from django.http import Http404,JsonResponse
 from app_admin.models import SysSetting
+from app_api.models import UserToken
+from django import VERSION as django_version
 
 # 超级管理员用户需求
 def superuser_only(function):
@@ -56,3 +58,23 @@ def allow_report_file(function):
         else:
             raise Http404
     return _inner
+
+
+# Token头验证
+# def check_token(function):
+#     def _inner(request,*args,**kwargs):
+#         if django_version[0] == 2 and django_version[1] >= 2:
+#             headers = request.headers
+#             print(headers)
+#             if 'Mrdoc-Token' not in headers:
+#                 return JsonResponse({'data':'非法请求'})
+#             else:
+#                 token = headers['Mrdoc-Token']
+#                 is_vail = UserToken.objects.filter(token=token)
+#                 if is_vail.exists():
+#                     return function(request,*args,**kwargs)
+#                 else:
+#                     return JsonResponse({'data':'无效Token'})
+#         else:
+#             metas = request.META
+#     return _inner

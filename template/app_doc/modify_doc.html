@@ -23,17 +23,11 @@
 
             <!-- 标题 -->
             <div>
-                <label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="layui-icon layui-icon-edit"></i> 文档标题</label>
-                <div class="layui-input-block" style="margin-left:95px;">
+                <!--<label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="layui-icon layui-icon-edit"></i> 文档标题</label>-->
+                <div class="layui-input-block" style="margin-left:0;">
                   <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input">
                 </div>
             </div><br>
-
-            <!--<label class="doc-form-label">标题</label>-->
-            <!--<div class="layui-input-inline">-->
-              <!--<input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input" >-->
-            <!--</div>-->
-
 
             <label class="doc-form-label">文集</label>
             <div class="layui-input-inline">
@@ -42,10 +36,10 @@
               </select>
             </div>
 
-            <label class="doc-form-label">上级文档</label>
+            <!--<label class="doc-form-label">上级文档</label>-->
             <div class="layui-input-inline">
               <select name="parent_id" lay-verify="required" id="parent-doc">
-                  <option value="0"></option>
+                  <option value="0">选择上级文档</option>
               </select>
             </div>
 

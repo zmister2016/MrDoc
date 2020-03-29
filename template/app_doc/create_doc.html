@@ -8,18 +8,18 @@
         <div class="layui-form" style="">
             <!-- 标题 -->
             <div style="padding-bottom:10px;">
-                <label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="fa fa-header"></i> 文档标题</label>
-                <div class="layui-input-block" style="margin-left:95px;">
+                <!--<label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="fa fa-header"></i> 文档标题</label>-->
+                <div class="layui-input-block" style="margin-left:0px;">
                   <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
                 </div>
             </div>
 
             <div class="layui-row">
-                <div class="layui-col-md4 layui-col-sm6 " style="padding-bottom:10px;">
-                    <label class="doc-form-label">所属文集</label>
+                <div class="layui-col-md3 layui-col-sm6 " style="padding-bottom:10px;">
+                    <!--<label class="doc-form-label">所属文集</label>-->
                     <div class="layui-input-inline">
                       <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
-                        <option value=""></option>
+                        <option value="">请选择一个文集</option>
                         <option value="-1">新建文集</option>
                           {% for p in project_list %}
                           {% if p.role == 1 %}
@@ -37,10 +37,10 @@
                 </div>
 
                 <div class="layui-col-md3 layui-col-sm6" style="padding-bottom:10px;">
-                    <label class="doc-form-label">所属上级</label>
+                    <!--<label class="doc-form-label">所属上级</label>-->
                     <div class="layui-input-inline">
                       <select name="parent_id" lay-verify="required" id="parent-doc">
-                        <option value=""></option>
+                        <option value="">请选择所属上级</option>
                       </select>
                     </div>
                 </div>

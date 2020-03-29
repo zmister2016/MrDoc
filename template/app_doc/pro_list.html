@@ -42,7 +42,7 @@
                     </div>
                   <div class="layui-card-body">
                       <p>作者：{{p.create_user}}</p>
-                      <p>最新：<u>{{p.id | get_new_doc}}</u></p>
+                      <p style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">最新：<u title="{{p.id | get_new_doc}}">{{p.id | get_new_doc}}</u></p>
                       <p class="tooltip">简介：
                           {% if p.intro == "" %}
                           <span class="">此文集没有填写简介</span>
