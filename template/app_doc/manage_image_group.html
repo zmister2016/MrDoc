@@ -42,8 +42,8 @@
           <td>{{ group.group_name }}</td>
           <td>{{ group.id | img_group_cnt }}</td>
           <td>
-              <a href="javascript:void(0);"  onclick="modifyGroup('{{group.id}}')" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
-              <a href="javascript:void(0);" onclick="delGroup('{{group.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
+              <a href="javascript:void(0);"  onclick="modifyGroup('{{group.id}}')" class="layui-btn layui-btn-xs">修改</a>
+              <a href="javascript:void(0);" onclick="delGroup('{{group.id}}');" class="layui-btn layui-btn-xs">删除</a>
           </td>
         </tr>
         {% endfor %}

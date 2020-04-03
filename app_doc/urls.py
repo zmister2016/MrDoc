@@ -15,6 +15,8 @@ urlpatterns = [
     path('modify_pro_role/<int:pro_id>/',views.modify_project_role,name="modify_pro_role"),# 修改文集权限
     path('modify_pro_download/<int:pro_id>/', views.modify_project_download, name="modify_pro_download"),  # 修改文集前台下载权限
     path('check_viewcode/',views.check_viewcode,name='check_viewcode'),# 文集访问码验证
+    path('manage_project_colla/<int:pro_id>/',views.manage_project_collaborator,name="manage_pro_colla"), # 管理文集协作
+    path('manage_pro_colla_self/',views.manage_pro_colla_self,name="manage_pro_colla_self"), # 我协作的文集
     #################文档相关
     path('project-<int:pro_id>/doc-<int:doc_id>/', views.doc, name='doc'),  # 文档浏览页
     path('create_doc/', views.create_doc, name="create_doc"),  # 新建文档

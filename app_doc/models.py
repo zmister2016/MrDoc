@@ -26,21 +26,21 @@ class Project(models.Model):
                            "pro_id":self.pk}
                        )
 
-# # 文集协作模型
-# class ProjectCollaborator(models.Model):
-#     project = models.ForeignKey(Project,on_delete=models.CASCADE)
-#     user = models.ForeignKey(User,on_delete=models.CASCADE)
-#     # 用户的协作模式：0表示可新建文档可修改删除自己新建的文档，1表示可新建文档可修改删除所有文档
-#     role = models.IntegerField(choices=((0,0),(1,1)),default=0,verbose_name='协作模式')
-#     create_time = models.DateTimeField(auto_now=True,verbose_name='添加时间')
-#     modify_time = models.DateTimeField(auto_now_add=True,verbose_name='修改时间')
-#
-#     def __str__(self):
-#         return self.project
-#
-#     class Meta:
-#         verbose_name = '文集协作'
-#         verbose_name_plural = verbose_name
+# 文集协作模型
+class ProjectCollaborator(models.Model):
+    project = models.ForeignKey(Project,on_delete=models.CASCADE) # 文集
+    user = models.ForeignKey(User,on_delete=models.CASCADE) # 用户
+    # 用户的协作模式：0表示可新建文档，可修改、删除自己新建的文档，1表示可新建文档，可删除自己创建的文档、可修改所有文档
+    role = models.IntegerField(choices=((0,0),(1,1)),default=0,verbose_name='协作模式')
+    create_time = models.DateTimeField(auto_now=True,verbose_name='添加时间')
+    modify_time = models.DateTimeField(auto_now_add=True,verbose_name='修改时间')
+
+    def __str__(self):
+        return self.project
+
+    class Meta:
+        verbose_name = '文集协作'
+        verbose_name_plural = verbose_name
 
 # 文档模型
 class Doc(models.Model):

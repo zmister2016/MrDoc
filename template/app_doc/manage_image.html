@@ -14,10 +14,10 @@
                 <!--<div class="layui-input-inline">-->
                     <!--<input type="text" name="kw" id="kw"  placeholder="搜索图片" autocomplete="off" class="layui-input">-->
                 <!--</div>-->
-                <!--<button class="layui-btn layui-btn-normal" type="submit">搜索</button>-->
-                <button class="layui-btn layui-btn-normal" type="button" id="upload_img">上传图片</button>
-                <button class="layui-btn layui-btn-normal" type="button" onclick="createImgGroup()">新建分组</button>
-                <a class="layui-btn layui-btn-normal" href="{% url 'manage_img_group' %}">分组管理</a>
+                <!--<button class="layui-btn" type="submit">搜索</button>-->
+                <button class="layui-btn" type="button" id="upload_img">上传图片</button>
+                <button class="layui-btn" type="button" onclick="createImgGroup()">新建分组</button>
+                <a class="layui-btn" href="{% url 'manage_img_group' %}">分组管理</a>
             </div>
         </form>
 
@@ -56,13 +56,13 @@
         <div class="pagination">
             <span class="step-links">
                 {% if images.has_previous %}
-                    <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs">上一页</a>
                 {% endif %}
                 <span class="current">
                     当前页： {{ images.number }} 共 {{ images.paginator.num_pages }} 页
                 </span>
                 {% if images.has_next %}
-                    <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                    <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs">下一页</a>
                 {% endif %}
             </span>
         </div>

@@ -1,0 +1,64 @@
+{% extends 'app_doc/manage_base.html' %}
+{% load staticfiles %}
+{% block title %}我协作的文集{% endblock %}
+{% block content %}
+    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
+        <span class="layui-breadcrumb" lay-separator=">">
+          <a href="{% url 'manage_project' %}">文集管理</a>
+          <a><cite>我协作的文集</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+
+      <div class="layui-row">
+          <span style="font-size:18px;">协作的文集列表
+          </span>
+      </div>
+  </div>
+    {% if colla_pros.count != 0 %}
+    <div class="layui-row">
+        <table class="layui-table">
+            <thead>
+                <tr>
+                    <th>文集名称</th>
+                    <th>作者</th>
+                    <th>权限</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for colla in colla_pros %}
+                <tr>
+                    <td>{{ colla.project }}</td>
+                    <td>{{ colla.project.create_user }}</td>
+                    <td>
+                        {% if colla.role == 0 %}
+                            初级 - 可新建文档、修改和删除自己创建的文档
+                        {% else %}
+                            高级 - 可新建文档、修改所有文档、删除自己创建的文档
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'pro_index' colla.project.id %}" target="_blank" class="layui-btn layui-btn-xs">查看</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="layui-row">
+        你还没有成为任何文集的协作者
+    </div>
+    {% endif %}
+{% endblock %}
+{% block custom_script %}
+<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
+<script>
+    $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+    var form = layui.form;
+</script>
+{% endblock %}

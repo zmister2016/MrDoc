@@ -12,6 +12,7 @@
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
+    <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <style>
         body{
             background-color: #fafafa;
@@ -83,6 +84,7 @@
                 <a href="{% url 'forget_pwd' %}" class="register-link">忘记密码</a>
                 {% endif %}
 
+                <a href="{% url 'pro_list' %}" class="register-link">返回首页</a>
             </form>
         </div>
     </div>

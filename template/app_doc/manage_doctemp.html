@@ -14,8 +14,8 @@
             <div class="layui-input-inline">
                 <input type="text" name="kw" id="kw"  placeholder="输入文档模板内容" autocomplete="off" class="layui-input">
             </div>
-            <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
-            <button class="layui-btn layui-btn-normal" type="button"><a href="{% url 'create_doctemp' %}" target="_blank">新建文档模板</a></button>
+            <button class="layui-btn" type="submit">搜索</button>
+            <button class="layui-btn" type="button"><a href="{% url 'create_doctemp' %}" target="_blank">新建文档模板</a></button>
         </div>
         </form>
     </div>
@@ -40,8 +40,8 @@
           <td>{{ temp.create_time }}</td>
           <td>
 {#              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">查看</a>#}
-              <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
-              <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
+              <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank" class="layui-btn layui-btn-xs">修改</a>
+              <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');" class="layui-btn layui-btn-xs">删除</a>
           </td>
         </tr>
         {% endfor %}
@@ -53,13 +53,13 @@
         <div class="pagination">
             <span class="step-links">
                 {% if doctemps.has_previous %}
-                    <a href="?page={{ doctemps.previous_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ doctemps.previous_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-xs">上一页</a>
                 {% endif %}
                 <span class="current">
                     当前页： {{ doctemps.number }} 共 {{ doctemps.paginator.num_pages }} 页
                 </span>
                 {% if doctemps.has_next %}
-                    <a href="?page={{ doctemps.next_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                    <a href="?page={{ doctemps.next_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-xs">下一页</a>
                 {% endif %}
             </span>
         </div>

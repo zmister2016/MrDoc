@@ -35,3 +35,9 @@ def get_report_status(value):
 def get_img_group_cnt(value):
     cnt = Image.objects.filter(group_id=value).count()
     return cnt
+
+# 获取文集的协作用户数
+@register.filter(name='project_collaborator_cnt')
+def get_project_collaborator_cnt(value):
+    cnt = ProjectCollaborator.objects.filter(project=value).count()
+    return cnt

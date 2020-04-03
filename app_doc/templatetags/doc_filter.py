@@ -15,6 +15,15 @@ def get_next_doc(value):
 def get_doc_top(value):
     return Project.objects.get(id=int(value))
 
+# 获取用户是否为文集创建者
+@register.filter(name='is_colla_pro')
+def is_colla_pro(pro,user):
+    p = Project.objects.filter(id=pro,create_user=user)
+    if p.exists():
+        return ''
+    else:
+        return '【协作】'
+
 # 获取文档的上级文档名称
 @register.filter(name='get_doc_parent')
 def get_doc_parent(value):

@@ -6,6 +6,7 @@
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
+    <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <style>
         body{
             background-color: #fafafa;
@@ -91,6 +92,8 @@
                         <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">注册并登录</button>
                     </div>
                 </div>
+                 <a href="{% url 'login' %}" class="register-link">返回登录</a>
+                 <a href="{% url 'pro_list' %}" class="register-link">返回首页</a>
             </form>
         </div>
     </div>

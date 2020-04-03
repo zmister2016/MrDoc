@@ -21,17 +21,28 @@
                       <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
                         <option value="">请选择一个文集</option>
                         <option value="-1">新建文集</option>
+                          <!-- 自己的文集 -->
+                          <optgroup label="自有文集" id="self-project">
                           {% for p in project_list %}
-                          {% if p.role == 1 %}
-                          <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
-                          {% elif p.role == 2 %}
-                          <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
-                          {% elif p.role == 3 %}
-                          <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
-                          {% else %}
-                        <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
-                          {% endif %}
+                              {% if p.role == 1 %}
+                              <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
+                              {% elif p.role == 2 %}
+                              <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
+                              {% elif p.role == 3 %}
+                              <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
+                              {% else %}
+                              <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
+                              {% endif %}
                           {% endfor %}
+                          </optgroup>
+                          <!-- 协作的文集 -->
+                          {% if colla_project_list.count > 0 %}
+                          <optgroup label="协作文集">
+                          {% for p in colla_project_list %}
+                                <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
+                          {% endfor %}
+                          </optgroup>
+                          {% endif %}
                       </select>
                     </div>
                 </div>
@@ -110,7 +121,7 @@
                         $.post("{% url 'create_project' %}",data,function(r){
                             if(r.status){
                                 //创建成功，更新文集select
-                                $("#project").append("<option value="+r.data.id+">《"+r.data.name+"》</option>");
+                                $("#self-project").append("<option value="+r.data.id+">《"+r.data.name+"》</option>");
                                 form.render();
                                 //window.location.reload();
                                 layer.close(index)
@@ -208,9 +219,10 @@
             else{
                 $.post("{% url 'create_doc' %}",data,function(r){
                     if(r.status){
-                        //创建成功
+                        //保存成功
+                        md_changed = false;
                         layer.msg('保存草稿成功',function(){
-                            window.location.href = "/modify_doc/"+r.data+"/";
+                            window.location.href = "/modify_doc/"+r.data.doc+"/";
                         });
                     }else{
                         //创建失败

@@ -6,8 +6,9 @@
 {% block title %}{{ project.name }}{% endblock %}
 
 {% block head_toolbar %}
-    {% if request.user == project.create_user %}
-        <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
+    {% if request.user == project.create_user or colla_user > 0 %}
+        <span class="btn pull-left">|</span>
+        <a class="btn pull-left" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
             <i class="fa fa-edit"></i> 添加文档
         </a>
     {% endif %}

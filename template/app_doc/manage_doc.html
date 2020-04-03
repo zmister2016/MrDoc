@@ -20,23 +20,12 @@
             <div class="layui-input-inline" style="float:inherit;">
                 <input type="text" name="kw" id="kw" placeholder="输入文档内容" autocomplete="off" class="layui-input">
             </div>
-            <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
-            <button class="layui-btn layui-btn-normal"><a href="{% url 'create_doc' %}" target="_blank">新建文档</a></button>
+            <button class="layui-btn" type="submit">搜索</button>
+            <button class="layui-btn"><a href="{% url 'create_doc' %}" target="_blank">新建文档</a></button>
         </div>
         </form>
     </div>
-    <div class="layui-row">
-        <form action="{% url 'manage_doc' %}" method="get" class="layui-form">
-            <div class="layui-form-item">
-                <!--<span class="layui-breadcrumb doc_status_condition" lay-separator="|">-->
-                  <!--<a href="{% url 'manage_doc' %}?status=all" class="{% if doc_status == 'all' %}current{% endif %}">全部（{{all_cnt}}）</a>-->
-                  <!--<a href="{% url 'manage_doc' %}?status=published" class="{% if doc_status == 'published' %}current{% endif %}">已发布（{{published_doc_cnt}}）</a>-->
-                  <!--<a href="{% url 'manage_doc' %}?status=draft" class="{% if doc_status == 'draft' %}current{% endif %}">草稿（{{draft_doc_cnt}}）</a>-->
-                <!--</span>-->
-            </div>
 
-        </form>
-    </div>
     <div class="layui-row" lay-skin="line">
         <table class="layui-table"  id="doctemp-list" lay-skin="">
       <thead>
@@ -62,11 +51,13 @@
                 </td>
             {% endif %}
             <td>{{ doc.parent_doc|get_doc_parent }}</td>
-            <td>{{ doc.top_doc|get_doc_top }}</td>
+            <td>
+                {{ doc.top_doc|is_colla_pro:doc.create_user }}{{ doc.top_doc|get_doc_top }}
+            </td>
             <td>{{ doc.create_time }}</td>
             <td>
-                <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
-                <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
+                <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank" class="layui-btn layui-btn-xs">修改</a>
+                <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs">删除</a>
             </td>
         </tr>
         {% endfor %}
@@ -78,13 +69,13 @@
         <div class="pagination">
             <span class="step-links">
                 {% if docs.has_previous %}
-                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs">上一页</a>
                 {% endif %}
                 <span class="current">
                     当前页： {{ docs.number }} 共 {{ docs.paginator.num_pages }} 页
                 </span>
                 {% if docs.has_next %}
-                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs">下一页</a>
                 {% endif %}
             </span>
         </div>

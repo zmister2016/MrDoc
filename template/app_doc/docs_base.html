@@ -55,6 +55,10 @@
         ul.markdown-toc-list a{
             text-decoration: underline!important;
         }
+        /* 块级代码和行内代码去除边框 */
+        .markdown-body p code{
+            border:none;
+        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -76,9 +80,14 @@
         <div class="project-title">
             <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}
                 {% if project.role == 1 %}
-                    <i class="layui-icon layui-icon-password"></i>
+                    <i class="layui-icon layui-icon-password" title="私密文档"></i>
                 {% endif %}
             </a>
+            <p>
+                {% if colla_user > 0 %}
+                <span style="font-size:12px;color:gray;font-weight:100;">* 此为协作文集</span>
+                {% endif %}
+            </p>
         </div>
         <hr>
         <!-- 遍历文集大纲 -->
