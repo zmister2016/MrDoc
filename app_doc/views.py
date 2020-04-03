@@ -495,15 +495,14 @@ def create_doc(request):
 def modify_doc(request,doc_id):
     if request.method == 'GET':
         try:
-            doc = Doc.objects.get(id=doc_id)
-            project = Project.objects.get(id=doc.top_doc)
-            pro_colla = ProjectCollaborator.objects.get(project=project,user=request.user)
-            if request.user == doc.create_user or pro_colla.role == 1:
+            doc = Doc.objects.get(id=doc_id) # 查询文档信息
+            project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集信息
+            pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) # 查询用户的协作文集信息
+            if (request.user == doc.create_user) or (pro_colla[0].role == 1):
                 doc_list = Doc.objects.filter(top_doc=project.id)
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
                 return render(request,'app_doc/modify_doc.html',locals())
             else:
-                # return HttpResponse("非法的请求")
                 return render(request,'403.html')
         except Exception as e:
             if settings.DEBUG:
