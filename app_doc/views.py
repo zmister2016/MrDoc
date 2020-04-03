@@ -521,9 +521,9 @@ def modify_doc(request,doc_id):
 
             if doc_id != '' and project != '' and doc_name != '' and project != '-1':
                 doc = Doc.objects.get(id=doc_id)
-                pro_colla = ProjectCollaborator.objects.get(project=project, user=request.user)
+                pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)
                 # 验证用户有权限修改文档 - 文档的创建者或文集的高级协作者
-                if (request.user == doc.create_user) or (pro_colla.role == 1):
+                if (request.user == doc.create_user) or (pro_colla[0].role == 1):
                     # 更新文档内容
                     Doc.objects.filter(id=int(doc_id)).update(
                         name=doc_name,
