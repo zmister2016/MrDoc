@@ -8,24 +8,27 @@
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
+    <meta name="description" content="{% block description %}{% endblock %}" />
     <title>{% block title %}{% endblock %} - MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
-    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
-        .markdown-body ul li{
-            list-style:disc;
+        /* 编辑器图标样式 */
+        .editormd-menu i{
+            color: #333;
+            font-size: 16px;
         }
-        .markdown-body ul > li > ul > li{
-            list-style-type: circle;
+        /* 选择上级文档样式 */
+        .selected-parent-doc{
+            text-decoration-line: underline;
+            font-weight: 700;
+            color: black;
         }
-        .markdown-body ol li{
-            list-style-type: decimal;
-        }
-        .markdown-body ol ol ul,.markdown-body ol ul ul,.markdown-body ul ol ul,.markdown-body ul ul ul li{
-            list-style-type: square;
-        }
+        /* 选择图片 - 图片列表样式 */
         .select-img-list{
             cursor: pointer;
             position: relative;
@@ -51,35 +54,130 @@
             border-radius: 3px;
             overflow: hidden;
         }
-        /* 编辑器图标样式 */
-        .editormd-menu i{
-            color: black;
-            font-size: 20px;
+        /* layui分页组件样式 */
+        .layui-laypage .layui-laypage-curr .layui-laypage-em{
+            background-color: #1E9FFF !important;
         }
+        /* layui按钮 */
+        /* .layui-btn{
+            background-color: #00C6CF !important;
+        } */
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
-    {% block custom_style %}{% endblock %}
 
 </head>
-<body class="layui-container">
-<!-- 页头 -->
-{% include 'app_doc/head_base.html' %}
-<!-- 页头结束 -->
+<body>
+<div class="doc layui-fluid" style="padding-left:0px;">
+    <!-- 左侧工具栏 -->
+    <div class="doc-summary">
+        <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
+            <span style="font-size: 14px;">你正在：{% block editor_type %}{% endblock %}</span>
+        </div>
+        
+        <hr>
+        {% block left_opera %}
+        {% endblock %}
+    </div>
+    <!-- 左侧工具栏结束 -->
 
-<!-- 主体开始 -->
-<div class="layui-container">
-    {% block content %}
-    {% endblock %}
+    <!-- 右侧编辑器栏 -->
+    <div class="doc-body">
+        <!-- 文档导航 -->
+        <div class="doc-header" role="navigation">
+
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+                <i class="fa fa-align-justify"></i>
+            </a>
+            <!-- 顶部工具栏 -->
+            {% block head_toolbar %}
+            {% endblock %}
+            <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
+                <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
+            </a>
+        </div>
+        <!-- 文档主体 -->
+        <div class="doc-body-content" style="padding-left: 15px;">
+            <div class="mrdoc-body-content-div">
+                <!-- 文档内容 -->
+                <div class="mrdoc-editor-content">
+                    <!-- 正文开始 -->
+                    <div class="markdown-body" id="content">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                    <!-- 正文结束 -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 右侧编辑器结束 -->
 </div>
-<!-- 主体结束 -->
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
 <script src="{% static 'editor.md/editormd.min.js' %}"></script>
 <script src="{% static 'mrdoc.editor.js' %}"></script>
+<script src="{% static 'mrdoc.js' %}?version={{mrdoc_version}}"></script>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    var tree = layui.tree;
+    //加载页面时执行一次
+    changeSidebar();
+    //监听浏览器宽度的改变
+    window.onresize = function(){
+        changeSidebar();
+    };
+    function changeSidebar(){
+        // 获取匹配指定的媒体查询
+        var screen_width = window.matchMedia('(max-width: 768px)');
+        //判断匹配状态
+        if(screen_width.matches){
+            //如果匹配到，切换侧边栏
+            //console.log('小屏幕')
+            $("body").addClass("big-page");
+        }else{
+            $("body").removeClass("big-page");
+        }
+    }
+    </script>
+    <!-- 切换隐藏侧边栏 -->
+    <script>
+        // 切换侧边栏
+        $(function(){
+            $(".js-toolbar-action").click(toggleSidebar);
+        });
+        //切换侧边栏显示隐藏
+        function toggleSidebar(){
+            console.log("切换侧边栏")
+            $("body").toggleClass("big-page");
+            return false;
+        }
+    </script>
+
+    <!-- 展开收起左边目录 -->
+    <script>
+        $(function(){
+            $(".switch-toc").click(SwitchToc);
+        });
+        function SwitchToc(i){
+            var $me = $(this);
+            $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
+            $(this).toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+        };
+    </script>
 <script>
     $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -92,7 +190,7 @@
     //初始化editormd
     var editor = editormd("editor-md", {
         width       :   "100%",
-        height      :   "1000px;",
+        height      :   "800px",
         placeholder :   "开始使用Markdown书写MrDoc文档，编辑器支持以下功能：\n1.粘贴上传图片\n2.六级标题\n3.代码高亮\n4.本地图片和外链图片\n5.表格\n6.多级列表和任务列表\n7.Katex公式\n8.流程图\n9.时序图\n……",
         toolbarIcons : function() {
             return [
@@ -112,7 +210,7 @@
         //自定义工具栏添加图片按钮
         toolbarIconsClass : {
             imgUpload:'fa-image',
-            attachment:'fa-file-zip-o',
+            attachment:'fa-upload',
             htmltable:'fa-table',
         },
         //设置自定义工具栏按钮的事件
@@ -166,7 +264,7 @@
                             if(r.status){
                                 // $.each(r.data,function(k,v){
                                 //     console.log(k,v)
-                                //     var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                //     var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
                                 //     $("#attach_table tbody").append(row)
                                 // })
                                 //调用分页显示
@@ -179,7 +277,7 @@
                                         $("#attach_table tbody").empty();
                                         var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                                         layui.each(thisData, function(k, v){
-                                            var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                            var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
                                             // arr.push(row);
                                             $("#attach_table tbody").append(row)
                                         });
@@ -208,7 +306,7 @@
                     btn:['确定','取消'], //添加按钮
                     yes:function(index,layero){
                         var table_md = convertTable("DataTable1")
-                        //console.log(table_md)
+                        console.log(table_md)
                         editor.insertValue("\n" + table_md);
                         $("#TableGroup").empty();//清空表格
                         layer.close(index)
@@ -297,7 +395,7 @@
             if(r.status){
                 //console.log(r.data)
                 group_btn_str = ''
-                for(let i in r.data){
+                for(var i in r.data){
                     group_btn_str += '<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="switchImgGroup(' + r.data[i].group_id +')">' + r.data[i].group_name + '(' + r.data[i].group_cnt + ')</button>'
                 };
                 $("#select-img-group").append(group_btn_str)
@@ -392,7 +490,7 @@
       </ul>
       <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload_img">点击上传图片</button>
+            <button class="layui-btn layui-btn-normal layui-btn-fluid" id="upload_img"><i class="layui-icon layui-icon-upload"></i> 点击上传图片</button>
         </div>
         <div class="layui-tab-item">
             <div class="layui-row" id="select-img-group">
@@ -407,8 +505,8 @@
 <div id="upload-attach" style="display:none;margin:20px;">
     <span>* 仅支持.zip格式的压缩文件作为附件，文件大小不超过50Mb</span>
     <div style="margin: 10px 0 0 10px;">
-        <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload_attachment">点击上传附件</button>
-        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_attachment' %}" target="_blank">管理附件</a>
+        <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload_attachment"><i class="layui-icon layui-icon-upload"></i> 点击上传附件</button>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_attachment' %}" target="_blank"><i class="fa fa-cubes"></i> 管理附件</a>
     </div>
     <table class="layui-table" id="attach_table" style="margin: 10px;width:90%;">
         <thead>
@@ -487,8 +585,8 @@
         field:'attachment_upload',
         size: 50000, //最大允许上传的文件大小
     })
-    //修改a标签链接新窗口打开
-    $('#content').on('click','a',function(e){
+    //修改预览div中a标签链接新窗口打开
+    $('div.editormd-preview').on('click','a',function(e){
         e.target.target = '_blank';
     });
 </script>

@@ -1,7 +1,7 @@
-{% extends 'app_doc/create_base.html' %}
+{% extends 'app_doc/create_base_2.html' %}
 {% load staticfiles %}
 {% block title %}修改文档{% endblock %}
-{% block subtitle %}修改文档{% endblock %}
+{% block editor_type %}修改文档{% endblock %}
 
 {% block custom_style %}
 <style>
@@ -17,54 +17,88 @@
     </style>
 {% endblock %}
 
-{% block content %}
-    <div class="create-doc-form">
-        <div class="layui-form">
+{% block head_toolbar %}
+<a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
+    <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">新建文档</span>
+</a>
+<a class="btn pull-left" aria-label="" href="{% url 'manage_doc' %}?pid={{project.id}}" target="_blank">
+    <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理文档</span>
+</a>
+<a class="btn pull-left" aria-label="" href="{% url 'manage_project' %}" target="_blank">
+    <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理文集</span>
+</a>
+{% endblock %}
 
-            <!-- 标题 -->
-            <div>
-                <!--<label class="layui-form-label" style="padding-left:0px;padding-right:0px;"><i class="layui-icon layui-icon-edit"></i> 文档标题</label>-->
-                <div class="layui-input-block" style="margin-left:0;">
-                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input">
-                </div>
-            </div><br>
+{% block left_opera %}
+<div class="layui-form" style="padding:0 10px 10px 10px;">
+    <div class="layui-row">
+        <div class="doc-form-label" style="margin-bottom: 10px;">
+            {% if doc.status == 0 %}
+            <strong>*当前文档状态为：草稿</strong>
+            {% elif doc.status == 1 %}
+            <strong>*当前文档状态为：已发布 </strong><a class="layui-btn layui-btn-xs layui-btn-normal" target="_blank" href="{% url 'doc' doc.top_doc doc.id %}">查看文档</a>
+            {% endif %}
+        </div>
 
-            <label class="doc-form-label">文集</label>
-            <div class="layui-input-inline">
-              <select name="pro_id" lay-verify="required"  lay-filter="project" id="project" disabled>
+        <div class="layui-col-md12" style="margin-bottom: 10px;">
+            <label class="doc-form-label" style="margin-right:0px;">
+                <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp" title="插入模板内容">
+                    <i class="fa fa-clipboard"></i> 模板
+                </button>
+            </label>
+
+            <label class="doc-form-label" style="margin-right:0px;">
+                <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
+                <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
+                    <i class="fa fa-clipboard"></i> 文本
+                </button>
+            </label>
+
+            <label class="doc-form-label">
+                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                    <i class="fa fa-save"></i> 保存
+                </button>
+            </label>
+            <label class="doc-form-label">
+                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                    <i class="fa fa-save"></i> 发布
+                </button>
+            </label>
+        </div>
+
+        <div class="layui-col-md12" style="margin-bottom: 10px;">
+            <div class="layui-input-inblock">
+              <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
                 <option value="{{ project.id }}">{{ project.name }}</option>
               </select>
             </div>
+        </div>
 
-            <!--<label class="doc-form-label">上级文档</label>-->
-            <div class="layui-input-inline">
-              <select name="parent_id" lay-verify="required" id="parent-doc">
-                  <option value="0">选择上级文档</option>
-              </select>
+        <div class="layui-row">
+            <div class="layui-col-md12" style="margin-bottom: 10px;">
+                <span>点击文档树选择上级（可选）或</span>
+                <button class="layui-btn layui-btn-xs layui-btn-normal" id="clearParentDoc">不设上级</button>
+                <input type="text" id="parent-doc" hidden> 
             </div>
-
-            <label class="doc-form-label">排序</label>
-            <div class="layui-input-inline">
-              <input class="layui-input" placeholder="99" style="width:50px;" name="sort" id="sort" value="{{doc.sort}}"/>
+            <div class="layui-col-md12">
+                <input type="number" class="layui-input" placeholder="输入文档排序值，默认99" id="sort" value="{{doc.sort}}">
             </div>
+            
+        </div>
+        <div class="layui-col-md12" id="doc-tree"></div>
+        
+    </div>
+</div>
+{% endblock %}
 
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-primary layui-btn-sm" id="sel-doctemp">插入模板</button>
-            </label>
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()">保存草稿</button>
-            </label>
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()">发布文档</button>
-            </label>
-            <label class="doc-form-label">
-                {% if doc.status == 0 %}
-                <span>*当前状态：草稿</span>
-                {% elif doc.status == 1 %}
-                <span>*当前状态：已发布</span>
-                {% endif %}
-            </label>
-
+{% block content %}
+    <div class="create-doc-form">
+        <div class="layui-form">
+            <!-- 标题 -->
+            <div class="layui-input-block" style="margin-left:0;">
+                <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input">
+            </div>
+            <br>
         </div>
     </div>
     <div id="editor-md">
@@ -75,21 +109,49 @@
 
 {% block custom_script %}
     <script>
-        //获取上级文档信息
+        //获取文档数和上级文档信息
         $(function(){
             var doc_parent_id = {{ doc.parent_doc }};
-           $.post('{% url 'get_pro_doc' %}',{'pro_id':$("#project").val()},function(r){
+            $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
                 if(r.status){
-                    //解析文集的下级文档
-                    for(let i in r.data) {
-                        console.log(doc_parent_id,r.data[i][2])
-                        if(r.data[i][0] == doc_parent_id){
-                            $("#parent-doc").append("<option value='"+r.data[i][0]+"' selected>"+r.data[i][3]+r.data[i][1]+"</option>")
-                        }else{
-                            $("#parent-doc").append("<option value='"+r.data[i][0]+"'>"+r.data[i][3]+r.data[i][1]+"</option>")
+                    var doc_tree = tree.render({
+                        elem:"#doc-tree",
+                        id:'docTree',
+                        onlyIconControl:true,
+                        data:r.data,
+                        click: function(obj){
+                            if(obj.data.level != 3){
+                                console.log(obj.data.id,doc_parent_id)
+                                if(obj.data.id != {{ doc.id }} ){
+                                    $('#parent-doc').val(obj.data.id);// 设置上级文档
+                                    $("div.layui-tree-set").each(function(i){
+                                        var $me = $(this)
+                                        if($me.data('id') == obj.data.id){
+                                            // console.log('点击了')
+                                            $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                                        }else{
+                                            $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                                        }
+                                    });
+                                }else{
+                                    layer.msg("不可选择自己作为上级")
+                                };
+                                
+                            }else{
+                                layer.msg("第三级文档不能作为上级文档")
+                            };
+                            
                         }
-                    };
-                    form.render();
+                    });
+                    $('#parent-doc').val(doc_parent_id);// 设置上级文档
+                    $("div.layui-tree-set").each(function(i){
+                        var $me = $(this)
+                        if($me.data('id') == doc_parent_id){
+                            $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                        }else{
+                            $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                        }
+                    });
                 }else{
                     layer.msg("获取下级文档失败！")
                 }
@@ -136,6 +198,7 @@
                 if(r.status){
                     //修改成功
                     layer.msg('保存成功',function(){
+                        md_changed = false;
                         window.location.href = "{% url 'modify_doc' doc.id %}";
                     });
                 }else{
@@ -192,7 +255,7 @@
           <td>{{ temp.name }}</td>
           <td>{{ temp.create_time }}</td>
           <td>
-              <a href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
+              <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertTemp('{{temp.id}}');">选择模板</a>
 {#              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>#}
 {#              <a href="javascript:void(0);" onclick="delTemp();">删除</a>#}
           </td>

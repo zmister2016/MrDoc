@@ -15,9 +15,9 @@
                     <!--<input type="text" name="kw" id="kw"  placeholder="搜索图片" autocomplete="off" class="layui-input">-->
                 <!--</div>-->
                 <!--<button class="layui-btn" type="submit">搜索</button>-->
-                <button class="layui-btn" type="button" id="upload_img">上传图片</button>
-                <button class="layui-btn" type="button" onclick="createImgGroup()">新建分组</button>
-                <a class="layui-btn" href="{% url 'manage_img_group' %}">分组管理</a>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" id="upload_img"><i class="layui-icon layui-icon-upload"></i>上传图片</button>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" onclick="createImgGroup()"><i class="layui-icon layui-icon-addition"></i>新建分组</button>
+                <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_img_group' %}">分组管理</a>
             </div>
         </form>
 
@@ -50,21 +50,27 @@
             {% endfor %}
         </ul>
     </div>
-    <!-- 分页 -->
     <hr>
+    <!-- 分页 -->
     <div class="layui-row">
-        <div class="pagination">
-            <span class="step-links">
+        <div class="layui-box layui-laypage layui-laypage-default">
+                <!-- 上一页 -->
                 {% if images.has_previous %}
-                    <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs">上一页</a>
+                    <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                {% else %}
+                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
                 {% endif %}
-                <span class="current">
-                    当前页： {{ images.number }} 共 {{ images.paginator.num_pages }} 页
+                <!-- 当前页 -->
+                <span class="layui-laypage-curr">
+                    <em class="layui-laypage-em"></em>
+                    <em>{{ images.number }}/{{ images.paginator.num_pages }}</em>
                 </span>
+                <!-- 下一页 -->
                 {% if images.has_next %}
-                    <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs">下一页</a>
+                    <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                {% else %}
+                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
                 {% endif %}
-            </span>
         </div>
     </div>
 {% endblock %}

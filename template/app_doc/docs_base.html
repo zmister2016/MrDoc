@@ -59,6 +59,12 @@
         .markdown-body p code{
             border:none;
         }
+        /* 分享图标样式 */
+        /* .share-div a{
+            background-color: #00C6CF !important;
+            color: white !important;
+            border-color: #00C6CF !important;
+        } */
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -90,6 +96,11 @@
             </p>
         </div>
         <hr>
+        <!-- <div style="margin-left:15px;">
+            <a href="javascript:void(0);" onclick="openDocTree()"><i class="fa fa-bars"></i> 展开</a>
+            <a href="javascript:void(0);" onclick="closeDocTree()"><i class="fa fa-bars"></i> 折叠</a>
+        </div> -->
+        
         <!-- 遍历文集大纲 -->
         {% load doc_filter %}
         <nav>
@@ -208,7 +219,6 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<!--<script src="{% static 'prism/prism.js' %}"></script>-->
 <script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
@@ -227,7 +237,7 @@
     };
     function changeSidebar(){
         // 获取匹配指定的媒体查询
-        let screen_width = window.matchMedia('(max-width: 768px)');
+        var screen_width = window.matchMedia('(max-width: 768px)');
         //判断匹配状态
         if(screen_width.matches){
             //如果匹配到，切换侧边栏
@@ -279,18 +289,16 @@
     <!-- 页面初始化字体设置 -->
     <script>
         font_stauts = window.localStorage.getItem('font-sans')
-        //font_size = window.localStorage.getItem('font-size')
-        if(font_stauts == 'serif'){
+        if(font_stauts == 'serif'){// 字体类型
             $(".doc-content").toggleClass("switch-font")
             $("#content").toggleClass("switch-font")
         }
-        if(window.localStorage.getItem('font-size')){
+        if(window.localStorage.getItem('font-size')){// 字体大小
             font_size = window.localStorage.getItem('font-size')
             console.log(font_size)
-            //$('.doc-info h1').css({'font-size':font_size+'rem'})
             $('#content').css({'font-size':font_size+'rem'})
         }else{
-            window.localStorage.setItem('font-size',0.8)
+            window.localStorage.setItem('font-size',1.0)
         }
     </script>
     <!-- 返回顶部 -->
@@ -351,7 +359,6 @@
             console.log(font_size)
             if(parseFloat(font_size) < 1.4){
                 size = parseFloat(font_size) + 0.1
-                //$('.doc-info h1').css({'font-size':size+'rem'})
                 $('#content').css({'font-size':size+'rem'})
                 window.localStorage.setItem('font-size',size)
             }else{
@@ -364,10 +371,8 @@
         });
         function smallFont(){
             var font_size = window.localStorage.getItem('font-size')
-            //console.log(font_size)
             if(parseFloat(font_size) >= 0.6){
-                size = parseFloat(font_size) - 0.2
-                //$('.doc-info h1').css({'font-size':size+'rem'})
+                size = parseFloat(font_size) - 0.1
                 $('#content').css({'font-size':size+'rem'})
                 window.localStorage.setItem('font-size',size)
             }else{
@@ -384,6 +389,26 @@
             var $me = $(this);
             $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
             $(this).toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+        };
+    </script>
+
+    <!-- 展开\收起文档树 -->
+    <script>
+        function openDocTree(){
+            $("nav ul.summary ul").each(function(obj){
+                console.log(obj,this)
+                $(this).removeClass("toc-close")
+                $(this).prev().children('i').toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+            })
+            
+        };
+        function closeDocTree(){
+            $("nav ul.summary ul").each(function(obj){
+                console.log(obj,this)
+                $(this).addClass("toc-close")
+                $(this).prev().children('i').toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+            })
+            
         };
     </script>
 

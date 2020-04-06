@@ -125,3 +125,19 @@ class Image(models.Model):
     class Meta:
         verbose_name = '素材图片'
         verbose_name_plural = verbose_name
+
+
+# 附件模型
+class Attachment(models.Model):
+    file_name = models.CharField(max_length=200,verbose_name="附件名",default='mrdoc_附件.zip')
+    file_size = models.CharField(max_length=100,verbose_name="附件大小",blank=True,null=True)
+    file_path = models.FileField(upload_to='attachment/%Y/%m/',verbose_name='附件')
+    user = models.ForeignKey(User,on_delete=models.CASCADE,)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file_name
+
+    class Meta:
+        verbose_name = '附件管理'
+        verbose_name_plural = verbose_name

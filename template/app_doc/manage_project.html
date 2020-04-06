@@ -14,14 +14,14 @@
             <div class="layui-input-inline">
                 <input type="text" name="kw" id="kw" placeholder="输入文集内容" autocomplete="off" class="layui-input">
             </div>
-            <button class="layui-btn" type="submit">搜索</button>
-            <button class="layui-btn" onclick="createProject()" type="button">新建文集</button>
-            <a class="layui-btn" href="{% url 'manage_pro_colla_self' %}">我协作的文集</a>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search" ></i>搜索</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createProject()" type="button"><i class="layui-icon layui-icon-addition"></i>新建文集</button>
+            <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_pro_colla_self' %}"><i class="layui-icon layui-icon-group"></i>我协作的文集</a>
         </div>
         </form>
     </div>
-    <div class="layui-row" lay-skin="line">
-        <table class="layui-table"  id="doctemp-list" lay-skin="">
+    <div class="layui-row">
+        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-size="" lay-even>
             <colgroup>
             <col width="100">
             <col width="200">
@@ -29,7 +29,7 @@
             <col width="100">
             <col width="50">
             <col width="100">
-            <col width="100">
+            <col width="60">
             <col width="150">
             </colgroup>
       <thead>
@@ -62,22 +62,27 @@
           <td>
               <div class="layui-input-inline">
               {% if pro.role == 0 %}
-                  <i class="layui-icon layui-icon-circle"></i> 公开 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+                  <i class="layui-icon layui-icon-circle-dot" style="color: #01AAED;"></i> 公开 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
               {% elif pro.role == 1 %}
-                  <i class="layui-icon layui-icon-menu-fill"></i> 私密 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+                  <i class="layui-icon layui-icon-password"></i> 私密 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
               {% elif pro.role == 2 %}
-                  <i class="layui-icon layui-icon-group"></i> 指定用户可见 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+                  <i class="layui-icon layui-icon-group"></i> 指定用户 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
               {% elif pro.role == 3 %}
-                  <i class="layui-icon layui-icon-key"></i> 访问码可见 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
+                  <i class="layui-icon layui-icon-key"></i> 访问码 <a href="{% url 'modify_pro_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
               {% endif %}
               </div>
           </td>
             <td>{{ pro.id | project_collaborator_cnt }} <a href="{% url 'manage_pro_colla' pro.id %}"  title="管理文集协作"><i class="layui-icon layui-icon-edit"></i></a></td>
           <td>
-              <!--<a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">查看</a>-->
-              <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-xs">修改</a>
-              <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-xs">删除</a>
-              <a href="javascript:void(0);" onclick="reportMd('{{pro.id}}')" class="layui-btn layui-btn-xs">导出</a>
+              <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                <i class="layui-icon layui-icon-edit"></i>修改
+            </a>
+              <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
+                <i class="layui-icon layui-icon-delete"></i>删除
+            </a>
+              <a href="javascript:void(0);" onclick="reportMd('{{pro.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                <i class="layui-icon layui-icon-export"></i>导出
+            </a>
           </td>
         </tr>
         {% endfor %}
@@ -86,18 +91,24 @@
     </div>
     <!-- 分页 -->
     <div class="layui-row">
-        <div class="pagination">
-            <span class="step-links">
+        <div class="layui-box layui-laypage layui-laypage-default">
+                <!-- 上一页 -->
                 {% if pros.has_previous %}
-                    <a href="?page={{ pros.previous_page_number }}&kw={{pros.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ pros.previous_page_number }}&kw={{pros.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                {% else %}
+                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
                 {% endif %}
-                <span class="current">
-                    当前页： {{ pros.number }} 共 {{ pros.paginator.num_pages }} 页
+                <!-- 当前页 -->
+                <span class="layui-laypage-curr">
+                    <em class="layui-laypage-em"></em>
+                    <em>{{ pros.number }}/{{ pros.paginator.num_pages }}</em>
                 </span>
+                <!-- 下一页 -->
                 {% if pros.has_next %}
-                    <a href="?page={{ pros.next_page_number }}&kw={{pros.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">下一页</a>
+                    <a href="?page={{ pros.next_page_number }}&kw={{pros.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                {% else %}
+                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
                 {% endif %}
-            </span>
         </div>
     </div>
 {% endblock %}

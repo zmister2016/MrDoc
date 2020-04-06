@@ -14,21 +14,37 @@
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+    <style>
+        .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after{
+            background-color: #333 !important;
+        }
+        .layui-nav .layui-nav-child dd.layui-this a, .layui-nav-child dd.layui-this{
+            background-color: #333 !important;
+        }
+        /* layui分页组件样式 */
+        .layui-laypage .layui-laypage-curr .layui-laypage-em{
+            background-color: #333 !important;
+        }
+    </style>
 </head>
 <body class="layui-container">
 <!-- 页头 -->
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
 
+{% if kw != '' %}
+    <div style="text-align: center;margin-top: 5px;">符合“<span style="color: #FF5722;font-weight: 700;">{{kw}}</span>”的搜索结果：</div>
+{% endif %}
+
 <!-- 主体 -->
 <div class="layui-container project-list-content" style="display:flex;flex-wrap:wrap;">
     <!-- 遍历文集列表 -->
     {% load project_filter %}
-    {% for p in project_list %}
-        <div class="project-item layui-col-md3 layui-col-xs12">
+    {% for p in projects %}
+        <div class="layui-col-md3 layui-col-xs12 project-item">
             <a href="{% url 'pro_index' p.id %}" title="{{p.name}}">
                 <div class="layui-card">
-                    <div class="layui-card-header" style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <div class="layui-card-header" style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;color: black;">
                         {% if p.role == 1 %}
                         <strong><i class="layui-icon layui-icon-password"></i> {{ p.name }}</strong>
                         {% elif p.role == 2 %}
@@ -62,6 +78,28 @@
     {% endif %}
 </div>
 <!-- 主体结束 -->
+<!-- 分页 -->
+<div class="layui-row project-list-page" style="text-align: center;">
+    <div class="layui-box layui-laypage layui-laypage-default">
+            <!-- 上一页 -->
+            {% if projects.has_previous %}
+                <a href="?page={{ projects.previous_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+            {% else %}
+                <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+            {% endif %}
+            <!-- 当前页 -->
+            <span class="layui-laypage-curr">
+                <em class="layui-laypage-em"></em>
+                <em>{{ projects.number }}/{{ projects.paginator.num_pages }}</em>
+            </span>
+            <!-- 下一页 -->
+            {% if projects.has_next %}
+                <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+            {% else %}
+                <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+            {% endif %}
+    </div>
+</div>
 
 <!-- 页脚 -->
 {% include 'app_doc/foot_base.html' %}
@@ -184,7 +222,7 @@
                 console.log($(".layui-header").height()+$(".layui-container").height())
                 console.log($(window).height())
                 //如果页面内容高度小于屏幕高度，div#footer将绝对定位到屏幕底部，否则div#footer保留它的正常静态定位
-                if(($(".layui-header").height()+$(".project-list-content").height()) < $(window).height()) {
+                if(($(".layui-header").height() + $(".project-list-content").height() + $(".project-list-page").height()) < $(window).height()) {
                     console.log("页脚置底")
                     $(".layui-footer").css({ position: "absolute",left:"0" }).stop().css({top:footerTop});
                 }

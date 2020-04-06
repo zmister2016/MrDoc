@@ -21,8 +21,8 @@
         </div>
         </form>
     </div>
-    <div class="layui-row" lay-skin="line">
-        <table class="layui-table"  id="doctemp-list" lay-skin="">
+    <div class="layui-row">
+        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
             <colgroup>
             <col width="200">
             <col width="200">
@@ -42,8 +42,12 @@
           <td>{{ group.group_name }}</td>
           <td>{{ group.id | img_group_cnt }}</td>
           <td>
-              <a href="javascript:void(0);"  onclick="modifyGroup('{{group.id}}')" class="layui-btn layui-btn-xs">修改</a>
-              <a href="javascript:void(0);" onclick="delGroup('{{group.id}}');" class="layui-btn layui-btn-xs">删除</a>
+              <a href="javascript:void(0);"  onclick="modifyGroup('{{group.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                <i class="layui-icon layui-icon-edit"></i>修改
+            </a>
+              <a href="javascript:void(0);" onclick="delGroup('{{group.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
+                <i class="layui-icon layui-icon-delete"></i>删除
+            </a>
           </td>
         </tr>
         {% endfor %}

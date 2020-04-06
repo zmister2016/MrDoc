@@ -1,18 +1,12 @@
 ## MrDoc - 记录文档，汇聚思想
 
-![Mrdoc首页](./docs/mrdoc_2019080101.gif)
+![Mrdoc首页](./captrue/mrdoc-index.png)
 
 ## 介绍
 
-基于Python编写的文档写作系统，适合作为文档、知识和笔记管理工具。
+`MrDoc`是基于`Python`开发的在线文档系统，适合作为个人和小型团队的文档、知识和笔记管理工具。
 
-MarkDown快速书写，两栏式阅读布局，清晰高效浏览。
-
-当前版本为：**v0.3.4**，版本发布时间为**2020-04-03**
-
-完整更新记录详见：[CHANGES.md](./CHANGES.md)
-
-MrDoc拥有以下特点：
+### 特性：
 
 - 简洁的站点与用户系统
     - 支持用户注册、用户登录、用户管理、管理员等控制等功能；
@@ -23,14 +17,19 @@ MrDoc拥有以下特点：
     
 - 结构清晰地文档系统
     - 基于文集的文档撰写和阅读；
-    - 基于Editormd的Markdown编辑器，支持Markdown语法的文档写作，支持图片粘贴上传，支持从本地MD文件中插入内容；
+    - 使用基于`Editormd`的`Markdown`编辑器并扩展，以`Markdown`语法进行文档写作；
     - 提供文档模板功能，支持文档模板的创建、修改；
-    - 仿GitBook文档阅读页面，支持文档阅读页面的字体缩放，字体类型修改，页面社交分享，良好的移动端阅读体验；
+    - 两栏式文档阅读页面，支持文档阅读页面的字体缩放，字体类型修改，页面社交分享，良好的移动端阅读体验；
     - 支持三级目录层级显示；
-    - 支持文集后台导出为markdown文本格式.md文件、前台导出为EPUB电子书；
+    - 支持文集后台导出为`markdown`文本格式`.md`文件、前台导出为`EPUB`等格式文件；
     - 基于文集进行权限控制，提供公开、私密、指定用户可见、访问码可见4种权限模式；
-    - 支持基于账户的API接口，可以借助账户token通过API获取文集、上传图片和创建文档；
+    - 支持基于账户的`API`接口，可以借助账户`token`通过`API`获取文集、上传图片和创建文档；
     - 支持文集协作功能，一个文集可以拥有一个创建者和多个协作者，可灵活选择协作权限；
+    - 支持附件上传和管理、图片上传和管理；
+
+当前版本为：**v0.4**，版本发布时间为**2020-04-06**
+
+完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
 在开发过程中，参考和借鉴了GitBook、ShowDoc、Wordbook等应用和网站的功能与样式，并使用了众多开源组件、插件。
 
@@ -103,14 +102,13 @@ python manage.py runserver
 
 ## 使用说明文档
 
-详见MrDoc使用文档:http://mrdoc.zmister.com
-
+详见MrDoc使用文档: [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
 
 ## 问题提交和反馈
 
 ### 1、提交issue
 
-直接在https://gitee.com/zmister/MrDoc/issues 页面提交问题。
+直接在[https://gitee.com/zmister/MrDoc/issues](https://gitee.com/zmister/MrDoc/issues) 页面提交问题。
 
 ### 2、加入MrDoc交流群
 
@@ -119,26 +117,23 @@ python manage.py runserver
 
 ## 更多应用截图
 
-### 首页
-![MrDoc首页](./docs/mrdoc_index.jpg)
+### 文集浏览页面
+![MrDoc文集页面](./captrue/mrdoc-project-index.png)
 
-### 文集页
-![](./docs/mrdoc_project.jpg)
+### 文档阅读页面
+![MrDoc文档页](./captrue/mrdoc-doc.png)
 
-### 文档界面
-![MrDoc文档页](./docs/mrdoc_doc.jpg)
+### 文档编写页面
+![](./captrue/mrdoc-create-doc.png)
 
-### 文档编写界面
-![](./docs/mrdoc_doc_write.jpg)
+### 普通用户个人中心
+![MrDoc普通用户后台](./captrue/mrdoc-manage-project.png)
 
-### 普通用户后台界面
-![MrDoc普通用户后台](./docs/mrdoc_user.jpg)
+### 管理员后台页面
+![MrDoc管理员后台](./captrue/mrdoc-admin-register-code.png)
 
-### 管理员后台界面
-![MrDoc管理员后台](./docs/mrdoc_admin.jpg)
+### 登录页面
+![MrDoc登录页](./captrue/mrdoc-login.png)
 
-### 登录界面
-![MrDoc登录页](./docs/mrdoc_login.png)
-
-### 注册界面
-![MrDoc注册页](./docs/mrdoc_register.png)
+### 注册页面
+![MrDoc注册页](./captrue/mrdoc-register.png)

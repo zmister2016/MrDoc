@@ -14,16 +14,16 @@
             <div class="layui-input-inline">
                 <input type="text" name="kw" id="kw" placeholder="输入文集内容" autocomplete="off" class="layui-input">
             </div>
-            <button class="layui-btn layui-btn-normal" type="submit">搜索</button>
-            <button class="layui-btn layui-btn-normal" onclick="createProject()" type="button">新建文集</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createProject()" type="button"><i class="layui-icon layui-icon-addition"></i>新建文集</button>
         </div>
         </form>
     </div>
-    <div class="layui-row" lay-skin="line">
-        <table class="layui-table"  id="doctemp-list" lay-skin="">
+    <div class="layui-row" >
+        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-size='sm' lay-even>
             <colgroup>
                 <col width="100">
-                <col width="300">
+                <col width="200">
                 <col width="40">
                 <col width="50">
                 <col width="100">
@@ -64,9 +64,15 @@
           <td>{{ pro.create_time }}</td>
           <td>{{ pro.create_user }}</td>
           <td>
-              <a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">查看</a>
-              <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-warm layui-btn-xs">修改</a>
-              <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
+              <a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
+                  <i class="layui-icon layui-icon-read"></i>查看
+                </a>
+              <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-normal layui-btn-xs">
+                <i class="layui-icon layui-icon-edit"></i>修改
+            </a>
+              <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">
+                <i class="layui-icon layui-icon-delete"></i>删除
+            </a>
           </td>
         </tr>
         {% endfor %}
@@ -75,18 +81,24 @@
     </div>
     <!-- 分页 -->
     <div class="layui-row">
-        <div class="pagination">
-            <span class="step-links">
+        <div class="layui-box layui-laypage layui-laypage-default">
+                <!-- 上一页 -->
                 {% if projects.has_previous %}
-                    <a href="?page={{ projects.previous_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    <a href="?page={{ projects.previous_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                {% else %}
+                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
                 {% endif %}
-                <span class="current">
-                    当前页： {{ projects.number }} 共 {{ projects.paginator.num_pages }} 页
+                <!-- 当前页 -->
+                <span class="layui-laypage-curr">
+                    <em class="layui-laypage-em"></em>
+                    <em>{{ projects.number }}/{{ projects.paginator.num_pages }}</em>
                 </span>
+                <!-- 下一页 -->
                 {% if projects.has_next %}
-                    <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs">下一页</a>
+                    <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                {% else %}
+                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
                 {% endif %}
-            </span>
         </div>
     </div>
 {% endblock %}

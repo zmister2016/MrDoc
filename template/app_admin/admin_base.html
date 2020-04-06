@@ -7,8 +7,44 @@
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
-        .logo img{
-            height: 30px;
+      .layui-btn a{
+            color:white;
+        }
+        /* 左侧菜单栏悬浮样式 */
+        .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover{
+          background-color: #1E9FFF !important;
+        }
+        .layui-nav-tree .layui-nav-bar{
+          background-color: #1E9FFF !important;
+        }
+        /* 顶部菜单栏悬浮样式 */
+        .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after{
+          background-color: #1E9FFF !important;
+        }
+        /* 管理文档文档状态条件筛选 管理图片图片分组筛选 */
+        .doc_status_condition > a.current{
+            color: #000!important;
+        }
+        /* layui分页组件样式 */
+        .layui-laypage .layui-laypage-curr .layui-laypage-em{
+            background-color: #1E9FFF !important;
+        }
+        /* layui引用文本样式 */
+        .layui-elem-quote{
+          border-left: 5px solid #1E9FFF !important;
+        }
+        /* 设置输入框的高度 和layui-btn-sm一致 */
+        .layui-input{
+          height: 30px !important;
+        }
+        /* layui开关按钮 */
+        .layui-form-onswitch{
+          border-color: #1E9FFF;
+          background-color: #1E9FFF;
+        }
+        /* layui单选按钮 */
+        .layui-form-radio>i:hover, .layui-form-radioed>i{
+          color: #1E9FFF;
         }
     </style>
 </head>
@@ -16,8 +52,7 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">
-            <a class="logo" href="{% url 'pro_list' %}">
-{#            <img src="/media/logo-white.png" />#}
+            <a class="logo" href="{% url 'pro_list' %}">  
                 <h1 style="color: white;">
                     <strong>MrDoc</strong>
                     <span style="font-size: 14px;" class="layui-badge-rim">后台管理</span>

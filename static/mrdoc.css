@@ -14,6 +14,7 @@
     position: absolute;
     left: 20px;
     top: 16px;
+    color:black;
 }
 .logo img {
     /*width: 85px;*/
@@ -49,10 +50,11 @@
 
 .project-item{
     /*float: left;*/
-    /*width: 200px;*/
+    width: 350px;
     height: 170px;
-    margin-top: 20px;
-    margin-left: 20px;
+    /*margin-top: 20px;*/
+    /*margin-left: 20px;*/
+    margin:10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,.055);
@@ -140,10 +142,10 @@
 }
 .create-doc-form{
     margin-top: 20px;
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
 }
 .doc-form-label{
-    margin-left: 10px;
+    /*margin-left: 10px;*/
     /*margin-right: 10px;*/
 }
 /* 文档浏览页 */
@@ -250,7 +252,7 @@ body, html {
     text-decoration: underline;
 }
 li.active > a,li.active > div > a{
-  color: #008cff;
+  color: #1E9FFF;
 }
 .bq a {
     padding: 15px;
@@ -365,6 +367,21 @@ li.active > a,li.active > div > a{
 
 /* 移动端小屏幕样式 */
 @media screen and (max-width:768px){
+    /* 首页 */
+    .project-item{
+        width: 100%;
+        height: 170px;
+        margin:10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.055);
+    }
+    .layui-container{
+        padding:0 5px;
+    }
+    .layui-fluid{
+        padding: 0 25px;
+    }
     /* 文档浏览页 顶部控制按钮 */
     .doc-header .btn{
         padding:0 10px;
