@@ -1174,8 +1174,9 @@ def manage_attachment(request):
         for i in formats:
             size /= unit
             if size < unit:
-                return f'{round(size, precision)}{i}'
-        return f'{round(size, precision)}{i}'
+                r = '{}{}'.format(round(size, precision),i)
+                return r
+
     if request.method == 'GET':
         try:
             search_kw = request.GET.get('kw', None)
