@@ -110,7 +110,10 @@ python manage.py runserver
 
 ### 1、提交issue
 
-直接在[https://gitee.com/zmister/MrDoc/issues](https://gitee.com/zmister/MrDoc/issues) 页面提交问题。
+在如下页面提交问题：
+
+- [https://gitee.com/zmister/MrDoc/issues](https://gitee.com/zmister/MrDoc/issues)
+- [https://github.com/zmister2016/MrDoc/issues](https://github.com/zmister2016/MrDoc/issues)
 
 ### 2、加入MrDoc交流群
 
