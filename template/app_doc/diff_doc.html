@@ -1,0 +1,229 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <title>文档历史版本对比：{{ doc.name }} - MrDoc</title>
+    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+
+    <link rel=stylesheet href="{% static '/docdiff/codemirror.css' %}">
+    <link rel=stylesheet href="{% static '/docdiff/merge.css' %}">
+    <style>
+        .CodeMirror-merge, .CodeMirror-merge .CodeMirror{
+            height: 600px;
+        }
+    </style>
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+<div class="doc layui-fluid" style="padding-left:0px;">
+    <!-- 左侧工具栏 -->
+    <div class="doc-summary">
+        <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
+            <span style="font-size: 14px;">你正在：对比文档历史版本</span>
+        </div>
+        <hr>
+        <div class="layui-row" style="padding: 10px;">
+            <p style="font-size: 20px;font-weight: 700;text-align: center;">{{ doc.name }}</p><hr>
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                  <tr>
+                    <th>创建时间</th>
+                    <th>用户</th>
+                    <th>查看</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for history in history_list %}
+                  <tr>
+                    <td>{{ history.create_time }}</td>
+                    <td>{{ history.create_user }}</td>
+                    <td>
+                        <a href="{% url 'diff_doc' history.doc.id history.id %}" >对比</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+    <!-- 左侧工具栏结束 -->
+
+    <!-- 右侧编辑器栏 -->
+    <div class="doc-body">
+        <!-- 文档导航 -->
+        <div class="doc-header" role="navigation">
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+                <i class="layui-icon layui-icon-spread-left"></i>
+            </a>
+            <!-- 顶部工具栏 -->
+            <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
+                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">首页</span>
+            </a>
+        </div>
+        <!-- 文档主体 -->
+        <div class="doc-body-content" style="padding-left: 15px;">
+            <div class="mrdoc-body-content-div">
+                <!-- 文档内容 -->
+                <div class="mrdoc-editor-content">
+                    <div style="display: none">
+                        <textarea id="doc">{{ doc.pre_content }}</textarea>
+                        <textarea id="history">{{ history.pre_content }}</textarea>
+                    </div>
+                    <!-- 对比开始 -->
+                    <div class="layui-row" style="margin-bottom: 10px;">
+                        <div class="layui-col-md6" style="text-align: center;">
+                            <span style="font-weight: 700;">当前版本</span>
+                        </div>
+                        <div class="layui-col-md6" style="text-align: center;">
+                            <span style="font-weight: 700;color: darkblue;">历史版本:{{history.create_time}}</span>
+                        </div>
+                    </div>
+                    <div class="markdown-body" id="content">
+                    </div>
+                    <!-- 对比结束 -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 右侧编辑器结束 -->
+</div>
+
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+
+<script src="{% static '/docdiff/codemirror.js' %}"></script>
+<script src="{% static '/docdiff/markdown.js' %}"></script>
+<script src="{% static '/docdiff/diff_match_patch.js' %}"></script>
+<script src="{% static '/docdiff/merge.js' %}"></script>
+
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    var tree = layui.tree;
+    //加载页面时执行一次
+    changeSidebar();
+    //监听浏览器宽度的改变
+    window.onresize = function(){
+        changeSidebar();
+    };
+    function changeSidebar(){
+        // 获取匹配指定的媒体查询
+        var screen_width = window.matchMedia('(max-width: 768px)');
+        //判断匹配状态
+        if(screen_width.matches){
+            //如果匹配到，切换侧边栏
+            $("body").addClass("big-page");
+        }else{
+            $("body").removeClass("big-page");
+        }
+    }
+    </script>
+    <!-- 切换隐藏侧边栏 -->
+    <script>
+        // 切换侧边栏
+        $(function(){
+            $(".js-toolbar-action").click(toggleSidebar);
+        });
+        //切换侧边栏显示隐藏
+        function toggleSidebar(){
+            console.log("切换侧边栏")
+            $("body").toggleClass("big-page");
+            return false;
+        }
+    </script>
+
+    <!-- 展开收起左边目录 -->
+    <script>
+        $(function(){
+            $(".switch-toc").click(SwitchToc);
+        });
+        function SwitchToc(i){
+            var $me = $(this);
+            $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
+            $(this).toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+        };
+    </script>
+    <script>
+        // 初始化一些变量
+        var value, orig1, orig2, dv, panes = 2, highlight = true, connect = "align", collapse = false;
+
+        // 初始化合并对比
+        function initUI() {
+        if (value == null) return;
+        var target = document.getElementById("content");
+        target.innerHTML = "";
+        // 生成合并视图
+        dv = CodeMirror.MergeView(target, {
+            value: value, //编辑值
+            orig: orig2, // 对比值
+            mode: "markdown", // Markdown语法模式
+            lineNumbers: true, // 显示行号
+            lineWrapping: true, // 换行
+            foldGutter: true,
+            highlightDifferences: highlight, // 高亮显示差异
+            revertButtons:false,
+        });
+        }
+
+        // 切换差异对比
+        function toggleDifferences() {
+        dv.setShowDifferences(highlight = !highlight);
+        }
+
+        // 页面加载执行
+        window.onload = function() {
+        value = document.getElementById('doc').innerHTML;
+        orig2 = document.getElementById('history').innerHTML;
+        initUI();
+        let d = document.createElement("div"); 
+        d.style.cssText = "width: 50px; margin: 7px; height: 14px"; 
+        dv.editor().addLineWidget(57, d)
+        };
+
+        function mergeViewHeight(mergeView) {
+        function editorHeight(editor) {
+            if (!editor) return 0;
+            return editor.getScrollInfo().height;
+        }
+        return Math.max(editorHeight(mergeView.leftOriginal()),
+                        editorHeight(mergeView.editor()),
+                        editorHeight(mergeView.rightOriginal()));
+        }
+
+        function resize(mergeView) {
+        var height = mergeViewHeight(mergeView);
+        for(;;) {
+            if (mergeView.leftOriginal())
+            mergeView.leftOriginal().setSize(null, height);
+            mergeView.editor().setSize(null, height);
+            if (mergeView.rightOriginal())
+            mergeView.rightOriginal().setSize(null, height);
+
+            var newHeight = mergeViewHeight(mergeView);
+            if (newHeight >= height) break;
+            else height = newHeight;
+        }
+        mergeView.wrap.style.height = height + "px";
+        }
+    </script>
+<script src="{% static 'mrdoc.js' %}?version={{mrdoc_version}}"></script>
+{% block custom_script %}
+{% endblock %}
+</body>
+</html>

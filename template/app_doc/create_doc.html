@@ -215,18 +215,19 @@
         else{
             //发布按钮设为禁用
             $("#create_doc").attr({"disabled":"disabled"});
+            layer.load(); // 加载提示
             $.post("{% url 'create_doc' %}",data,function(r){
                 if(r.status){
                     //创建成功
+                    layer.closeAll("loading"); //关闭加载层
                     layer.msg('发布文档成功，即将跳转到文档页面',function(){
                         md_changed = false;
-                        //跳转到首页
-                        //window.location.href = "{% url 'pro_list' %}";
                         //跳转到发布的文档
                         window.location.href = "/project-" + r.data.pro + "/doc-" + r.data.doc
                     });
                 }else{
                     //创建失败
+                    layer.closeAll("loading"); //关闭加载层
                     layer.msg('发布文档失败:'+r.data);
                     //恢复按钮状态
                     $("#create_doc").removeAttr("disabled");
@@ -253,15 +254,18 @@
             layer.msg('请选择文集！');
         }
         else{
+            layer.load();
             $.post("{% url 'create_doc' %}",data,function(r){
                 if(r.status){
                     //保存成功
+                    layer.closeAll("loading");
                     md_changed = false;
                     layer.msg('保存草稿成功',function(){
                         window.location.href = "/modify_doc/"+r.data.doc+"/";
                     });
                 }else{
                     //创建失败
+                    layer.closeAll("loading");
                     layer.msg('保存草稿失败:'+r.data);
                 }
             });

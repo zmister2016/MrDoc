@@ -59,6 +59,7 @@
     <script>
         //保存文档模板
         createDocTemp = function(){
+            layer.load();
             var data = {
                 'name':$("#doctemp-name").val(),
                 'content':editor.getMarkdown(),
@@ -66,12 +67,14 @@
             $.post("{% url 'create_doctemp' %}",data,function(r){
                 if(r.status){
                     //创建成功
+                    layer.closeAll("loading");
                     layer.msg('保存成功',function(){
                         md_changed = false;
                         window.location.href = "{% url 'manage_doctemp' %}";
                     });
                 }else{
                     //创建失败
+                    layer.closeAll("loading");
                     layer.msg('保存失败');
                 }
             });

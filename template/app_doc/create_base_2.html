@@ -22,6 +22,19 @@
             color: #333;
             font-size: 16px;
         }
+        /* 编辑器预览列表样式 */
+        .markdown-body ul li{
+            list-style:disc;
+        }
+        .markdown-body ul > li > ul > li{
+            list-style-type: circle;
+        }
+        .markdown-body ol li{
+            list-style-type: decimal;
+        }
+        .markdown-body ol ol ul,.markdown-body ol ul ul,.markdown-body ul ol ul,.markdown-body ul ul ul li{
+            list-style-type: square;
+        }
         /* 选择上级文档样式 */
         .selected-parent-doc{
             text-decoration-line: underline;
@@ -259,14 +272,10 @@
                     id:'uploadAttach',//配置ID,
                     content:$('#upload-attach'),
                     success: function(layero, index){
+                        layer.load();
                         $.post('{% url "manage_attachment" %}',{types:2},function(r){
                             $("#attach_table tbody").empty()
                             if(r.status){
-                                // $.each(r.data,function(k,v){
-                                //     console.log(k,v)
-                                //     var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
-                                //     $("#attach_table tbody").append(row)
-                                // })
                                 //调用分页显示
                                 laypage.render({
                                     elem: 'select-attach-page',//分页的div
@@ -283,8 +292,9 @@
                                         });
                                     }
                                 });
-                                //layer.close(loading);//关闭加载提示
+                                layer.closeAll("loading");//关闭加载提示
                             }else{
+                                layer.closeAll("loading");//关闭加载提示
                                 layer.msg("获取附件失败，请稍后重试！")
                             }
                         })
@@ -361,11 +371,16 @@
                 reader.onload = function (event) {
                     var base64 = event.target.result;
                     //ajax上传图片
+                    layer.load();
                     $.post("{% url 'upload_doc_img' %}",{base:base64}, function (ret) {
                         layer.msg(ret.message);
                         if (ret.success === 1) {
                             //新一行的图片显示
+                            layer.closeAll("loading");
                             editor.insertValue("\n![](" + ret.url + ")");
+                        }else{
+                            layer.closeAll("loading");
+                            layer.msg("粘贴图片失败！")
                         }
                     });
                 }; // data url!
@@ -388,12 +403,12 @@
       //console.log(data.index); //得到当前Tab的所在下标
       //console.log(data.elem); //得到当前的Tab大容器
       if(data.index == 1){
+        layer.load();
         console.log('选择图片')
         $("#select-img-group").empty(); //删除已有分组按钮
         //请求新的分组数据
         $.post("{% url 'manage_img_group' %}",{'types':3},function(r){
             if(r.status){
-                //console.log(r.data)
                 group_btn_str = ''
                 for(var i in r.data){
                     group_btn_str += '<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="switchImgGroup(' + r.data[i].group_id +')">' + r.data[i].group_name + '(' + r.data[i].group_cnt + ')</button>'
@@ -402,7 +417,6 @@
             }
         });
         //请求全部图片数据
-        var loading = layer.load();
         $.post("{% url 'manage_image' %}",{'types':2,'group_id':0},function(r){
             if(r.status){
                 //调用分页显示
@@ -422,9 +436,9 @@
                         }();
                     }
                 });
-                layer.close(loading);//关闭加载提示
+                layer.closeAll("loading");
             }else{
-                layer.close(loading);
+                layer.closeAll("loading");
                 layer.msg("获取图片失败")
             }
         })
@@ -437,7 +451,7 @@
     };
     //切换图片分组
     switchImgGroup = function(e){
-        var switch_loading = layer.load();
+        layer.load();
         $.post("{% url 'manage_image' %}", {
             'types': 2,
             'group_id': e
@@ -462,9 +476,9 @@
                         } ();
                     }
                 });
-                layer.close(switch_loading); //关闭加载提示
+                layer.closeAll("loading"); //关闭加载提示
             } else {
-                layer.close(switch_loading);
+                layer.closeAll("loading");
                 layer.msg("获取分组图片失败")
             }
         })
@@ -516,9 +530,7 @@
             <th>操作</th>
         </thead>
         <tbody>
-
         </tbody>
-        
     </table>
     <div id="select-attach-page"></div>
 </div>
@@ -548,6 +560,9 @@
     upload.render({
         elem: '#upload_img',
         url: '{% url "upload_doc_img" %}',
+        before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+            layer.load(); //上传loading
+        },
         done: function(res, index, upload){ //上传后的回调
             //上传成功
             if(res.success == 1){
@@ -555,13 +570,14 @@
                 layer.closeAll();
                 layer.msg("上传成功");
             }else{
+                layer.closeAll();
                 layer.msg("上传出错，请重试！")
             }
         },
         accept: 'images', //允许上传的文件类型
         acceptMime:'image/*',
         field:'manage_upload',
-        size: 5000, //最大允许上传的文件大小
+        size: 5120, //最大允许上传的图片大小
 
     });
     // 按钮选择上传附件
@@ -570,6 +586,9 @@
         elem: '#upload_attachment',
         url: '{% url "manage_attachment" %}',
         data:{types:0,csrfmiddlewaretoken: '{{ csrf_token }}'},
+        before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+            layer.load(); //上传loading
+        },
         done: function(res, index, upload){ //上传后的回调
             //上传成功，刷新页面
             if(res.status){
@@ -583,7 +602,7 @@
         accept: 'file', //允许上传的文件类型
         exts:'zip', //允许上传zip压缩文件
         field:'attachment_upload',
-        size: 50000, //最大允许上传的文件大小
+        size: 51200, //最大允许上传的文件大小
     })
     //修改预览div中a标签链接新窗口打开
     $('div.editormd-preview').on('click','a',function(e){

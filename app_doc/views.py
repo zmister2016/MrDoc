@@ -279,8 +279,8 @@ def manage_project(request):
         try:
             search_kw = request.GET.get('kw', None)
             if search_kw:
-                pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw)
-                paginator = Paginator(pro_list, 10)
+                pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw).order_by('-create_time')
+                paginator = Paginator(pro_list, 15)
                 page = request.GET.get('page', 1)
                 try:
                     pros = paginator.page(page)
@@ -290,8 +290,8 @@ def manage_project(request):
                     pros = paginator.page(paginator.num_pages)
                 pros.kw = search_kw
             else:
-                pro_list = Project.objects.filter(create_user=request.user)
-                paginator = Paginator(pro_list, 10)
+                pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+                paginator = Paginator(pro_list, 15)
                 page = request.GET.get('page', 1)
                 try:
                     pros = paginator.page(page)
@@ -532,6 +532,7 @@ def modify_doc(request,doc_id):
             if (request.user == doc.create_user) or (pro_colla[0].role == 1):
                 doc_list = Doc.objects.filter(top_doc=project.id)
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
+                history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
                 return render(request,'app_doc/modify_doc.html',locals())
             else:
                 return render(request,'403.html')
@@ -555,6 +556,12 @@ def modify_doc(request,doc_id):
                 pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)
                 # 验证用户有权限修改文档 - 文档的创建者或文集的高级协作者
                 if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+                    # 将现有文档内容写入到文档历史中
+                    DocHistory.objects.create(
+                        doc = doc,
+                        pre_content = doc.pre_content,
+                        create_user = request.user
+                    )
                     # 更新文档内容
                     Doc.objects.filter(id=int(doc_id)).update(
                         name=doc_name,
@@ -697,6 +704,76 @@ def manage_doc(request):
         return render(request,'app_doc/manage_doc.html',locals())
     else:
         return HttpResponse('方法不允许')
+
+# 查看对比文档历史版本
+@login_required()
+def diff_doc(request,doc_id,his_id):
+    if request.method == 'GET':
+        try:
+            doc = Doc.objects.get(id=doc_id)  # 查询文档信息
+            project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集信息
+            pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  # 查询用户的协作文集信息
+            if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+                history = DocHistory.objects.get(id=his_id)
+                history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
+                if history.doc == doc:
+                    return render(request, 'app_doc/diff_doc.html', locals())
+                else:
+                    return render(request, '403.html')
+            else:
+                return render(request, '403.html')
+        except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return render(request, '404.html')
+
+    elif request.method == 'POST':
+        try:
+            doc = Doc.objects.get(id=doc_id)  # 查询文档信息
+            project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集信息
+            pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  # 查询用户的协作文集信息
+            if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+                history = DocHistory.objects.get(id=his_id)
+                if history.doc == doc:
+                    return JsonResponse({'status':True,'data':history.pre_content})
+                else:
+                    return JsonResponse({'status': False, 'data': '非法请求'})
+            else:
+                return JsonResponse({'status':False,'data':'非法请求'})
+        except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return JsonResponse({'status':False,'data':'获取异常'})
+
+# 管理文档历史版本
+@login_required()
+def manage_doc_history(request,doc_id):
+    if request.method == 'GET':
+        try:
+            doc = Doc.objects.get(id=doc_id,create_user=request.user)
+            history_list = DocHistory.objects.filter(create_user=request.user,doc=doc_id).order_by('-create_time')
+            paginator = Paginator(history_list, 15)
+            page = request.GET.get('page', 1)
+            try:
+                historys = paginator.page(page)
+            except PageNotAnInteger:
+                historys = paginator.page(1)
+            except EmptyPage:
+                historys = paginator.page(paginator.num_pages)
+            return render(request, 'app_doc/manage_doc_history.html', locals())
+        except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return render(request, '404.html')
+    elif request.method == 'POST':
+        try:
+            history_id = request.POST.get('history_id','')
+            DocHistory.objects.filter(id=history_id,doc=doc_id,create_user=request.user).delete()
+            return JsonResponse({'status':True,'data':'删除成功'})
+        except:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return JsonResponse({'status':False,'data':'出现异常'})
 
 
 # 创建文档模板

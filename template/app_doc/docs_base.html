@@ -47,10 +47,11 @@
             list-style-position:inside;
         }
         ul.markdown-toc-list li{
-            list-style: inherit!important;
+            list-style: none!important;
+            line-height: 24px;
         }
         ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
-            padding-left:10px;
+            padding-left:15px;
         }
         ul.markdown-toc-list a{
             text-decoration: underline!important;
@@ -197,7 +198,7 @@
                     </div>
                     <!-- 标题结束 -->
                     <!-- 正文开始 -->
-                    <div class="markdown-body" id="content">
+                    <div class="markdown-body" id="content" style="padding: 0 20px;">
                         {% block page_content %}
                         {% endblock %}
                     </div>
@@ -253,6 +254,7 @@
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
         //解析Markdown为HTML
+        layer.load(1);
         editormd.markdownToHTML("content", {
             htmlDecode      : "style,script,iframe",
             emoji           : true,  //emoji表情
@@ -267,6 +269,7 @@
             atLink    : false,//禁用@链接
 
         });
+        layer.closeAll("loading");
         //为当前页面的目录链接添加蓝色样式
         $("nav li a").each(function (i) {
             var $me = $(this);

@@ -34,9 +34,15 @@
     <div class="layui-row">
         <div class="doc-form-label" style="margin-bottom: 10px;">
             {% if doc.status == 0 %}
-            <strong>*当前文档状态为：草稿</strong>
+            <strong>*当前文档状态：草稿</strong>
             {% elif doc.status == 1 %}
-            <strong>*当前文档状态为：已发布 </strong><a class="layui-btn layui-btn-xs layui-btn-normal" target="_blank" href="{% url 'doc' doc.top_doc doc.id %}">查看文档</a>
+            <strong>*当前文档状态：已发布 </strong>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" target="_blank" href="{% url 'doc' doc.top_doc doc.id %}">
+                <i class="fa fa-book"></i> 查看
+            </a>
+            <button class="layui-btn layui-btn-xs layui-btn-normal" id="doc-history">
+                <i class="fa fa-history"></i> 历史
+            </button>
             {% endif %}
         </div>
 
@@ -111,9 +117,11 @@
     <script>
         //获取文档数和上级文档信息
         $(function(){
+            layer.load();
             var doc_parent_id = {{ doc.parent_doc }};
             $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
                 if(r.status){
+                    layer.closeAll("loading");
                     var doc_tree = tree.render({
                         elem:"#doc-tree",
                         id:'docTree',
@@ -159,6 +167,7 @@
         });
         //发布文档
         createDoc = function(){
+            layer.load();
             var data = {
                 'doc_id':{{ doc.id }},
                 'project':$("#project").val(),
@@ -171,12 +180,14 @@
             }
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 if(r.status){
+                    layer.closeAll("loading");
                     //修改成功
                     layer.msg('发布成功，即将跳转',function(){
                         md_changed = false;
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                     });
                 }else{
+                    layer.closeAll("loading");
                     //修改失败
                     layer.msg('保存失败');
                 }
@@ -184,6 +195,7 @@
         };
         //保存草稿
         saveDoc = function(){
+            layer.load();
             var data = {
                 'doc_id':{{ doc.id }},
                 'project':$("#project").val(),
@@ -197,11 +209,13 @@
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 if(r.status){
                     //修改成功
+                    layer.closeAll("loading");
                     layer.msg('保存成功',function(){
                         md_changed = false;
                         window.location.href = "{% url 'modify_doc' doc.id %}";
                     });
                 }else{
+                    layer.closeAll("loading");
                     //修改失败
                     layer.msg('保存失败');
                 }
@@ -218,20 +232,46 @@
         });
         //插入模板
         insertTemp = function(doctemp_id){
+            layer.load();
             $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
                 if(r.status){
                     editor.insertValue(r.data);
                     layer.closeAll()
                 }else{
+                    layer.closeAll("loading");
                     layer.msg(r.data)
                 }
             });
         };
+        // 查看历史记录
+        $("#doc-history").click(function(){
+            layer.open({
+                type: 1,
+                id:'history-div',
+                content: $('#history-list'),
+                area:['530px','300px'],
+            });
+        });
+        insertHistory = function(doc_id,history_id){
+            layer.load(1);
+            var url = "{% url 'diff_doc' 0 1 %}";
+            url = url.replace(0,doc_id).replace(1,history_id)
+            $.post(url,function(r){
+                if(r.status){
+                    editor.setMarkdown(r.data);
+                    layer.closeAll()
+                }else{
+                    layer.closeAll("loading");
+                    layer.msg(r.data)
+                }
+            });
+        }
     </script>
 {% endblock %}
 
 {% block custom_div %}
-    <div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
+<!-- 模板div块 -->
+<div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
     <div style="margin: 10px 0 0 10px;">
         <a class="layui-btn layui-btn-normal" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
         <a class="layui-btn layui-btn-normal" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
@@ -256,8 +296,33 @@
           <td>{{ temp.create_time }}</td>
           <td>
               <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertTemp('{{temp.id}}');">选择模板</a>
-{#              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>#}
-{#              <a href="javascript:void(0);" onclick="delTemp();">删除</a>#}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<!-- 文档历史div块 -->
+<div class="history-list" id="history-list" style="display: none;width: 500px;">
+    <table class="layui-table" style="margin: 10px;" lay-size='sm'>
+      <thead>
+        <tr>
+          <th>创建时间</th>
+          <th>用户</th>
+          <th>对比</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for history in history_list %}
+        <tr>
+          <td>{{ history.create_time }}</td>
+          <td>{{ history.create_user }}</td>
+          <td>
+              <a href="{% url 'diff_doc' history.doc.id history.id %}" target="_blank">查看差异</a>
+          </td>
+          <td>
+              <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertHistory('{{history.doc.id}}','{{history.id}}');">恢复此版本</a>
           </td>
         </tr>
         {% endfor %}

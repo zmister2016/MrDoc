@@ -1,3 +1,12 @@
+##### MrDoc使用文档
+
+- [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+
+##### MrDoc项目地址
+
+- [https://gitee.com/zmister/MrDoc](https://gitee.com/zmister/MrDoc)
+- [https://github.com/zmister2016/MrDoc](https://github.com/zmister2016/MrDoc)
+
 ##### Markdown语法教程 (Markdown syntax tutorial)
 
 - [Markdown Syntax](http://daringfireball.net/projects/markdown/syntax/ "Markdown Syntax")

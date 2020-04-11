@@ -24,6 +24,8 @@ urlpatterns = [
     path('modify_doc/<int:doc_id>/', views.modify_doc, name="modify_doc"),  # 修改文档
     path('del_doc/',views.del_doc,name="del_doc"), # 删除文档
     path('manage_doc/',views.manage_doc,name="manage_doc"), # 管理文档
+    path('diff_doc/<int:doc_id>-<int:his_id>/',views.diff_doc,name='diff_doc'), # 对比文档历史版本
+    path('manage_doc_history/<int:doc_id>/',views.manage_doc_history,name='manage_doc_history'), # 管理文档历史版本
     #################文档模板相关
     path('manage_doctemp/',views.manage_doctemp,name='manage_doctemp'), # 文档模板列表
     path('create_doctemp/',views.create_doctemp,name="create_doctemp"), # 创建文档模板
