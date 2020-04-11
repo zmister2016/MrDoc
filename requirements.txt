@@ -1,5 +1,5 @@
 beautifulsoup4==4.8.2
-Django==2.2.3
+Django==2.2.10
 Pillow==6.1.0
 pytz==2019.1
 sqlparse==0.3.0
