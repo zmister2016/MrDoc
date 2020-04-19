@@ -86,17 +86,19 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'doctemp_id':doctemp_id,
                 }
                 $.post("{% url 'del_doctemp' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //修改成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //修改失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })

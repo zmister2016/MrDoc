@@ -1,3 +1,4 @@
+// ****生成可编辑HTML表格****
 function InsertLine(obj) {
   var table_id = "#" + $(obj).attr("name");
   var name = $(obj).attr("name");

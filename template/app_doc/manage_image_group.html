@@ -67,11 +67,13 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'types':2,
                     'group_id':group_id,
                 }
                 $.post("{% url 'manage_img_group' %}",data,function(r){
+                    layer.closeAll('loading')
                     if(r.status){
                         //删除成功
                         window.location.reload();
@@ -95,19 +97,21 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'types':1,
                     'group_id':group_id,
                     'group_name':$("#new-group-name").val()
                 }
                 $.post("{% url 'manage_img_group' %}",data,function(r){
+                    layer.closeAll('loading')
                     if(r.status){
                         //修改成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //修改失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })

@@ -128,11 +128,13 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'pname':$("#pname").val(),
                     'desc':$("#desc").val(),
                 }
                 $.post("{% url 'create_project' %}",data,function(r){
+                    layer.closeAll('loading'); //关闭loading
                     if(r.status){
                         //创建成功
                         window.location.reload();
@@ -157,19 +159,21 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'pro_id':pro_id,
                     'name':$("#pname").val(),
                     'desc':$("#desc").val(),
                 }
                 $.post("{% url 'modify_project' %}",data,function(r){
+                    layer.closeAll('loading'); //关闭loading
                     if(r.status){
                         //修改成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //修改失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })
@@ -187,10 +191,12 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'pro_id':pro_id,
                 }
                 $.post("{% url 'del_project' %}",data,function(r){
+                    layer.closeAll('loading'); //关闭loading
                     if(r.status){
                         //修改成功
                         window.location.reload();
@@ -220,14 +226,14 @@
                     'project_id':pro_id,
                 }
                 $.post("{% url 'report_md' %}",data,function(r){
+                    layer.closeAll('loading'); //关闭loading
                     if(r.status){
                         //导出成功
-                        layer.close(index)
                         //文件下载提示
                         downloadMd(r.data)
                     }else{
                         //导出失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                     layer.close(load)

@@ -108,11 +108,13 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'types':1,
                     'all_cnt':$("#regCodeCnt").val(),
                 }
                 $.post("{% url 'register_code_manage' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //新增成功，刷新页面
                         window.location.reload();

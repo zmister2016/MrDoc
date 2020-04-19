@@ -23,43 +23,141 @@ def validateTitle(title):
   return new_title
 
 
-# 文集列表
 def project_list(request):
-    kw = request.GET.get('kw','')
-    if kw == '':
-        # 登录用户
-        if request.user.is_authenticated:
-            # 用户的协作文集
-            colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]
-            # 查询所有可显示的文集
-            project_list = Project.objects.filter(
-                Q(role__in=[0,3]) | \
-                Q(role=2,role_value__contains=str(request.user.username)) | \
-                Q(create_user=request.user) | \
-                Q(id__in=colla_list)
-            )
-        else:
-            # 非登录用户只显示公开文集和需要访问码的文集
-            project_list = Project.objects.filter(role__in=[0,3])
+    kw = request.GET.get('kw','') # 搜索词
+    sort = request.GET.get('sort',0) # 排序,0表示按时间升序排序，1表示按时间降序排序，默认为0
+    role = request.GET.get('role',-1) # 筛选文集权限，默认为显示所有可显示的文集
+
+    # 是否排序
+    if sort in ['',0,'0']:
+        sort_str = ''
     else:
-        # 登录用户
-        if request.user.is_authenticated:
-            # 用户的协作文集
-            colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]
-            # 查询所有可显示的文集
-            project_list = Project.objects.filter(
-                Q(role__in=[0, 3]) | \
-                Q(role=2, role_value__contains=str(request.user.username)) | \
-                Q(create_user=request.user) | \
-                Q(id__in=colla_list),
-                Q(name__icontains=kw) | Q(intro__icontains=kw)
-            )
+        sort_str = '-'
+
+    # 是否搜索
+    if kw == '':
+        is_kw = False
+    else:
+        is_kw = True
+
+    # 是否认证
+    if request.user.is_authenticated:
+        is_auth = True
+    else:
+        is_auth = False
+
+    # 是否筛选
+    if role in ['',-1,'-1']:
+        is_role = False
+        role_list = [0,3]
+    else:
+        is_role = True
+
+    # 没有搜索 and 认证用户 and 没有筛选
+    if (is_kw is False) and (is_auth) and (is_role is False):
+        colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集列表
+        project_list = Project.objects.filter(
+            Q(role__in=role_list) | \
+            Q(role=2,role_value__contains=str(request.user.username)) | \
+            Q(create_user=request.user) | \
+            Q(id__in=colla_list)
+        ).order_by("{}create_time".format(sort_str))
+
+    # 没有搜索 and 认证用户 and 有筛选
+    elif (is_kw is False ) and (is_auth) and (is_role):
+        if role in ['0',0]:
+            project_list = Project.objects.filter(role=0).order_by("{}create_time".format(sort_str))
+        elif role in ['1',1]:
+            project_list = Project.objects.filter(create_user=request.user,role=1).order_by("{}create_time".format(sort_str))
+        elif role in ['2',2]:
+            project_list = Project.objects.filter(role=2,role_value__contains=str(request.user.username)).order_by("{}create_time".format(sort_str))
+        elif role in ['3',3]:
+            project_list = Project.objects.filter(role=3).order_by("{}create_time".format(sort_str))
+        elif role in ['99',99]:
+            colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集列表
+            project_list = Project.objects.filter(id__in=colla_list).order_by("{}create_time".format(sort_str))
         else:
-            # 非登录用户只显示公开文集和需要访问码的文集
+            return render(request,'404.html')
+
+    # 没有搜索 and 游客 and 没有筛选
+    elif (is_kw is False) and (is_auth is False) and (is_role is False):
+        project_list = Project.objects.filter(role__in=[0,3]).order_by("{}create_time".format(sort_str))
+
+    # 没有搜索 and 游客 and 有筛选
+    elif (is_kw is False) and (is_auth is False) and (is_role):
+        if role in ['0',0]:
+            project_list = Project.objects.filter(role=0).order_by("{}create_time".format(sort_str))
+        elif role in ['3',3]:
+            project_list = Project.objects.filter(role=3).order_by("{}create_time".format(sort_str))
+        else:
+            return render(request,'404.html')
+
+    # 有搜索 and 认证用户 and 没有筛选
+    elif (is_kw) and (is_auth) and (is_role is False):
+        colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集
+        # 查询所有可显示的文集
+        project_list = Project.objects.filter(
+            Q(role__in=[0, 3]) | \
+            Q(role=2, role_value__contains=str(request.user.username)) | \
+            Q(create_user=request.user) | \
+            Q(id__in=colla_list),
+            Q(name__icontains=kw) | Q(intro__icontains=kw)
+        ).order_by('{}create_time'.format(sort_str))
+
+    # 有搜索 and 认证用户 and 有筛选
+    elif (is_kw) and (is_auth) and (is_role):
+        if role in ['0',0]:
+            project_list = Project.objects.filter(
+                Q(name__icontains=kw)|Q(intro__icontains=kw),
+                role=0
+            ).order_by("{}create_time".format(sort_str))
+        elif role in ['1',1]:
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
-                role__in=[0, 3]
-            )
+                create_user=request.user
+            ).order_by("{}create_time".format(sort_str))
+        elif role in ['2',2]:
+            project_list = Project.objects.filter(
+                Q(name__icontains=kw) | Q(intro__icontains=kw),
+                role=2,
+                role_value__contains=str(request.user.username)
+            ).order_by("{}create_time".format(sort_str))
+        elif role in ['3',3]:
+            project_list = Project.objects.filter(
+                Q(name__icontains=kw) | Q(intro__icontains=kw),
+                role=3
+            ).order_by("{}create_time".format(sort_str))
+        elif role in ['99',99]:
+            colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集列表
+            project_list = Project.objects.filter(
+                Q(name__icontains=kw) | Q(intro__icontains=kw),
+                id__in=colla_list
+            ).order_by("{}create_time".format(sort_str))
+        else:
+            return render(request,'404.html')
+
+    # 有搜索 and 游客 and 没有筛选
+    elif (is_kw) and (is_auth is False) and (is_role is False):
+        project_list = Project.objects.filter(
+            Q(name__icontains=kw) | Q(intro__icontains=kw),
+            role__in=[0, 3]
+        ).order_by("{}create_time".format(sort_str))
+
+    # 有搜索 and 游客 and 有筛选
+    elif (is_kw) and (is_auth is False) and (is_role):
+        if role in ['0',0]:
+            project_list = Project.objects.filter(
+                Q(name__icontains=kw) | Q(intro__icontains=kw),
+                role=0
+            ).order_by("{}create_time".format(sort_str))
+        elif role in ['3',3]:
+            project_list = Project.objects.filter(
+                Q(name__icontains=kw) | Q(intro__icontains=kw),
+                role=3
+            ).order_by("{}create_time".format(sort_str))
+        else:
+            return render(request,'404.html')
+
     # 分页处理
     paginator = Paginator(project_list, 12)
     page = request.GET.get('page', 1)
@@ -70,7 +168,6 @@ def project_list(request):
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
     return render(request, 'app_doc/pro_list.html', locals())
-
 
 # 创建文集
 @login_required()
@@ -1291,6 +1388,10 @@ def manage_attachment(request):
             if attachment:
                 attachment_name = attachment.name
                 attachment_size = sizeFormat(attachment.size)
+                # 限制附件大小在50mb以内
+                if attachment.size > 52428800:
+                    return JsonResponse({'status':False,'data':'文件大小超出限制'})
+                # 限制附件为ZIP格式文件
                 if attachment_name.endswith('.zip'):
                     a = Attachment.objects.create(
                         file_name = attachment_name,

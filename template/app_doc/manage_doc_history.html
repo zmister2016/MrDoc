@@ -86,13 +86,13 @@
                     'history_id':history_id,
                 }
                 $.post("{% url 'manage_doc_history' doc.id %}",data,function(r){
+                    layer.closeAll('loading')
                     if(r.status){
                         //修改成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //修改失败，提示
-                        layer.close('loading')
                         layer.msg(r.data)
                     }
                 })

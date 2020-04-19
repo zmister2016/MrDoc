@@ -13,7 +13,6 @@
     <title>{% block title %}{% endblock %} - MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
-    <!--<link rel="stylesheet" href="{% static 'prism/prism.css' %}" />-->
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'share.js/css/share.min.css' %}?version={{mrdoc_version}}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
@@ -198,7 +197,7 @@
                     </div>
                     <!-- 标题结束 -->
                     <!-- 正文开始 -->
-                    <div class="markdown-body" id="content" style="padding: 0 20px;">
+                    <div class="markdown-body" id="content" style="padding: 20px;">
                         {% block page_content %}
                         {% endblock %}
                     </div>
@@ -227,7 +226,15 @@
 <script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
-<script src="{% static 'editor.md/editormd.min.js' %}"></script>
+<!-- 脑图开始 -->
+<script src="{% static 'mindmap/d3@5.js' %}"></script>
+<script src="{% static 'mindmap/transform.js' %}"></script>
+<script src="{% static 'mindmap/view.js' %}"></script>
+<!-- <script src="{% static 'mindmap/mindmap.js' %}"></script> -->
+<!-- 脑图结束 -->
+
+<!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
+<script src="{% static 'editor.md/editormd.js' %}"></script>
 <script src="{% static 'share.js/js/social-share.min.js' %}"></script>
 <script>
     //加载页面时执行一次

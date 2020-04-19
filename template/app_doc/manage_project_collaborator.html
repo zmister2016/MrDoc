@@ -98,19 +98,21 @@
                 form.render('radio'); // 刷新checkbox开关渲染(否则开关按钮会不显示)
             },
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'types':0,
                     'username':$("#username").val(),
                     'role': $('input[name="add-role"]:checked').val()
                 }
                 $.post("{% url 'manage_pro_colla' pro.id %}",data,function(r){
+                    layer.closeAll('loading'); //关闭loading
                     if(r.status){
                         //添加成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //添加失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })

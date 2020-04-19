@@ -117,7 +117,7 @@
     <script>
         //获取文档数和上级文档信息
         $(function(){
-            layer.load();
+            layer.load(1);
             var doc_parent_id = {{ doc.parent_doc }};
             $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
                 if(r.status){
@@ -167,7 +167,7 @@
         });
         //发布文档
         createDoc = function(){
-            layer.load();
+            layer.load(1);
             var data = {
                 'doc_id':{{ doc.id }},
                 'project':$("#project").val(),
@@ -179,15 +179,14 @@
                 'sort':$("#sort").val(),
             }
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
+                layer.closeAll("loading");
                 if(r.status){
-                    layer.closeAll("loading");
                     //修改成功
                     layer.msg('发布成功，即将跳转',function(){
                         md_changed = false;
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                     });
                 }else{
-                    layer.closeAll("loading");
                     //修改失败
                     layer.msg('保存失败');
                 }
@@ -195,7 +194,7 @@
         };
         //保存草稿
         saveDoc = function(){
-            layer.load();
+            layer.load(1);
             var data = {
                 'doc_id':{{ doc.id }},
                 'project':$("#project").val(),
@@ -207,15 +206,14 @@
                 'status':0
             }
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
+                layer.closeAll("loading");
                 if(r.status){
                     //修改成功
-                    layer.closeAll("loading");
                     layer.msg('保存成功',function(){
                         md_changed = false;
                         window.location.href = "{% url 'modify_doc' doc.id %}";
                     });
                 }else{
-                    layer.closeAll("loading");
                     //修改失败
                     layer.msg('保存失败');
                 }
@@ -257,11 +255,10 @@
             var url = "{% url 'diff_doc' 0 1 %}";
             url = url.replace(0,doc_id).replace(1,history_id)
             $.post(url,function(r){
+                layer.closeAll("loading");
                 if(r.status){
                     editor.setMarkdown(r.data);
-                    layer.closeAll()
                 }else{
-                    layer.closeAll("loading");
                     layer.msg(r.data)
                 }
             });

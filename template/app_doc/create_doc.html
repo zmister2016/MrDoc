@@ -160,7 +160,7 @@
                             ,none: '文集暂无文档' //数据为空时的提示文本
                             },
                         click: function(obj){
-                            console.log(obj.data); //得到当前点击的节点数据
+                            //console.log(obj.data); //得到当前点击的节点数据
                             // console.log(obj.state); //得到当前节点的展开状态：open、close、normal
                             // console.log(obj.elem); //得到当前节点元素
                             if(obj.data.level != 3){
@@ -169,6 +169,7 @@
                                     var $me = $(this)
                                     if($me.data('id') == obj.data.id){
                                         // console.log('点击了')
+                                        layer.msg("选择了上级文档："+obj.data.title)
                                         $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
                                     }else{
                                         $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')

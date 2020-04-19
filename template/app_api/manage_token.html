@@ -47,7 +47,9 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 $.post("{% url 'manage_token' %}",function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //生成成功
                         //window.location.reload();

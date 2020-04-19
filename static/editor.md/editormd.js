@@ -168,6 +168,7 @@
         tex                  : false,          // TeX(LaTeX), based on KaTeX
         flowChart            : false,          // flowChart.js only support IE9+
         sequenceDiagram      : false,          // sequenceDiagram.js only support IE9+
+        mindMap              : true,           // 脑图
         previewCodeHighlight : true,
                 
         toolbar              : true,           // show/hide toolbar
@@ -1492,7 +1493,6 @@
          */
         
         katexRender : function() {
-            
             if (timer === null)
             {
                 return this;
@@ -1507,6 +1507,24 @@
 
             return this;
         },
+
+        /**
+         * 解析思维导图 - 2020-04-12
+         * 
+         * @returns {editormd}             返回editormd的实例对象
+         */
+        mindmapRender:function(){
+            // console.log("开始解析脑图")
+            this.previewContainer.find(".mindmap").each(function(){
+                var mmap  = $(this);
+                var md_data = window.markmap.transform(mmap.text().trim());
+                window.markmap.markmap("svg#"+this.id,md_data)
+                //drawMindMap(mmap[0]) // kityminder的实现
+            });   
+
+            return this;
+        },
+
         
         /**
          * 解析和渲染流程图及时序图
@@ -1529,7 +1547,7 @@
                     return this;
                 }
                 
-                previewContainer.find(".flowchart").flowChart(); 
+                previewContainer.find(".flowchart").flowChart();
             }
 
             if (settings.sequenceDiagram) {
@@ -1999,6 +2017,7 @@
                 emailLink            : settings.emailLink,        // for mail address auto link
                 flowChart            : settings.flowChart,
                 sequenceDiagram      : settings.sequenceDiagram,
+                mindMap              : settings.mindMap,
                 previewCodeHighlight : settings.previewCodeHighlight,
             };
             
@@ -2032,13 +2051,13 @@
                 this.htmlTextarea.text(newMarkdownDoc);
             }
             
-            if(settings.watch || (!settings.watch && state.preview))
+            if(settings.watch || (!settings.watch && state.preview))//如果开启了预览
             {
                 previewContainer.html(newMarkdownDoc);
 
                 this.previewCodeHighlight();
                 
-                if (settings.toc) 
+                if (settings.toc) // 渲染目录
                 {
                     var tocContainer = (settings.tocContainer === "") ? previewContainer : $(settings.tocContainer);
                     var tocMenu      = tocContainer.find("." + this.classPrefix + "toc-menu");
@@ -2063,7 +2082,7 @@
                     }
                 }
                 
-                if (settings.tex)
+                if (settings.tex) // 渲染公式
                 {
                     if (!editormd.kaTeXLoaded && settings.autoLoadModules) 
                     {
@@ -2078,8 +2097,17 @@
                         editormd.$katex = katex;
                         this.katexRender();
                     }
-                }                
+                }
+
+                // 渲染脑图
+                if(settings.mindMap){
+                    setTimeout(function(){
+                        _this.mindmapRender();
+                    },10)
+                   
+                }
                 
+                // 渲染流程图和时序图
                 if (settings.flowChart || settings.sequenceDiagram)
                 {
                     flowchartTimer = setTimeout(function(){
@@ -3633,10 +3661,21 @@
             else if ( lang === "math" || lang === "latex" || lang === "katex")
             {
                 return "<p class=\"" + editormd.classNames.tex + "\">" + code + "</p>";
+            }
+            else if (/^mindmap/i.test(lang)){
+            　　var len = 9 || 32;
+            　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 
+            　　var maxPos = $chars.length;
+            　　var map_id = '';
+            　　for (var i = 0; i < len; i++) {
+            　　　　map_id += $chars.charAt(Math.floor(Math.random() * maxPos));
+                }
+                // var map_id = lang.split('>')[1];
+                // console.log(map_id)
+                return "<svg class='mindmap' style='width:100%;min-height=150px;' id='mindmap-"+ map_id +"'>"+code+"</svg>";
             } 
             else 
             {
-
                 return marked.Renderer.prototype.code.apply(this, arguments);
             }
         };
@@ -3913,6 +3952,7 @@
             taskList             : false,   // Github Flavored Markdown task lists
             emoji                : false,
             flowChart            : false,
+            mindMap              : true, //百度脑图
             sequenceDiagram      : false,
             previewCodeHighlight : true
         };
@@ -3944,6 +3984,7 @@
             emailLink            : settings.emailLink,        // for mail address auto link
             flowChart            : settings.flowChart,
             sequenceDiagram      : settings.sequenceDiagram,
+            mindMap              : settings.mindMap, // 思维导图
             previewCodeHighlight : settings.previewCodeHighlight,
         };
 
@@ -4020,7 +4061,6 @@
                     tex.find(".katex").css("font-size", "1.6em");
                 });
             };
-            
             if (settings.autoLoadKaTeX && !editormd.$katex && !editormd.kaTeXLoaded)
             {
                 this.loadKaTeX(function() {
@@ -4033,6 +4073,20 @@
             {
                 katexHandle();
             }
+        }
+
+        // 前台渲染脑图
+        if(settings.mindMap){
+            // console.log("前台渲染脑图")
+            var mindmapHandle = function(){
+                div.find(".mindmap").each(function(){
+                    var mmap  = $(this);
+                    var md_data = window.markmap.transform(mmap.text().trim());
+                    window.markmap.markmap("svg#"+this.id,md_data)
+                    //drawMindMap(mmap[0]) // kityminder的实现
+                });   
+            }
+            mindmapHandle();
         }
         
         div.getMarkdown = function() {            
@@ -4181,9 +4235,9 @@
     // You can custom KaTeX load url.
     editormd.katexURL  = {
         //css : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min",
-        css :   "/static/katex/katex.min.css",
+        css :   "/static/katex/katex.min",
         //js  : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min"
-        js  :   "/static/katex/katex.min.js",
+        js  :   "/static/katex/katex.min",
     };
     
     editormd.kaTeXLoaded = false;

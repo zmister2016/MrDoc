@@ -99,18 +99,20 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'img_id':img_id,
                     'types':0
                 }
                 $.post("{% url 'manage_image' %}",data,function(r){
+                    layer.closeAll('loading')
                     if(r.status){
                         //删除成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //删除失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })
@@ -131,6 +133,7 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'types':1,
                     'img_id':img_id,
@@ -138,13 +141,14 @@
                 }
                 console.log(data)
                 $.post("{% url 'manage_image' %}",data,function(r){
+                    layer.closeAll('loading')
                     if(r.status){
                         //移动成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //移动失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })
@@ -176,18 +180,19 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1); //上传loading
                 data = {
                     'types':0,
                     'group_name':$("#img_group_name").val(),
                 }
                 $.post("{% url 'manage_img_group' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //新建成功
                         window.location.reload();
-                        //layer.close(index)
                     }else{
                         //新建失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })
@@ -199,7 +204,11 @@
     upload.render({
         elem: '#upload_img',
         url: '{% url "upload_doc_img" %}',
+        before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+            layer.load(); //上传loading
+        },
         done: function(res, index, upload){ //上传后的回调
+            layer.closeAll('loading'); //关闭loading
             //上传成功，刷新页面
             if(res.success == 1){
                 window.location.reload();

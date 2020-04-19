@@ -59,23 +59,22 @@
     <script>
         //修改文档模板
         modifyDocTemp = function(){
-            layer.load();
+            layer.load(1);
             var data = {
                 'doctemp_id':{{ doctemp.id }},
                 'name':$("#doctemp-name").val(),
                 'content':editor.getMarkdown(),
             }
             $.post("{% url 'modify_doctemp' doctemp_id=doctemp.id %}",data,function(r){
+                layer.closeAll("loading");
                 if(r.status){
                     //修改成功
-                    layer.closeAll("loading");
                     layer.msg('修改成功，即将跳转',function(){
                         md_changed = false;
                         window.location.href = "{% url 'manage_doctemp' %}";
                     });
                 }else{
                     //创建失败
-                    layer.closeAll("loading");
                     layer.msg('保存失败');
                 }
             });

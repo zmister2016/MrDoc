@@ -82,7 +82,11 @@
         elem: '#upload_attachment',
         url: '{% url "manage_attachment" %}',
         data:{types:0,csrfmiddlewaretoken: '{{ csrf_token }}'},
+        before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+            layer.load(1); //上传loading
+        },
         done: function(res, index, upload){ //上传后的回调
+            layer.closeAll('loading'); //关闭loading
             //上传成功，刷新页面
             if(res.status == 1){
                 window.location.reload();
@@ -107,18 +111,20 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'attach_id':attach_id,
                     'types':1
                 }
                 $.post("{% url 'manage_attachment' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //修改成功
                         window.location.reload();
                         //layer.close(index)
                     }else{
                         //修改失败，提示
-                        console.log(r)
+                        // console.log(r)
                         layer.msg(r.data)
                     }
                 })

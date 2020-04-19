@@ -3622,7 +3622,45 @@
             else if ( lang === "math" || lang === "latex" || lang === "katex")
             {
                 return "<p class=\"" + editormd.classNames.tex + "\">" + code + "</p>";
-            } 
+            }
+            else if (/^mindmap/i.test(lang)){
+                lang=lang+" ";//加一个空格，便于解析各参数使用    
+                //各参数解析开始
+                var sizeps = lang.match(/(?<=size:)(mindmap-sm|mindmap-md|mindmap-lg)(?= )/i);
+                var Templateps = lang.match(/(?<=Template:)(fresh-blue|filetree|fish-bone|right|structure|tianpan)(?= )/i);
+                var Themeps = lang.match(/(?<=Theme:)(classic|classic-compact|fish|fresh-blue|fresh-blue-compat|fresh-green|fresh-green-compat|fresh-pink|fresh-pink-compat|fresh-purple|fresh-purple-compat|fresh-red|fresh-red-compat|fresh-soil|fresh-soil-compat|snow|snow-compact|tianpan|tianpan-compact|wire)(?= )/i);
+                var protocolps=lang.match(/(?<=protocol:)(json|text|markdown|list)(?= )/i);
+                var tmpshowps=lang.match(/(?<=tmpshow:)(true)(?= )/i);
+                var size=(sizeps!== null)?sizeps[0]:"mindmap-md";
+                var Theme=(Themeps!== null)?Themeps[0]:"fresh-blue";
+                var protocol=(protocolps!== null)?protocolps[0]:"markdown";
+                var Template=(Templateps!== null)?Templateps[0]:"default";
+                var tmpshow=(tmpshowps!== null)?"":"style=\"display:none;\"";
+                //参数解析结束
+                
+                //生成两个div，其中一个存放参数，一个存放待生成的数据。
+                if(protocol=="list"){
+                    code=marked(code);
+                }
+                else {
+                    //先将code解析为json数据，并添加主题和模板，
+                    //如果不先解析，按照官方文档，使用minder.execCommand('Template', "right");
+                    //或minder.useTemplate;minder.setTemplate;
+                    //等均没有效果，需要单独添加一个按钮或标签，等加载完才可以改变，有点无语。
+                    var minder=new kityminder.Minder();
+                    try {
+                        var tmpcode = minder.decodeData(protocol,code);
+                        tmpcode=tmpcode.fulfillValue;
+                        tmpcode.template=Template;
+                        tmpcode.theme=Theme;
+                        code=JSON.stringify(tmpcode);
+                    }catch(e){}
+                }
+                var mindmapoption="<div class=\"mindmapoption\" style=\"display:none;\" >" +  lang + "</div>";
+                var midmaptmpdiv="<div class=\"mindmaptmp\"" +tmpshow+" >" +  code + "</div>";
+                return "<div class=\"mindmap "+size+"\">"+mindmapoption+midmaptmpdiv+"</div>";				
+    
+            }
             else 
             {
 
@@ -4183,6 +4221,9 @@
      */
     
     editormd.loadKaTeX = function (callback) {
+        // editormd.loadCSS(editormd.katexURL.css, function(){
+            // editormd.loadScript(editormd.katexURL.js, callback || function(){});
+        // });
         editormd.loadCSS(editormd.katexURL.css, function(){
             editormd.loadScript(editormd.katexURL.js, callback || function(){});
         });

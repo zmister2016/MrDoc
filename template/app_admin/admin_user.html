@@ -61,7 +61,9 @@
     var layer = layui.layer;
     //获取用户列表
     getUserInfo = function () {
+        layer.load(1);
         $.post("{% url 'user_manage' %}",{'username':$("#username").val()},function(r){
+            layer.closeAll('loading');
             if(r.status){
                 //执行表格渲染
                 table.render({
@@ -94,12 +96,14 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'username':$("#user").val(),
                     'password':$("#password").val(),
                     'email':$("#email").val()
                 }
                 $.post("{% url 'create_user' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //创建成功，刷新页面
                         window.location.reload();
@@ -122,12 +126,14 @@
             content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
             btn:['确认修改','取消'],
             yes:function (index,layero) {
+                layer.load();
                 data = {
                     'user_id':uid,
                     'password':$("#newPwd1").val(),
                     'password2':$("#newPwd2").val(),
                 }
                 $.post("{% url 'change_pwd' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //修改成功
                         window.location.reload();
@@ -152,10 +158,12 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'user_id':uid,
                 }
                 $.post("{% url 'del_user' %}",data,function(r){
+                    layer.closeAll('loading');
                     if(r.status){
                         //删除成功
                         window.location.reload();

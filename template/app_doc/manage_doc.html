@@ -106,10 +106,12 @@
             btn:['确定','取消'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
+                layer.load(1);
                 data = {
                     'doc_id':doc_id,
                 }
                 $.post("{% url 'del_doc' %}",data,function(r){
+                    layer.closeAll('loading')
                     if(r.status){
                         //修改成功
                         window.location.reload();

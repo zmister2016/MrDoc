@@ -25,6 +25,49 @@
         .layui-laypage .layui-laypage-curr .layui-laypage-em{
             background-color: #333 !important;
         }
+        /* 控制栏表单下拉框样式 */
+        .index-control .layui-input-inline{
+                width: 100px;
+        }
+        .index-control .layui-input{
+            height: 25px;
+            border: none;
+        }
+        .index-control .layui-form-select dl {
+            top: 30px;
+        }
+        .index-control .layui-form-item{
+            margin-bottom: 0px;
+        }
+        /* 文集列表样式 */
+        .project-item-list{
+            /* float: left; */
+            min-width: 0;
+            width: 100vw;
+            height: 120px;
+            /* margin-top: 20px; */
+            /* margin-left: 20px; */
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.055);
+        }
+        /* 移动端筛选控制栏样式 */
+        @media screen and (max-width: 768px){
+            /* 控制栏样式 */
+            .index-control .layui-form-item .layui-inline{
+                display: -webkit-inline-box;
+            }
+            .index-control .layui-form-item .layui-input-inline{
+                display: -webkit-inline-box;
+                float: none;
+                left: -3px;
+                /* width: auto; */
+                margin: 0;
+            }
+
+        }
+        
     </style>
 </head>
 <body class="layui-container">
@@ -32,8 +75,53 @@
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
 
+<!-- 筛选栏 -->
+<div class="layui-container" style="margin-top: 10px;">
+    <!-- 表单风格开始 -->
+    <div class="layui-row">
+        <form class="index-control layui-form" style="float: right;" lay-filter="filter-project-form">
+            <div class="layui-form-item">
+                <!-- 筛选开始 -->
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <select name="role" lay-verify="" id="sel-role">
+                            <option value="">筛选</option>
+                            {% if request.user.is_authenticated %}
+                            <option value="0">公开文集</option>
+                            <option value="1">私密文集</option>
+                            <option value="99">协作文集</option>
+                            <option value="3">访问码文集</option>
+                            {% else %}
+                            <option value="0">公开文集</option>
+                            <option value="3">访问码文集</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="layui-input-inline">
+                        <select name="sort" lay-verify="" id="sel-sort">
+                            <option value="">排序</option>
+                            <option value="0" {% if sort == 0 %} checked {% endif %}>时间升序</option>
+                            <option value="1" {% if sort == 1 %} checked {% endif %}>时间降序</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- 筛选结束 -->
+                <!-- 切换开始 -->
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 40px;">
+                        <a href="javascript:void(0);" id="switch-grid-list"><i class="layui-icon layui-icon-align-left"></i></a>
+                    </div>
+                </div>
+                <!-- 切换结束 -->
+            </div>
+        </form>
+    </div>
+    <!-- 表单风格结束 -->
+</div>
+
+<!-- 搜索结果提示 -->
 {% if kw != '' %}
-    <div style="text-align: center;margin-top: 5px;">符合“<span style="color: #FF5722;font-weight: 700;">{{kw}}</span>”的搜索结果：</div>
+    <div style="text-align: center;margin-top: 0px;">符合“<span style="color: #FF5722;font-weight: 700;">{{kw}}</span>”的搜索结果：</div>
 {% endif %}
 
 <!-- 主体 -->
@@ -41,25 +129,25 @@
     <!-- 遍历文集列表 -->
     {% load project_filter %}
     {% for p in projects %}
+        <!-- 网格布局 -->
         <div class="layui-col-md3 layui-col-xs12 project-item">
             <a href="{% url 'pro_index' p.id %}" title="{{p.name}}">
                 <div class="layui-card">
-                    <div class="layui-card-header" style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;color: black;">
+                    <div class="layui-card-header" >
                         {% if p.role == 1 %}
-                        <strong><i class="layui-icon layui-icon-password"></i> {{ p.name }}</strong>
+                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #FF5722;"></i> {{ p.name }}</p>
                         {% elif p.role == 2 %}
-                        <strong><i class="layui-icon layui-icon-user"></i> {{ p.name }}</strong>
+                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #009688;"></i> {{ p.name }}</p>
                         {% elif p.role == 3 %}
-                        <strong><i class="layui-icon layui-icon-key"></i> {{ p.name }}</strong>
+                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #1E9FFF;"></i> {{ p.name }}</p>
                         {% else %}
-                            <strong>{{ p.name }}</strong>
+                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #5FB878;"></i> {{ p.name }}</p>
                         {% endif %}
-
                     </div>
                   <div class="layui-card-body">
-                      <p>作者：{{p.create_user}}</p>
-                      <p style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">最新：<u title="{{p.id | get_new_doc}}">{{p.id | get_new_doc}}</u></p>
-                      <p class="tooltip">简介：
+                      <p class="layui-word-aux layui-elip">作者：{{p.create_user}}</p>
+                      <p class="layui-word-aux">最新：{{p.id | get_new_doc}}</p>
+                      <p class="tooltip layui-word-aux">简介：
                           {% if p.intro == "" %}
                           <span class="">此文集没有填写简介</span>
                           {% else %}
@@ -67,11 +155,49 @@
                           <span class="tooltip-content clearfix">{{ p.intro }}</span>
                           {% endif %}
                       </p>
-                      <p></p>
                   </div>
                 </div>
             </a>
         </div>
+        <!-- 网格布局结束 -->
+        <!-- 列表布局开始 -->
+        <div class="project-item-list layui-row layui-hide">
+            <a href="{% url 'pro_index' p.id %}" title="{{p.name}}">
+                <div class="layui-col-md1 layui-col-xs2" style="height: 100%;;text-align: center;display: flex;display: -webkit-flex;justify-content: center;align-items:center;">
+                    {% if p.role == 1 %}
+                    <i class="layui-icon layui-icon-menu-fill" style="font-size: 30px;color: #FF5722;"></i>
+                    {% elif p.role == 2 %}
+                    <i class="layui-icon layui-icon-group" style="font-size: 30px;color: #009688;"></i>
+                    {% elif p.role == 3 %}
+                    <i class="layui-icon layui-icon-key" style="font-size: 30px;color: #1E9FFF;"></i> 
+                    {% else %}
+                    <i class="layui-icon layui-icon-read" style="font-size: 30px;color: #5FB878;"></i>
+                    {% endif %}
+                </div>
+                <div class="layui-col-md11 layui-col-xs10">
+                    <div class="layui-card">
+                        <div class="layui-card-header layui-elip" >
+                            <strong class="layui-elip">{{p.name}}</strong>
+                        </div>
+                      <div class="layui-card-body layui-word-aux layui-elip">
+                            <p class="">
+                              <i class="layui-icon layui-icon-user"></i> {{p.create_user}}
+                            </p>
+                            <p class="tooltip layui-word-aux">
+                                {% if p.intro == "" %}
+                                此文集没有填写简介
+                                {% else %}
+                                <!-- <span class="">{{ p.intro | slice:'30' }}…</span> -->
+                                {{ p.intro }}
+                                {% endif %}
+                            </p>
+                      </div>
+                    </div>
+                </div>
+                
+            </a>
+        </div>
+        <!-- 列表布局结束 -->
     {% endfor %}
     {% if project_list.count == 0 %}
     <img src="{% static 'non_doc.png' %}">
@@ -83,7 +209,7 @@
     <div class="layui-box layui-laypage layui-laypage-default">
             <!-- 上一页 -->
             {% if projects.has_previous %}
-                <a href="?page={{ projects.previous_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                <a href="?page={{ projects.previous_page_number }}&kw={{kw}}&sort={{sort}}&role={{role}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
             {% else %}
                 <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
             {% endif %}
@@ -94,12 +220,13 @@
             </span>
             <!-- 下一页 -->
             {% if projects.has_next %}
-                <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                <a href="?page={{ projects.next_page_number }}&kw={{kw}}&sort={{sort}}&role={{role}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
             {% else %}
                 <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
             {% endif %}
     </div>
 </div>
+<!-- 分页结束 -->
 
 <!-- 页脚 -->
 {% include 'app_doc/foot_base.html' %}
@@ -113,6 +240,53 @@
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
         var layer = layui.layer;
+        var form = layui.form;
+        function positionFooter() {
+            // 获取页脚的高度
+            footerHeight = $(".layui-footer").height();
+            // 获取页脚的高度
+            /*
+                scrollTop() 设置或获取位于对象最顶端和窗口中可见内容的最顶端之间的距离
+            */
+            footerTop = ($(window).scrollTop() + $(window).height() - footerHeight - 40)+"px";
+            // console.log("页脚高度：",footerHeight)
+            // console.log(footerTop)
+            // console.log($(".layui-header").height()+$(".layui-container").height())
+            // console.log("窗口高度：",$(window).height())
+            //如果页面内容高度小于屏幕高度，div#footer将绝对定位到屏幕底部，否则div#footer保留它的正常静态定位
+            if(($(".layui-header").height() + $(".index-control").height() + $(".project-list-content").height() + $(".project-list-page").height() + 15) < $(window).height()) {
+                console.log("页脚置底")
+                $(".layui-footer").css({ position: "absolute",left:"0" }).stop().css({top:footerTop});
+            }else{
+                $(".layui-footer").css({ position: ""})
+            }
+        };
+        $(window).bind("load", function() {
+            // 设置页脚位置
+            var footerHeight = 0;
+            var footerTop = 0;
+            positionFooter();
+            //$(window).scroll(positionFooter).resize(positionFooter);
+            //设置条件栏选中值
+            var url = layui.url();
+            console.log(url)
+            $("#sel-role").val(url.search.role);
+            $("#sel-sort").val(url.search.sort);
+            layui.form.render('select');
+        });
+
+        
+
+
+        // 侦听Select下拉框的选择事件
+        form.on('select()', function(data){
+            var filter_data = form.val("filter-project-form");
+            console.log(filter_data)
+            window.location.href = '/?sort=' + filter_data['sort'] + '&role=' + filter_data['role'] + '&kw={{kw}}' 
+        });  
+    </script>
+    <script>
+        
         //创建新文集
         createPro = function () {
             layer.open({
@@ -124,11 +298,13 @@
                 btn:['确定','取消'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
+                    layer.load(1);
                     data = {
                         'pname':$("#pname").val(),
                         'desc':$("#desc").val(),
                     }
                     $.post("{% url 'create_project' %}",data,function(r){
+                        layer.closeAll("loading");
                         if(r.status){
                             //创建成功，刷新页面
                             window.location.reload();
@@ -152,18 +328,21 @@
                 btn:['确定','取消'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
+                    layer.load(1);
                     data = {
                         'pro_id':pro_id,
                         'name':$("#pname").val(),
                         'desc':$("#desc").val(),
                     }
                     $.post("{% url 'modify_project' %}",data,function(r){
+                        layer.closeAll("loading");
                         if(r.status){
                             //修改成功，刷新页面
                             window.location.reload();
                         }else{
                             //修改失败，提示
-                            console.log(r)
+                            // console.log(r)
+                            layer.msg(r.data)
                         }
                     })
                 },
@@ -179,11 +358,13 @@
                 content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
                 btn:['确认修改','取消'],
                 yes:function (index,layero) {
+                    layer.load(1);
                     data = {
                         'password':$("#newPwd1").val(),
                         'password2':$("#newPwd2").val(),
                     }
                     $.post("{% url 'modify_pwd' %}",data,function(r){
+                        layer.closeAll("loading");
                         if(r.status){
                             //修改成功
                             window.location.reload();
@@ -197,6 +378,18 @@
                 },
             })
         };
+        //切换文集列表和网格
+        $("#switch-grid-list").click(function(){
+            // 切换按钮图标
+            $(this).children("i").toggleClass("layui-icon-align-left layui-icon-app");//切换图标
+            // 切换class
+            $(".project-item").toggleClass("layui-hide")
+            $(".project-item-list").toggleClass("layui-hide")
+            // 重新计算底部
+            var footerHeight = 0;
+            var footerTop = 0;
+            positionFooter();
+        });
     </script>
     <!-- 统计代码开始 -->
         {% if debug %}
@@ -204,32 +397,6 @@
             {{ static_code | safe }}
         {% endif %}
     <!-- 统计代码结束 -->
-    <script>
-        $(window).bind("load", function() {
-            var footerHeight = 0;
-            var footerTop = 0;
-            positionFooter();
-            function positionFooter() {
-                // 获取页脚的高度
-                footerHeight = $(".layui-footer").height();
-                // 获取页脚的高度
-                /*
-                    scrollTop() 设置或获取位于对象最顶端和窗口中可见内容的最顶端之间的距离
-                */
-                footerTop = ($(window).scrollTop()+$(window).height()-footerHeight-40)+"px";
-                console.log(footerHeight)
-                console.log(footerTop)
-                console.log($(".layui-header").height()+$(".layui-container").height())
-                console.log($(window).height())
-                //如果页面内容高度小于屏幕高度，div#footer将绝对定位到屏幕底部，否则div#footer保留它的正常静态定位
-                if(($(".layui-header").height() + $(".project-list-content").height() + $(".project-list-page").height()) < $(window).height()) {
-                    console.log("页脚置底")
-                    $(".layui-footer").css({ position: "absolute",left:"0" }).stop().css({top:footerTop});
-                }
-            }
-            //$(window).scroll(positionFooter).resize(positionFooter);
-        });
-    </script>
 {% endblock %}
 </body>
 </html>
