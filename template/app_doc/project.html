@@ -81,10 +81,12 @@
                     {% if allow_download.allow_pdf == 1 %}
                         <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="fa fa-download"></i> <u>PDF电子书</u></a>
                     {% endif %}
+                    {% if allow_download.allow_pdf == 0 and allow_download.allow_epub == 0 %}
+                        <a>文集作者未开放此文集的任何格式下载！</a>
+                    {% endif %}
                 {% else %}
                     <a>文集作者未开放此文集的任何格式下载！</a>
                 {% endif %}
-                <!--<a href=""><i class="fa fa-download"></i> <u>DOCX文档</u></a>-->
             </span>
         </p>
     </div>
