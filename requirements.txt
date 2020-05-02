@@ -1,5 +1,5 @@
-beautifulsoup4==4.8.2
 django==2.2.12
+beautifulsoup4==4.8.2
+lxml
 pillow==6.2.2
-pytz==2019.1
-sqlparse==0.3.0
+pyppeteer==0.0.25

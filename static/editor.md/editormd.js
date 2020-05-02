@@ -3672,7 +3672,15 @@
                 }
                 // var map_id = lang.split('>')[1];
                 // console.log(map_id)
-                return "<svg class='mindmap' style='width:100%;min-height=150px;' id='mindmap-"+ map_id +"'>"+code+"</svg>";
+                var custom_height;
+                var h = lang.split('>')[1];
+                if(h != undefined){
+                    custom_height = h;
+                }else{
+                    custom_height = 150;
+                }
+
+                return "<svg class='mindmap' style='width:100%;min-height:150px;height:"+ custom_height +"px;' id='mindmap-"+ map_id +"'>"+code+"</svg>";
             } 
             else 
             {
@@ -3952,7 +3960,7 @@
             taskList             : false,   // Github Flavored Markdown task lists
             emoji                : false,
             flowChart            : false,
-            mindMap              : true, //百度脑图
+            mindMap              : true, //脑图
             sequenceDiagram      : false,
             previewCodeHighlight : true
         };

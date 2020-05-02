@@ -21,6 +21,125 @@ django.setup()
 from app_doc.models import *
 import traceback
 import time
+from pyppeteer import launch
+import asyncio
+# import PyPDF2
+# from pdfminer import high_level
+
+# 动态脑图转静态图片
+def genera_mindmap_img(html_path,img_path):
+    async def main():
+        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
+        page = await browser.newPage()
+        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
+        element = await page.querySelector('.mindmap')
+        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
+        await browser.close()
+
+    # asyncio.new_event_loop().run_until_complete(main())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
+
+
+# 公式转图片
+def genera_tex_img(html_path,img_path):
+    async def main():
+        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
+        page = await browser.newPage()
+        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
+        element = await page.querySelector('.editormd-tex')
+        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
+        await browser.close()
+
+    # asyncio.new_event_loop().run_until_complete(main())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
+
+# 流程图转图片
+def genera_flowchart_img(html_path,img_path):
+    async def main():
+        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
+        page = await browser.newPage()
+        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
+        element = await page.querySelector('.flowchart')
+        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
+        await browser.close()
+
+    # asyncio.new_event_loop().run_until_complete(main())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
+
+# 时序图转图片
+def genera_seque_img(html_path,img_path):
+    async def main():
+        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
+        page = await browser.newPage()
+        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
+        element = await page.querySelector('.sequence-diagram')
+        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
+        await browser.close()
+
+    # asyncio.new_event_loop().run_until_complete(main())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
+
+# HTML转PDF
+def html_to_pdf(html_path,pdf_path):
+    async def main():
+        browser = await launch(
+            headless=True,
+            handleSIGINT=False,
+            handleSIGTERM=False,
+            handleSIGHUP=False,
+            ignoreHTTPSErrors = True,
+        )
+        page = await browser.newPage()
+        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
+        await page.pdf({
+            'path':pdf_path,
+            'format':'A4',
+            'displayHeaderFooter':True,
+            'headerTemplate':'<div></div>',
+            'footerTemplate':'<div style="text-align:center;width:297mm;font-size: 8px;"><span class="pageNumber"></span>/<span class="totalPages"></span></div>',
+            'margin':{
+                'top':'1cm',
+                'right':'1cm',
+                'bottom':'1cm',
+                'left':'1cm'
+            }
+
+        })
+        await browser.close()
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    except:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
 
 # 导出MD文件压缩包
 class ReportMD():
@@ -55,7 +174,7 @@ class ReportMD():
     def work(self):
         # 读取指定文集的文档数据
         data = Doc.objects.filter(top_doc=self.pro_id, parent_doc=0).order_by("sort")
-        # 遍历文档
+        # 遍历一级文档
         for d in data:
             md_name = d.name
             md_content = d.pre_content
@@ -70,7 +189,6 @@ class ReportMD():
             for d2 in data_2:
                 md_name_2 = d2.name
                 md_content_2 = d2.pre_content
-
                 md_content_2 = self.operat_md_media(md_content_2)
 
                 # 新建MD文件
@@ -138,7 +256,7 @@ class ReportMD():
 class ReportEPUB():
     def __init__(self,project_id):
         self.project = Project.objects.get(id=project_id)
-        self.base_path = settings.MEDIA_ROOT + '/report/{}/'.format(project_id)
+        self.base_path = settings.MEDIA_ROOT + '/report_epub/{}/'.format(project_id)
 
         # 创建相关目录
         if os.path.exists(self.base_path + '/OEBPS') is False:
@@ -155,7 +273,7 @@ class ReportEPUB():
         # 复制样式文件到相关目录
         shutil.copyfile(settings.BASE_DIR+'/static/report_epub/style.css',self.base_path + '/OEBPS/Styles/style.css')
         shutil.copyfile(settings.BASE_DIR+'/static/katex/katex.min.css',self.base_path + '/OEBPS/Styles/katex.css')
-        shutil.copyfile(settings.BASE_DIR+'/static/editor.md/css/editormd.min.css/',self.base_path + '/OEBPS/Styles/editormd.css')
+        shutil.copyfile(settings.BASE_DIR+'/static/editor.md/css/editormd.min.css',self.base_path + '/OEBPS/Styles/editormd.css')
         # 复制封面图片到相关目录
         shutil.copyfile(settings.BASE_DIR+'/static/report_epub/epub_cover1.jpg',self.base_path + '/OEBPS/Images/epub_cover1.jpg')
 
@@ -164,8 +282,11 @@ class ReportEPUB():
         # 使用BeautifulSoup解析拼接好的HTML文本
         html_soup = BeautifulSoup(html_str, 'lxml')
         src_tag = html_soup.find_all(lambda tag: tag.has_attr("src"))  # 查找所有包含src的标签
-        code_tag = html_soup.find_all(name="code")
-        # print(src_tag)
+        mindmap_tag = html_soup.select('svg.mindmap') # 查找所有脑图的SVG标签
+        tex_tag = html_soup.select('.editormd-tex') # 查找所有公式标签
+        flowchart_tag = html_soup.select('.flowchart') # 查找所有流程图标签
+        seque_tag = html_soup.select('.sequence-diagram') # 查找所有时序图标签
+        code_tag = html_soup.find_all(name="code") # 查找code代码标签
 
         # 添加css样式标签
         style_link = html_soup.new_tag(name='link',href="../Styles/style.css",rel="stylesheet",type="text/css")
@@ -177,6 +298,7 @@ class ReportEPUB():
 
         # 添加xlm标签声明
         # html_soup.html.insert_before('<?xml version="1.0" encoding="UTF-8"?>')
+
         # 添加html标签的xmlns属性
         html_soup.html['xmlns'] = "http://www.w3.org/1999/xhtml"
 
@@ -194,6 +316,160 @@ class ReportEPUB():
                     )
                 except FileNotFoundError as e:
                     pass
+
+        # 替换HTML文本中的脑图为静态图片
+        for mindmap in mindmap_tag:
+            print('转换脑图')
+            html_str = '''<!DOCTYPE html>
+                        <html>
+                        <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                        <title>Markmap</title>
+                        <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+                        <script src="../../static/mindmap/d3@5.js"></script>
+                        <script src="../../static/mindmap/transform.js"></script>
+                        <script src="../../static/mindmap/view.js"></script>
+                        </head>
+                        <body>
+                        {svg_content}
+                        <script>
+                            var mmap  = $('svg.mindmap');
+                            var md_data = window.markmap.transform(mmap.text().trim());
+                            window.markmap.markmap("svg.mindmap",md_data)
+                        </script>
+                        </body>
+                        </html>
+                    '''.format(svg_content=mindmap)
+            # 脑图HTML文件路径
+            temp_mindmap_html = settings.BASE_DIR +'/media/report_epub/mindmap_{}.html'.format(str(time.time()))
+            mindmap_img_filename = 'mindmap_{}.jpg'.format(str(time.time()))
+            mindmap_img_path = self.base_path + '/OEBPS/Images/' + mindmap_img_filename
+            with open(temp_mindmap_html,'w+',encoding='utf-8') as mindmap_html:
+                mindmap_html.write(html_str)
+            genera_mindmap_img(temp_mindmap_html,mindmap_img_path)
+            # 将图片标签设置进去
+            mindmap.name = 'img'
+            mindmap['src'] = '../Images/' + mindmap_img_filename
+            mindmap.string = ''
+            os.remove(temp_mindmap_html) # 删除临时的HTML
+
+        # 替换公式为静态图片
+        for tex in tex_tag:
+            print('转换公式')
+            html_str = '''<!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link rel="stylesheet" href="../../static/katex/katex.min.css" />
+                <title>Markmap</title>
+                <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+                <script src="../../static/editor.md/editormd.js"></script>
+                <script src="../../static/katex/katex.min.js"></script>
+                </head>
+                <body>
+                {content}
+                </body>
+                    <script>
+                        var tex  = $('.editormd-tex');
+                        katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);
+                        tex.find(".katex").css("font-size", "1.6em");
+                    </script>
+	            </body>
+                </html>
+            '''.format(content=tex)
+            # 公式HTML文件路径
+            temp_tex_html = settings.BASE_DIR + '/media/report_epub/tex_{}.html'.format(str(time.time()))
+            tex_img_filename = 'tex_{}.jpg'.format(str(time.time()))
+            tex_img_path = self.base_path + '/OEBPS/Images/' + tex_img_filename
+            with open(temp_tex_html, 'w+', encoding='utf-8') as tex_html:
+                tex_html.write(html_str)
+            genera_tex_img(temp_tex_html, tex_img_path)
+            # 将图片标签添加进去
+            # tex.name = 'img'
+            # tex['src'] = '../Images/' + tex_img_filename
+            tex.string = ''
+            tex_img_tag = html_soup.new_tag(name='img',src='../Images/' + tex_img_filename)
+            tex.insert(0,tex_img_tag)
+            os.remove(temp_tex_html)  # 删除临时的HTML
+
+        # 替换流程图为静态图片
+        for flowchart in flowchart_tag:
+            print("转换流程图")
+            html_str = '''<!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link rel="stylesheet" href="../../static/katex/katex.min.css" />
+                <title>Markmap</title>
+                <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+                <script src="../../static/editor.md/lib/raphael.min.js"></script>
+				<script src="../../static/editor.md/lib/flowchart.min.js"></script>
+                <script src="../../static/editor.md/lib/jquery.flowchart.min.js"></script>
+                </head>
+                <body>
+                {content}
+                </body>
+                    <script>
+                        $(".flowchart").flowChart();
+                    </script>
+                </body>
+                </html>
+            '''.format(content=flowchart)
+            # 流程图HTML文件路径
+            temp_flow_html = settings.BASE_DIR + '/media/report_epub/flow_{}.html'.format(str(time.time()))
+            flow_img_filename = 'flow_{}.jpg'.format(str(time.time()))
+            flow_img_path = self.base_path + '/OEBPS/Images/' + flow_img_filename
+            with open(temp_flow_html, 'w+', encoding='utf-8') as flow_html:
+                flow_html.write(html_str)
+            genera_flowchart_img(temp_flow_html, flow_img_path)
+            # 将图片标签添加进去
+            flowchart.string = ''
+            flow_img_tag = html_soup.new_tag(name='img', src='../Images/' + flow_img_filename)
+            flowchart.insert(0, flow_img_tag)
+            os.remove(temp_flow_html)  # 删除临时的HTML
+
+        # 替换时序图为静态图片
+        for seque in seque_tag:
+            print("转换时序图")
+            html_str = '''<!DOCTYPE html>
+                    <html>
+                    <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                    <title>Markmap</title>
+                    <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+                    <script src="../../static/editor.md/lib/raphael.min.js"></script>
+				    <script src="../../static/editor.md/lib/underscore.min.js"></script>
+                    <script src="../../static/editor.md/lib/sequence-diagram.min.js"></script>
+                    </head>
+                    <body>
+                    {content}
+                    </body>
+                        <script>
+                            $(".sequence-diagram").sequenceDiagram({{theme: "simple"}});
+                        </script>
+                    </body>
+                    </html>
+                '''.format(content=seque)
+            # 时序图HTML文件路径
+            temp_seque_html = settings.BASE_DIR + '/media/report_epub/seque_{}.html'.format(str(time.time()))
+            seque_img_filename = 'seque_{}.jpg'.format(str(time.time()))
+            seque_img_path = self.base_path + '/OEBPS/Images/' + seque_img_filename
+            with open(temp_seque_html, 'w+', encoding='utf-8') as seque_html:
+                seque_html.write(html_str)
+            genera_seque_img(temp_seque_html, seque_img_path)
+            # 将图片标签添加进去
+            seque.string = ''
+            seque_img_tag = html_soup.new_tag(name='img', src='../Images/' + seque_img_filename)
+            seque.insert(0, seque_img_tag)
+            os.remove(temp_seque_html)  # 删除临时的HTML
 
         # 替换code标签的内容
         # for code in code_tag:
@@ -521,11 +797,11 @@ class ReportEPUB():
     def generate_epub(self):
         try:
             # 生成ZIP压缩文件
-            zipfile_name = settings.MEDIA_ROOT + '/report/{}'.format(self.project.name)+'_'+str(int(time.time()))
+            zipfile_name = settings.MEDIA_ROOT + '/report_epub/{}'.format(self.project.name)+'_'+str(int(time.time()))
             zip_name = shutil.make_archive(
                 base_name = zipfile_name,
                 format='zip',
-                root_dir= settings.MEDIA_ROOT + '/report/{}'.format(self.project.id)
+                root_dir= settings.MEDIA_ROOT + '/report_epub/{}'.format(self.project.id)
             )
             # print(zip_name)
             # 修改zip压缩文件后缀为EPUB
@@ -549,6 +825,186 @@ class ReportEPUB():
         self.generate_opf() # 生成content.opf
         epub_file = self.generate_epub()
         return epub_file
+
+
+# 导出PDF
+class ReportPDF():
+    def __init__(self,project_id):
+        # 查询文集信息
+        self.pro_id = project_id
+        self.html_str = '''
+            <!DOCTYPE html>
+                        <html>
+                        <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                        <title>{title}</title>
+                        <link rel="stylesheet" href="../../static/editor.md/css/editormd.css" />
+                        <link rel="stylesheet" href="../../static/katex/katex.min.css" />
+                        <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+                        <script src="../../static/editor.md/lib/marked.min.js"></script>
+                        <script src="../../static/editor.md/lib/prettify.min.js"></script>
+                        <script src="../../static/editor.md/lib/raphael.min.js"></script>
+                        <script src="../../static/editor.md/lib/underscore.min.js"></script>
+                        <script src="../../static/editor.md/lib/sequence-diagram.min.js"></script>
+                        <script src="../../static/editor.md/lib/flowchart.min.js"></script>
+                        <script src="../../static/editor.md/lib/jquery.flowchart.min.js"></script>
+                        <script src="../../static/mindmap/d3@5.js"></script>
+                        <script src="../../static/mindmap/transform.js"></script>
+                        <script src="../../static/mindmap/view.js"></script>
+                        <script src="../../static/katex/katex.min.js"></script>
+                        <script src="../../static/editor.md/editormd.js"></script>
+                        </head>
+                        <body>
+                            <div style="position: fixed;font-size:8px; bottom: 5px; right: 10px; background: red; z-index: 10000">
+                                本文档由觅道文档(MrDoc)生成
+                            </div>
+                            <div style="text-align:center;margin-top:400px;">
+                                <h1>{project_name}</h1>
+                                <p>作者：{author}</p>
+                                <p>日期：{create_time}</p>
+                            </div>\n
+                            <div class="markdown-body" id="content" style="padding:0px;font-family:宋体;">
+                                <textarea style="display: none;">{pre_content}</textarea>
+                            </div>
+                        <script>
+                            editormd.markdownToHTML("content", {{
+                            htmlDecode      : "style,script,iframe",
+                            emoji           : true,  //emoji表情
+                            taskList        : true,  // 任务列表
+                            tex             : true,  // 科学公式
+                            flowChart       : true,  // 流程图
+                            sequenceDiagram : true,  // 时序图
+                            tocm            : true, //目录
+                            toc             :true,
+                            tocContainer : "#toc-container",
+                            tocDropdown   : false,
+                            atLink    : false,//禁用@链接
+                
+                        }});
+                        $('html').find(".editormd-tex").each(function(){{
+                            var tex  = $(this);                    
+                            katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                            tex.find(".katex").css("font-size", "1.6em");
+                        }});
+                        $('img.emoji').each(function(){{
+                            var img = $(this);
+                            if(img[0].src.indexOf("/static/editor.md/")){{
+                                var src = img[0].src.split('static');
+								img[0].src = '../../static' + src[1];
+                            }}
+                        }})
+                        </script>
+                        </body>
+                        </html>
+        '''
+        self.content_str = ""
+
+    def work(self):
+        try:
+            project = Project.objects.get(pk=self.pro_id)
+        except:
+            return
+        # 拼接文档的HTML字符串
+        data = Doc.objects.filter(top_doc=self.pro_id,parent_doc=0).order_by("sort")
+        toc_list = {'1':[],'2':[],'3':[]}
+        for d in data:
+            self.content_str += "<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d.name)
+            self.content_str += d.pre_content + '\n'
+            toc_list['1'].append({'id':d.id,'name':d.name})
+            # 获取第二级文档
+            data_2 = Doc.objects.filter(parent_doc=d.id).order_by("sort")
+            for d2 in data_2:
+                self.content_str += "\n\n<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d2.name)
+                self.content_str += d2.pre_content + '\n'
+                toc_list['2'].append({'id':d2.id,'name':d2.name,'parent':d.id})
+                # 获取第三级文档
+                data_3 = Doc.objects.filter(parent_doc=d2.id).order_by("sort")
+                for d3 in data_3:
+                    # print(d3.name,d3.content)
+                    self.content_str += "\n\n<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d3.name)
+                    self.content_str += d3.pre_content +'\n'
+                    toc_list['3'].append({'id':d3.id,'name':d3.name,'parent':d2.id})
+
+        # 替换所有媒体文件链接
+        self.content_str = self.content_str.replace('![](/media//','![](../../media/')
+        # print(self.html_str.format(pre_content=self.content_str))
+
+        # 创建写入临时HTML文件
+        report_pdf_folder = settings.MEDIA_ROOT+'/report_pdf'
+        is_folder = os.path.exists(report_pdf_folder)
+        # 创建文件夹
+        if is_folder is False:
+            os.mkdir(report_pdf_folder)
+        # 临时HTML和PDF文件名
+        temp_file_name =  '{}_{}'.format(
+            project.name,
+            str(datetime.datetime.today()).replace(' ', '-').replace(':', '-')
+        )
+        # 临时HTML文件路径
+        temp_file_path = report_pdf_folder + '/{0}.html'.format(temp_file_name)
+        # PDF文件路径
+        report_file_path = report_pdf_folder + '/{0}.pdf'.format(temp_file_name)
+        # output_pdf_path = report_pdf_folder + '/{}_{}.pdf'.format(
+        #     project.name,
+        #     str(datetime.datetime.today()).replace(' ','-').replace(':','-')
+        # )
+        # 写入HTML文件
+        with open(temp_file_path, 'w', encoding='utf-8') as htmlfile:
+            htmlfile.write(
+                self.html_str.format(
+                    title=project.name,
+                    pre_content=self.content_str,
+                    project_name=project.name,
+                    author=project.create_user,
+                    create_time=str(datetime.date.today())
+                )
+            )
+
+        # 执行HTML转PDF
+        html_to_pdf(temp_file_path,report_file_path)
+        # 处理PDF文件
+        if os.path.exists(report_file_path):
+            # output = PyPDF2.PdfFileWriter()  # 实例化一个PDF写入文件类，用于保存最后的PDF文件
+            # tmp_pdf_file = open(report_file_path, 'rb') # 打开临时PDF
+            # input = PyPDF2.PdfFileReader(tmp_pdf_file)  # 打开临时PDF文件
+            # pdf_pages = input.getNumPages() # 获取临时PDF的页数
+            # for p in range(pdf_pages):
+            #     page = input.getPage(p)
+            #     output.addPage(page)  # 添加一页
+            #     page_content = high_level.extract_text(report_file_path, page_numbers=[p])  # 提取某页的文本
+            #     first_line_text = page_content.split('\n') # 获取某页的第一行文本
+            #     # 添加第一层级文档书签
+            #     for i1 in toc_list['1']:
+            #         if i1['name'] in first_line_text:
+            #             bookmark_1 = output.addBookmark(i1['name'], p, parent=None)  # 添加书签
+            #         else:
+            #             bookmark_1 = None
+            #     # 添加第二层文档书签
+            #     for i2 in toc_list['2']:
+            #         if i2['name'] in first_line_text:
+            #             bookmark_2 = output.addBookmark(i2['name'], p, parent=bookmark_1)  # 添加书签
+            #     # 添加第三层文档书签
+            #     for i3 in toc_list['3']:
+            #         if i3['name'] in first_line_text:
+            #             bookmark_3 = output.addBookmark(i3['name'], p, parent=bookmark_2)  # 添加书签
+            #
+            # output.setPageMode("/UseOutlines")  # 默认打开书签
+            # with open(output_pdf_path, 'wb') as output_pdf_file:
+            #     output.write(output_pdf_file)
+
+                # output_pdf_file.close()
+
+            # 删除临时HTML文件和临时PDF文件
+            # tmp_pdf_file.close() # 关闭临时PDF文件
+            os.remove(temp_file_path)
+            # os.remove(report_file_path)
+            # print(report_file_path)
+            return report_file_path
+        else:
+            return False
+
 
 # 导出Docx
 class ReportDocx():
@@ -697,7 +1153,12 @@ if __name__ == '__main__':
     #     project_id=7
     # )
     # app.work()
-    app = ReportEPUB(project_id=20)
+
+    # app = ReportEPUB(project_id=20)
+    # app.work()
+
+    app = ReportPDF(project_id=20)
     app.work()
+
     # app = ReportDocx(project_id=20)
     # app.work()

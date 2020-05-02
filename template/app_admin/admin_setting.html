@@ -38,11 +38,11 @@
                   </div>
 
                    <div class="layui-form-item">
-                    <label class="layui-form-label">文集导出</label>
+                    <label class="layui-form-label">文集下载</label>
                     <div class="layui-input-inline">
                       <input type="checkbox" name="enable_project_report" lay-skin="switch" lay-text="开启|关闭"  {% if enable_project_report %}checked{% endif %}>
                     </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，文集允许导出为EPUB和DOCX等格式文件，文集拥有者可进行进一步控制文集是否开放导出</div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项，文集允许导出为EPUB和DOCX等格式文件以供下载，文集拥有者可进行进一步控制特定文集是否开放导出</div>
                   </div>
 
                    <div class="layui-form-item">
@@ -61,9 +61,15 @@
                   </div>
 
                    <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">广告代码</label>
+                    <label class="layui-form-label">广告位1</label>
                     <div class="layui-input-block">
                       <textarea name="ad_code" placeholder="如果需要在文档正文上方添加广告，请将广告相关代码输入至此，可以包含<script>标签" class="layui-textarea">{{ad_code}}</textarea>
+                    </div>
+                  </div>
+                  <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">广告位2</label>
+                    <div class="layui-input-block">
+                      <textarea name="ad_code_2" placeholder="此广告位位于文档下方、分享按钮上方，可以包含<script>标签" class="layui-textarea">{{ad_code_2}}</textarea>
                     </div>
                   </div>
 

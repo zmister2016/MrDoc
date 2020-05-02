@@ -19,12 +19,23 @@ def get_new_doc(value):
         new_doc = '它还没有文档……'
     return new_doc
 
-# 获取文集的开放导出状态
-@register.filter(name='get_report_status')
-def get_report_status(value):
+# 获取文集的EPUB开放导出状态
+@register.filter(name='report_status_epub')
+def get_report_status_epub(value):
     try:
         project = Project.objects.get(id=int(value))
         status = ProjectReport.objects.get(project=project).allow_epub
+    except Exception as e:
+        # print(repr(e))
+        status = 0
+    return status
+
+# 获取文集的PDF开放导出状态
+@register.filter(name='report_status_pdf')
+def get_report_status_pdf(value):
+    try:
+        project = Project.objects.get(id=int(value))
+        status = ProjectReport.objects.get(project=project).allow_pdf
     except Exception as e:
         # print(repr(e))
         status = 0

@@ -12,6 +12,7 @@ urlpatterns = [
     path('manage_project',views.manage_project,name="manage_project"), # 管理文集
     path('del_project/',views.del_project,name='del_project'), # 删除文集
     path('report_project_md/',views.report_md,name='report_md'), # 导出文集MD文件
+    path('genera_project_file/',views.genera_project_file,name='genera_project_file'), # 个人中心生成文集文件（epub\docx\pdf等）
     path('report_project_file/',views.report_file,name='report_file'), # 导出文集文件(epub、docx等)
     path('modify_pro_role/<int:pro_id>/',views.modify_project_role,name="modify_pro_role"),# 修改文集权限
     path('modify_pro_download/<int:pro_id>/', views.modify_project_download, name="modify_pro_download"),  # 修改文集前台下载权限

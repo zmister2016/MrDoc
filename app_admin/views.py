@@ -12,19 +12,25 @@ import json,datetime,hashlib,random
 from app_doc.models import *
 from app_admin.models import *
 from app_admin.utils import *
+import traceback
 
 
 # 返回验证码图片
 def check_code(request):
-    import io
-    from . import check_code as CheckCode
-    stream = io.BytesIO()
-    # img图片对象,code在图像中写的内容
-    img, code = CheckCode.create_validate_code()
-    img.save(stream, "png")
-    # 图片页面中显示,立即把session中的CheckCode更改为目前的随机字符串值
-    request.session["CheckCode"] = code
-    return HttpResponse(stream.getvalue())
+    try:
+        import io
+        from . import check_code as CheckCode
+        stream = io.BytesIO()
+        # img图片对象,code在图像中写的内容
+        img, code = CheckCode.create_validate_code()
+        img.save(stream, "png")
+        # 图片页面中显示,立即把session中的CheckCode更改为目前的随机字符串值
+        request.session["CheckCode"] = code
+        return HttpResponse(stream.getvalue())
+    except Exception as e:
+        if settings.DEBUG:
+            print(traceback.print_exc())
+        return HttpResponse("请求异常：{}".format(repr(e)))
 
 
 # 登录视图
@@ -54,6 +60,8 @@ def log_in(request):
                 errormsg = '用户名或密码错误！'
                 return render(request, 'login.html', locals())
         except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
             return HttpResponse('请求出错')
 
 
@@ -136,8 +144,8 @@ def log_out(request):
     try:
         logout(request)
     except Exception as e:
-        print(e)
-        # logger.error(e)
+        if settings.DEBUG:
+            print(traceback.print_exc())
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -165,7 +173,8 @@ def forget_pwd(request):
                 errormsg = "验证码已过期"
                 return render(request, 'forget_pwd.html', locals())
         except Exception as e:
-            print(repr(e))
+            if settings.DEBUG:
+                print(traceback.print_exc())
             errormsg = "验证码错误"
             return render(request,'forget_pwd.html',locals())
 
@@ -514,7 +523,8 @@ def admin_setting(request):
         if types == 'basic':
             close_register = request.POST.get('close_register',None) # 禁止注册
             static_code = request.POST.get('static_code',None) # 统计代码
-            ad_code = request.POST.get('ad_code',None) # 广告代码
+            ad_code = request.POST.get('ad_code',None) # 广告位1
+            ad_code_2 = request.POST.get('ad_code_2',None) # 广告位2
             beian_code = request.POST.get('beian_code',None) # 备案号
             enbale_email = request.POST.get("enable_email",None) # 启用邮箱
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
@@ -533,6 +543,10 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name = 'ad_code',
                 defaults={'value':ad_code,'types':'basic'}
+            )
+            SysSetting.objects.update_or_create(
+                name='ad_code_2',
+                defaults={'value': ad_code_2, 'types': 'basic'}
             )
             # 更新备案号
             SysSetting.objects.update_or_create(

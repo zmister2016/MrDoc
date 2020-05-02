@@ -106,12 +106,29 @@ class ProjectReport(models.Model):
     project = models.OneToOneField(Project,unique=True,on_delete=models.CASCADE)
     # 允许导出，默认为0-允许，1-不允许
     allow_epub = models.IntegerField(default=0,verbose_name="前台导出EPUB")
+    allow_pdf = models.IntegerField(default=0, verbose_name="前台导出PDF")
 
     def __str__(self):
         return self.project.name
 
     class Meta:
         verbose_name = '文集导出'
+        verbose_name_plural = verbose_name
+
+
+# 文集导出文集模型
+class ProjectReportFile(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)  # 外键关联文集
+    file_type = models.CharField(choices=(('epub', 'epub'), ('pdf', 'pdf'), ('docx', 'docx')), verbose_name='文件类型',max_length=10)
+    file_name = models.CharField(max_length=100, verbose_name='文件名称')
+    file_path = models.CharField(max_length=250, verbose_name='文件路径')
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file_name
+
+    class Meta:
+        verbose_name = '附件管理'
         verbose_name_plural = verbose_name
 
 # 图片分组模型

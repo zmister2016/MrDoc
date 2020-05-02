@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>{% block title %}{% endblock %} - MrDoc</title>
+    <title>{% block title %}{% endblock %} - 觅道文档MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
@@ -215,7 +215,7 @@
             return [
                 "undo", "redo", "|",
                 "bold", "del", "italic", "quote","kaiSpan", "|",
-                "h1", "h2", "h3", "h4", "|",
+                "h1", "h2", "h3", "|",
                 "list-ul", "list-ol", "hr", "link", "reference-link", "|",
                 "mindmap","imgUpload", "attachment" ,"code", "code-block", "htmltable", "|","datetime", "emoji", "html-entities", "pagebreak", "|",
                 "watch", "preview", "|",
@@ -383,6 +383,7 @@
         flowChart   :   true, //开启流程图
         sequenceDiagram : true, //开启序列图
         imageUpload    : true, //开启图片上传
+        codeFold       :true, //代码折叠
         htmlDecode     : "link,style,script,iframe|on*", //解析部分HTML标签
         imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL : "{% url 'upload_doc_img' %}",

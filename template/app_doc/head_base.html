@@ -1,9 +1,11 @@
+{% load staticfiles %}
 <div class="layui-header layui-fluid">
     <div class="" style="display:flex;flex-direction:row;justify-content:space-between;">
         <!-- LOGO -->
         <div class="">
             <a class="logo" href="{% url 'pro_list' %}">
-                <h1><strong>MrDoc</strong></h1>
+                <img src="{% static 'logo.jpg' %}" style="height: 32px;width: auto;">
+                <!-- <h1><strong>MrDoc</strong></h1> -->
             </a>
         </div>
         <!-- 搜索框 -->

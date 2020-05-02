@@ -1,10 +1,10 @@
 {% extends 'app_doc/manage_base.html' %}
 {% load staticfiles %}
-{% block title %}文集下载状态管理{% endblock %}
+{% block title %}文集下载状态管理 - {{pro.name}}{% endblock %}
 {% block content %}
     {% if enable_project_report %}
     {% else %}
-        <blockquote class="layui-elem-quote">当前站点未启用前台文集下载功能，修改操作将在功能启用后生效！</blockquote>
+        <blockquote class="layui-elem-quote">站点管理员未启用文集导出下载文件功能，相关操作将在此功能启用后生效！</blockquote>
     {% endif %}
     <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
         <span class="layui-breadcrumb" lay-separator=">">
@@ -33,15 +33,57 @@
                 <label class="layui-form-label">EPUB下载</label>
                 <div class="layui-input-block">
                     <input type="checkbox" name="download_epub"
-                       {% if pro.id|get_report_status == 1 %} checked {%endif%}
+                       {% if pro.id|report_status_epub == 1 %} checked {%endif%}
                        lay-skin="switch" lay-text="允许|禁止">
+                       <!-- 判断后台是否开启导出，如果开启，则显示 -->
+                       {% if enable_project_report %}
+                            <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')" style=""><i class="layui-icon layui-icon-refresh"></i><u>生成或更新EPUB文件</u></a>
+                            {% if project_files %}
+                                {% for file in project_files %}
+                                    {% if file.file_type == 'epub' %}
+                                        | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>下载文集EPUB文件</u></a>
+                                    {% else %}
+                                        
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                            | <span style="color: hotpink;">未生成文集导出文件</span>
+                            {% endif %}
+                        {% endif %}
                 </div>
             </div>
 
             <div class="layui-form-item">
+                <label class="layui-form-label">PDF下载</label>
                 <div class="layui-input-block">
-                  <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
+                    <input type="checkbox" name="download_pdf"
+                       {% if pro.id|report_status_pdf == 1 %} checked {%endif%}
+                       lay-skin="switch" lay-text="允许|禁止">
+                       <!-- 判断后台是否开启导出，如果开启，则显示 -->
+                       {% if enable_project_report %}
+                            <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>生成或更新PDF文件</u></a>
+                            {% if project_files %}
+                                {% for file in project_files %}
+                                    {% if file.file_type == 'pdf' %}
+                                        | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>下载文集PDF文件</u></a>
+                                    {% else %}
+                                        
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                            | <span style="color: hotpink;">未生成文集导出文件</span>
+                            {% endif %}
+                        {% endif %}
                 </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="formDemo">立即修改</button>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <blockquote class="layui-elem-quote">注意：开启某类型文件下载后，请先点击“生成或更新XXX文件”，文集文档中如果包含公式、流程图、时序图、脑图等内容，将会延长生成时间，请耐心等待</blockquote>
             </div>
         </form>
     </div>
@@ -49,6 +91,18 @@
 {% block custom_script %}
 <script>
     var form = layui.form;
-
+    reportFile = function(pro_id,types){
+            layer.load(1)
+            var data = {'pro_id':pro_id,'types':types};
+            $.post("{% url 'genera_project_file' %}",data,function(r){
+                layer.closeAll('loading');
+                if(r.status){
+                    layer.msg("生成完成")
+                    window.location.reload();
+                }else{
+                    layer.msg("生成出错，请稍后重试")
+                }
+            })
+        }
 </script>
 {% endblock %}

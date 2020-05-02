@@ -74,10 +74,15 @@
         <h3>文集下载：</h3>
         <p>
             <span class="layui-breadcrumb" lay-separator="|">
-                {% if allow_epub_download == 1 %}
-                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','epub')"><i class="fa fa-download"></i> <u>EPUB电子书</u></a>
+                {% if allow_download %}
+                    {% if allow_download.allow_epub == 1 %}
+                        <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','epub')"><i class="fa fa-download"></i> <u>EPUB电子书</u></a>
+                    {% endif %}
+                    {% if allow_download.allow_pdf == 1 %}
+                        <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="fa fa-download"></i> <u>PDF电子书</u></a>
+                    {% endif %}
                 {% else %}
-                <a>文集作者未开放此文集的任何格式下载！</a>
+                    <a>文集作者未开放此文集的任何格式下载！</a>
                 {% endif %}
                 <!--<a href=""><i class="fa fa-download"></i> <u>DOCX文档</u></a>-->
             </span>
@@ -85,13 +90,15 @@
     </div>
     <script>
         reportFile = function(pro_id,types){
+            layer.load(1)
             var data = {'pro_id':pro_id,'types':types};
             $.post("{% url 'report_file' %}",data,function(r){
+                layer.closeAll('loading');
                 if(r.status){
                     //文件下载提示
                     downloadFile(r.data)
                 }else{
-                    layer.msg("导出文件出错")
+                    layer.msg(r.data)
                 }
             })
         }
@@ -102,7 +109,7 @@
                 title:"下载导出文档",
                 area:"300px",
                 id:"downloadMd",
-                content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="" >点击下载文件</a>',
+                content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-normal layui-btn-fluid download-md-link" href="'+ download_link + '" download="" >点击下载文件</a>',
                 //btn:['确定','取消'], //添加按钮
                 //btnAlign:'c', //按钮居中
                 success: function (layero, index) {

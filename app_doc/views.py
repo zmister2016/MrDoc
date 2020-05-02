@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.db import transaction
 import datetime
 import traceback
 import re
@@ -18,7 +19,7 @@ import os.path
 
 # 替换前端传来的非法字符
 def validateTitle(title):
-  rstr = r"[\/\\\:\*\?\"\<\>\|]" # '/ \ : * ? " < > |'
+  rstr = r"[\/\\\:\*\?\"\<\>\|\[\]]" # '/ \ : * ? " < > |'
   new_title = re.sub(rstr, "_", title) # 替换为下划线
   return new_title
 
@@ -181,7 +182,7 @@ def create_project(request):
             role_list = ['0','1','2','3',0,1,2,3]
             if name != '':
                 project = Project.objects.create(
-                    name=name,
+                    name=validateTitle(name),
                     intro=desc[:100],
                     create_user=request.user,
                     role = int(role) if role in role_list else 0
@@ -214,9 +215,9 @@ def project_index(request,pro_id):
 
         # 获取问价文集前台下载权限
         try:
-            allow_epub_download = ProjectReport.objects.get(project=project).allow_epub
+            allow_download = ProjectReport.objects.get(project=project)
         except ObjectDoesNotExist:
-            allow_epub_download = 0
+            allow_download = False
 
         # 私密文集并且访问者非创建者非协作者
         if (project.role == 1) and (request.user != project.create_user) and (colla_user == 0):
@@ -266,7 +267,7 @@ def modify_project(request):
             if (request.user == project.create_user) or request.user.is_superuser:
                 name = request.POST.get('name',None)
                 content = request.POST.get('desc',None)
-                project.name = name
+                project.name = validateTitle(name)
                 project.intro = content
                 project.save()
                 return JsonResponse({'status':True,'data':'修改成功'})
@@ -415,17 +416,29 @@ def modify_project_download(request,pro_id):
     if (pro.create_user != request.user) and (request.user.is_superuser is False):
         return render(request,'403.html')
     else:
+        project_files = ProjectReportFile.objects.filter(project=pro)
         if request.method == 'GET':
             return render(request,'app_doc/manage_project_download.html',locals())
         elif request.method == 'POST':
             download_epub = request.POST.get('download_epub',None)
+            download_pdf = request.POST.get('download_pdf', None)
             # print("epub状态:",download_epub)
+            # EPUB下载权限
             if download_epub == 'on':
                 epub_status = 1
             else:
                 epub_status = 0
+            # PDF下载权限
+            if download_pdf == 'on':
+                pdf_status = 1
+            else:
+                pdf_status = 0
+            # 写入数据库
             ProjectReport.objects.update_or_create(
                 project = pro,defaults={'allow_epub':epub_status}
+            )
+            ProjectReport.objects.update_or_create(
+                project=pro, defaults={'allow_pdf': pdf_status}
             )
             return render(request,'app_doc/manage_project_download.html',locals())
 
@@ -526,7 +539,6 @@ def doc(request,pro_id,doc_id):
             # 私密文集且访问者非创建者、协作者 - 不能访问
             if (project.role == 1) and (request.user != project.create_user) and (colla_user == 0):
                 return render(request, '404.html')
-
             # 指定用户可见文集
             elif project.role == 2:
                 user_list = project.role_value
@@ -842,6 +854,7 @@ def diff_doc(request,doc_id,his_id):
                 print(traceback.print_exc())
             return JsonResponse({'status':False,'data':'获取异常'})
 
+
 # 管理文档历史版本
 @login_required()
 def manage_doc_history(request,doc_id):
@@ -1106,7 +1119,6 @@ def get_pro_doc_tree(request):
 def handle_404(request):
     return render(request,'404.html')
 
-
 # 导出文集MD文件
 @login_required()
 def report_md(request):
@@ -1133,43 +1145,252 @@ def report_md(request):
     else:
         return Http404
 
-# 导出文集文件
+# 生成文集文件 - 个人中心 - 文集管理
+@login_required()
+def genera_project_file(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('types',None) # 获取前端传入到导出文件类型参数
+        # 导出EPUB文件
+
+        pro_id = request.POST.get('pro_id')
+        try:
+            project = Project.objects.get(id=int(pro_id))
+            # 获取文集的协作用户信息
+            if request.user.is_authenticated:
+                colla_user = ProjectCollaborator.objects.filter(project=project, user=request.user)
+                if colla_user.exists():
+                    colla_user_role = colla_user[0].role
+                    colla_user = colla_user.count()
+                else:
+                    colla_user = colla_user.count()
+            else:
+                colla_user = 0
+
+            # 公开的文集 - 可以直接导出
+            if project.role == 0:
+                allow_export = True
+
+            # 私密文集 - 非创建者和协作者不可导出
+            elif (project.role == 1):
+                if (request.user != project.create_user) and (colla_user == 0):
+                    allow_export = False
+                else:
+                    allow_export = True
+
+            # 指定用户可见文集 - 指定用户、文集创建者和协作者可导出
+            elif project.role == 2:
+                user_list = project.role_value
+                if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
+                    if (request.user.username not in user_list) and \
+                            (request.user != project.create_user) and \
+                            (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
+                        allow_export = False
+                    else:
+                        allow_export = True
+                else:  # 游客直接返回404
+                    allow_export = False
+
+            # 访问码可见文集 - 文集创建者、协作者和通过验证即可导出
+            elif project.role == 3:
+                # 浏览用户不为创建者和协作者 - 需要访问码
+                if (request.user != project.create_user) and (colla_user == 0):
+                    viewcode = project.role_value
+                    viewcode_name = 'viewcode-{}'.format(project.id)
+                    r_viewcode = request.COOKIES[
+                        viewcode_name] if viewcode_name in request.COOKIES.keys() else 0  # 从cookie中获取访问码
+                    if viewcode != r_viewcode:  # cookie中的访问码不等于文集访问码，不可导出
+                        allow_export = False
+                    else:
+                        allow_export = True
+                else:
+                    allow_export = True
+            else:
+                allow_export = False
+
+            # 允许被导出
+            if allow_export:
+                # 导出EPUB
+                if report_type in ['epub']:
+                    try:
+                        report_project = ReportEPUB(
+                            project_id=project.id
+                        ).work()
+                        # print(report_project)
+                        report_file_path = report_project.split('media', maxsplit=1)[-1] # 导出文件的路径
+                        epub_file = '/media' + report_file_path + '.epub' # 文件相对路径
+                        # 查询文集是否存在导出文件
+                        report_cnt = ProjectReportFile.objects.filter(project=project,file_type='epub')
+                        # 存在文件删除
+                        if report_cnt.count() != 0:
+                            for r in report_cnt:
+                                is_exist = os.path.exists(settings.BASE_DIR + r.file_path)
+                                if is_exist:
+                                    os.remove(settings.BASE_DIR + r.file_path)
+                            report_cnt.delete()  # 删除数据库记录
+
+                        # 创建数据库记录
+                        ProjectReportFile.objects.create(
+                            project=project,
+                            file_type='epub',
+                            file_name=epub_file,
+                            file_path=epub_file
+                        )
+
+                        return JsonResponse({'status': True, 'data': epub_file})
+                    except Exception as e:
+                        if settings.DEBUG:
+                            print(traceback.print_exc())
+                        return JsonResponse({'status': False, 'data': '生成出错'})
+                # 导出PDF
+                elif report_type in ['pdf']:
+                    try:
+                        report_project = ReportPDF(
+                            project_id=project.id
+                        ).work()
+                        if report_project is False:
+                            return JsonResponse({'status':False,'data':'生成出错'})
+                        report_file_path = report_project.split('media', maxsplit=1)[-1]  # 导出文件的路径
+                        pdf_file = '/media' + report_file_path  # 文件相对路径
+                        # 查询文集是否存在导出文件
+                        report_cnt = ProjectReportFile.objects.filter(project=project, file_type='pdf')
+                        # 存在文件删除
+                        if report_cnt.count() != 0:
+                            for r in report_cnt:
+                                is_exist = os.path.exists(settings.BASE_DIR + r.file_path)
+                                if is_exist:
+                                    os.remove(settings.BASE_DIR + r.file_path)
+                            report_cnt.delete()  # 删除数据库记录
+
+                        # 创建数据库记录
+                        ProjectReportFile.objects.create(
+                            project=project,
+                            file_type='pdf',
+                            file_name=pdf_file,
+                            file_path=pdf_file
+                        )
+
+                        return JsonResponse({'status': True, 'data': pdf_file})
+
+                    except Exception as e:
+                        if settings.DEBUG:
+                            print(traceback.print_exc())
+                        return JsonResponse({'status': False, 'data': '生成出错'})
+                else:
+                    return JsonResponse({'status': False, 'data': '不支持的类型'})
+            # 不允许被导出
+            else:
+                return JsonResponse({'status':False,'data':'无权限导出'})
+
+        except ObjectDoesNotExist:
+            return JsonResponse({'status':False,'data':'文集不存在'})
+
+        except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return JsonResponse({'status':False,'data':'系统异常'})
+    else:
+        return Http404
+
+
+# 获取文集前台导出文件
 @allow_report_file
 def report_file(request):
     if request.method == 'POST':
-        report_type = request.POST.get('types',None)
-        if report_type in ['epub']:
-            pro_id = request.POST.get('pro_id')
-            try:
-                project = Project.objects.get(id=int(pro_id))
-                # 公开的文集 - 可以直接导出
-                if project.role == 0:
-                    report_project = ReportEPUB(
-                        project_id=project.id
-                    ).work()
-                    # print(report_project)
-                    report_file_path = report_project.split('media',maxsplit=1)[-1]
-                    epub_file = '/media' + report_file_path + '.epub'
-                    return JsonResponse({'status':True,'data':epub_file})
-                # 私密文集 - 拥有者可导出
-                elif project.role == 1:
-                    pass
-                # 指定用户可见文集 - 指定用户可导出
-                elif project.role == 2:
-                    pass
-                # 访问码可见文集 - 通过验证即可导出
-                elif project.role == 3:
-                    pass
+        report_type = request.POST.get('types',None) # 获取前端传入到导出文件类型参数
+
+        pro_id = request.POST.get('pro_id')
+        try:
+            project = Project.objects.get(id=int(pro_id))
+
+            # 获取文集的协作用户信息
+            if request.user.is_authenticated:
+                colla_user = ProjectCollaborator.objects.filter(project=project, user=request.user)
+                if colla_user.exists():
+                    colla_user_role = colla_user[0].role
+                    colla_user = colla_user.count()
                 else:
-                    return JsonResponse({'status':False,'data':'不存在的文集权限'})
-            except ObjectDoesNotExist:
-                return JsonResponse({'status':False,'data':'文集不存在'})
-            except Exception as e:
-                if settings.DEBUG:
-                    print(traceback.print_exc())
-                return JsonResponse({'status':False,'data':'系统异常'})
-        else:
-            return JsonResponse({'status':False,'data':'不支持的类型'})
+                    colla_user = colla_user.count()
+            else:
+                colla_user = 0
+
+            # 公开的文集 - 可以直接导出
+            if project.role == 0:
+                allow_export = True
+
+            # 私密文集 - 非创建者和协作者不可导出
+            elif (project.role == 1):
+                if (request.user != project.create_user) and (colla_user == 0):
+                    allow_export = False
+                else:
+                    allow_export = True
+
+            # 指定用户可见文集 - 指定用户、文集创建者和协作者可导出
+            elif project.role == 2:
+                user_list = project.role_value
+                if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
+                    if (request.user.username not in user_list) and \
+                            (request.user != project.create_user) and \
+                            (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
+                        allow_export = False
+                    else:
+                        allow_export = True
+                else:  # 游客直接返回404
+                    allow_export = False
+            # 访问码可见文集 - 文集创建者、协作者和通过验证即可导出
+            elif project.role == 3:
+                # 浏览用户不为创建者和协作者 - 需要访问码
+                if (request.user != project.create_user) and (colla_user == 0):
+                    viewcode = project.role_value
+                    viewcode_name = 'viewcode-{}'.format(project.id)
+                    r_viewcode = request.COOKIES[
+                        viewcode_name] if viewcode_name in request.COOKIES.keys() else 0  # 从cookie中获取访问码
+                    if viewcode != r_viewcode:  # cookie中的访问码不等于文集访问码，不可导出
+                        allow_export = False
+                    else:
+                        allow_export = True
+                else:
+                    allow_export = True
+            else:
+                allow_export = False
+                # return JsonResponse({'status':False,'data':'不存在的文集权限'})
+            if allow_export:
+                # 导出EPUB文件
+                if report_type in ['epub']:
+                    try:
+                        try:
+                            report_project = ProjectReportFile.objects.get(project=project,file_type='epub')
+                        except ObjectDoesNotExist:
+                            return JsonResponse({'status':False,'data':'无可用文件,请联系文集创建者'})
+                        # print(report_project)
+                        return JsonResponse({'status': True, 'data': report_project.file_path})
+                    except Exception as e:
+                        if settings.DEBUG:
+                            print(traceback.print_exc())
+                        return JsonResponse({'status': False, 'data': '导出出错'})
+                # 导出PDF
+                elif report_type in ['pdf']:
+                    try:
+                        try:
+                            report_project = ProjectReportFile.objects.get(project=project,file_type='pdf')
+                        except ObjectDoesNotExist:
+                            return JsonResponse({'status':False,'data':'无可用文件,请联系文集创建者'})
+                        # print(report_project)
+                        return JsonResponse({'status': True, 'data': report_project.file_path})
+                    except Exception as e:
+                        if settings.DEBUG:
+                            print(traceback.print_exc())
+                        return JsonResponse({'status': False, 'data': '导出出错'})
+                else:
+                    return JsonResponse({'status': False, 'data': '不支持的类型'})
+            else:
+                return JsonResponse({'status':False,'data':'无权限导出'})
+        except ObjectDoesNotExist:
+            return JsonResponse({'status':False,'data':'文集不存在'})
+        except Exception as e:
+            if settings.DEBUG:
+                print(traceback.print_exc())
+            return JsonResponse({'status':False,'data':'系统异常'})
+
     else:
         return Http404
 

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>{% block title %}{% endblock %} - MrDoc</title>
+    <title>{% block title %}{% endblock %} - 觅道文档MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
@@ -203,6 +203,17 @@
                     </div>
                     <!-- 正文结束 -->
                 </div>
+
+                <!-- 广告代码开始 -->
+                {% if debug %}
+                {% else %}
+                    {% if ad_code %}
+                        <div class="ad-code">
+                        {{ ad_code_2 | safe }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+                <!-- 广告代码结束 -->
 
                 {% block doc_previous_next %}{% endblock %}
                 <!-- 社交分享 -->

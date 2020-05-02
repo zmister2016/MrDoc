@@ -53,10 +53,11 @@
           <td>{{ pro.id | get_doc_count }}</td>
           <td>{{ pro.create_time }}</td>
           <td>
-              {% if pro.id|get_report_status == 1 %}
-              <span>允许</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
+              {% if pro.id|report_status_epub == 1 or pro.id|report_status_pdf == 1 %}
+                
+                <span style="color: #01AAED;">允许</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
               {% else %}
-              <span>禁止</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
+              <span style="color: hotpink;">禁止</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
               {% endif %}
           </td>
           <td>
