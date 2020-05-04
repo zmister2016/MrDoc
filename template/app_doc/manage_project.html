@@ -54,7 +54,7 @@
           <td>{{ pro.create_time }}</td>
           <td>
               {% if pro.id|report_status_epub == 1 or pro.id|report_status_pdf == 1 %}
-                
+
                 <span style="color: #01AAED;">允许</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
               {% else %}
               <span style="color: hotpink;">禁止</span> <a href="{% url 'modify_pro_download' pro.id %}" title="修改前台下载"><i class="layui-icon layui-icon-edit"></i></a>
@@ -254,7 +254,7 @@
             //btnAlign:'c', //按钮居中
             success: function (layero, index) {
                 $(layero).find('.download-md-link').click(function () {
-                    layer.close(index);
+                    layer.closeAll();
                 })
         }
         })

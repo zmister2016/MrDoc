@@ -1,16 +1,27 @@
-## 觅道文档MrDoc - 记录文档，汇聚思想
+## MrDoc觅道文档 - 记录文档，汇聚思想
 
 ![Mrdoc首页](./captrue/mrdoc-index.png)
 
-## 介绍
+### 介绍
 
 `MrDoc`是基于`Python`开发的在线文档系统，适合作为个人和小型团队的文档、知识和笔记管理工具。
 
-## 开源地址
+### 开源地址
 
-**Gitee:** [https://gitee.com/zmister/MrDoc](https://gitee.com/zmister/MrDoc)
+**Gitee:** <https://gitee.com/zmister/MrDoc>
 
-**GitHub:** [https://github.com/zmister2016/MrDoc](https://github.com/zmister2016/MrDoc)
+**GitHub:** <https://github.com/zmister2016/MrDoc>
+
+### 示例站点：
+
+<http://mrdoc.zmister.com>
+
+### 说明文档：
+
+使用说明：<http://mrdoc.zmister.com/project-7/>
+
+文档样式效果和导出样例：<http://mrdoc.zmister.com/project-20/>
+
 
 ## 特性：
 
@@ -139,28 +150,3 @@ python manage.py runserver
 如果MrDoc对你有所帮助，欢迎给予开发者赞赏，助力项目更好发展。
 
 ![](./captrue/mrdoc-zan.png)
-
-
-## 更多应用截图
-
-### 文集浏览页面
-![MrDoc文集页面](./captrue/mrdoc-project-index.png)
-
-### 文档阅读页面
-![MrDoc文档页](./captrue/mrdoc-doc.png)
-
-### 文档编写页面
-![](./captrue/mrdoc-create-doc.png)
-
-### 普通用户个人中心
-![MrDoc普通用户后台](./captrue/mrdoc-manage-project.png)
-
-### 管理员后台页面
-![MrDoc管理员后台](./captrue/mrdoc-admin-register-code.png)
-
-### 登录页面
-![MrDoc登录页](./captrue/mrdoc-login.png)
-
-### 注册页面
-![MrDoc注册页](./captrue/mrdoc-register.png)
-
