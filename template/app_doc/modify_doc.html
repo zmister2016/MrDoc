@@ -92,7 +92,9 @@
             
         </div>
         <div class="layui-col-md12" id="doc-tree"></div>
-        
+    </div>
+    <div class="layui-row" style="margin-top: 20px;">
+        <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档">删除文档</button>
     </div>
 </div>
 {% endblock %}
@@ -250,6 +252,7 @@
                 area:['530px','300px'],
             });
         });
+        // 插入历史版本
         insertHistory = function(doc_id,history_id){
             layer.load(1);
             var url = "{% url 'diff_doc' 0 1 %}";
@@ -261,6 +264,37 @@
                 }else{
                     layer.msg(r.data)
                 }
+            });
+        };
+        delDoc = function(doc_id){
+            layer.open({
+                type:1,
+                title:'删除文档',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：此操作将删除此文档！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'doc_id':{{ doc.id }},
+                    }
+                    $.post("{% url 'del_doc' %}",data,function(r){
+                        layer.closeAll('loading')
+                        if(r.status){
+                            //修改成功
+                            layer.msg("文档已删除，即将跳转至文集")
+                            // window.location.reload();
+                            window.location.href = "{% url 'pro_index' doc.top_doc %}"
+                            //layer.close(index)
+                        }else{
+                            //修改失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
             });
         }
     </script>
