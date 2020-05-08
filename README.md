@@ -93,9 +93,16 @@ engine = sqlite
 
 在安装完所需的第三方库并配置好数据库信息之后，我们需要对数据库进行初始化。
 
-在项目路径下打开命令行界面，运行如下命令生成和执行数据库迁移：
+在项目路径下打开命令行界面，运行如下命令生成数据库迁移：
+
 ```
-python manage.py makemigrations &&  python manage.py migrate
+python manage.py makemigrations 
+```
+
+运行如下命令执行数据库迁移:
+
+```
+python manage.py migrate
 ```
 执行完毕之后，数据库就初始化完成了。
 
