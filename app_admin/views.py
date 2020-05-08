@@ -13,6 +13,7 @@ from app_doc.models import *
 from app_admin.models import *
 from app_admin.utils import *
 import traceback
+from loguru import logger
 
 
 # 返回验证码图片
@@ -30,12 +31,14 @@ def check_code(request):
     except Exception as e:
         if settings.DEBUG:
             print(traceback.print_exc())
+        logger.exception("生成验证码图片异常")
         return HttpResponse("请求异常：{}".format(repr(e)))
 
 
 # 登录视图
 def log_in(request):
     if request.method == 'GET':
+        # 登录用户访问登录页面自动跳转到首页
         if request.user.is_authenticated:
             return redirect('/')
         else:
@@ -62,12 +65,15 @@ def log_in(request):
         except Exception as e:
             if settings.DEBUG:
                 print(traceback.print_exc())
+            logger.exception("登录异常")
             return HttpResponse('请求出错')
 
 
 # 注册视图
 @open_register
+@logger.catch()
 def register(request):
+    # 如果登录用户访问注册页面，跳转到首页
     if request.user.is_authenticated:
         return redirect('/')
     else:
@@ -146,6 +152,7 @@ def log_out(request):
     except Exception as e:
         if settings.DEBUG:
             print(traceback.print_exc())
+        logger.exception("注销异常")
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -175,11 +182,13 @@ def forget_pwd(request):
         except Exception as e:
             if settings.DEBUG:
                 print(traceback.print_exc())
+            logger.exception("修改密码异常")
             errormsg = "验证码错误"
             return render(request,'forget_pwd.html',locals())
 
 
 # 发送电子邮箱验证码
+@logger.catch()
 def send_email_vcode(request):
     if request.method == 'POST':
         email = request.POST.get('email',None)
@@ -205,9 +214,12 @@ def send_email_vcode(request):
 
         else:
             return JsonResponse({'status':False,'data':'电子邮箱不存在！'})
+    else:
+        return JsonResponse({'status':False,'data':'方法错误'})
 
 # 管理员后台首页 - 用户管理
 @superuser_only
+@logger.catch()
 def admin_user(request):
     if request.method == 'GET':
         # user_list = User.objects.all()
@@ -235,10 +247,13 @@ def admin_user(request):
             }
             table_data.append(item)
         return JsonResponse({'status':True,'data':table_data})
+    else:
+        return JsonResponse({'status':False,'data':'方法错误'})
 
 
 # 管理员后台首页 - 创建用户
 @superuser_only
+@logger.catch()
 def admin_create_user(request):
     if request.method == 'POST':
         username = request.POST.get('username','') # 接收用户名参数
@@ -263,6 +278,7 @@ def admin_create_user(request):
 
 # 管理员后台 - 修改密码
 @superuser_only
+@logger.catch()
 def admin_change_pwd(request):
     if request.method == 'POST':
         try:
@@ -288,6 +304,7 @@ def admin_change_pwd(request):
 
 # 管理员后台 - 删除用户
 @superuser_only
+@logger.catch()
 def admin_del_user(request):
     if request.method == 'POST':
         try:
@@ -303,6 +320,7 @@ def admin_del_user(request):
 
 # 管理员后台 - 文集管理
 @superuser_only
+@logger.catch()
 def admin_project(request):
     if request.method == 'GET':
         search_kw = request.GET.get('kw','')
@@ -334,6 +352,7 @@ def admin_project(request):
 
 # 管理员后台 - 修改文集权限
 @superuser_only
+@logger.catch()
 def admin_project_role(request,pro_id):
     pro = Project.objects.get(id=pro_id)
     if request.method == 'GET':
@@ -368,6 +387,7 @@ def admin_project_role(request,pro_id):
 
 # 管理员后台 - 文档管理
 @superuser_only
+@logger.catch()
 def admin_doc(request):
     if request.method == 'GET':
         kw = request.GET.get('kw','')
@@ -397,6 +417,7 @@ def admin_doc(request):
 
 # 管理员后台 - 文档模板管理
 @superuser_only
+@logger.catch()
 def admin_doctemp(request):
     if request.method == 'GET':
         kw = request.GET.get('kw','')
@@ -426,6 +447,7 @@ def admin_doctemp(request):
 
 # 管理员后台 - 注册邀请码管理
 @superuser_only
+@logger.catch()
 def admin_register_code(request):
     # 返回注册邀请码管理页面
     if request.method == 'GET':
@@ -482,6 +504,7 @@ def admin_register_code(request):
 
 # 普通用户修改密码
 @login_required()
+@logger.catch()
 def change_pwd(request):
     if request.method == 'POST':
         try:
@@ -506,6 +529,7 @@ def change_pwd(request):
 
 # 管理员后台 - 应用设置
 @superuser_only
+@logger.catch()
 def admin_setting(request):
     email_settings = SysSetting.objects.filter(types="email")
     if email_settings.count() == 6:
@@ -522,6 +546,7 @@ def admin_setting(request):
         # 基础设置
         if types == 'basic':
             close_register = request.POST.get('close_register',None) # 禁止注册
+            require_login = request.POST.get('require_login',None) # 全站登录
             static_code = request.POST.get('static_code',None) # 统计代码
             ad_code = request.POST.get('ad_code',None) # 广告位1
             ad_code_2 = request.POST.get('ad_code_2',None) # 广告位2
@@ -531,8 +556,13 @@ def admin_setting(request):
             enable_project_report = request.POST.get('enable_project_report',None) # 文集导出
             # 更新开放注册状态
             SysSetting.objects.update_or_create(
+                name='require_login',
+                defaults={'value':require_login,'types':'basic'}
+            )
+            # 更新全站登录状态
+            SysSetting.objects.update_or_create(
                 name='close_register',
-                defaults={'value':close_register,'types':'basic'}
+                defaults={'value': close_register, 'types': 'basic'}
             )
             # 更新统计代码状态
             SysSetting.objects.update_or_create(

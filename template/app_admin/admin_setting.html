@@ -30,11 +30,11 @@
                   </div>
 
                    <div class="layui-form-item">
-                    <label class="layui-form-label">启用注册码</label>
+                    <label class="layui-form-label">全站登录</label>
                     <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_register_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_register_code %}checked{% endif %}>
+                      <input type="checkbox" name="require_login" lay-skin="switch" lay-text="开启|关闭"  {% if require_login %}checked{% endif %}>
                     </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，新用户注册将需要填写注册码</div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项，除注册、登录页面外的所有页面的访问都需要登录</div>
                   </div>
 
                    <div class="layui-form-item">

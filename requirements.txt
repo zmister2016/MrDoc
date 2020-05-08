@@ -3,3 +3,4 @@ beautifulsoup4==4.8.2
 lxml
 pillow==6.2.2
 pyppeteer==0.0.25
+loguru==0.4.1

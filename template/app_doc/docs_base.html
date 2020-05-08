@@ -285,7 +285,7 @@
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
         //解析Markdown为HTML
-        layer.load(1);
+        // layer.load(1);
         editormd.markdownToHTML("content", {
             htmlDecode      : "style,script,iframe",
             emoji           : true,  //emoji表情
@@ -300,7 +300,7 @@
             atLink    : false,//禁用@链接
 
         });
-        layer.closeAll("loading");
+        // layer.closeAll("loading");
         //为当前页面的目录链接添加蓝色样式
         $("nav li a").each(function (i) {
             var $me = $(this);

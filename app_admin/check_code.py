@@ -2,12 +2,17 @@
 # coding:utf-8
 # 生成验证码图片
 import random
+import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from django.conf import settings
 
 _letter_cases = "abcdefghjkmnpqrstuvwxy"  # 小写字母，去除可能干扰的i，l，o，z
 _upper_cases = _letter_cases.upper()  # 大写字母
 _numbers = ''.join(map(str, range(3, 10)))  # 数字
 init_chars = ''.join((_letter_cases, _upper_cases, _numbers))
+
+static_path = os.path.join(settings.BASE_DIR,"static") # 静态文件路径
+font_path = os.path.join(static_path,"MONACO.TTF") # 字体路径
 
 def create_validate_code(size=(120, 30),
                          chars=init_chars,
@@ -16,7 +21,7 @@ def create_validate_code(size=(120, 30),
                          bg_color=(255, 255, 255),
                          fg_color=(0, 0, 255),
                          font_size=18,
-                         font_type="MONACO.TTF",
+                         font_type=font_path,
                          length=4,
                          draw_lines=True,
                          n_line=(1, 2),

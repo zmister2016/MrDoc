@@ -45,7 +45,7 @@
     - 支持**文集协作**功能，一个文集可以拥有一个创建者和多个协作者，可灵活选择协作权限；
     - 支持**文档历史版本**功能，可以查看和对比历史版本与现有版本的差异，恢复某个历史版本为当前版本；
 
-当前版本为：**v0.5.0**，版本发布时间为**2020-05-02**
+当前版本为：**v0.5.1**，版本发布时间为**2020-05-08**
 
 完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
@@ -55,7 +55,7 @@
 
 `MrDoc`基于`Python`语言的`Django Web`框架配合前端的`LayUI`、`JQuery`等库进行开发。
 
-`MrDoc`在`Python3.6` + `Django 2.2`上进行开发，并且在Django 2.1、2.2和Python3.5、3.6、3.7上测试运行良好，在其他环境下运行MrDoc不排除有未知的异常。。
+`MrDoc`在`Python 3.6` + `Django 2.2`上进行开发，并且在Django 2.1、2.2和Python3.5、3.6、3.7上测试运行良好，在其他环境下运行MrDoc不排除有未知的异常。。
 
 ## 简明安装教程
 
@@ -70,43 +70,32 @@ pip install -r requirements.txt
 
 如果有配置其他数据库的需求，请首先按照Django官方的[数据库支持说明](https://docs.djangoproject.com/zh-hans/2.2/ref/databases/)，安装特定数据库的Python绑定库，
 
-然后在/MrDoc/MrDoc目录下打开settings.py文件，在约80行的位置，将如下代码：
+然后在/MrDoc/config目录下打开conig.ini文件，根据自己的数据库信息进行修改：
 
 ```python
-DATABASES = {
- 'default': {
- 'ENGINE': 'django.db.backends.sqlite3',
- 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
- }
-}
+# engine，指定数据库类型，接受sqlite、mysql、oracle、postgresql
+engine = sqlite
+# name表示数据库的名称
+# name = db_name
+# user表示数据库用户名
+# user = db_user
+# password表示数据库用户密码
+# password = db_pwd
+# host表示数据库主机地址
+# host = db_host
+# port表示数据库端口
+# port = db_port
 ```
 
 按照自己数据库的信息，将其修改如下格式，下面以MySQL为例：
-
-```python
-DATABASES = {
- 'default': {
- 'ENGINE': 'django.db.backends.mysql', # 使用的数据库后端
- 'NAME': 'mrdoc', # 数据库名
- 'USER':'root', # 数据库用户
- 'PASSWORD':'123456789', # 数据库用户密码
- 'HOST':'', # 数据库主机地址
- 'PORT':'3306', # 数据库端口
- }
-}
-```
 
 ### 3、初始化数据库
 
 在安装完所需的第三方库并配置好数据库信息之后，我们需要对数据库进行初始化。
 
-在项目路径下打开命令行界面，运行如下命令生成数据库迁移：
+在项目路径下打开命令行界面，运行如下命令生成和执行数据库迁移：
 ```
-python manage.py makemigrations
-```
-接着，运行如下命令执行数据库迁移：
-```
-python manage.py migrate
+python manage.py makemigrations &&  python manage.py migrate
 ```
 执行完毕之后，数据库就初始化完成了。
 
@@ -120,13 +109,10 @@ python manage.py createsuperuser
 在完成上述步骤之后，即可运行使用MrDoc。
 
 在测试环境中，可以使用Django自带的服务器运行MrDoc，其命令为：
+
 ```
 python manage.py runserver
 ```
-
-## 使用说明文档
-
-详见MrDoc使用文档: [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
 
 ## 问题提交和反馈
 

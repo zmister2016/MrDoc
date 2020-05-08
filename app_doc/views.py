@@ -10,6 +10,7 @@ from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
+from loguru import logger
 import datetime
 import traceback
 import re
@@ -23,7 +24,8 @@ def validateTitle(title):
   new_title = re.sub(rstr, "_", title) # 替换为下划线
   return new_title
 
-
+# 文集列表（首页）
+@logger.catch('文集列表获取异常')
 def project_list(request):
     kw = request.GET.get('kw','') # 搜索词
     sort = request.GET.get('sort',0) # 排序,0表示按时间升序排序，1表示按时间降序排序，默认为0
@@ -1411,7 +1413,7 @@ def manage_image(request):
                 image_list = Image.objects.filter(user=request.user,group_id=None)  # 查询指定分组的图片
             else:
                 image_list = Image.objects.filter(user=request.user,group_id=g_id)  # 查询指定分组的图片
-            paginator = Paginator(image_list, 20)
+            paginator = Paginator(image_list, 18)
             page = request.GET.get('page', 1)
             try:
                 images = paginator.page(page)
