@@ -252,6 +252,14 @@
                 area:['530px','300px'],
             });
         });
+        //清除所选上级文档
+        $("#clearParentDoc").click(function(){
+            $('#parent-doc').val("");
+            $("span.layui-tree-txt").each(function(i){
+                var $me = $(this)
+                $me.removeClass('selected-parent-doc')
+            });
+        });
         // 插入历史版本
         insertHistory = function(doc_id,history_id){
             layer.load(1);
@@ -266,6 +274,7 @@
                 }
             });
         };
+        // 删除文档
         delDoc = function(doc_id){
             layer.open({
                 type:1,
