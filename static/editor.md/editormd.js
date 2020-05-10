@@ -1519,7 +1519,6 @@
                 var mmap  = $(this);
                 var md_data = window.markmap.transform(mmap.text().trim());
                 window.markmap.markmap("svg#"+this.id,md_data)
-                //drawMindMap(mmap[0]) // kityminder的实现
             });   
 
             return this;

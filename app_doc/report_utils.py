@@ -13,7 +13,7 @@ import shutil
 from bs4 import BeautifulSoup
 
 from django.core.wsgi import get_wsgi_application
-sys.path.extend([r'F:\pythonproject\MrDoc',])
+sys.path.extend([settings.BASE_DIR])
 os.environ.setdefault("DJANGO_SETTINGS_MODULE","MrDoc.settings")
 application = get_wsgi_application()
 import django
@@ -23,16 +23,30 @@ import traceback
 import time
 from pyppeteer import launch
 import asyncio
+from loguru import logger
 # import PyPDF2
 # from pdfminer import high_level
 
-# 动态脑图转静态图片
-def genera_mindmap_img(html_path,img_path):
+# JS动态图形转静态图片
+@logger.catch()
+def geneta_js_img(html_path,img_path,types):
+    '''
+    :param html_path: HTML源文件路径
+    :param img_path: 保存的静态图片路径
+    :param type: 转换的类型，有mindmap、tex、flowchart、seque四种
+    :return:
+    '''
+    type_map = {
+        'mindmap':'.mindmap', # 脑图
+        'tex':'.editormd-tex', # 科学公式
+        'flowchart':'.flowchart', # 流程图
+        'seque':'.sequence-diagram' # 序列图
+    }
     async def main():
         browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
         page = await browser.newPage()
         await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
-        element = await page.querySelector('.mindmap')
+        element = await page.querySelector(type_map[types])
         await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
         await browser.close()
 
@@ -42,68 +56,14 @@ def genera_mindmap_img(html_path,img_path):
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(main())
-    finally:
-        loop.close()
-
-
-# 公式转图片
-def genera_tex_img(html_path,img_path):
-    async def main():
-        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
-        page = await browser.newPage()
-        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
-        element = await page.querySelector('.editormd-tex')
-        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
-        await browser.close()
-
-    # asyncio.new_event_loop().run_until_complete(main())
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop = asyncio.get_event_loop()
-    try:
+    except:
         loop.run_until_complete(main())
     finally:
         loop.close()
 
-# 流程图转图片
-def genera_flowchart_img(html_path,img_path):
-    async def main():
-        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
-        page = await browser.newPage()
-        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
-        element = await page.querySelector('.flowchart')
-        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
-        await browser.close()
-
-    # asyncio.new_event_loop().run_until_complete(main())
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    finally:
-        loop.close()
-
-# 时序图转图片
-def genera_seque_img(html_path,img_path):
-    async def main():
-        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
-        page = await browser.newPage()
-        await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
-        element = await page.querySelector('.sequence-diagram')
-        await element.screenshot({'type': 'jpeg', 'quality': 100, 'path': img_path})
-        await browser.close()
-
-    # asyncio.new_event_loop().run_until_complete(main())
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    finally:
-        loop.close()
 
 # HTML转PDF
+@logger.catch()
 def html_to_pdf(html_path,pdf_path):
     async def main():
         browser = await launch(
@@ -127,7 +87,6 @@ def html_to_pdf(html_path,pdf_path):
                 'bottom':'1cm',
                 'left':'1cm'
             }
-
         })
         await browser.close()
 
@@ -141,7 +100,9 @@ def html_to_pdf(html_path,pdf_path):
     finally:
         loop.close()
 
+
 # 导出MD文件压缩包
+@logger.catch()
 class ReportMD():
     def __init__(self,project_id):
         # 查询文集信息
@@ -253,6 +214,7 @@ class ReportMD():
 
 
 # 导出EPUB
+@logger.catch()
 class ReportEPUB():
     def __init__(self,project_id):
         self.project = Project.objects.get(id=project_id)
@@ -319,7 +281,7 @@ class ReportEPUB():
 
         # 替换HTML文本中的脑图为静态图片
         for mindmap in mindmap_tag:
-            print('转换脑图')
+            # print('转换脑图')
             html_str = '''<!DOCTYPE html>
                         <html>
                         <head>
@@ -346,9 +308,14 @@ class ReportEPUB():
             temp_mindmap_html = settings.BASE_DIR +'/media/report_epub/mindmap_{}.html'.format(str(time.time()))
             mindmap_img_filename = 'mindmap_{}.jpg'.format(str(time.time()))
             mindmap_img_path = self.base_path + '/OEBPS/Images/' + mindmap_img_filename
+
+            # 写入临时HTML文件
             with open(temp_mindmap_html,'w+',encoding='utf-8') as mindmap_html:
                 mindmap_html.write(html_str)
-            genera_mindmap_img(temp_mindmap_html,mindmap_img_path)
+
+            # 生成静态图片
+            geneta_js_img(temp_mindmap_html,mindmap_img_path,'mindmap')
+
             # 将图片标签设置进去
             mindmap.name = 'img'
             mindmap['src'] = '../Images/' + mindmap_img_filename
@@ -357,7 +324,7 @@ class ReportEPUB():
 
         # 替换公式为静态图片
         for tex in tex_tag:
-            print('转换公式')
+            # print('转换公式')
             html_str = '''<!DOCTYPE html>
                 <html>
                 <head>
@@ -385,9 +352,13 @@ class ReportEPUB():
             temp_tex_html = settings.BASE_DIR + '/media/report_epub/tex_{}.html'.format(str(time.time()))
             tex_img_filename = 'tex_{}.jpg'.format(str(time.time()))
             tex_img_path = self.base_path + '/OEBPS/Images/' + tex_img_filename
+
             with open(temp_tex_html, 'w+', encoding='utf-8') as tex_html:
                 tex_html.write(html_str)
-            genera_tex_img(temp_tex_html, tex_img_path)
+
+            # 生成静态图片
+            geneta_js_img(temp_tex_html, tex_img_path,'tex')
+
             # 将图片标签添加进去
             # tex.name = 'img'
             # tex['src'] = '../Images/' + tex_img_filename
@@ -398,7 +369,7 @@ class ReportEPUB():
 
         # 替换流程图为静态图片
         for flowchart in flowchart_tag:
-            print("转换流程图")
+            # print("转换流程图")
             html_str = '''<!DOCTYPE html>
                 <html>
                 <head>
@@ -425,9 +396,13 @@ class ReportEPUB():
             temp_flow_html = settings.BASE_DIR + '/media/report_epub/flow_{}.html'.format(str(time.time()))
             flow_img_filename = 'flow_{}.jpg'.format(str(time.time()))
             flow_img_path = self.base_path + '/OEBPS/Images/' + flow_img_filename
+
             with open(temp_flow_html, 'w+', encoding='utf-8') as flow_html:
                 flow_html.write(html_str)
-            genera_flowchart_img(temp_flow_html, flow_img_path)
+
+            # 生成静态图片
+            geneta_js_img(temp_flow_html, flow_img_path,'flowchart')
+
             # 将图片标签添加进去
             flowchart.string = ''
             flow_img_tag = html_soup.new_tag(name='img', src='../Images/' + flow_img_filename)
@@ -436,7 +411,7 @@ class ReportEPUB():
 
         # 替换时序图为静态图片
         for seque in seque_tag:
-            print("转换时序图")
+            # print("转换时序图")
             html_str = '''<!DOCTYPE html>
                     <html>
                     <head>
@@ -464,7 +439,10 @@ class ReportEPUB():
             seque_img_path = self.base_path + '/OEBPS/Images/' + seque_img_filename
             with open(temp_seque_html, 'w+', encoding='utf-8') as seque_html:
                 seque_html.write(html_str)
-            genera_seque_img(temp_seque_html, seque_img_path)
+
+            # 生成静态图片
+            geneta_js_img(temp_seque_html, seque_img_path, 'seque')
+
             # 将图片标签添加进去
             seque.string = ''
             seque_img_tag = html_soup.new_tag(name='img', src='../Images/' + seque_img_filename)
@@ -828,6 +806,7 @@ class ReportEPUB():
 
 
 # 导出PDF
+@logger.catch()
 class ReportPDF():
     def __init__(self,project_id):
         # 查询文集信息
@@ -1147,6 +1126,7 @@ class ReportDocx():
 
         with open(temp_file_path, 'a+', encoding='utf-8') as htmlfile:
             htmlfile.write(self.doc_str + self.content_str + "</body></html>")
+
 
 if __name__ == '__main__':
     # app = ReportMD(

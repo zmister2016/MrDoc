@@ -169,6 +169,8 @@
         });
         //发布文档
         createDoc = function(){
+            $('button.layui-btn').attr("disabled",true);
+            $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load(1);
             var data = {
                 'doc_id':{{ doc.id }},
@@ -191,11 +193,15 @@
                 }else{
                     //修改失败
                     layer.msg('保存失败');
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
             });
         };
         //保存草稿
         saveDoc = function(){
+            $('button.layui-btn').attr("disabled",true);
+            $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load(1);
             var data = {
                 'doc_id':{{ doc.id }},
@@ -218,6 +224,8 @@
                 }else{
                     //修改失败
                     layer.msg('保存失败');
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
             });
         };

@@ -197,6 +197,8 @@
     };
     //发布文档
     createDoc = function(){
+        $('button.layui-btn').attr("disabled",true);
+        $('button.layui-btn').addClass('layui-btn-disabled');
         var data = {
             'project':$("#project").val(),
             'parent_doc':$("#parent-doc").val(),
@@ -209,9 +211,13 @@
         console.log(data)
         if(data.doc_name == ""){
             layer.msg('请输入文档标题！');
+            $('button.layui-btn').attr("disabled",false);
+            $('button.layui-btn').removeClass('layui-btn-disabled');
         }
         else if(data.project == ""){
             layer.msg('请选择文集！');
+            $('button.layui-btn').attr("disabled",false);
+            $('button.layui-btn').removeClass('layui-btn-disabled');
         }
         else{
             //发布按钮设为禁用
@@ -231,13 +237,16 @@
                     layer.closeAll("loading"); //关闭加载层
                     layer.msg('发布文档失败:'+r.data);
                     //恢复按钮状态
-                    $("#create_doc").removeAttr("disabled");
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
             });
         }
     };
     //保存草稿
     saveDoc = function(){
+        $('button.layui-btn').attr("disabled",true);
+        $('button.layui-btn').addClass('layui-btn-disabled');
         var data = {
             'project':$("#project").val(),
             'parent_doc':$("#parent-doc").val(),
@@ -250,12 +259,16 @@
         console.log(data)
         if(data.doc_name == ""){
             layer.msg('请输入文档标题！');
+            $('button.layui-btn').attr("disabled",false);
+            $('button.layui-btn').removeClass('layui-btn-disabled');
         }
         else if(data.project == ""){
             layer.msg('请选择文集！');
+            $('button.layui-btn').attr("disabled",false);
+            $('button.layui-btn').removeClass('layui-btn-disabled');
         }
         else{
-            layer.load();
+            layer.load(1);
             $.post("{% url 'create_doc' %}",data,function(r){
                 if(r.status){
                     //保存成功
@@ -268,6 +281,8 @@
                     //创建失败
                     layer.closeAll("loading");
                     layer.msg('保存草稿失败:'+r.data);
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
             });
         }

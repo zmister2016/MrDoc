@@ -59,6 +59,8 @@
     <script>
         //保存文档模板
         createDocTemp = function(){
+            $('button.layui-btn').attr("disabled",true);
+            $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load();
             var data = {
                 'name':$("#doctemp-name").val(),
@@ -76,6 +78,8 @@
                     //创建失败
                     layer.closeAll("loading");
                     layer.msg('保存失败');
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
             });
         };

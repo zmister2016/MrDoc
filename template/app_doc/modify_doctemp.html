@@ -59,6 +59,8 @@
     <script>
         //修改文档模板
         modifyDocTemp = function(){
+            $('button.layui-btn').attr("disabled",true);
+            $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load(1);
             var data = {
                 'doctemp_id':{{ doctemp.id }},
@@ -76,6 +78,8 @@
                 }else{
                     //创建失败
                     layer.msg('保存失败');
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
             });
         };
