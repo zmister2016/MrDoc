@@ -1467,10 +1467,10 @@ def manage_image(request):
             elif int(types) == 1:
                 group_id = request.POST.get('group_id',None)
                 if group_id is None:
-                    Image.objects.filter(id=img_id).update(group_id=None)
+                    Image.objects.filter(id=img_id,user=request.user).update(group_id=None)
                 else:
                     group = ImageGroup.objects.get(id=group_id,user=request.user)
-                    Image.objects.filter(id=img_id).update(group_id=group)
+                    Image.objects.filter(id=img_id,user=request.user).update(group_id=group)
                 return JsonResponse({'status':True,'data':'移动完成'})
             # 获取图片
             elif int(types) == 2:
@@ -1528,7 +1528,7 @@ def manage_img_group(request):
             group_name = request.POST.get("group_name",'')
             if group_name not in ['','默认分组','未分组']:
                 group_id = request.POST.get('group_id', '')
-                ImageGroup.objects.filter(id=group_id).update(group_name=group_name)
+                ImageGroup.objects.filter(id=group_id,user=request.user).update(group_name=group_name)
                 return JsonResponse({'status':True,'data':'修改成功'})
             else:
                 return JsonResponse({'status':False,'data':'名称无效'})
@@ -1538,7 +1538,7 @@ def manage_img_group(request):
             try:
                 group_id = request.POST.get('group_id','')
                 group = ImageGroup.objects.get(id=group_id,user=request.user) # 查询分组
-                images = Image.objects.filter(group_id=group_id).update(group_id=None) # 移动图片到未分组
+                images = Image.objects.filter(group_id=group_id,user=request.user).update(group_id=None) # 移动图片到未分组
                 group.delete() # 删除分组
                 return JsonResponse({'status':True,'data':'删除完成'})
             except:
@@ -1549,8 +1549,8 @@ def manage_img_group(request):
         elif int(types) == 3:
             try:
                 group_list = []
-                all_cnt = Image.objects.all().count()
-                non_group_cnt = Image.objects.filter(group_id=None).count()
+                all_cnt = Image.objects.filter(user=request.user).count()
+                non_group_cnt = Image.objects.filter(group_id=None,user=request.user).count()
                 group_list.append({'group_name':'全部图片','group_cnt':all_cnt,'group_id':0})
                 group_list.append({'group_name':'未分组','group_cnt':non_group_cnt,'group_id':-1})
                 groups = ImageGroup.objects.filter(user=request.user) # 查询所有分组
