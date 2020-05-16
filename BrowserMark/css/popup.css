@@ -1,0 +1,229 @@
+﻿
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar:hover{width: 10px;height: 6px;}
+::-webkit-scrollbar-thumb{border-radius:1px;background-color: #aaa}
+::-webkit-scrollbar-thumb:hover{background-color: #999;}
+
+@font-face {
+    font-family: 'icomoon';
+    src:url('fonts/icomoon.eot?-7801l6');
+    src:url('fonts/icomoon.eot?#iefix-7801l6') format('embedded-opentype'),
+        url('fonts/icomoon.woff?-7801l6') format('woff'),
+        url('fonts/icomoon.ttf?-7801l6') format('truetype'),
+        url('fonts/icomoon.svg?-7801l6#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 开关样式 */
+.layui-form-onswitch{
+    border-color: #1E9FFF;
+    background-color: #1E9FFF;
+  }
+/* select 选择器样式 */
+.layui-form-select dl dd.layui-this {
+    background-color: #1E9FFF;
+    color: #fff;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    background-color:#f2f2f2;
+    color:#555;
+    font-size:14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, 'Microsoft YaHei', sans-serif;
+    overflow:hidden;
+    padding:0;
+    margin:0;
+}
+
+a, a:visited {
+    color: rgb(5, 5, 5);
+    text-decoration: none;
+}
+
+.not-selectable {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.content {
+    width: 438px;
+    margin:8px 0 0 8px;
+}
+
+.top {
+    position:relative;
+    padding-bottom: 10px;
+}
+
+.logo {
+      background-position:-1px -1px;
+      width:105px;
+      height:32px;
+      display:inline-block;
+      text-indent:100%;
+      white-space:nowrap;
+      overflow:hidden;
+}
+
+.topcorner {
+    position:absolute;
+    right:0px;
+    top:-8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.topcorner a {
+    cursor: pointer;
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    line-height: 25px;
+    text-align: center;
+}
+.topcorner .optionbtn { font-size: 12px; }
+
+.topcorner .optionbtn:hover { color: #8ab833; }
+
+.topcorner .closebtn { font-size: 16px; }
+
+.topcorner .closebtn:hover { color: #8ab833; }
+
+.mrdoc-utils {
+    padding-right: 8px;
+}
+
+.mrdoc-auto-extract {
+    display: none;
+}
+
+.titleinp {
+    height: 35px;width: 432px;
+    line-height: 24px;
+    font-size: 18px;color: #000;
+    margin: 10px 0;
+    padding: 0 4px;
+    background-color: #fff;
+    border-radius: 1px;
+    border: 1px solid #d9d9d9;
+    border-top-color: #c0c0c0;
+}
+
+.titleinp:hover {
+    border-color: #a0a0a0 #b9b9b9 #b9b9b9 #b9b9b9;
+}
+
+.titleinp:focus {
+    outline: none;
+    border: 1px solid black;
+    box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
+}
+
+.mrdoc-extra {
+    position: relative;
+    z-index: 1000004;
+}
+
+.select {
+    margin: 0 0 10px;
+    position: relative;
+}
+
+.projects{
+    height: 24px;
+}
+
+
+.notecontentwrap{
+    position:relative;
+    width:432px;
+    border: 1px solid #cbcbcb;
+    border-radius: 1px;
+    background-color:#fff;
+}
+.notecontentwrap:hover {
+    border-color: #a0a0a0 #b9b9b9 #b9b9b9 #b9b9b9;
+}
+
+.notecontentwrap .notecontent{
+    resize:none;
+    border:0 none;
+    outline:none;
+    height:246px;
+    padding:0;
+    min-height:100px;
+    max-height:440px;
+    overflow:auto;
+    width: 430px;
+}
+.notecontentwrap .notecontent img{
+    max-width:100%;
+}
+
+.bottom{
+    font-size:14px;
+    -webkit-user-select:none;
+    user-select:none;
+    position:relative;
+    color:#999;
+}
+.bottom .btn{
+    position:absolute;
+    color: #666;
+    cursor: pointer;
+    display: inline-block;
+    padding: 3px 14px;
+    vertical-align: middle;
+    background-color: #fff;
+    border: 1px solid #cbcbcb;
+    border-radius: 2px;
+    margin: 10px 5px 0 0;
+}
+
+.bottom .resetbtn{
+    right:72px;
+    background-color: #fafafa;
+}
+.bottom .savebtn{
+    right:0;
+    color: #fff;
+    border-color: black;
+    background-color: black;
+}
+.resetbtn:hover {
+    background-color: #fff;
+    border: 1px solid #c6c6c6;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+.savebtn:hover{
+    background-color: #666;
+    border: 1px solid #666;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}

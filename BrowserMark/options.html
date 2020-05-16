@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>选项 - MrDoc速记</title>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="css/layui.css" >
+    <style>
+        body{
+            background-color: #fafafa;
+            text-align: center;
+        }
+        /* .container{
+            display: flex;
+            display: -webkit-flex;
+            justify-content: center;
+            align-items: center;
+        } */
+        .login-form{
+            margin-top: 15%;
+            padding: 20px 50px 20px 60px;
+            background-color: #fff;
+            -webkit-box-shadow: #666 0px 0px 10px;
+           -moz-box-shadow: #666 0px 0px 10px;
+           box-shadow: #666 0px 0px 10px;
+        }
+        .register-link{
+            font-size: 12px;
+        }
+        .layui-input{
+            /* width: 500px; */
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-container">
+        <div class="login-form">
+            <div class="layui-form" >
+                <div class="layui-form-item">
+                    <!-- <h2><strong>MrDoc速记 - 选项</strong></h2> -->
+                    <img src="css/images/sujilogo.jpeg">
+                </div>
+                <div class="layui-form-item" pane>
+                    <label class="layui-form-label">MrDoc地址</label>
+                    <div class="layui-input-block">
+                      <input type="text" id="mrdoc_url" name="mrdoc_server_url" placeholder="请输入MrDoc站点地址" autocomplete="off" class="layui-input" >
+                    </div>
+                </div>
+                <div class="layui-form-item" pane>
+                    <label class="layui-form-label">用户Token</label>
+                    <div class="layui-input-block">
+                      <input type="text" id="mrdoc_token" name="mrdoc_account_key" placeholder="请输入用户token" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" type="button" id="checkKey">验证</button>
+                        <button class="layui-btn layui-btn-normal" type="button" id="save-btn">保存</button>
+                    </div>
+                </div>
+                <a class="register-link" href="http://mrdoc.zmister.com" target="_blank">使用帮助</a> - 
+                <a class="register-link" href="https://gitee.com/zmister/MrDoc/" target="_blank">码云</a> - 
+                <a class="register-link" href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>                
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/lib/jquery-2.1.1.min.js"></script>
+<script src="layui/layui.all.js"></script>
+<script src="js/options.js"></script>
+</html>

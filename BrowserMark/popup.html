@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>
+            MrDoc速记 Popup 页面
+        </title>
+        <link rel="stylesheet" href="layui/css/layui.css">
+        <link rel="stylesheet" href="css/popup.css">
+        <!-- <link rel="stylesheet" href="layer/theme/default/layer.css"> -->
+
+        <!-- markdown编辑器 -->
+        <link rel="stylesheet" href="js/codemirror/lib/codemirror.css">
+        <link rel="stylesheet" href="js/codemirror/theme/material.css">
+        <link rel="stylesheet" href="js/codemirror/addon/dialog/dialog.css">
+        <link rel="stylesheet" href="css/github-markdown.css">
+        <link rel="stylesheet" href="css/prism.css">
+    </head>
+    <body>
+        <div class="popupwrap">
+            <div class="content layui-form" id="content">
+                <div class="top">
+                    <a href="http://mrdoc.zmister.com" title="MrDoc速记" target="_blank">MrDoc·速记，文档、笔记和知识管理</a>
+                    <div class="topcorner">
+                        <a class="closebtn icon-cross" id="closebtn" title="关闭">
+                            <i class="layui-icon layui-icon-close"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="title">
+                    <!-- <input placeholder="文档标题" id="titleinp" class="titleinp" title="文档标题"> -->
+                    <input placeholder="文档标题" id="titleinp" class="layui-input" title="文档标题">
+                </div>
+                <div class="not-selectable mrdoc-extra" id="mrdoc-extra">
+					<div class="select">
+						<select class="projects" id="projects">
+							<option value="0">选择文集</option>
+						</select>
+					</div>
+                </div>
+                <div class="notecontentwrap" id="notecontentwrap">
+                    <!-- <iframe id="notecontent" class="notecontent"></iframe> -->
+                    <textarea name="editor" id="editor"></textarea>
+                </div>
+                <div class="bottom">
+                    <!-- <div class="layui-form-item"> -->
+                        <!-- <div class="layui-inline"> -->
+                          <label class="layui-form-label" style="padding-left: 0;">鼠标选择</label>
+                          <div class="layui-input-inline">
+                            <input type="checkbox" id="mouse-select" lay-skin="switch" lay-text="开启|关闭"/>
+                          </div>
+                          <label style="float:right;margin-top: 5px;">
+                            <a class="layui-btn layui-btn-primary layui-btn-sm" id="resetbtn" title="重置内容">重 置</a>
+                            <a class="layui-btn layui-btn-normal layui-btn-sm" id="savebtn" title="保存文档">保 存</a>  
+
+                          </label>
+                        <!-- </div>   -->
+                      <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    <script src="js/lib/jquery-2.1.1.min.js"></script>
+    <script src="layui/layui.all.js"></script>
+    <!-- markdown编辑器 -->
+    <script src="js/codemirror/lib/codemirror.js"></script>
+    <script src="js/codemirror/addon/edit/continuelist.js"></script>
+    <script src="js/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="js/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="js/codemirror/mode/markdown/markdown.js"></script>
+    <script src="js/codemirror/keymap/sublime.js"></script>
+    <script src="js/codemirror/addon/search/search.js"></script>
+    <script src="js/codemirror/addon/search/searchcursor.js"></script>
+    <script src="js/codemirror/addon/dialog/dialog.js"></script>
+    <script src="js/codemirror/addon/comment/comment.js"></script>
+    <script src="js/codemirror/addon/wrap/hardwrap.js"></script>
+	<script src="js/lib/prism.js"></script>
+	<script src="js/popup.js"></script>
+</body>
+</html>
