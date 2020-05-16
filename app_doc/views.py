@@ -194,8 +194,7 @@ def create_project(request):
         else:
             return JsonResponse({'status':False,'data':'文集名称不能为空！'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
+
         logger.exception("创建文集出错")
         return JsonResponse({'status':False,'data':'出现异常,请检查输入值！'})
 
@@ -252,8 +251,6 @@ def project_index(request,pro_id):
             return render(request,'app_doc/project_doc_search.html',locals())
         return render(request, 'app_doc/project.html', locals())
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("文集页访问异常")
         return render(request,'404.html')
 
@@ -276,8 +273,6 @@ def modify_project(request):
         else:
             return JsonResponse({'status':False,'data':'非法请求'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("修改文集出错")
         return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -344,8 +339,6 @@ def check_viewcode(request):
                 errormsg = "访问码错误"
                 return render(request, 'app_doc/check_viewcode.html', locals())
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("验证文集访问码出错")
         return render(request,'404.html')
 
@@ -370,8 +363,6 @@ def del_project(request):
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("删除文集出错")
         return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -405,8 +396,6 @@ def manage_project(request):
                 pros = paginator.page(paginator.num_pages)
         return render(request,'app_doc/manage_project.html',locals())
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("管理文集出错")
         return render(request,'404.html')
 
@@ -499,8 +488,7 @@ def manage_project_collaborator(request,pro_id):
                 pro_colla.delete()
                 return JsonResponse({'status':True,'data':'删除成功'})
             except:
-                if settings.DEBUG:
-                    print(traceback.print_exc())
+                logger.exception("删除协作者出错")
                 return JsonResponse({'status':False,'data':'删除出错'})
         # 修改协作权限
         elif int(types) == 2:
@@ -512,8 +500,7 @@ def manage_project_collaborator(request,pro_id):
                 pro_colla.update(role=role)
                 return JsonResponse({'status':True,'data':'修改成功'})
             except:
-                if settings.DEBUG:
-                    print(traceback.print_exc())
+                logger.exception("修改协作权限出错")
                 return JsonResponse({'status':False,'data':'修改失败'})
 
         else:
@@ -574,8 +561,6 @@ def doc(request,pro_id,doc_id):
             try:
                 doc = Doc.objects.get(id=int(doc_id),status=1)
             except ObjectDoesNotExist:
-                if settings.DEBUG:
-                    print(traceback.print_exc())
                 return render(request, '404.html')
             # 获取文集下一级文档
             project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
@@ -583,8 +568,6 @@ def doc(request,pro_id,doc_id):
         else:
             return HttpResponse('参数错误')
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("文集浏览出错")
         return render(request,'404.html')
 
@@ -602,8 +585,7 @@ def create_doc(request):
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
             return render(request,'app_doc/create_doc.html',locals())
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
+            logger.exception("访问创建文档页面出错")
             return render(request,'404.html')
     elif request.method == 'POST':
         try:
@@ -636,8 +618,7 @@ def create_doc(request):
             else:
                 return JsonResponse({'status':False,'data':'请确认文档标题、文集正确'})
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
+            logger.exception("创建文档出错")
             return JsonResponse({'status':False,'data':'请求出错'})
     else:
         return JsonResponse({'status':False,'data':'方法不允许'})
@@ -660,8 +641,6 @@ def modify_doc(request,doc_id):
             else:
                 return render(request,'403.html')
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("修改文档页面访问出错")
             return render(request,'404.html')
     elif request.method == 'POST':
@@ -702,8 +681,6 @@ def modify_doc(request,doc_id):
             else:
                 return JsonResponse({'status': False,'data':'参数错误'})
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("修改文档出错")
             return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -732,8 +709,6 @@ def del_doc(request):
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("删除文档出错")
         return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -851,8 +826,6 @@ def diff_doc(request,doc_id,his_id):
             else:
                 return render(request, '403.html')
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("文档历史版本页面访问出错")
             return render(request, '404.html')
 
@@ -870,8 +843,6 @@ def diff_doc(request,doc_id,his_id):
             else:
                 return JsonResponse({'status':False,'data':'非法请求'})
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("文档历史版本获取出错")
             return JsonResponse({'status':False,'data':'获取异常'})
 
@@ -894,8 +865,6 @@ def manage_doc_history(request,doc_id):
                 historys = paginator.page(paginator.num_pages)
             return render(request, 'app_doc/manage_doc_history.html', locals())
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("管理文档历史版本页面访问出错")
             return render(request, '404.html')
     elif request.method == 'POST':
@@ -904,8 +873,6 @@ def manage_doc_history(request,doc_id):
             DocHistory.objects.filter(id=history_id,doc=doc_id,create_user=request.user).delete()
             return JsonResponse({'status':True,'data':'删除成功'})
         except:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("操作文档历史版本出错")
             return JsonResponse({'status':False,'data':'出现异常'})
 
@@ -932,8 +899,6 @@ def create_doctemp(request):
             else:
                 return JsonResponse({'status':False,'data':'模板标题不能为空'})
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("创建文档模板出错")
             return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -951,8 +916,6 @@ def modify_doctemp(request,doctemp_id):
             else:
                 return HttpResponse('非法请求')
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("访问文档模板修改页面出错")
             return render(request, '404.html')
     elif request.method == 'POST':
@@ -972,8 +935,6 @@ def modify_doctemp(request,doctemp_id):
             else:
                 return JsonResponse({'status':False,'data':'参数错误'})
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("修改文档模板出错")
             return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -993,8 +954,6 @@ def del_doctemp(request):
         else:
             return JsonResponse({'status': False, 'data': '参数错误'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("删除文档模板出错")
         return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -1006,7 +965,10 @@ def manage_doctemp(request):
     try:
         search_kw = request.GET.get('kw', None)
         if search_kw:
-            doctemp_list = DocTemp.objects.filter(create_user=request.user,content__icontains=search_kw)
+            doctemp_list = DocTemp.objects.filter(
+                create_user=request.user,
+                content__icontains=search_kw
+            ).order_by('-modify_time')
             paginator = Paginator(doctemp_list, 10)
             page = request.GET.get('page', 1)
             try:
@@ -1017,7 +979,7 @@ def manage_doctemp(request):
                 doctemps = paginator.page(paginator.num_pages)
             doctemps.kw = search_kw
         else:
-            doctemp_list = DocTemp.objects.filter(create_user=request.user)
+            doctemp_list = DocTemp.objects.filter(create_user=request.user).order_by('-modify_time')
             paginator = Paginator(doctemp_list, 10)
             page = request.GET.get('page', 1)
             try:
@@ -1028,8 +990,6 @@ def manage_doctemp(request):
                 doctemps = paginator.page(paginator.num_pages)
         return render(request, 'app_doc/manage_doctemp.html', locals())
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("管理文档模板页面访问出错")
         return render(request, '404.html')
 
@@ -1046,8 +1006,6 @@ def get_doctemp(request):
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("获取指定文档模板出错")
         return JsonResponse({'status':False,'data':'请求出错'})
 
@@ -1163,8 +1121,6 @@ def report_md(request):
         else:
             return JsonResponse({'status':False,'data':'无权限'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("导出文集MD文件出错")
         return JsonResponse({'status':False,'data':'文集不存在'})
 
@@ -1262,8 +1218,6 @@ def genera_project_file(request):
 
                     return JsonResponse({'status': True, 'data': epub_file})
                 except Exception as e:
-                    if settings.DEBUG:
-                        print(traceback.print_exc())
                     return JsonResponse({'status': False, 'data': '生成出错'})
             # 导出PDF
             elif report_type in ['pdf']:
@@ -1296,8 +1250,6 @@ def genera_project_file(request):
                     return JsonResponse({'status': True, 'data': pdf_file})
 
                 except Exception as e:
-                    if settings.DEBUG:
-                        print(traceback.print_exc())
                     return JsonResponse({'status': False, 'data': '生成出错'})
             else:
                 return JsonResponse({'status': False, 'data': '不支持的类型'})
@@ -1309,8 +1261,6 @@ def genera_project_file(request):
         return JsonResponse({'status':False,'data':'文集不存在'})
 
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("生成文集文件出错")
         return JsonResponse({'status':False,'data':'系统异常'})
 
@@ -1387,8 +1337,6 @@ def report_file(request):
                     # print(report_project)
                     return JsonResponse({'status': True, 'data': report_project.file_path})
                 except Exception as e:
-                    if settings.DEBUG:
-                        print(traceback.print_exc())
                     return JsonResponse({'status': False, 'data': '导出出错'})
             # 导出PDF
             elif report_type in ['pdf']:
@@ -1400,8 +1348,6 @@ def report_file(request):
                     # print(report_project)
                     return JsonResponse({'status': True, 'data': report_project.file_path})
                 except Exception as e:
-                    if settings.DEBUG:
-                        print(traceback.print_exc())
                     return JsonResponse({'status': False, 'data': '导出出错'})
             else:
                 return JsonResponse({'status': False, 'data': '不支持的类型'})
@@ -1410,8 +1356,6 @@ def report_file(request):
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':'文集不存在'})
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("获取文集前台导出文件出错")
         return JsonResponse({'status':False,'data':'系统异常'})
 
@@ -1428,11 +1372,11 @@ def manage_image(request):
             no_group_cnt = Image.objects.filter(user=request.user,group_id=None).count() # 获取所有未分组的图片数量
             g_id = int(request.GET.get('group', 0))  # 图片分组id
             if int(g_id) == 0:
-                image_list = Image.objects.filter(user=request.user)  # 查询所有图片
+                image_list = Image.objects.filter(user=request.user).order_by('-create_time')  # 查询所有图片
             elif int(g_id) == -1:
-                image_list = Image.objects.filter(user=request.user,group_id=None)  # 查询指定分组的图片
+                image_list = Image.objects.filter(user=request.user,group_id=None).order_by('-create_time')  # 查询指定分组的图片
             else:
-                image_list = Image.objects.filter(user=request.user,group_id=g_id)  # 查询指定分组的图片
+                image_list = Image.objects.filter(user=request.user,group_id=g_id).order_by('-create_time')  # 查询指定分组的图片
             paginator = Paginator(image_list, 18)
             page = request.GET.get('page', 1)
             try:
@@ -1444,8 +1388,6 @@ def manage_image(request):
             images.group = g_id
             return render(request,'app_doc/manage_image.html',locals())
         except:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("图片素材管理出错")
             return render(request,'404.html')
     elif request.method == 'POST':
@@ -1478,11 +1420,11 @@ def manage_image(request):
                 if group_id is None: #
                     return JsonResponse({'status':False,'data':'参数错误'})
                 elif int(group_id) == 0:
-                    imgs = Image.objects.filter(user=request.user)
+                    imgs = Image.objects.filter(user=request.user).order_by('-create_time')
                 elif int(group_id) == -1:
-                    imgs = Image.objects.filter(user=request.user,group_id=None)
+                    imgs = Image.objects.filter(user=request.user,group_id=None).order_by('-create_time')
                 else:
-                    imgs = Image.objects.filter(user=request.user,group_id=group_id)
+                    imgs = Image.objects.filter(user=request.user,group_id=group_id).order_by('-create_time')
                 img_list = []
                 for img in imgs:
                     item = {
@@ -1496,8 +1438,6 @@ def manage_image(request):
         except ObjectDoesNotExist:
             return JsonResponse({'status':False,'data':'图片不存在'})
         except:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("操作图片素材出错")
             return JsonResponse({'status':False,'data':'程序异常'})
 
@@ -1542,8 +1482,7 @@ def manage_img_group(request):
                 group.delete() # 删除分组
                 return JsonResponse({'status':True,'data':'删除完成'})
             except:
-                if settings.DEBUG:
-                    print(traceback.print_exc())
+                logger.exception("删除图片分组出错")
                 return JsonResponse({'status':False,'data':'删除错误'})
         # 获取分组
         elif int(types) == 3:
@@ -1564,8 +1503,7 @@ def manage_img_group(request):
                     group_list.append(item)
                 return JsonResponse({'status':True,'data':group_list})
             except:
-                if settings.DEBUG:
-                    print(traceback.print_exc())
+                logger.exception("获取图片分组出错")
                 return JsonResponse({'status':False,'data':'出现错误'})
 
 
@@ -1603,7 +1541,10 @@ def manage_attachment(request):
         try:
             search_kw = request.GET.get('kw', None)
             if search_kw:
-                attachment_list = Attachment.objects.filter(user=request.user,file_name__icontains=search_kw)
+                attachment_list = Attachment.objects.filter(
+                    user=request.user,
+                    file_name__icontains=search_kw
+                ).order_by('-create_time')
                 paginator = Paginator(attachment_list, 15)
                 page = request.GET.get('page', 1)
                 try:
@@ -1614,7 +1555,7 @@ def manage_attachment(request):
                     attachments = paginator.page(paginator.num_pages)
                 attachments.kw = search_kw
             else:
-                attachment_list = Attachment.objects.filter(user=request.user)
+                attachment_list = Attachment.objects.filter(user=request.user).order_by('-create_time')
                 paginator = Paginator(attachment_list, 15)
                 page = request.GET.get('page', 1)
                 try:
@@ -1625,8 +1566,6 @@ def manage_attachment(request):
                     attachments = paginator.page(paginator.num_pages)
             return render(request, 'app_doc/manage_attachment.html', locals())
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("附件管理访问出错")
             return render(request,'404.html')
     elif request.method == 'POST':

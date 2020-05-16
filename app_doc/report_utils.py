@@ -43,7 +43,21 @@ def geneta_js_img(html_path,img_path,types):
         'seque':'.sequence-diagram' # 序列图
     }
     async def main():
-        browser = await launch(headless=True,handleSIGINT=False,handleSIGTERM=False,handleSIGHUP=False)
+        if settings.CHROMIUM_PATH:
+            browser = await launch(
+                executablePath=r'{}'.format(settings.CHROMIUM_PATH),
+                headless=True,
+                handleSIGINT=False,
+                handleSIGTERM=False,
+                handleSIGHUP=False
+            )
+        else:
+            browser = await launch(
+                headless=True,
+                handleSIGINT=False,
+                handleSIGTERM=False,
+                handleSIGHUP=False
+            )
         page = await browser.newPage()
         await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
         element = await page.querySelector(type_map[types])
@@ -66,13 +80,21 @@ def geneta_js_img(html_path,img_path,types):
 @logger.catch()
 def html_to_pdf(html_path,pdf_path):
     async def main():
-        browser = await launch(
-            headless=True,
-            handleSIGINT=False,
-            handleSIGTERM=False,
-            handleSIGHUP=False,
-            ignoreHTTPSErrors = True,
-        )
+        if settings.CHROMIUM_PATH:
+            browser = await launch(
+                executablePath=r'{}'.format(settings.CHROMIUM_PATH),
+                headless=True,
+                handleSIGINT=False,
+                handleSIGTERM=False,
+                handleSIGHUP=False
+            )
+        else:
+            browser = await launch(
+                headless=True,
+                handleSIGINT=False,
+                handleSIGTERM=False,
+                handleSIGHUP=False
+            )
         page = await browser.newPage()
         await page.goto('file://' + html_path, {'waitUntil': 'networkidle0'})
         await page.pdf({

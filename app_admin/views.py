@@ -29,8 +29,6 @@ def check_code(request):
         request.session["CheckCode"] = code
         return HttpResponse(stream.getvalue())
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("生成验证码图片异常")
         return HttpResponse("请求异常：{}".format(repr(e)))
 
@@ -63,8 +61,6 @@ def log_in(request):
                 errormsg = '用户名或密码错误！'
                 return render(request, 'login.html', locals())
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("登录异常")
             return HttpResponse('请求出错')
 
@@ -150,8 +146,6 @@ def log_out(request):
     try:
         logout(request)
     except Exception as e:
-        if settings.DEBUG:
-            print(traceback.print_exc())
         logger.exception("注销异常")
     return redirect(request.META['HTTP_REFERER'])
 
@@ -180,8 +174,6 @@ def forget_pwd(request):
                 errormsg = "验证码已过期"
                 return render(request, 'forget_pwd.html', locals())
         except Exception as e:
-            if settings.DEBUG:
-                print(traceback.print_exc())
             logger.exception("修改密码异常")
             errormsg = "验证码错误"
             return render(request,'forget_pwd.html',locals())

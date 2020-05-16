@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 from configparser import ConfigParser
+from loguru import logger
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +23,13 @@ CONFIG_DIR = os.path.join(BASE_DIR, 'config')
 CONFIG = ConfigParser()
 CONFIG.read(os.path.join(CONFIG_DIR,'config.ini'),encoding='utf-8')
 
+# 日志文件配置
+LOG_DIR = os.path.join(BASE_DIR,'log')
+
+if os.path.exists(LOG_DIR) is False:
+    os.makedirs(LOG_DIR)
+
+logger.add(os.path.join(LOG_DIR,'error.log'),rotation='1 days',retention='30 days',encoding='utf-8')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -32,10 +40,9 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug')
 
-VERSIONS = '0.5.1'
+VERSIONS = '0.5.2'
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -50,6 +57,7 @@ INSTALLED_APPS = [
     'app_doc',
     'app_api',
     'django.contrib.sitemaps',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +88,10 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'app_admin.context_processors.sys_setting', # 自定义系统设置上下文渲染
             ],
+            'libraries': { # 自定义的模板标签
+                'doc_filter' : 'app_doc.templatetags.doc_filter',
+                'project_filter' : 'app_doc.templatetags.project_filter',
+            },
         },
     },
 ]
@@ -168,3 +180,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+# Chromium路径
+try:
+    CHROMIUM_DIR = CONFIG['chromium']['path']
+    CHROMIUM_PATH = CHROMIUM_DIR
+    # CHROMIUM_PATH = os.path.join(CONFIG_DIR,CHROMIUM_DIR) # Windows便携版本使用config下的路径
+except:
+    CHROMIUM_PATH = None
