@@ -82,7 +82,9 @@ class LoginView(APIView):
                 AppUserToken.objects.update_or_create(defaults={"token": token}, user=user_obj)
                 # 将token返回给用户
                 res["token"] = token
+                res['username'] = username
             else:
+                res['code'] = 2
                 res["error"] = '账号被禁用'
 
         else:

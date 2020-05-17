@@ -461,6 +461,8 @@ def admin_register_code(request):
         if int(types) == 1:
             try:
                 all_cnt = int(request.POST.get('all_cnt',1)) # 注册码的最大使用次数
+                if all_cnt <= 0:
+                    return JsonResponse({'status': False, 'data': '最大使用次数不可为负数'})
                 is_code = False
                 while is_code is False:
                     code_str = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
