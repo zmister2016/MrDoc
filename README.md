@@ -8,7 +8,7 @@
 
 目前涵盖：
 
-- Web端，；
+- Web端；
 - Chrome扩展；
 - App端（开发中）
 - Windows、Mac、Linux桌面端（开发中）
