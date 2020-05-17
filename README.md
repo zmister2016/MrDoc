@@ -12,6 +12,7 @@
 - Chrome扩展；
 - App端（开发中）
 - Windows、Mac、Linux桌面端（开发中）
+- [Windows免安装体验版](http://mrdoc.zmister.com/project-7/doc-249/)
 
 ### 开源地址
 
