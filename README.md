@@ -8,11 +8,11 @@
 
 目前涵盖：
 
-- Web端；
-- Chrome扩展；
+- Web端，[使用说明](http://mrdoc.zmister.com/project-7/)；
+- Chrome扩展，[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
 - App端（开发中）
 - Windows、Mac、Linux桌面端（开发中）
-- [Windows免安装体验版](http://mrdoc.zmister.com/project-7/doc-249/)
+- Windows免安装体验版，[使用说明](http://mrdoc.zmister.com/project-7/doc-249/)
 
 ### 开源地址
 
@@ -22,14 +22,15 @@
 
 ### 示例站点：
 
+可注册、可创建文集、文档，账号不定期清除，仅作测试用途，请勿编写重要文档。
+
 <http://mrdoc.zmister.com>
 
 ### 说明文档：
 
-使用说明：<http://mrdoc.zmister.com/project-7/>
+[MrDoc使用文档](http://mrdoc.zmister.com/project-7/)
 
-文档样式效果和导出样例：<http://mrdoc.zmister.com/project-20/>
-
+[文档样式效果和导出样例](http://mrdoc.zmister.com/project-20/)
 
 ## 特性：
 
