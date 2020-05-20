@@ -1072,12 +1072,14 @@
                     return false;
                 }
 
-                if (top - editor.offset().top > 10 && top < editor.height())
+                // if (top - editor.offset().top > 10 && top < editor.height())
+                if (top - editor.offset().top > 10 && top - editor.offset().top < editor.height() - toolbar.height())
                 {
                     toolbar.css({
                         position : "fixed",
                         width    : editor.width() + "px",
-                        left     : ($window.width() - editor.width()) / 2 + "px"
+                        // left     : ($window.width() - editor.width()) / 2 + "px"
+                        left     : editor.offset().left + "px"
                     });
                 }
                 else
@@ -3610,7 +3612,8 @@
             
             var headingHTML = "<h" + level + " id=\"h"+ level + "-" + this.options.headerPrefix + id +"\">";
             
-            headingHTML    += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
+            // headingHTML    += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
+            headingHTML    += "<a name=\"" + text.replace(/<[^>]*>\s?/g,'') + "\" class=\"reference-link\"></a>";
             headingHTML    += "<span class=\"header-link octicon octicon-link\"></span>";
             headingHTML    += (hasLinkReg) ? this.atLink(this.emoji(linkText)) : this.atLink(this.emoji(text));
             headingHTML    += "</h" + level + ">";
@@ -3862,16 +3865,24 @@
     editormd.filterHTMLTags = function(html, filters) {
         
         if (typeof html !== "string") {
-            html = new String(html);
+            html = new String(html).toString();
         }
             
         if (typeof filters !== "string") {
-            return html;
+            //return html;
+            // If no filters set use "script|on*" by default to avoid XSS
+            filters = "script|on*";
         }
 
         var expression = filters.split("|");
         var filterTags = expression[0].split(",");
         var attrs      = expression[1];
+
+        if(!filterTags.includes('allowScript') && !filterTags.includes('script'))
+         {
+             // Only allow script if requested specifically
+             filterTags.push('script');
+         }
 
         for (var i = 0, len = filterTags.length; i < len; i++)
         {
@@ -3882,9 +3893,24 @@
         
         //return html;
 
+        if (typeof attrs === "undefined")
+         {
+            // If no attrs set block "on*" to avoid XSS
+            attrs = "on*"
+         }
+
         if (typeof attrs !== "undefined")
         {
             var htmlTagRegex = /\<(\w+)\s*([^\>]*)\>([^\>]*)\<\/(\w+)\>/ig;
+
+            var filterAttrs = attrs.split(",");
+            var filterOn = true;
+
+            if(filterAttrs.includes('allowOn'))
+            {
+                // Only allow on* if requested specifically
+                filterOn = false;
+            }
 
             if (attrs === "*")
             {
@@ -3892,7 +3918,8 @@
                     return "<" + $2 + ">" + $4 + "</" + $5 + ">";
                 });         
             }
-            else if (attrs === "on*")
+            // else if (attrs === "on*")
+            else if ((attrs === "on*") || filterOn)
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
                     var el = $("<" + $2 + ">" + $4 + "</" + $5 + ">");
@@ -3916,10 +3943,11 @@
                     return el[0].outerHTML + text;
                 });
             }
-            else
+            // else
+            if(filterAttrs.length > 1 || (filterAttrs[0]!=="*" && filterAttrs[0]!=="on*"))
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4) {
-                    var filterAttrs = attrs.split(",");
+                    // var filterAttrs = attrs.split(",");
                     var el = $($1);
                     el.html($4);
 
