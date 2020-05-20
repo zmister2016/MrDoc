@@ -3442,6 +3442,7 @@
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg    = regexs.pageBreak;
 
+        // marked emoji 解析
         markedRenderer.emoji = function(text) {
             
             text = text.replace(editormd.regexs.emojiDatetime, function($1) {           
@@ -3509,6 +3510,7 @@
             return text;
         };
 
+        // marked @ 解析
         markedRenderer.atLink = function(text) {
 
             if (atLinkReg.test(text))
@@ -3536,7 +3538,7 @@
 
             return text;
         };
-                
+        // marked 链接解析
         markedRenderer.link = function (href, title, text) {
 
             if (this.options.sanitize) {
@@ -3572,6 +3574,7 @@
             return out;
         };
         
+        // marked 解析标题
         markedRenderer.heading = function(text, level, raw) {
                     
             var linkText       = text;
@@ -3615,6 +3618,7 @@
             return headingHTML;
         };
         
+        // marked 解析分页符
         markedRenderer.pageBreak = function(text) {
             if (pageBreakReg.test(text) && settings.pageBreak)
             {
@@ -3623,7 +3627,7 @@
             
             return text;
         };
-
+        // marked 解析段落
         markedRenderer.paragraph = function(text) {
             var isTeXInline     = /\$\$(.*)\$\$/g.test(text);
             var isTeXLine       = /^\$\$(.*)\$\$$/.test(text);
@@ -3647,7 +3651,7 @@
             return (isToC) ? ( (isToCMenu) ? "<div class=\"editormd-toc-menu\">" + tocHTML + "</div><br/>" : tocHTML )
                            : ( (pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.emoji(text)) + "</p>\n" );
         };
-
+        // marked 解析代码块
         markedRenderer.code = function (code, lang, escaped) { 
 
             if (lang === "seq" || lang === "sequence")
@@ -3687,14 +3691,14 @@
                 return marked.Renderer.prototype.code.apply(this, arguments);
             }
         };
-
+        // marked 解析表格
         markedRenderer.tablecell = function(content, flags) {
             var type = (flags.header) ? "th" : "td";
             var tag  = (flags.align)  ? "<" + type +" style=\"text-align:" + flags.align + "\">" : "<" + type + ">";
             
             return tag + this.atLink(this.emoji(content)) + "</" + type + ">\n";
         };
-
+        // marked 解析列表项
         markedRenderer.listitem = function(text) {
             if (settings.taskList && /^\s*\[[x\s]\]\s*/.test(text)) 
             {
@@ -3940,8 +3944,8 @@
      * @returns {Object}   div           返回jQuery对象元素
      */
     
-    editormd.markdownToHTML = function(id, options) {
-        var defaults = {
+    editormd.markdownToHTML = function(id, options) { // Markdown 渲染为 HTML
+        var defaults = { // 默认属性
             gfm                  : true,
             toc                  : true,
             tocm                 : false,
@@ -3965,12 +3969,13 @@
             previewCodeHighlight : true
         };
         
-        editormd.$marked  = marked;
+        editormd.$marked  = marked; // 定义 editormd 的 marked 属性 为 marked
 
-        var div           = $("#" + id);
+        var div           = $("#" + id); // Markdown 内容所在的 div
         var settings      = div.settings = $.extend(true, defaults, options || {});
-        var saveTo        = div.find("textarea");
+        var saveTo        = div.find("textarea"); // HTML 保存的 DIV
         
+        // 如果页面没有保存 HTML 的div，则自动添加一个
         if (saveTo.length < 1)
         {
             div.append("<textarea></textarea>");
@@ -3980,34 +3985,34 @@
         var markdownDoc   = (settings.markdown === "") ? saveTo.val() : settings.markdown; 
         var markdownToC   = [];
 
-        var rendererOptions = {  
-            toc                  : settings.toc,
-            tocm                 : settings.tocm,
-            tocStartLevel        : settings.tocStartLevel,
-            taskList             : settings.taskList,
-            emoji                : settings.emoji,
-            tex                  : settings.tex,
-            pageBreak            : settings.pageBreak,
+        var rendererOptions = {  // 渲染选项
+            toc                  : settings.toc, // 目录
+            tocm                 : settings.tocm, // 目录
+            tocStartLevel        : settings.tocStartLevel, // 目录开始级别
+            taskList             : settings.taskList, // 人物列表
+            emoji                : settings.emoji, // emoji 表情
+            tex                  : settings.tex, // 公式
+            pageBreak            : settings.pageBreak, // 分页符
             atLink               : settings.atLink,           // for @link
             emailLink            : settings.emailLink,        // for mail address auto link
-            flowChart            : settings.flowChart,
-            sequenceDiagram      : settings.sequenceDiagram,
+            flowChart            : settings.flowChart, // 流程图
+            sequenceDiagram      : settings.sequenceDiagram, // 序列图
             mindMap              : settings.mindMap, // 思维导图
-            previewCodeHighlight : settings.previewCodeHighlight,
+            previewCodeHighlight : settings.previewCodeHighlight, // 预览代码高度
         };
 
-        var markedOptions = {
-            renderer    : editormd.markedRenderer(markdownToC, rendererOptions),
-            gfm         : settings.gfm,
-            tables      : true,
-            breaks      : true,
+        var markedOptions = { // marked 选项
+            renderer    : editormd.markedRenderer(markdownToC, rendererOptions), // 渲染器
+            gfm         : settings.gfm, // 风格
+            tables      : true, // 表格
+            breaks      : true, // 
             pedantic    : false,
             sanitize    : (settings.htmlDecode) ? false : true, // 是否忽略HTML标签，即是否开启HTML标签解析，为了安全性，默认不开启
             smartLists  : true,
             smartypants : true
         };
         
-		markdownDoc = new String(markdownDoc);
+		markdownDoc = new String(markdownDoc).toString();
         
         var markdownParsed = marked(markdownDoc, markedOptions);
         
