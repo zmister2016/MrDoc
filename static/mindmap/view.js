@@ -1,4 +1,4 @@
-/*! markmap-lib v0.4.2 | MIT License */
+/*! markmap-lib v0.7.8 | MIT License */
 (function (exports, d3) {
 'use strict';
 
@@ -557,6 +557,12 @@ const updateLows = (lowY, index, lastLows) => {
   };
 };
 
+const uniqId = Math.random().toString(36).slice(2, 8);
+let globalIndex = 0;
+function getId() {
+  globalIndex += 1;
+  return `mm-${uniqId}-${globalIndex}`;
+}
 function walkTree(tree, callback, key = 'c') {
   const walk = (item, parent) => callback(item, () => {
     var _item$key;
@@ -568,36 +574,265 @@ function walkTree(tree, callback, key = 'c') {
 
   walk(tree);
 }
+function arrayFrom(arrayLike) {
+  if (Array.from) return Array.from(arrayLike);
+  const array = [];
 
-let canvas;
+  for (let i = 0; i < arrayLike.length; i += 1) {
+    array.push(arrayLike[i]);
+  }
 
-function getTextRect(items, font) {
-  // re-use canvas object for better performance
-  if (!canvas) canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  context.font = font;
-  let maxWidth = 0;
-  let width = 0;
-  let row = 0;
+  return array;
+}
+function flatMap(arrayLike, callback) {
+  if (arrayLike.flatMap) return arrayLike.flatMap(callback);
+  const array = [];
 
-  const walk = item => {
-    if (item.t === 'text') {
-      item.p = { ...item.p
-      };
-      if (!width && row) item.p.newline = true;
-      const metrics = context.measureText(item.v);
-      width += metrics.width;
-      if (maxWidth < width) maxWidth = width;
-    } else if (item.t === 'softbreak') {
-      width = 0;
-      row += 1;
-    } else if (item.t === 'link') {
-      item.c.forEach(walk);
-    }
+  for (let i = 0; i < arrayLike.length; i += 1) {
+    const result = callback(arrayLike[i], i, arrayLike);
+    if (Array.isArray(result)) array.push(...result);else array.push(result);
+  }
+
+  return array;
+}
+function addClass(className, ...rest) {
+  const classList = (className || '').split(' ').filter(Boolean);
+  rest.forEach(item => {
+    if (item && classList.indexOf(item) < 0) classList.push(item);
+  });
+  return classList.join(' ');
+}
+function childSelector(filter) {
+  if (typeof filter === 'string') {
+    const tagName = filter;
+
+    filter = el => el.tagName === tagName;
+  }
+
+  const filterFn = filter;
+  return function selector() {
+    let nodes = arrayFrom(this.childNodes);
+    if (filterFn) nodes = nodes.filter(node => filterFn(node));
+    return nodes;
   };
+}
 
-  items.forEach(walk);
-  return [maxWidth, row + 1];
+function memoize(fn) {
+  const cache = {};
+  return function memoized(...args) {
+    const key = `${args[0]}`;
+    let data = cache[key];
+
+    if (!data) {
+      data = {
+        value: fn(...args)
+      };
+      cache[key] = data;
+    }
+
+    return data.value;
+  };
+}
+
+function createElement(tagName, props, attrs) {
+  const el = document.createElement(tagName);
+
+  if (props) {
+    Object.entries(props).forEach(([key, value]) => {
+      el[key] = value;
+    });
+  }
+
+  if (attrs) {
+    Object.entries(attrs).forEach(([key, value]) => {
+      el.setAttribute(key, value);
+    });
+  }
+
+  return el;
+}
+
+const memoizedPreloadJS = memoize(url => {
+  document.head.append(createElement('link', {
+    rel: 'preload',
+    as: 'script',
+    href: url
+  }));
+});
+
+function loadJSItem(item, context) {
+  if (item.type === 'script') {
+    return new Promise((resolve, reject) => {
+      document.head.append(createElement('script', Object.assign(Object.assign({}, item.data), {}, {
+        onload: resolve,
+        onerror: reject
+      })));
+    });
+  } else if (item.type === 'iife') {
+    const {
+      fn,
+      getParams
+    } = item.data;
+    fn(...((getParams == null ? void 0 : getParams(context)) || []));
+  }
+}
+
+function loadCSSItem(item) {
+  if (item.type === 'style') {
+    document.head.append(createElement('style', {
+      textContent: item.data
+    }));
+  } else if (item.type === 'stylesheet') {
+    document.head.append(createElement('link', Object.assign({
+      rel: 'stylesheet'
+    }, item.data)));
+  }
+}
+
+async function loadJS(items, options) {
+  const needPreload = items.filter(item => item.type === 'script');
+  if (needPreload.length > 1) needPreload.forEach(item => memoizedPreloadJS(item.data.src));
+
+  for (const item of items) {
+    await loadJSItem(item, options);
+  }
+}
+function loadCSS(items) {
+  for (const item of items) {
+    loadCSSItem(item);
+  }
+}
+async function initializePlugins(Markmap, plugins, options) {
+  options = Object.assign({}, options);
+  await Promise.all(plugins.map(plugin => {
+    loadCSS(plugin.styles);
+    return loadJS(plugin.scripts, options);
+  }));
+
+  for (const {
+    initialize
+  } of plugins) {
+    if (initialize) initialize(Markmap, options);
+  }
+}
+
+const styles = [];
+const scripts = [{
+  type: 'iife',
+  data: {
+    fn: mathJax => {
+      mathJax.options = Object.assign({
+        skipHtmlTags: {
+          '[-]': ['code', 'pre']
+        }
+      }, mathJax.options);
+      mathJax.startup = Object.assign({
+        typeset: false
+      }, mathJax.startup);
+      window.MathJax = mathJax;
+    },
+    getParams: context => [Object.assign({}, context.mathJax)]
+  }
+}, {
+  type: 'script',
+  data: {
+    src: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js'
+  }
+}];
+
+function initialize(Markmap, options) {
+  Markmap.transformHtml.tap((mm, nodes) => {
+    var _MathJax$typeset, _MathJax;
+
+    (_MathJax$typeset = (_MathJax = window.MathJax).typeset) == null ? void 0 : _MathJax$typeset.call(_MathJax, nodes);
+  });
+}
+
+const plugin = {
+  styles,
+  scripts,
+  initialize
+};
+
+const styles$1 = [{
+  type: 'stylesheet',
+  data: {
+    href: 'https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.css'
+  }
+}];
+const scripts$1 = [{
+  type: 'iife',
+  data: {
+    fn: () => {
+      window.Prism = {
+        manual: true
+      };
+    }
+  }
+}, {
+  type: 'script',
+  data: {
+    src: 'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js'
+  }
+}, // components will be added by paths relative to path of autoloader
+{
+  type: 'script',
+  data: {
+    src: 'https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js'
+  }
+}];
+
+function initialize$1(Markmap, options) {
+  Markmap.transformHtml.tap((mm, nodes) => {
+    const {
+      Prism
+    } = window;
+    const langs = flatMap(nodes, node => arrayFrom(node.querySelectorAll('code[class*=language-]'))).map(code => {
+      const lang = code.className.match(/(?:^|\s)language-(\S+)|$/)[1];
+
+      if (Prism.languages[lang]) {
+        Prism.highlightElement(code);
+      } else {
+        return lang;
+      }
+    }).filter(Boolean);
+
+    if (langs.length) {
+      Prism.plugins.autoloader.loadLanguages(langs, () => {
+        mm.setData();
+        mm.fit();
+      });
+    }
+  });
+}
+
+const plugin$1 = {
+  styles: styles$1,
+  scripts: scripts$1,
+  initialize: initialize$1
+};
+
+var plugins = /*#__PURE__*/Object.freeze({
+__proto__: null,
+mathJax: plugin,
+prism: plugin$1
+});
+
+class Hook {
+  constructor() {
+    this.listeners = [];
+  }
+
+  tap(fn) {
+    this.listeners.push(fn);
+  }
+
+  call(...args) {
+    for (const fn of this.listeners) {
+      fn(...args);
+    }
+  }
+
 }
 
 function linkWidth(nodeData) {
@@ -605,266 +840,264 @@ function linkWidth(nodeData) {
   return Math.max(6 - 2 * data.d, 1.5);
 }
 
-function getKey(v) {
-  const result = ['<'];
-  v.forEach(item => {
-    if (item.t === 'text') result.push(item.v.replace(/[<|&]/g, m => `&${m}`));else if (item.c) result.push(getKey(item.c));
-  });
-  result.push('>');
-  return result.join('');
-}
-
-function addSpacing(tree, spacing) {
-  let depth = 0;
-  walkTree(tree, (item, next) => {
-    item.y += depth * spacing;
-    depth += 1;
+function adjustSpacing(tree, spacing) {
+  walkTree(tree, (d, next) => {
+    d.ySizeInner = d.ySize - spacing;
+    d.y += spacing;
     next();
-    depth -= 1;
   }, 'children');
 }
 
-function getChildNodes() {
-  return this.childNodes;
-}
-
-function markmap(svg, data, opts) {
-  svg = svg.datum ? svg : d3.select(svg);
-  const classList = (svg.attr('class') || '').split(' ').filter(Boolean);
-
-  if (classList.indexOf('markmap') < 0) {
-    classList.push('markmap');
-    svg.attr('class', classList.join(' '));
+class Markmap {
+  constructor(svg, opts) {
+    this.options = void 0;
+    this.state = void 0;
+    this.svg = void 0;
+    this.styleNode = void 0;
+    this.g = void 0;
+    this.zoom = void 0;
+    ['handleZoom', 'handleClick'].forEach(key => {
+      this[key] = this[key].bind(this);
+    });
+    this.svg = svg.datum ? svg : d3.select(svg);
+    this.styleNode = this.svg.append('style');
+    this.zoom = d3.zoom().on('zoom', this.handleZoom);
+    this.options = Object.assign({
+      duration: 500,
+      nodeFont: '300 16px/20px sans-serif',
+      nodeMinHeight: 16,
+      spacingVertical: 5,
+      spacingHorizontal: 80,
+      autoFit: false,
+      fitRatio: 0.95,
+      color: (colorFn => node => colorFn(node.p.i))(d3.scaleOrdinal(d3.schemeCategory10)),
+      paddingX: 8
+    }, opts);
+    this.state = {
+      id: this.options.id || getId()
+    };
+    this.g = this.svg.append('g').attr('class', `${this.state.id}-g`);
+    this.updateStyle();
+    this.svg.call(this.zoom);
   }
 
-  const style = svg.append('style');
-  const g = svg.append('g');
-  const zoom = d3.zoom().on('zoom', handleZoom);
-  const svgNode = svg.node();
-  const options = {
-    duration: 500,
-    nodeFont: '300 16px sans-serif',
-    lineHeight: 20,
-    spacingVertical: 5,
-    spacingHorizontal: 80,
-    autoFit: false,
-    fitRatio: 0.95,
-    color: d3.scaleOrdinal(d3.schemeCategory10),
-    colorDepth: 0,
-    ...opts
-  };
-  const state = {};
-  updateStyle();
-
-  if (data) {
-    setData(data);
-    fit(); // always fit for the first render
+  getStyleContent() {
+    const {
+      style,
+      nodeFont
+    } = this.options;
+    const {
+      id
+    } = this.state;
+    const extraStyle = typeof style === 'function' ? style(id) : '';
+    const styleText = `\
+.${id} a { color: #0097e6; }
+.${id} a:hover { color: #00a8ff; }
+.${id}-g > path { fill: none; }
+.${id}-fo > div { font: ${nodeFont}; white-space: nowrap; }
+.${id}-fo code { padding: .2em .4em; font-size: calc(1em - 2px); color: #555; background-color: #f0f0f0; border-radius: 2px; }
+.${id}-fo del { text-decoration: line-through; }
+.${id}-fo em { font-style: italic; }
+.${id}-fo strong { font-weight: 500; }
+.${id}-fo pre { margin: 0; }
+.${id}-fo pre[class*=language-] { padding: 0; }
+.${id}-g > g { cursor: pointer; }
+${extraStyle}
+`;
+    return styleText;
   }
 
-  svg.call(zoom);
-  return {
-    setData,
-    setOptions,
-    fit
-  };
-
-  function updateStyle() {
-    style.text(`\
-.markmap a { fill: #0097e6; }
-.markmap a:hover { fill: #00a8ff; }
-.markmap path { fill: none; }
-.markmap text { font: ${options.nodeFont} }
-.markmap tspan.markmap-em { font-style: italic; }
-.markmap tspan.markmap-strong { font-weight: 500; }
-.markmap g > g { cursor: pointer; }
-`);
+  updateStyle() {
+    this.svg.attr('class', addClass(this.svg.attr('class'), this.state.id));
+    this.styleNode.text(this.getStyleContent());
   }
 
-  function handleZoom() {
+  handleZoom() {
     const {
       transform
     } = d3.event;
-    g.attr('transform', transform);
+    this.g.attr('transform', transform);
   }
 
-  function addKeys(node) {
-    let i = 1;
-    const {
-      colorDepth
-    } = options;
-    walkTree(node, (item, next, parent) => {
-      var _item$v;
-
-      options.color(`${i}`); // preload colors
-
-      item.p = {
-        i,
-        ...item.p
-      };
-
-      if ((_item$v = item.v) == null ? void 0 : _item$v.length) {
-        var _parent$p;
-
-        item.p.k = ((parent == null ? void 0 : (_parent$p = parent.p) == null ? void 0 : _parent$p.k) || '') + getKey(item.v);
-      }
-
-      next();
-      if (!colorDepth || item.d === colorDepth) i += 1;
-    });
-  }
-
-  function setOptions(opts) {
-    Object.assign(options, opts);
-  }
-
-  function setData(data, opts) {
-    addKeys(data);
-    state.data = data;
-    if (opts) setOptions(opts);
-    renderData(data);
-  }
-
-  function fit() {
-    const {
-      width: offsetWidth,
-      height: offsetHeight
-    } = svgNode.getBoundingClientRect();
-    const {
-      minX,
-      maxX,
-      minY,
-      maxY
-    } = state;
-    const naturalWidth = maxY - minY;
-    const naturalHeight = maxX - minX;
-    const scale = Math.min(offsetWidth / naturalWidth * options.fitRatio, offsetHeight / naturalHeight * options.fitRatio, 2);
-    const initialZoom = d3.zoomIdentity.translate((offsetWidth - naturalWidth * scale) / 2 - minY * scale, (offsetHeight - naturalHeight * scale) / 2 - minX * scale).scale(scale);
-    svg.transition().duration(options.duration).call(zoom.transform, initialZoom);
-  }
-
-  function handleClick(d) {
+  handleClick(d) {
     var _data$p;
 
     const {
       data
     } = d;
-    data.p = { ...data.p,
+    data.p = Object.assign(Object.assign({}, data.p), {}, {
       f: !((_data$p = data.p) == null ? void 0 : _data$p.f)
-    };
-    renderData(d.data);
-  }
-
-  function handleLink(d) {
-    d3.event.preventDefault();
-    window.open(d.p.href);
-  }
-
-  function renderTextNode(t, d) {
-    if (d.t === 'link') {
-      const a = t.append('a').attr('href', d.p.href).attr('title', d.p.title).on('click', handleLink);
-      const text = a.selectAll(getChildNodes).data(d => d.c);
-      text.enter().each(function (d) {
-        const t = d3.select(this);
-        renderTextNode(t, d);
-      });
-    }
-
-    if (d.t === 'text') {
-      t.append('tspan').text(d.v).attr('class', d => {
-        var _d$p;
-
-        const style = ((_d$p = d.p) == null ? void 0 : _d$p.style) || {};
-        return [style.em && 'markmap-em', style.strong && 'markmap-strong'].filter(Boolean).join(' ');
-      }).attr('x', d => {
-        var _d$p2;
-
-        return ((_d$p2 = d.p) == null ? void 0 : _d$p2.newline) ? 8 : null;
-      }).attr('dy', d => {
-        var _d$p3;
-
-        return ((_d$p3 = d.p) == null ? void 0 : _d$p3.newline) ? options.lineHeight : null;
-      });
-    }
-  }
-
-  function renderText(text) {
-    const textNode = text.selectAll(getChildNodes).data(d => d.data.v);
-    textNode.enter().each(function (d) {
-      const t = d3.select(this);
-      renderTextNode(t, d);
     });
-    return text;
+    this.renderData(d.data);
   }
 
-  function renderData(originData) {
-    var _origin$data$x, _origin$data$y;
+  initializeData(node) {
+    let i = 0;
+    const {
+      nodeFont,
+      color,
+      nodeMinHeight
+    } = this.options;
+    const {
+      id
+    } = this.state;
+    const container = document.createElement('div');
+    const containerClass = `${id}-container`;
+    container.className = addClass(container.className, `${id}-fo`, containerClass);
+    const style = document.createElement('style');
+    style.textContent = `
+${this.getStyleContent()}
+.${containerClass} {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: -100px;
+  left: -100px;
+  overflow: hidden;
+  font: ${nodeFont};
+}
+.${containerClass} > div {
+  display: inline-block;
+}
+`;
+    document.body.append(style, container);
+    walkTree(node, (item, next) => {
+      var _item$c;
 
-    if (!state.data) return;
+      item.c = (_item$c = item.c) == null ? void 0 : _item$c.map(child => Object.assign({}, child));
+      i += 1;
+      const el = document.createElement('div');
+      el.innerHTML = item.v;
+      container.append(el);
+      item.p = Object.assign(Object.assign({}, item.p), {}, {
+        // unique ID
+        i,
+        el
+      });
+      color(item); // preload colors
+
+      next();
+    });
+    const nodes = arrayFrom(container.childNodes);
+    this.constructor.transformHtml.call(this, nodes);
+    walkTree(node, (item, next, parent) => {
+      var _parent$p;
+
+      const rect = item.p.el.getBoundingClientRect();
+      item.v = item.p.el.innerHTML;
+      item.p.s = [Math.ceil(rect.width), Math.max(Math.ceil(rect.height), nodeMinHeight)]; // TODO keep keys for unchanged objects
+      // unique key, should be based on content
+
+      item.p.k = `${(parent == null ? void 0 : (_parent$p = parent.p) == null ? void 0 : _parent$p.i) || ''}.${item.p.i}:${item.v}`;
+      next();
+    });
+    container.remove();
+    style.remove();
+  }
+
+  setOptions(opts) {
+    Object.assign(this.options, opts);
+  }
+
+  setData(data, opts) {
+    if (!data) data = Object.assign({}, this.state.data);
+    this.state.data = data;
+    this.initializeData(data);
+    if (opts) this.setOptions(opts);
+    this.renderData();
+  }
+
+  renderData(originData) {
+    var _origin$data$p$x, _origin$data$p$y;
+
+    if (!this.state.data) return;
+    const {
+      spacingHorizontal,
+      paddingX,
+      spacingVertical,
+      autoFit,
+      color
+    } = this.options;
+    const {
+      id
+    } = this.state;
     const layout = flextree().children(d => {
-      var _d$p4;
+      var _d$p;
 
-      return !((_d$p4 = d.p) == null ? void 0 : _d$p4.f) && d.c;
+      return !((_d$p = d.p) == null ? void 0 : _d$p.f) && d.c;
     }).nodeSize(d => {
-      const [width, rows] = getTextRect(d.data.v, options.nodeFont);
-      return [rows * options.lineHeight, width + 16];
+      const [width, height] = d.data.p.s;
+      return [height, width + (width ? paddingX * 2 : 0) + spacingHorizontal];
     }).spacing((a, b) => {
-      return a.parent === b.parent ? options.spacingVertical : options.spacingVertical * 2;
+      return a.parent === b.parent ? spacingVertical : spacingVertical * 2;
     });
-    const tree = layout.hierarchy(state.data);
+    const tree = layout.hierarchy(this.state.data);
     layout(tree);
-    addSpacing(tree, options.spacingHorizontal);
+    adjustSpacing(tree, spacingHorizontal);
     const descendants = tree.descendants().reverse();
     const links = tree.links();
     const linkShape = d3.linkHorizontal();
     const minX = d3.min(descendants, d => d.x - d.xSize / 2);
     const maxX = d3.max(descendants, d => d.x + d.xSize / 2);
     const minY = d3.min(descendants, d => d.y);
-    const maxY = d3.max(descendants, d => d.y + d.ySize);
-    state.minX = minX;
-    state.maxX = maxX;
-    state.minY = minY;
-    state.maxY = maxY;
-    if (options.autoFit) fit();
-    const origin = originData ? descendants.find(item => item.data === originData) : tree;
-    const x0 = (_origin$data$x = origin.data.x0) != null ? _origin$data$x : origin.x;
-    const y0 = (_origin$data$y = origin.data.y0) != null ? _origin$data$y : origin.y; // Update the nodes
+    const maxY = d3.max(descendants, d => d.y + d.ySizeInner);
+    Object.assign(this.state, {
+      minX,
+      maxX,
+      minY,
+      maxY
+    });
+    if (autoFit) this.fit();
+    const origin = originData && descendants.find(item => item.data === originData) || tree;
+    const x0 = (_origin$data$p$x = origin.data.p.x0) != null ? _origin$data$p$x : origin.x;
+    const y0 = (_origin$data$p$y = origin.data.p.y0) != null ? _origin$data$p$y : origin.y; // Update the nodes
 
-    const node = g.selectAll('g').data(descendants, d => d.data.p.k);
-    const nodeEnter = node.enter().append('g').attr('transform', d => `translate(${y0 + origin.ySize - d.ySize},${x0 + origin.xSize / 2 - d.xSize})`).on('click', handleClick);
-    const nodeExit = node.exit().transition().duration(options.duration);
-    nodeExit.select('rect').attr('width', 0).attr('x', d => d.ySize);
-    nodeExit.select('text').attr('fill-opacity', 0);
-    nodeExit.attr('transform', d => `translate(${origin.y + origin.ySize - d.ySize},${origin.x + origin.xSize / 2 - d.xSize})`).remove();
+    const node = this.g.selectAll(childSelector('g')).data(descendants, d => d.data.p.k);
+    const nodeEnter = node.enter().append('g').attr('transform', d => `translate(${y0 + origin.ySizeInner - d.ySizeInner},${x0 + origin.xSize / 2 - d.xSize})`).on('click', this.handleClick);
+    const nodeExit = this.transition(node.exit());
+    nodeExit.select('rect').attr('width', 0).attr('x', d => d.ySizeInner);
+    nodeExit.select('foreignObject').style('opacity', 0);
+    nodeExit.attr('transform', d => `translate(${origin.y + origin.ySizeInner - d.ySizeInner},${origin.x + origin.xSize / 2 - d.xSize})`).remove();
     const nodeMerge = node.merge(nodeEnter);
-    nodeMerge.transition().duration(options.duration).attr('transform', d => `translate(${d.y},${d.x - d.xSize / 2})`);
-    nodeMerge.selectAll('rect').data(d => [d], d => d.data.p.k).join(enter => {
-      return enter.append('rect').attr('x', d => d.ySize).attr('y', d => d.xSize - linkWidth(d) / 2).attr('width', 0).attr('height', linkWidth);
-    }, update => update, exit => exit.remove()).transition().duration(options.duration).attr('x', -1).attr('width', d => d.ySize + 2).attr('fill', d => options.color(d.data.p.i));
-    nodeMerge.selectAll('circle').data(d => d.data.c ? [d] : [], d => d.data.p.k).join(enter => {
-      return enter.append('circle').attr('stroke-width', '1.5').attr('cx', d => d.ySize).attr('cy', d => d.xSize).attr('r', 0);
-    }, update => update, exit => exit.remove()).transition().duration(options.duration).attr('r', 6).attr('stroke', d => options.color(d.data.p.i)).attr('fill', d => {
+    this.transition(nodeMerge).attr('transform', d => `translate(${d.y},${d.x - d.xSize / 2})`);
+    const rect = nodeMerge.selectAll(childSelector('rect')).data(d => [d], d => d.data.p.k).join(enter => {
+      return enter.append('rect').attr('x', d => d.ySizeInner).attr('y', d => d.xSize - linkWidth(d) / 2).attr('width', 0).attr('height', linkWidth);
+    }, update => update, exit => exit.remove());
+    this.transition(rect).attr('x', -1).attr('width', d => d.ySizeInner + 2).attr('fill', d => color(d.data));
+    const circle = nodeMerge.selectAll(childSelector('circle')).data(d => d.data.c ? [d] : [], d => d.data.p.k).join(enter => {
+      return enter.append('circle').attr('stroke-width', '1.5').attr('cx', d => d.ySizeInner).attr('cy', d => d.xSize).attr('r', 0);
+    }, update => update, exit => exit.remove());
+    this.transition(circle).attr('r', 6).attr('stroke', d => color(d.data)).attr('fill', d => {
       var _d$data$p;
 
-      return ((_d$data$p = d.data.p) == null ? void 0 : _d$data$p.f) ? options.color(d.data.p.i) : '#fff';
+      return ((_d$data$p = d.data.p) == null ? void 0 : _d$data$p.f) ? color(d.data) : '#fff';
     });
-    nodeMerge.selectAll('text').data(d => [d], d => d.data.p.k).join(enter => {
-      return enter.append('text').attr('x', 8).attr('y', options.lineHeight - 4).attr('text-anchor', 'start').attr('fill-opacity', 0).call(renderText);
-    }, update => update, exit => exit.remove()).transition().duration(options.duration).attr('fill-opacity', 1); // Update the links
+    const foreignObject = nodeMerge.selectAll(childSelector('foreignObject')).data(d => [d], d => d.data.p.k).join(enter => {
+      const fo = enter.append('foreignObject').attr('class', `${id}-fo`).attr('x', paddingX).attr('y', 0).style('opacity', 0).attr('height', d => d.xSize);
+      fo.append('xhtml:div').select(function (d) {
+        const node = d.data.p.el.cloneNode(true);
+        this.replaceWith(node);
+        return node;
+      }).attr('xmlns', 'http://www.w3.org/1999/xhtml');
+      return fo;
+    }, update => update, exit => exit.remove()).attr('width', d => Math.max(0, d.ySizeInner - paddingX * 2));
+    this.transition(foreignObject).style('opacity', 1); // Update the links
 
-    g.selectAll('path').data(links, d => d.target.data.p.k).join(enter => {
-      const source = [y0 + origin.ySize, x0 + origin.xSize / 2];
+    const path = this.g.selectAll(childSelector('path')).data(links, d => d.target.data.p.k).join(enter => {
+      const source = [y0 + origin.ySizeInner, x0 + origin.xSize / 2];
       return enter.insert('path', 'g').attr('d', linkShape({
         source,
         target: source
       }));
     }, update => update, exit => {
-      const source = [origin.y + origin.ySize, origin.x + origin.xSize / 2];
-      return exit.transition().duration(options.duration).attr('d', linkShape({
+      const source = [origin.y + origin.ySizeInner, origin.x + origin.xSize / 2];
+      return this.transition(exit).attr('d', linkShape({
         source,
         target: source
       })).remove();
-    }).transition().duration(options.duration).attr('stroke', d => options.color(d.target.data.p.i)).attr('stroke-width', d => linkWidth(d.target)).attr('d', d => {
-      const source = [d.source.y + d.source.ySize, d.source.x + d.source.xSize / 2];
+    });
+    this.transition(path).attr('stroke', d => color(d.target.data)).attr('stroke-width', d => linkWidth(d.target)).attr('d', d => {
+      const source = [d.source.y + d.source.ySizeInner, d.source.x + d.source.xSize / 2];
       const target = [d.target.y, d.target.x + d.target.xSize / 2];
       return linkShape({
         source,
@@ -872,12 +1105,88 @@ function markmap(svg, data, opts) {
       });
     });
     descendants.forEach(d => {
-      d.data.x0 = d.x;
-      d.data.y0 = d.y;
+      d.data.p.x0 = d.x;
+      d.data.p.y0 = d.y;
     });
   }
+
+  transition(sel) {
+    const {
+      duration
+    } = this.options;
+    return sel.transition().duration(duration);
+  }
+
+  fit() {
+    const svgNode = this.svg.node();
+    const {
+      width: offsetWidth,
+      height: offsetHeight
+    } = svgNode.getBoundingClientRect();
+    const {
+      fitRatio
+    } = this.options;
+    const {
+      minX,
+      maxX,
+      minY,
+      maxY
+    } = this.state;
+    const naturalWidth = maxY - minY;
+    const naturalHeight = maxX - minX;
+    const scale = Math.min(offsetWidth / naturalWidth * fitRatio, offsetHeight / naturalHeight * fitRatio, 2);
+    const initialZoom = d3.zoomIdentity.translate((offsetWidth - naturalWidth * scale) / 2 - minY * scale, (offsetHeight - naturalHeight * scale) / 2 - minX * scale).scale(scale);
+    return this.transition(this.svg).call(this.zoom.transform, initialZoom).end();
+  }
+
+  rescale(scale) {
+    const svgNode = this.svg.node();
+    const {
+      width: offsetWidth,
+      height: offsetHeight
+    } = svgNode.getBoundingClientRect();
+    const halfWidth = offsetWidth / 2;
+    const halfHeight = offsetHeight / 2;
+    const transform = d3.zoomTransform(svgNode);
+    const newTransform = transform.translate((halfWidth - transform.x) * (1 - scale) / transform.k, (halfHeight - transform.y) * (1 - scale) / transform.k).scale(scale);
+    return this.transition(this.svg).call(this.zoom.transform, newTransform).end();
+  }
+
+  static create(svg, opts, data) {
+    const mm = new Markmap(svg, opts);
+
+    if (data) {
+      mm.setData(data);
+      mm.fit(); // always fit for the first render
+    }
+
+    return mm;
+  }
+
+}
+Markmap.transformHtml = new Hook();
+function markmap(svg, data, opts) {
+  return Markmap.create(svg, opts, data);
+}
+async function loadPlugins(items, options) {
+  items = items.map(item => {
+    if (typeof item === 'string') {
+      const name = item;
+      item = plugins[name];
+
+      if (!item) {
+        console.warn(`[markmap] Unknown plugin: ${name}`);
+      }
+    }
+
+    return item;
+  }).filter(Boolean);
+  return initializePlugins(Markmap, items, options);
 }
 
+exports.Markmap = Markmap;
+exports.loadPlugins = loadPlugins;
 exports.markmap = markmap;
+exports.plugins = plugins;
 
 }(this.markmap = this.markmap || {}, d3));

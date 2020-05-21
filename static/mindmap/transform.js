@@ -1,4 +1,4 @@
-/*! markmap-lib v0.4.2 | MIT License */
+/*! markmap-lib v0.7.8 | MIT License */
 (function (exports) {
 'use strict';
 
@@ -7284,71 +7284,82 @@ Remarkable.prototype.renderInline = function (str, env) {
   return this.renderer.render(this.parseInline(str, env), this.options, env);
 };
 
+const uniqId = Math.random().toString(36).slice(2, 8);
+
+function escapeHtml$1(html) {
+  return html.replace(/[&<"]/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '"': '&quot;'
+  })[m]);
+}
+function htmlOpen(tagName, attrs) {
+  const attrStr = attrs ? Object.entries(attrs).map(([key, value]) => {
+    if (value == null || value === false) return;
+    key = ` ${escapeHtml$1(key)}`;
+    if (value === true) return key;
+    return `${key}="${escapeHtml$1(value)}"`;
+  }).filter(Boolean).join('') : '';
+  return `<${tagName}${attrStr}>`;
+}
+function htmlClose(tagName) {
+  return `</${tagName}>`;
+}
+function wrapHtml(tagName, content, attrs) {
+  if (content == null) return htmlOpen(tagName, attrs);
+  return htmlOpen(tagName, attrs) + (content || '') + htmlClose(tagName);
+}
+function wrapStyle(text, style) {
+  if (style.code) text = wrapHtml('code', text);
+  if (style.del) text = wrapHtml('del', text);
+  if (style.em) text = wrapHtml('em', text);
+  if (style.strong) text = wrapHtml('strong', text);
+  return text;
+}
+
 const md = new Remarkable();
 md.block.ruler.enable(['deflist']);
 
-function shallowEqual(a, b) {
-  a = a || {};
-  b = b || {};
-  return Object.keys(a).length === Object.keys(b).length && Object.keys(a).every(k => a[k] === b[k]);
-}
-
 function extractInline(token) {
-  const root = {
-    t: 'inline',
-    c: []
-  };
-  const stack = [root];
+  const html = [];
   let style = {};
 
   for (const child of token.children) {
-    const current = stack[stack.length - 1];
-
     if (child.type === 'text') {
-      current.c.push({
-        t: 'text',
-        v: child.content,
-        p: {
-          style
-        }
-      });
+      html.push(wrapStyle(escapeHtml$1(child.content), style));
+    } else if (child.type === 'code') {
+      html.push(wrapHtml('code', wrapStyle(escapeHtml$1(child.content), style)));
     } else if (child.type === 'softbreak') {
-      current.c.push({
-        t: 'softbreak'
-      });
+      html.push('<br/>');
     } else if (child.type.endsWith('_open')) {
       const type = child.type.slice(0, -5);
 
       if (type === 'link') {
-        const item = {
-          t: 'link',
-          c: [],
-          p: {
-            href: child.href,
-            title: child.title
-          }
-        };
-        current.c.push(item);
-        stack.push(item);
+        html.push(htmlOpen('a', {
+          href: child.href,
+          title: child.title,
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        }));
       } else {
-        style = { ...style,
+        style = Object.assign(Object.assign({}, style), {}, {
           [type]: true
-        };
+        });
       }
     } else if (child.type.endsWith('_close')) {
       const type = child.type.slice(0, -6);
 
       if (type === 'link') {
-        stack.pop();
+        html.push(htmlClose('a'));
       } else {
-        style = { ...style,
+        style = Object.assign(Object.assign({}, style), {}, {
           [type]: false
-        };
+        });
       }
     }
   }
 
-  return root.c;
+  return html.join('');
 }
 
 function cleanNode(node, depth = 0) {
@@ -7360,8 +7371,8 @@ function cleanNode(node, depth = 0) {
 
     // keep first paragraph as content of list_item, drop others
     node.c = node.c.filter(item => {
-      if (item.t === 'paragraph') {
-        if (!node.v.length) node.v.push(...item.v);
+      if (['paragraph', 'fence'].includes(item.t)) {
+        if (!node.v) node.v = item.v;
         return false;
       }
 
@@ -7369,10 +7380,7 @@ function cleanNode(node, depth = 0) {
     });
 
     if (((_node$p = node.p) == null ? void 0 : _node$p.index) != null) {
-      node.v.unshift({
-        t: 'text',
-        v: `${node.p.index}. `
-      });
+      node.v = `${node.p.index}. ${node.v}`;
     }
   } else if (node.t === 'ordered_list') {
     var _node$p$start, _node$p2;
@@ -7380,9 +7388,9 @@ function cleanNode(node, depth = 0) {
     let index = (_node$p$start = (_node$p2 = node.p) == null ? void 0 : _node$p2.start) != null ? _node$p$start : 1;
     node.c.forEach(item => {
       if (item.t === 'list_item') {
-        item.p = { ...item.p,
+        item.p = Object.assign(Object.assign({}, item.p), {}, {
           index: index
-        };
+        });
         index += 1;
       }
     });
@@ -7391,29 +7399,13 @@ function cleanNode(node, depth = 0) {
   if (node.c.length === 0) {
     delete node.c;
   } else {
-    if (node.c.length === 1 && !node.c[0].v.length) {
+    if (node.c.length === 1 && !node.c[0].v) {
       node.c = node.c[0].c;
     }
 
     node.c.forEach(child => cleanNode(child, depth + 1));
   }
 
-  let last;
-  const content = [];
-
-  for (const item of node.v) {
-    var _last, _last$p, _item$p;
-
-    if (((_last = last) == null ? void 0 : _last.t) === 'text' && item.t === 'text' && shallowEqual((_last$p = last.p) == null ? void 0 : _last$p.style, (_item$p = item.p) == null ? void 0 : _item$p.style)) {
-      last.v += item.v;
-    } else {
-      content.push(item);
-    }
-
-    last = item;
-  }
-
-  node.v = content;
   node.d = depth;
   delete node.p;
 }
@@ -7423,7 +7415,7 @@ function buildTree(tokens) {
   const root = {
     t: 'root',
     d: 0,
-    v: [],
+    v: '',
     c: []
   };
   const stack = [root];
@@ -7458,8 +7450,8 @@ function buildTree(tokens) {
       const item = {
         t: type,
         d: depth,
-        v: [],
         p: payload,
+        v: '',
         c: []
       };
       current.c.push(item);
@@ -7473,8 +7465,15 @@ function buildTree(tokens) {
         stack.pop();
         depth = 0;
       }
-    } else {
-      current.v.push(...extractInline(token));
+    } else if (token.type === 'inline') {
+      current.v = `${current.v || ''}${extractInline(token)}`;
+    } else if (token.type === 'fence') {
+      current.c.push({
+        t: token.type,
+        d: depth + 1,
+        v: `<pre><code class="language-${token.params}">${escapeHtml$1(token.content)}</code></pre>`,
+        c: []
+      });
     }
   }
 
