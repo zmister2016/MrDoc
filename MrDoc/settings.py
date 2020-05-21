@@ -40,7 +40,7 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug')
 
-VERSIONS = '0.5.2'
+VERSIONS = '0.5.2beta'
 
 ALLOWED_HOSTS = ['*']
 
@@ -192,3 +192,9 @@ try:
     # CHROMIUM_PATH = os.path.join(CONFIG_DIR,CHROMIUM_DIR) # Windows便携版本使用config下的路径
 except:
     CHROMIUM_PATH = None
+
+# Chromium启动参数
+try:
+    CHROMIUM_ARGS = CONFIG['chromium']['args'].split(',')
+except:
+    CHROMIUM_ARGS = []
