@@ -544,6 +544,7 @@ def admin_setting(request):
             static_code = request.POST.get('static_code',None) # 统计代码
             ad_code = request.POST.get('ad_code',None) # 广告位1
             ad_code_2 = request.POST.get('ad_code_2',None) # 广告位2
+            ad_code_3 = request.POST.get('ad_code_3', None)  # 广告位3
             beian_code = request.POST.get('beian_code',None) # 备案号
             enbale_email = request.POST.get("enable_email",None) # 启用邮箱
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
@@ -572,6 +573,11 @@ def admin_setting(request):
                 name='ad_code_2',
                 defaults={'value': ad_code_2, 'types': 'basic'}
             )
+            SysSetting.objects.update_or_create(
+                name='ad_code_3',
+                defaults={'value': ad_code_3, 'types': 'basic'}
+            )
+
             # 更新备案号
             SysSetting.objects.update_or_create(
                 name='beian_code',
