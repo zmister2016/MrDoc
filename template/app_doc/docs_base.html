@@ -78,10 +78,6 @@
         .markdown-body h6{
             font-size: .85em;
         }
-        /* 引用块样式 */
-        .editormd-preview-container blockquote, .editormd-html-preview blockquote{
-            border-left: 4px solid #333;
-        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -161,6 +157,17 @@
         <div class="bq">
             <a href="https://gitee.com/zmister/MrDoc" target="_blank" class="mrdoc-link">本文档使用MrDoc发布</a>
         </div>
+        <!-- 右下角广告块 -->
+        <!-- 广告代码开始 -->
+        {% if debug %}
+        {% else %}
+            {% if ad_code_3 %}
+                <div class="ad-code">
+                {{ ad_code_3 | safe }}
+                </div>
+            {% endif %}
+        {% endif %}
+        <!-- 广告代码结束 -->
     </div>
     <!-- 左侧目录栏结束 -->
 
@@ -224,7 +231,7 @@
                 <!-- 广告代码开始 -->
                 {% if debug %}
                 {% else %}
-                    {% if ad_code %}
+                    {% if ad_code_2 %}
                         <div class="ad-code">
                         {{ ad_code_2 | safe }}
                         </div>

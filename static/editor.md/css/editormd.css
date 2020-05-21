@@ -3841,7 +3841,7 @@
   padding-left: 20px;
   margin-left: 0;
   font-size: 14px;
-  font-style: italic;
+  /* font-style: italic; */
 }
 .editormd-preview-container p code, .editormd-html-preview p code {
   margin-left: 5px;
