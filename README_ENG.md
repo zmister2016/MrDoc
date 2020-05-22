@@ -4,7 +4,7 @@
 
 ### Introduce
 
-`Mrdoc is an online document system developed based on python. It is suitable for individuals and small teams to manage documents, knowledge and notes. It is committed to become a private online document deployment solution for the whole platform (web, desktop, mobile).
+`Mrdoc` is an online document system developed based on python. It is suitable for individuals and small teams to manage documents, knowledge and notes. It is committed to become a private online document deployment solution for the whole platform (web, desktop, mobile).
 
 Current Platform：
 
@@ -24,7 +24,7 @@ Current Platform：
 
 <http://mrdoc.zmister.com> 
 
-You can register, create albums and documents. The account can be cleared from time to time. It is only for testing purposes. Please do not write important documents.
+You can register, create project and documents. The account can be cleared from time to time. It is only for testing purposes. Please do not write important documents.
 
 ### Documentation
 
@@ -40,20 +40,20 @@ You can register, create albums and documents. The account can be cleared from t
     
 - **Document System**
     - Document writing and reading are based on the Project, with five modules, namely **project**, **document**, **document template**, **image** and **attachment**;
-    - The 'markdown' editor based on 'editormd' is used to optimize and extend, and the 'markdown' syntax is used for document writing, and image management and uploading, table pasting, mind mapping, flow chart drawing and sequence diagram drawing are supported;
+    - The `markdown` editor based on `editormd` is used to optimize and extend, and the `markdown` syntax is used for document writing, and image management and uploading, table pasting, mind mapping, flow chart drawing and sequence diagram drawing are supported;
     - Two column **document reading** page, three-level directory level display, document reading font scaling, font type switching, page social sharing, mobile reading optimization, text collection export PDF, ePub file;
-    - Support the account based 'API' interface, which can use the account 'token' to get the corpus, upload pictures and create documents through the 'API';
+    - Support the account based `API` interface, which can use the account `token` to get the corpus, upload pictures and create documents through the 'API';
     - Supports the project collaboration function. A project can have one Creator and multiple collaborators, and can flexibly select collaboration permissions;
     - It supports the function of document historical version to view and compare the differences between the historical version and the existing version, and restore a historical version to the current version;
 
-Current Version:v0.5.2beta
+Current Version : v0.5.2beta
 
-Update Record:[CHANGES.md](./CHANGES.md)
+Update Record : [CHANGES.md](./CHANGES.md)
 
 
 ## Dependent environment
 
-`Mrdoc 'is developed on' Python 3.6 '+' Django 2.2 ', and tested well on Django 2.1, 2.2 and python 3.5, 3.6 and 3.7. Running mrdoc in other environments does not exclude unknown exceptions.
+`Mrdoc` is developed on `Python 3.6` + `Django 2.2`, and tested well on Django 2.1, 2.2 and python 3.5, 3.6 and 3.7. Running mrdoc in other environments does not exclude unknown exceptions.
 
 ## Simple Installation Tutorial
 
@@ -134,17 +134,17 @@ Submit questions on the following pages:
 
 ### 2. Join the mrdoc communication group
 
-Join the mrdoc communication Tencent QQ group ，Group number if **735507293**, join password：**mrdoc**
+Join the mrdoc communication Tencent QQ group ，Group number is **735507293**, join password：**mrdoc**
 
 ### 3. Contact author
 
-WeChat:**taoist_ling**
+WeChat : **taoist_ling**
 
-WeChat Subscription:**zmister2016**
+WeChat Subscription : **zmister2016**
 
 ## Sponsor
 
-Open source is not easy. We need to encourage you. If mrdoc is helpful to you, please give a 'star'.
+Open source is not easy. We need to encourage you. If mrdoc is helpful to you, please give a `star`.
 
 Welcome to give appreciation to developers and help the project develop better.
 
