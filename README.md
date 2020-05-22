@@ -1,4 +1,4 @@
-## MrDoc觅道文档 - 记录文档，汇聚思想
+## MrDoc觅道文档 - 记录文档，汇聚思想 - [English](./README_ENG.md)
 
 ![Mrdoc首页](./captrue/mrdoc-index.png)
 
