@@ -8,7 +8,7 @@
 
 目前涵盖：
 
-- Web端，[使用说明](http://mrdoc.zmister.com/project-7/)；
+- Web端，[安装手册](http://mrdoc.zmister.com/project-7/)，[使用手册](http://mrdoc.zmister.com/project-54/)；
 - Chrome扩展，[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
 - App端（开发中）
 - Windows、Mac、Linux桌面端（开发中）
@@ -26,7 +26,7 @@
 
 ### 说明文档：
 
-[MrDoc使用文档](http://mrdoc.zmister.com/project-7/)  [文档样式效果和导出样例](http://mrdoc.zmister.com/project-20/)
+[MrDoc安装手册](http://mrdoc.zmister.com/project-7/)、[MrDoc文档效果](http://mrdoc.zmister.com/project-20/)、[MrDoc使用手册](http://mrdoc.zmister.com/project-54/)
 
 ## 特性：
 
@@ -44,7 +44,7 @@
     - 支持**文集协作**功能，一个文集可以拥有一个创建者和多个协作者，可灵活选择协作权限；
     - 支持**文档历史版本**功能，可以查看和对比历史版本与现有版本的差异，恢复某个历史版本为当前版本；
 
-当前版本为：**v0.5.2beta**
+当前版本为：**v0.5.2**
 
 完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
