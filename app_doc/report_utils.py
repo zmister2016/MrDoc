@@ -40,7 +40,8 @@ def geneta_js_img(html_path,img_path,types):
         'mindmap':'.mindmap', # 脑图
         'tex':'.editormd-tex', # 科学公式
         'flowchart':'.flowchart', # 流程图
-        'seque':'.sequence-diagram' # 序列图
+        'seque':'.sequence-diagram', # 序列图
+        'echart':'.echart', # echart图表
     }
     async def main():
         if settings.CHROMIUM_PATH:
@@ -270,6 +271,7 @@ class ReportEPUB():
         tex_tag = html_soup.select('.editormd-tex') # 查找所有公式标签
         flowchart_tag = html_soup.select('.flowchart') # 查找所有流程图标签
         seque_tag = html_soup.select('.sequence-diagram') # 查找所有时序图标签
+        echart_tag = html_soup.select('.echart') # 查找所有echart图表标签
         code_tag = html_soup.find_all(name="code") # 查找code代码标签
 
         # 添加css样式标签
@@ -313,8 +315,8 @@ class ReportEPUB():
                         <title>Markmap</title>
                         <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
                         <script src="../../static/mindmap/d3@5.js"></script>
-                        <script src="../../static/mindmap/transform.js"></script>
-                        <script src="../../static/mindmap/view.js"></script>
+                        <script src="../../static/mindmap/transform.min.js"></script>
+                        <script src="../../static/mindmap/view.min.js"></script>
                         </head>
                         <body>
                         {svg_content}
@@ -470,6 +472,50 @@ class ReportEPUB():
             seque_img_tag = html_soup.new_tag(name='img', src='../Images/' + seque_img_filename)
             seque.insert(0, seque_img_tag)
             os.remove(temp_seque_html)  # 删除临时的HTML
+
+        # 替换echart图表为静态图片
+        for echart in echart_tag:
+            html_str = '''<!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <title>Markmap</title>
+                <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+                <script src="../../static/editor.md/lib/echarts.min.js"></script>
+                </head>
+                <body>
+                {svg_content}
+                <script>
+                    var echart = $('.echart')[0]
+                    if(echart.innerText != ''){{
+                        var echart_data = eval("(" + echart.innerText + ")");
+                        echart.innerText = '';
+                        var myChart = echarts.init(document.getElementById(echart.id),null,{{renderer: 'svg'}});
+                        myChart.setOption(echart_data);
+                    }}
+                </script>
+                </body>
+                </html>
+            '''.format(svg_content=echart)
+            # 脑图HTML文件路径
+            temp_echart_html = settings.BASE_DIR + '/media/report_epub/echart_{}.html'.format(str(time.time()))
+            echart_img_filename = 'echart_{}.jpg'.format(str(time.time()))
+            echart_img_path = self.base_path + '/OEBPS/Images/' + echart_img_filename
+
+            # 写入临时HTML文件
+            with open(temp_echart_html, 'w+', encoding='utf-8') as echart_html:
+                echart_html.write(html_str)
+
+            # 生成静态图片
+            geneta_js_img(temp_echart_html, echart_img_path, 'echart')
+
+            # 将图片标签设置进去
+            echart.name = 'img'
+            echart['src'] = '../Images/' + echart_img_filename
+            echart.string = ''
+            os.remove(temp_echart_html)  # 删除临时的HTML
 
         # 替换code标签的内容
         # for code in code_tag:
@@ -851,6 +897,7 @@ class ReportPDF():
                         <script src="../../static/editor.md/lib/sequence-diagram.min.js"></script>
                         <script src="../../static/editor.md/lib/flowchart.min.js"></script>
                         <script src="../../static/editor.md/lib/jquery.flowchart.min.js"></script>
+                        <script src="../../static/editor.md/lib/echarts.min.js"></script>
                         <script src="../../static/mindmap/d3@5.js"></script>
                         <script src="../../static/mindmap/transform.js"></script>
                         <script src="../../static/mindmap/view.js"></script>

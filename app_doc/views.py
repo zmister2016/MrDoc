@@ -633,6 +633,8 @@ def modify_doc(request,doc_id):
             doc = Doc.objects.get(id=doc_id) # 查询文档信息
             project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集信息
             pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) # 查询用户的协作文集信息
+            project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
+            colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
             if (request.user == doc.create_user) or (pro_colla[0].role == 1):
                 doc_list = Doc.objects.filter(top_doc=project.id)
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
@@ -805,6 +807,79 @@ def manage_doc(request):
             docs = paginator.page(paginator.num_pages)
         docs.status = doc_status
     return render(request,'app_doc/manage_doc.html',locals())
+
+
+# 移动文档
+@login_required()
+@require_http_methods(['POST'])
+def move_doc(request):
+    doc_id = request.POST.get('doc_id','') # 文档ID
+    pro_id = request.POST.get('pro_id','') # 移动的文集ID
+    move_type = request.POST.get('move_type','') # 移动的类型 0复制 1移动 2连同下级文档移动
+    parent_id = request.POST.get('parent_id',0)
+    # 判断文集是否存在且有权限
+    try:
+        project = Project.objects.get(id=int(pro_id)) # 自己的文集
+        colla = ProjectCollaborator.objects.filter(project=project, user=request.user) # 协作文集
+        if (project.create_user is not request.user) and (colla.count()): # 请求者不是文集创建者和协作者返回错误
+            return JsonResponse({'status':False,'data':'文集无权限'})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status':False,'data':'文集不存在'})
+    # 判断文档是否存在
+    try:
+        doc = Doc.objects.get(id=int(doc_id),create_user=request.user)
+    except ObjectDoesNotExist:
+        return JsonResponse({'status':False,'data':'文档不存在'})
+    # 判断上级文档是否存在
+    try:
+        if parent_id != '0':
+            parent = Doc.objects.get(id=int(parent_id),create_user=request.user)
+    except ObjectDoesNotExist:
+        return JsonResponse({'status':False,'data':'上级文档不存在'})
+    # 复制文档
+    if move_type == '0':
+        copy_doc = Doc.objects.create(
+            name = doc.name,
+            pre_content = doc.pre_content,
+            content = doc.content,
+            parent_doc = parent_id,
+            top_doc = int(pro_id),
+            create_user = request.user,
+            create_time = datetime.datetime.now(),
+            modify_time = datetime.datetime.now(),
+            # 文档状态说明：0表示草稿状态，1表示发布状态
+            status = doc.status
+        )
+        return JsonResponse({'status':True,'data':{'pro_id':pro_id,'doc_id':copy_doc.id}})
+    # 移动文档，下级文档更改到根目录
+    elif move_type == '1':
+        try:
+            # 修改文档的所属文集和上级文档实现移动文档
+            Doc.objects.filter(id=int(doc_id)).update(parent_doc=int(parent_id),top_doc=int(pro_id))
+            # 修改其子文档为顶级文档
+            Doc.objects.filter(parent_doc=doc_id).update(parent_doc=0)
+            return JsonResponse({'status':True,'data':{'pro_id':pro_id,'doc_id':doc_id}})
+        except:
+            logger.exception("移动文档异常")
+            return JsonResponse({'status':False,'data':'移动文档失败'})
+    # 包含下级文档一起移动
+    elif move_type == '2':
+        try:
+            # 修改文档的所属文集和上级文档实现移动文档
+            Doc.objects.filter(id=int(doc_id)).update(parent_doc=int(parent_id), top_doc=int(pro_id))
+            # 修改其子文档的文集归属
+            child_doc = Doc.objects.filter(parent_doc=doc_id)
+            child_doc.update(top_doc=int(pro_id))
+            # 遍历子文档，如果其存在下级文档，那么继续修改所属文集
+            for child in child_doc:
+                Doc.objects.filter(parent_doc=child.id).update(top_doc=int(pro_id))
+            return JsonResponse({'status': True, 'data':{'pro_id':pro_id,'doc_id':doc_id}})
+        except:
+            logger.exception("移动包含下级的文档异常")
+            return JsonResponse({'status': False, 'data': '移动文档失败'})
+    else:
+        return JsonResponse({'status':False,'data':'移动类型错误'})
+
 
 
 # 查看对比文档历史版本

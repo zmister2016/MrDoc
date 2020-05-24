@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block head_toolbar %}
+
 <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
     <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">新建文档</span>
 </a>
@@ -94,8 +95,13 @@
         <div class="layui-col-md12" id="doc-tree"></div>
     </div>
     <div class="layui-row" style="margin-top: 20px;">
+        <button class="layui-btn layui-btn-warm layui-btn-fluid" onclick="moveDoc()" title="复制或移动此文档到其他文集">复制/移动文档</button>
+    </div>
+
+    <div class="layui-row" style="margin-top: 10px;">
         <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档">删除文档</button>
     </div>
+
 </div>
 {% endblock %}
 
@@ -181,7 +187,7 @@
                 //'content':editor.getPreviewedHTML(),
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
-            }
+            };
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 layer.closeAll("loading");
                 if(r.status){
@@ -296,7 +302,7 @@
                     layer.load(1);
                     data = {
                         'doc_id':{{ doc.id }},
-                    }
+                    };
                     $.post("{% url 'del_doc' %}",data,function(r){
                         layer.closeAll('loading')
                         if(r.status){
@@ -313,7 +319,84 @@
                     })
                 },
             });
-        }
+        };
+        // 移动文档
+        moveDoc = function(doc_id){
+            layer.open({
+                type:1,
+                title:'复制或移动此文档到指定文集',
+                id:'moveDoc',
+                area:'450px;',
+                content:$('#move-project'),
+                success:function(layero,index){
+                    form.render(null, 'move-projects'); // 重新渲染弹出框的表单
+                    // 移动文集 - 侦听选择文集 - 获取文集的文档
+                    form.on('select(moveProject)', function(data){
+                        // console.log(data.value); //得到被选中的值
+                        $('#move-parent-id').val(0);
+                        //获取文集的下级文档
+                        $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':data.value},function(r){
+                            if(r.status){
+                                var doc_tree = tree.render({
+                                    elem:"#move-doc-tree",
+                                    id:'moveDocTree',
+                                    onlyIconControl:true,
+                                    data:r.data,
+                                    text: {
+                                        defaultNodeName: '未命名' //节点默认名称
+                                        ,none: '文集暂无文档' //数据为空时的提示文本
+                                        },
+                                    click: function(obj){
+                                        if(obj.data.level != 3){
+                                            $('#move-parent-id').val(obj.data.id);// 设置上级文档
+                                            $("div.layui-tree-set").each(function(i){
+                                                var $me = $(this)
+                                                if($me.data('id') == obj.data.id){
+                                                    // console.log('点击了')
+                                                    layer.msg("选择了上级文档："+obj.data.title)
+                                                    $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                                                }else{
+                                                    $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                                                }
+                                            });
+                                        }else{
+                                            layer.msg("第三级文档不能作为上级文档")
+                                        }
+                                        
+                                    }
+                                });
+                            }else{
+                                layer.msg("获取下级文档失败！")
+                            }
+                        });
+                    });
+                },
+            })
+        };
+        // 提交移动文档
+        submitMoveDoc = function(){
+            var data = {
+                move_type:$("input:radio[name='move-type']:checked").val(),
+                pro_id:$("#moveProject").val(),
+                parent_id:$("#move-parent-id").val(),
+                doc_id:'{{doc.id}}'
+            };
+            if(data.pro_id === ''){
+                layer.msg("必须选择一个文集")
+                return
+            }
+            console.log(data)
+            layer.load(1)
+            $.post("{% url 'move_doc' %}",data,function(r){
+                layer.closeAll('loading')
+                if(r.status){
+                    window.location.href = '/project-'+r.data.pro_id + '/doc-' + r.data.doc_id + '/'
+                }else{
+                    layer.msg(r.data)
+                }
+            });
+
+        };
     </script>
 {% endblock %}
 
@@ -350,6 +433,7 @@
       </tbody>
     </table>
 </div>
+
 <!-- 文档历史div块 -->
 <div class="history-list" id="history-list" style="display: none;width: 500px;">
     <table class="layui-table" style="margin: 10px;" lay-size='sm'>
@@ -376,5 +460,55 @@
         {% endfor %}
       </tbody>
     </table>
+</div>
+
+<!-- 移动文档div块 -->
+<div class="layui-form" id="move-project" style="display: none;width: 400px;height: 500px;" lay-filter='move-projects'>
+    <div class="layui-col-md12" style="margin: 10px;">
+        <div class="layui-form-item">
+            <!-- <label class="layui-form-label">操作类型</label> -->
+            <div class="layui-input-block" style="margin-left: 0px;">
+              <input type="radio" name="move-type" value="0" title="复制" checked>
+              <input type="radio" name="move-type" value="1" title="移动">
+              <input type="radio" name="move-type" value="2" title="移动（含下级文档）">
+            </div>
+          </div>
+          
+        <input id="move-parent-id" hidden value="0" />
+        <div class="layui-input-inblock">
+          <select name="move_pro_id"  lay-filter="moveProject" id="moveProject">
+            <option value="">请选择一个文集（必选）</option>
+              <!-- 自己的文集 -->
+              <optgroup label="自有文集" id="self-project">
+              {% for p in project_list %}
+                  {% if p.role == 1 %}
+                  <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
+                  {% elif p.role == 2 %}
+                  <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
+                  {% elif p.role == 3 %}
+                  <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
+                  {% else %}
+                  <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
+                  {% endif %}
+              {% endfor %}
+              </optgroup>
+              <!-- 协作的文集 -->
+              {% if colla_project_list.count > 0 %}
+              <optgroup label="协作文集">
+              {% for p in colla_project_list %}
+                    <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
+              {% endfor %}
+              </optgroup>
+              {% endif %}
+          </select>
+        </div>
+    </div>
+    <div class="layui-col-md12" id="move-doc-tree"></div>
+    <div class="layui-col-md12" style="margin: 10px;">
+        <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="submitMoveDoc()">确认操作</button>
+    </div>
+    <div class="layui-col-md12" style="margin: 10px;">
+        <span style="font-size: 12px;color:mediumvioletred;">警告：MrDoc仅支持3级目录显示，若移动的下级文档层级在目标文集中超过3层将不会显示在文集目录中</span>
+    </div>
 </div>
 {% endblock %}

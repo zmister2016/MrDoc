@@ -169,6 +169,7 @@
         flowChart            : false,          // flowChart.js only support IE9+
         sequenceDiagram      : false,          // sequenceDiagram.js only support IE9+
         mindMap              : true,           // 脑图
+        echart               : true,           // echart 图表
         previewCodeHighlight : true,
                 
         toolbar              : true,           // show/hide toolbar
@@ -506,7 +507,7 @@
                     
                     return ;
                 }
-
+                // 加载流程图和序列图 JS 文件
                 if (settings.flowChart || settings.sequenceDiagram) 
                 {
                     editormd.loadScript(loadPath + "raphael.min", function() {
@@ -546,6 +547,10 @@
                     _this.loadedDisplay();
                 }
             }; 
+            // 加载 echarts.min.js
+            editormd.loadScript(loadPath + "echarts.min", function() {
+                // _this.loadedDisplay();
+            });
 
             editormd.loadCSS(loadPath + "codemirror/codemirror.min");
             
@@ -1526,6 +1531,26 @@
             return this;
         },
 
+        /**
+         * 解析和渲染 Echarts - 2020-05-21
+         * 
+         * @returns {editormd}             返回editormd的实例对象
+         */
+        echartRender:function(){
+            // console.log("开始解析echart")
+            this.previewContainer.find(".echart").each(function(){
+                var echart  = $(this);
+                if(echart.text() != ''){
+                    var echart_data = eval("(" + echart.text() + ")");
+                    echart.empty();
+                    var myChart = echarts.init(document.getElementById(this.id),null,{renderer: 'svg'});
+                    myChart.setOption(echart_data);
+                }
+            });   
+
+            return this;
+        },
+
         
         /**
          * 解析和渲染流程图及时序图
@@ -2019,6 +2044,7 @@
                 flowChart            : settings.flowChart,
                 sequenceDiagram      : settings.sequenceDiagram,
                 mindMap              : settings.mindMap,
+                echart               : settings.echart,
                 previewCodeHighlight : settings.previewCodeHighlight,
             };
             
@@ -2105,6 +2131,14 @@
                     setTimeout(function(){
                         _this.mindmapRender();
                     },10)
+                   
+                }
+
+                // 渲染 echart
+                if(settings.echart){
+                    setTimeout(function(){
+                        _this.echartRender();
+                    },10)                    
                    
                 }
                 
@@ -3669,7 +3703,7 @@
             {
                 return "<p class=\"" + editormd.classNames.tex + "\">" + code + "</p>";
             }
-            else if (/^mindmap/i.test(lang)){
+            else if (/^mindmap/i.test(lang)){ // 思维导图
             　　var len = 9 || 32;
             　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 
             　　var maxPos = $chars.length;
@@ -3688,6 +3722,26 @@
                 }
 
                 return "<svg class='mindmap' style='width:100%;min-height:150px;height:"+ custom_height +"px;' id='mindmap-"+ map_id +"'>"+code+"</svg>";
+            }
+            else if(/^echart/i.test(lang)){ // echart 图表
+                var len = 9 || 32;
+            　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 
+            　　var maxPos = $chars.length;
+            　　var map_id = '';
+            　　for (var i = 0; i < len; i++) {
+            　　　　map_id += $chars.charAt(Math.floor(Math.random() * maxPos));
+                }
+                // var map_id = lang.split('>')[1];
+                // console.log(map_id)
+                var custom_height;
+                var h = lang.split('>')[1];
+                if(h != undefined){
+                    custom_height = h;
+                }else{
+                    custom_height = 150;
+                }
+
+                return "<div class='echart' style='width:100%;min-height:350px;height:"+ custom_height +"px;' id='echart-"+ map_id +"'>"+code+"</div>";
             } 
             else 
             {
@@ -3993,6 +4047,7 @@
             emoji                : false,
             flowChart            : false,
             mindMap              : true, //脑图
+            echart               : true, 
             sequenceDiagram      : false,
             previewCodeHighlight : true
         };
@@ -4026,6 +4081,7 @@
             flowChart            : settings.flowChart, // 流程图
             sequenceDiagram      : settings.sequenceDiagram, // 序列图
             mindMap              : settings.mindMap, // 思维导图
+            echart              : settings.echart, // 思维导图
             previewCodeHighlight : settings.previewCodeHighlight, // 预览代码高度
         };
 
@@ -4124,10 +4180,28 @@
                     var mmap  = $(this);
                     var md_data = window.markmap.transform(mmap.text().trim());
                     window.markmap.markmap("svg#"+this.id,md_data)
-                    //drawMindMap(mmap[0]) // kityminder的实现
                 });   
-            }
+            };
             mindmapHandle();
+        }
+
+        // 前台渲染 Echart
+        if(settings.echart){
+            // console.log("前台解析echart")
+            var echartHandle = function(){
+                div.find(".echart").each(function(){
+                    var echart  = $(this);
+                    if(echart.text() != ''){
+                        var echart_data = eval("(" + echart.text() + ")");
+                        echart.empty();
+                        var myChart = echarts.init(document.getElementById(this.id),null,{renderer: 'svg'});
+                        myChart.setOption(echart_data);
+                    }
+                });
+            };
+            echartHandle();
+            
+
         }
         
         div.getMarkdown = function() {            
@@ -4295,7 +4369,17 @@
             editormd.loadScript(editormd.katexURL.js, callback || function(){});
         });
     };
-        
+    
+    /**
+     * 加载Echarts文件
+     * 
+     * @param {Function} [callback=function()]  加载成功后执行的回调函数
+     */
+    
+    editormd.loadEcharts = function (callback) {
+        editormd.loadScript("/static/editor.md/lib/katex.min", callback || function(){});
+    };
+
     /**
      * 锁屏
      * lock screen

@@ -77,6 +77,10 @@
         .layui-form-select dl dd.layui-this{
             background-color: #1E9FFF !important;
         }
+        /* layui单选样式 */
+        .layui-form-radio>i:hover, .layui-form-radioed>i{
+            color: #1E9FFF;
+        }
         /* HTML预览样式 */
         .markdown-body h1{
             font-size: 1.7em;
@@ -235,10 +239,11 @@
         toolbarIcons : function() {
             return [
                 "undo", "redo", "|",
-                "h1", "bold", "del", "italic", "quote","kaiSpan",  "|",
-                "list-ul", "list-ol", "hr", "link", "reference-link", "|",
-                "mindmap","imgUpload", "attachment" ,"code", "code-block", "htmltable", "|", "emoji", "html-entities", "pagebreak", "|",
-                "watch", "preview", "|",
+                "h1", "bold", "del", "italic", "quote","kaiSpan",  
+                "list-ul", "list-ol", "hr", "link", "reference-link", 
+                "mindmap","echart","imgUpload", "attachment" ,"code", "code-block", "htmltable", 
+                "emoji", "html-entities", "pagebreak", 
+                "watch", "preview", 
                 "help"
             ]
         },
@@ -252,6 +257,7 @@
             attachment:'fa-upload',
             htmltable:'fa-table',
             mindmap:'fa-sitemap',
+            echart:'fa-bar-chart'
         },
         //设置自定义工具栏按钮的事件
         toolbarHandlers : {
@@ -371,8 +377,15 @@
                     }
                 });
             },
+            // 添加思维导图
             mindmap:function(cm,icon,cursor,selection){
                 cm.replaceSelection('```mindmap\n' + selection + "\n```");
+                if(selection === "") {
+                    cm.setCursor(cursor.line+1, cursor.ch);
+                }
+            },
+            echart:function(cm,icon,cursor,selection){
+                cm.replaceSelection('```echart\n' + selection + "\n```");
                 if(selection === "") {
                     cm.setCursor(cursor.line+1, cursor.ch);
                 }
@@ -386,6 +399,7 @@
                 attachment:"添加附件",
                 htmltable:"添加表格",
                 mindmap:"添加思维导图",
+                echart:"添加Echarts图表",
             }
         },
         //配置项
