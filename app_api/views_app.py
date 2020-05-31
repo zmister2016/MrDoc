@@ -100,6 +100,25 @@ class ProjectView(APIView):
     # 获取文集
     def get(self,request):
         pro_id = request.query_params.get('id',None)
+        range = request.query_params.get('range',None)
+        # 获取自己的文集创建的、协作的文集列表
+        if range == 'self':
+            colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集列表
+            project_list = Project.objects.filter(
+                Q(create_user=request.user) | \
+                Q(id__in=colla_list)
+            )
+            page = PageNumberPagination()  # 实例化一个分页器
+            page_projects = page.paginate_queryset(project_list, request, view=self)  # 进行分页查询
+            serializer = ProjectSerializer(page_projects, many=True)  # 对分页后的结果进行序列化处理
+            resp = {
+                'code': 0,
+                'data': serializer.data,
+                'count': project_list.count()
+            }
+            return Response(resp)
+
+        # 存在文集ID，返回指定的文集
         if pro_id:
             resp = dict()
             # 获取文集信息
@@ -146,7 +165,7 @@ class ProjectView(APIView):
                 serializer = ProjectSerializer(project)
                 resp = {'code': 0, 'data': serializer.data}
             return Response(resp)
-
+        # 否则，根据查询条件返回文集列表
         else:
             kw = request.query_params.get('kw', '')  # 搜索词
             sort = request.query_params.get('sort', 0)  # 排序,0表示按时间升序排序，1表示按时间降序排序，默认为0
