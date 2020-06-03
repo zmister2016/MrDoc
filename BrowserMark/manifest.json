@@ -20,8 +20,7 @@
 			"matches": [ "http://*/*", "https://*/*" ],
 			"js": [
 				"js/lib/jquery-2.1.1.min.js", 
-				"layui/layui.all.js",
-				"js/mrdocclipper.js", 
+				"js/mrdocclipper.js",
 				"js/lib/extract-content.js",
 				"js/lib/turndown.js"
 			]
@@ -51,7 +50,7 @@
 		"scripts": [ 
 			"js/lib/jquery-2.1.1.min.js", 
 			"layui/layui.all.js",
-			"js/lib/underscore.js", 
+			"js/lib/underscore.js",
 			"js/lib/backbone.js", 
 			"js/background.js" ]
 	}
