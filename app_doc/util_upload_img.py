@@ -43,7 +43,7 @@ def img_upload(files, dir_name, user):
     allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp"]
     file_suffix = files.name.split(".")[-1] # 提取图片格式
     # 判断图片格式
-    if file_suffix not in allow_suffix:
+    if file_suffix.lower() not in allow_suffix:
         return {"success": 0, "message": "图片格式不正确"}
 
     relative_path = upload_generation_dir(dir_name)
