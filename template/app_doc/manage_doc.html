@@ -5,11 +5,13 @@
     <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
           <span style="font-size:18px;">文档管理</span>
-          {% if search_kw %} - 搜索“{{search_kw}}”的结果{% endif %}
+          {% if search_kw %} - 搜索“<span style="color: #FF5722;">{{search_kw}}</span>”的结果{% endif %}
       </div>
   </div>
+    
     <div class="layui-row">
         <form action="{% url 'manage_doc' %}" method="get">
+            <input name="pid" value="{{docs.pid}}" hidden>
         <div class="layui-form-item">
             <span class="layui-breadcrumb doc_status_condition" lay-separator="|">
               <a href="{% url 'manage_doc' %}?status=all" class="{% if doc_status == 'all' %}current{% endif %}">全部（{{all_cnt}}）</a>
@@ -24,7 +26,39 @@
             <a href="{% url 'create_doc' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-addition"></i>新建文档</a>
         </div>
         </form>
+        <div class="">
+            <div class="layui-form">
+                <div class="layui-input-inline">
+                  <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
+                    <option value="">按文集筛选</option>
+                      <!-- 自己的文集 -->
+                      <optgroup label="自有文集" id="self-project">
+                      {% for p in project_list %}
+                          {% if p.role == 1 %}
+                          <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
+                          {% elif p.role == 2 %}
+                          <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
+                          {% elif p.role == 3 %}
+                          <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
+                          {% else %}
+                          <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
+                          {% endif %}
+                      {% endfor %}
+                      </optgroup>
+                      <!-- 协作的文集 -->
+                      {% if colla_project_list.count > 0 %}
+                      <optgroup label="协作文集">
+                      {% for p in colla_project_list %}
+                            <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
+                      {% endfor %}
+                      </optgroup>
+                      {% endif %}
+                  </select>
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <div class="layui-row" lay-skin="">
         <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
@@ -76,7 +110,7 @@
         <div class="layui-box layui-laypage layui-laypage-default">
                 <!-- 上一页 -->
                 {% if docs.has_previous %}
-                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
                 {% else %}
                     <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
                 {% endif %}
@@ -87,7 +121,7 @@
                 </span>
                 <!-- 下一页 -->
                 {% if docs.has_next %}
-                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
                 {% else %}
                     <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
                 {% endif %}
@@ -96,6 +130,7 @@
 {% endblock %}
 {% block custom_script %}
 <script>
+    // 删除文档
     delDoc = function(doc_id){
         layer.open({
             type:1,
@@ -125,5 +160,12 @@
             },
         });
     }
+    //筛选文集
+    form.on('select(project)', function(data){
+        console.log('选择文集：',data.value); //得到被选中的值
+        if(data.value != -1){//
+            window.location.href = '?kw={{docs.kw}}&status={{docs.status}}&pid='+data.value;
+        }
+    });
 </script>
 {% endblock %}

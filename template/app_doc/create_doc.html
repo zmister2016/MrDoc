@@ -95,7 +95,7 @@
 
 {% block content %}
     <div class="create-doc-form">
-        <div class="layui-form" style="">
+        <div class="layui-form">
             <!-- 标题 -->
             <div style="padding-bottom:10px;">
                 <div class="layui-input-block" style="margin-left:0px;">
@@ -116,7 +116,7 @@
     var tree = layui.tree;
     //选择文集
     form.on('select(project)', function(data){
-        console.log(data.value); //得到被选中的值
+        console.log('选择文集：',data.value); //得到被选中的值
         if(data.value == -1){ //新建文集
             layer.open({
                 type:1,
@@ -190,7 +190,7 @@
     //带pid参数自动选择文集
     var sel_pro_list = $('dl.layui-anim dd');
     for(var i = 0;i < sel_pro_list.length; i++){
-        if(sel_pro_list[i].getAttribute('lay-value') == {{pid}}){
+        if(sel_pro_list[i].getAttribute('lay-value') == '{{pid}}'){
             var sel_pro = 'dd[lay-value=' + sel_pro_list[i].getAttribute('lay-value') + ']';
             $('#project').siblings("div.layui-form-select").find('dl').find(sel_pro).click();
         }
@@ -396,8 +396,6 @@
           <td class="layui-hide-xs">{{ temp.create_time }}</td>
           <td>
               <a class="layui-btn layui-btn-normal layui-btn-sm" href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
-{#              <a href="javascript:void(0);" onclick="modifyTemp();">修改</a>#}
-{#              <a href="javascript:void(0);" onclick="delTemp();">删除</a>#}
           </td>
         </tr>
         {% endfor %}

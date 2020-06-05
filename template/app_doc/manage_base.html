@@ -44,6 +44,9 @@
         .layui-form-radio>i:hover, .layui-form-radioed>i{
           color: #1E9FFF;
         }
+        .layui-form-select dl dd.layui-this{
+            background-color: #1E9FFF !important;
+        }
         /* 开关样式 */
         .layui-form-onswitch{
           border-color: #1E9FFF;
@@ -95,8 +98,11 @@
               <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'manage_attachment' %}"><i class="layui-icon layui-icon-export"></i> 附件管理</a>
             </li>
-              <li class="layui-nav-item layui-nav-itemed">
+            <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'manage_token' %}"><i class="layui-icon layui-icon-key"></i> 用户Token管理</a>
+            </li>
+            <li class="layui-nav-item layui-nav-itemed">
+              <a href="http://mrdoc.zmister.com/project-54/" target="_blank"><i class="layui-icon layui-icon-help"></i> 使用手册</a>
             </li>
           </ul>
         </div>
@@ -110,7 +116,9 @@
       <div class="layui-footer" style="text-align:center;">
         <!-- 底部固定区域 -->
           © <a href="https://gitee.com/zmister/MrDoc" target="_blank">MrDoc 2019-2020</a>&nbsp;-&nbsp;
-          当前版本：<a href="https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/" target="_blank">{{mrdoc_version}}</a>
+          当前版本：<a href="https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/" target="_blank">{{mrdoc_version}}</a>&nbsp;-&nbsp;
+          <a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>&nbsp;-&nbsp;
+          <a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a>
       </div>
 </div>
 
