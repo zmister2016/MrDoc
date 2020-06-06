@@ -1,4 +1,4 @@
-django==2.2.12
+django==2.2.13
 beautifulsoup4==4.8.2
 lxml
 pillow==6.2.2
