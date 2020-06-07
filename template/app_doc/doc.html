@@ -78,16 +78,23 @@
     //初始化悬浮目录
     var toc = $("#toc-container").find('li');
     if(toc.length > 0){
-        layer.open({
+        var toc_index = layer.open({
              title: '目录',
              type:1,
              offset:'r',//坐标
              maxmin:true, //最大最小化
-             area: ['170px','200px'],
+             area: ['170px','0.8'],
              shade: 0,
              content: $("#toc-container"),
         });
     };
+    // 手机屏幕上默认最小化目录
+    if(window.outerWidth < 768){
+        console.log('最小化目录');
+        setTimeout(function(){
+            layer.min(toc_index);
+        },500)
+    }
     //修改a标签链接新窗口打开
     $('#content').on('click','a',function(e){
         e.target.target = '_blank';
