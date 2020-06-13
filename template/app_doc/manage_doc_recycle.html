@@ -1,0 +1,200 @@
+{% extends 'app_doc/manage_base.html' %}
+{% load staticfiles %}
+{% block title %}文档回收站管理{% endblock %}
+{% block content %}
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+      <div class="layui-row">
+          <span style="font-size:18px;">文档回收站管理</span>
+      </div>
+  </div>
+  
+    <div class="layui-row">
+        <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="emptyDoc()"><i class="layui-icon layui-icon-delete" ></i>清空回收站</button>
+        <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="restoreAll()"><i class="layui-icon layui-icon-refresh"></i>还原所有</button>
+
+    </div>
+    <div class="layui-row" lay-skin="">
+        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
+      <thead>
+        <tr>
+            <th>文档名称</th>
+            <th>上级文档</th>
+            <th>所属文集</th>
+            <th>创建时间</th>
+            <th>删除时间</th>
+            <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% load doc_filter %}
+        {% for doc in docs %}
+        <tr>
+            <td>{{ doc.name }}</td>
+            <td>{{ doc.parent_doc|get_doc_parent }}</td>
+            <td>
+                {{ doc.top_doc|is_colla_pro:doc.create_user }}{{ doc.top_doc|get_doc_top }}
+            </td>
+            <td>{{ doc.create_time }}</td>
+            <td>{{ doc.modify_time }}</td>
+            <td>
+                <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="restoreDoc('{{doc.id}}')">
+                    <i class="layui-icon layui-icon-refresh"></i>还原
+                </button>
+                <button onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-delete"></i>删除
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+        </table>
+    </div>
+    <!-- 分页 -->
+    <div class="layui-row">
+        <div class="layui-box layui-laypage layui-laypage-default">
+                <!-- 上一页 -->
+                {% if docs.has_previous %}
+                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                {% else %}
+                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                {% endif %}
+                <!-- 当前页 -->
+                <span class="layui-laypage-curr">
+                    <em class="layui-laypage-em"></em>
+                    <em>{{ docs.number }}/{{ docs.paginator.num_pages }}</em>
+                </span>
+                <!-- 下一页 -->
+                {% if docs.has_next %}
+                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                {% else %}
+                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+<script>
+    // 删除文档
+    delDoc = function(doc_id){
+        layer.open({
+            type:1,
+            title:'删除文档',
+            area:'300px;',
+            id:'delPro',//配置ID
+            content:'<div style="margin-left:10px;">警告：此操作将彻底删除此文档！</div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                layer.load(1);
+                data = {
+                    'doc_id':doc_id,
+                    'type':'del',
+                }
+                $.post("{% url 'doc_recycle' %}",data,function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        //删除成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //删除失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+        });
+    };
+    // 还原文档
+    restoreDoc = function(doc_id){
+        layer.open({
+            type:1,
+            title:'还原文档',
+            area:'300px;',
+            id:'delPro',//配置ID
+            content:'<div style="margin-left:10px;">提示：文档将还原为草稿状态！</div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                layer.load(1);
+                data = {
+                    'doc_id':doc_id,
+                    'type':'restore',
+                }
+                $.post("{% url 'doc_recycle' %}",data,function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        //还原成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //还原失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+        });
+    };
+    // 清空回收站
+    emptyDoc = function(){
+        layer.open({
+            type:1,
+            title:'清空回收站',
+            area:'300px;',
+            id:'delPro',//配置ID
+            content:'<div style="margin-left:10px;">警告：此操作将彻底删除回收站所有文档！</div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                layer.load(1);
+                data = {
+                    'type':'empty',
+                }
+                $.post("{% url 'doc_recycle' %}",data,function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        //清空成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //清空失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+        });
+    };
+    // 还原所有
+    restoreAll = function(){
+        layer.open({
+            type:1,
+            title:'还原回收站',
+            area:'300px;',
+            id:'delPro',//配置ID
+            content:'<div style="margin-left:10px;">警告：此操作将还原回收站所有文档为草稿状态！</div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                layer.load(1);
+                data = {
+                    'type':'restoreAll',
+                }
+                $.post("{% url 'doc_recycle' %}",data,function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        //还原成功
+                        window.location.reload();
+                        //layer.close(index)
+                    }else{
+                        //还原失败，提示
+                        console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+        });
+    };
+</script>
+{% endblock %}

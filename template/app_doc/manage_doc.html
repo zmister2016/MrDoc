@@ -82,6 +82,7 @@
             {% else %}
                 <td>
                     <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} <i class="layui-icon layui-icon-menu-fill" style="color:#FF5722"></i></a>
+                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="fastPubDoc('{{doc.id}}')">一键发布</button>
                 </td>
             {% endif %}
             <td>{{ doc.parent_doc|get_doc_parent }}</td>
@@ -159,7 +160,24 @@
                 })
             },
         });
-    }
+    };
+    // 一键发布文档
+    fastPubDoc = function(doc_id){
+        data = {
+            'doc_id':doc_id,
+        }
+        $.post("{% url 'fast_pub_doc' %}",data,function(r){
+            layer.closeAll('loading')
+            if(r.status){
+                //发布成功
+                window.location.reload();
+            }else{
+                //发布失败，提示
+                console.log(r)
+                layer.msg(r.data)
+            }
+        })
+    };
     //筛选文集
     form.on('select(project)', function(data){
         console.log('选择文集：',data.value); //得到被选中的值

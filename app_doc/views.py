@@ -213,7 +213,7 @@ def project_index(request,pro_id):
         else:
             colla_user = 0
 
-        # 获取问价文集前台下载权限
+        # 获取文集前台下载权限
         try:
             allow_download = ProjectReport.objects.get(project=project)
         except ObjectDoesNotExist:
@@ -687,7 +687,7 @@ def modify_doc(request,doc_id):
             return JsonResponse({'status':False,'data':'请求出错'})
 
 
-# 删除文档
+# 删除文档 - 软删除 - 进入回收站
 @login_required()
 @require_http_methods(["POST"])
 def del_doc(request):
@@ -698,14 +698,27 @@ def del_doc(request):
             # 查询文档
             try:
                 doc = Doc.objects.get(id=doc_id)
+                project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
+                # 获取文档所属文集的协作信息
+                pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) #
+                if pro_colla.exists():
+                    colla_user_role = pro_colla[0].role
+                else:
+                    colla_user_role = 0
             except ObjectDoesNotExist:
                 return JsonResponse({'status': False, 'data': '文档不存在'})
-            # 如果请求用户为文档创建者或为高级权限的协作者，可以删除
-            if request.user == doc.create_user:
-                # 删除
-                doc.delete()
-                # 修改其子文档为顶级文档
-                Doc.objects.filter(parent_doc=doc_id).update(parent_doc=0)
+            # 如果请求用户为文档创建者、高级权限的协作者、文集的创建者，可以删除
+            if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
+                # 修改状态为删除
+                doc.status = 3
+                doc.modify_time = datetime.datetime.now()
+                doc.save()
+                # 修改其下级所有文档状态为删除
+                chr_doc = Doc.objects.filter(parent_doc=doc_id) # 获取下级文档
+                chr_doc_ids = chr_doc.values_list('id',flat=True) # 提取下级文档的ID
+                chr_doc.update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的状态为删除
+                Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
+
                 return JsonResponse({'status': True, 'data': '删除完成'})
             else:
                 return JsonResponse({'status': False, 'data': '非法请求'})
@@ -734,11 +747,15 @@ def manage_doc(request):
 
     # 无搜索 - 无状态 - 无文集
     if (is_search is False) and (is_status == 'all') and (is_project is False):
-        doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
+        doc_list = Doc.objects.filter(create_user=request.user,status__in=[0,1]).order_by('-modify_time')
 
     # 无搜索 - 无状态 - 有文集
     elif (is_search is False) and (is_status == 'all') and (is_project):
-        doc_list = Doc.objects.filter(create_user=request.user,top_doc=int(doc_pro_id)).order_by('-modify_time')
+        doc_list = Doc.objects.filter(
+            create_user=request.user,
+            top_doc=int(doc_pro_id),
+            status__in=[0,1]
+        ).order_by('-modify_time')
 
     # 无搜索 - 有状态 - 无文集
     elif (is_search is False) and (is_status != 'all') and (is_project is False):
@@ -749,7 +766,7 @@ def manage_doc(request):
         elif doc_status == 'draft':
             doc_list = Doc.objects.filter(create_user=request.user, status=0).order_by('-modify_time')
         else:
-            doc_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')
+            doc_list = Doc.objects.filter(create_user=request.user, status__in=[0,1]).order_by('-modify_time')
 
     # 无搜索 - 有状态 - 有文集
     elif (is_search is False) and (is_status != 'all') and (is_project):
@@ -768,20 +785,25 @@ def manage_doc(request):
                 top_doc = int(doc_pro_id)
             ).order_by('-modify_time')
         else:
-            doc_list = Doc.objects.filter(create_user=request.user,top_doc=int(doc_pro_id)).order_by('-modify_time')
+            doc_list = Doc.objects.filter(
+                create_user=request.user,
+                top_doc=int(doc_pro_id),
+                status__in=[0,1]
+            ).order_by('-modify_time')
 
     # 有搜索 - 无状态 - 无文集
     elif (is_search) and (is_status == 'all') and (is_project is False):
         doc_list = Doc.objects.filter(
             Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
             create_user=request.user,
+            status__in=[0,1]
         ).order_by('-modify_time')
 
     # 有搜索 - 无状态 - 有文集
     elif (is_search) and (is_status == 'all') and (is_project):
         doc_list = Doc.objects.filter(
             Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
-            create_user=request.user,top_doc=int(doc_pro_id)
+            create_user=request.user,top_doc=int(doc_pro_id),status__in=[0,1]
         ).order_by('-modify_time')
 
     # 有搜索 - 有状态 - 无文集
@@ -801,7 +823,7 @@ def manage_doc(request):
         else:
             doc_list = Doc.objects.filter(
                 Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
-                create_user=request.user,
+                create_user=request.user,status__in=[0,1]
             ).order_by('-modify_time')
 
     # 有搜索 - 有状态 - 有文集
@@ -824,7 +846,7 @@ def manage_doc(request):
             doc_list = Doc.objects.filter(
                 Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
                 create_user=request.user,
-                top_doc=int(doc_pro_id)
+                top_doc=int(doc_pro_id),status__in=[0,1]
             ).order_by('-modify_time')
 
     # 文集列表
@@ -927,7 +949,6 @@ def move_doc(request):
         return JsonResponse({'status':False,'data':'移动类型错误'})
 
 
-
 # 查看对比文档历史版本
 @login_required()
 @require_http_methods(['GET',"POST"])
@@ -997,6 +1018,105 @@ def manage_doc_history(request,doc_id):
             logger.exception("操作文档历史版本出错")
             return JsonResponse({'status':False,'data':'出现异常'})
 
+
+# 文档回收站
+@login_required()
+@require_http_methods(['GET','POST'])
+def doc_recycle(request):
+    if request.method == 'GET':
+        # 获取状态为删除的文档
+        doc_list = Doc.objects.filter(status=3,create_user=request.user).order_by('-modify_time')
+        # 分页处理
+        paginator = Paginator(doc_list, 15)
+        page = request.GET.get('page', 1)
+        try:
+            docs = paginator.page(page)
+        except PageNotAnInteger:
+            docs = paginator.page(1)
+        except EmptyPage:
+            docs = paginator.page(paginator.num_pages)
+        return render(request,'app_doc/manage_doc_recycle.html',locals())
+    elif request.method == 'POST':
+        try:
+            # 获取参数
+            doc_id = request.POST.get('doc_id', None) # 文档ID
+            types = request.POST.get('type',None) # 操作类型
+            if doc_id:
+                # 查询文档
+                try:
+                    doc = Doc.objects.get(id=doc_id)
+                    project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
+                    # 获取文档所属文集的协作信息
+                    pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  #
+                    if pro_colla.exists():
+                        colla_user_role = pro_colla[0].role
+                    else:
+                        colla_user_role = 0
+                except ObjectDoesNotExist:
+                    return JsonResponse({'status': False, 'data': '文档不存在'})
+                # 如果请求用户为文档创建者、高级权限的协作者、文集的创建者，可以操作
+                if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
+                    # 还原文档
+                    if types == 'restore':
+                        # 修改状态为草稿
+                        doc.status = 0
+                        doc.modify_time = datetime.datetime.now()
+                        doc.save()
+                    # 删除文档
+                    elif types == 'del':
+                        # 删除文档
+                        doc.delete()
+                    else:
+                        return JsonResponse({'status':False,'data':'无效请求'})
+                    return JsonResponse({'status': True, 'data': '删除完成'})
+                else:
+                    return JsonResponse({'status': False, 'data': '非法请求'})
+            # 清空回收站
+            elif types == 'empty':
+                docs = Doc.objects.filter(status=3,create_user=request.user)
+                docs.delete()
+                return JsonResponse({'status': True, 'data': '清空成功'})
+            # 还原回收站
+            elif types == 'restoreAll':
+                Doc.objects.filter(status=3,create_user=request.user).update(status=0)
+                return JsonResponse({'status': True, 'data': '还原成功'})
+            else:
+                return JsonResponse({'status': False, 'data': '参数错误'})
+        except Exception as e:
+            logger.exception("处理文档出错")
+            return JsonResponse({'status': False, 'data': '请求出错'})
+
+
+# 一键发布文档
+@login_required()
+@require_http_methods(['POST'])
+def fast_publish_doc(request):
+    doc_id = request.POST.get('doc_id',None)
+    # 查询文档
+    try:
+        doc = Doc.objects.get(id=doc_id)
+        project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
+        # 获取文档所属文集的协作信息
+        pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  #
+        if pro_colla.exists():
+            colla_user_role = pro_colla[0].role
+        else:
+            colla_user_role = 0
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': '文档不存在'})
+    # 判断请求者是否有权限（文档创建者、文集创建者、文集高级协作者）
+    # 如果请求用户为文档创建者、高级权限的协作者、文集的创建者，可以删除
+    if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
+        try:
+            doc.status = 1
+            doc.modify_time = datetime.datetime.now()
+            doc.save()
+            return JsonResponse({'status':True,'data':'发布成功'})
+        except:
+            logger.exception("文档一键发布失败")
+            return JsonResponse({'status':False,'data':'发布失败'})
+    else:
+        return JsonResponse({'status':False,'data':'非法请求'})
 
 # 创建文档模板
 @login_required()
@@ -1138,7 +1258,7 @@ def get_pro_doc(request):
     pro_id = request.POST.get('pro_id','')
     if pro_id != '':
         # 获取文集所有文档的id、name和parent_doc3个字段
-        doc_list = Doc.objects.filter(top_doc=int(pro_id)).values_list('id','name','parent_doc').order_by('parent_doc')
+        doc_list = Doc.objects.filter(top_doc=int(pro_id),status=1).values_list('id','name','parent_doc').order_by('parent_doc')
         item_list = []
         # 遍历文档
         for doc in doc_list:

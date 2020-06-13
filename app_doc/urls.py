@@ -28,6 +28,8 @@ urlpatterns = [
     path('diff_doc/<int:doc_id>-<int:his_id>/',views.diff_doc,name='diff_doc'), # 对比文档历史版本
     path('manage_doc_history/<int:doc_id>/',views.manage_doc_history,name='manage_doc_history'), # 管理文档历史版本
     path('move_doc/', views.move_doc, name='move_doc'), # 移动文档
+    path('doc_recycle/', views.doc_recycle,name='doc_recycle'), # 文档回收站
+    path('fast_pub_doc/',views.fast_publish_doc,name='fast_pub_doc'), # 一键发布文档
     #################文档模板相关
     path('manage_doctemp/',views.manage_doctemp,name='manage_doctemp'), # 文档模板列表
     path('create_doctemp/',views.create_doctemp,name="create_doctemp"), # 创建文档模板

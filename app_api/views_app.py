@@ -566,13 +566,27 @@ class DocView(APIView):
                 # 查询文档
                 try:
                     doc = Doc.objects.get(id=doc_id)
+                    project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
+                    # 获取文档所属文集的协作信息
+                    pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  #
+                    if pro_colla.exists():
+                        colla_user_role = pro_colla[0].role
+                    else:
+                        colla_user_role = 0
                 except ObjectDoesNotExist:
                     return Response({'code': 1, 'data': '文档不存在'})
-                if request.user == doc.create_user:
-                    # 删除
-                    doc.delete()
-                    # 修改其子文档为顶级文档
-                    Doc.objects.filter(parent_doc=doc_id).update(parent_doc=0)
+                if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
+                    # 修改状态为删除
+                    doc.status = 3
+                    doc.modify_time = datetime.datetime.now()
+                    doc.save()
+                    # 修改其下级所有文档状态为删除
+                    chr_doc = Doc.objects.filter(parent_doc=doc_id)  # 获取下级文档
+                    chr_doc_ids = chr_doc.values_list('id', flat=True)  # 提取下级文档的ID
+                    chr_doc.update(status=3, modify_time=datetime.datetime.now())  # 修改下级文档的状态为删除
+                    Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,
+                                                                          modify_time=datetime.datetime.now())  # 修改下级文档的下级文档状态
+
                     return Response({'code': 0, 'data': '删除完成'})
                 else:
                     return Response({'code': 2, 'data': '非法请求'})

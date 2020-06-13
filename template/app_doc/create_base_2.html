@@ -426,7 +426,8 @@
         imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL : "{% url 'upload_doc_img' %}",
         onchange:function(){
-            md_changed = true
+            md_changed = true;
+            //console.log("字符数：",this.getMarkdown().length)
         },
         onload : function() {
             // this.insertValue(" ")

@@ -170,7 +170,7 @@
         //zoomable:false,//缩放
         button:false,//关闭按钮
       };
-    const viewer = new Viewer(document.getElementById('images'), options);
+    var viewer = new Viewer(document.getElementById('images'), options);
     //创建图片分组
     createImgGroup = function(){
         layer.open({
