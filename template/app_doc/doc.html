@@ -73,6 +73,7 @@
 {% endblock %}
 
 {% block custom_script %}
+<script src="{% static 'viewerjs/viewer.js' %}"></script>
 <script>
     var layer = layui.layer;
     //初始化悬浮目录
@@ -99,5 +100,18 @@
     $('#content').on('click','a',function(e){
         e.target.target = '_blank';
     });
+    // 图片放大显示
+    var img_options = {
+        url: 'data-original',
+        fullscreen:false,//全屏
+        rotatable:false,//旋转
+        scalable:false,//翻转
+        button:false,//关闭按钮
+        toolbar:false,
+        title:false,
+      };
+    var viewer = new Viewer(document.getElementById('content'), img_options);
 </script>
+
+
 {% endblock %}
