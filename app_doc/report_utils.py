@@ -47,6 +47,7 @@ def geneta_js_img(html_path,img_path,types):
         if settings.CHROMIUM_PATH:
             browser = await launch(
                 executablePath=r'{}'.format(settings.CHROMIUM_PATH),
+                args=settings.CHROMIUM_ARGS,
                 headless=True,
                 handleSIGINT=False,
                 handleSIGTERM=False,
@@ -84,6 +85,7 @@ def html_to_pdf(html_path,pdf_path):
         if settings.CHROMIUM_PATH:
             browser = await launch(
                 executablePath=r'{}'.format(settings.CHROMIUM_PATH),
+                args=settings.CHROMIUM_ARGS,
                 headless=True,
                 handleSIGINT=False,
                 handleSIGTERM=False,
