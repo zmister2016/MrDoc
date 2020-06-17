@@ -640,12 +640,11 @@ def admin_setting(request):
                     name='pwd',
                     defaults={"value": pwd, "types": 'email'}
                 )
-            if ssl != None:
-                # 更新SSL
-                SysSetting.objects.update_or_create(
-                    name='smtp_ssl',
-                    defaults={"value": ssl, "types": 'email'}
-                )
+            # 更新SSL
+            SysSetting.objects.update_or_create(
+                name='smtp_ssl',
+                defaults={"value": ssl, "types": 'email'}
+            )
             email_settings = SysSetting.objects.filter(types="email")
             if email_settings.count() == 6:
                 emailer = email_settings.get(name='send_emailer')

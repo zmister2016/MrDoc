@@ -35,7 +35,7 @@ def send_email(to_email,vcode_str):
         if ssl:
             s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
         else:
-            s = smtplib.SMTP(smtp_host, int(smtp_host))
+            s = smtplib.SMTP(smtp_host, int(smtp_port))
         subject = "MrDoc - 重置密码验证码"
         content = "你的验证码为：{}，验证码30分钟内有效！".format(vcode_str)
 
