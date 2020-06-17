@@ -129,13 +129,18 @@ python manage.py runserver
 
 ### 2、加入MrDoc交流群
 
-加入MrDoc交流QQ群，群号为**735507293**，入群密码：**mrdoc**
+加入MrDoc交流QQ群:
+
+- 群1（付费） **735507293** [![](http://pub.idqqimg.com/wpa/images/group.png "MrDoc交流群")](http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba) 
+- 群2（免费） **849206042**，入群密码：**mrdoc** [![](http://pub.idqqimg.com/wpa/images/group.png "MrDoc交流2群")](http://shang.qq.com/wpa/qunwpa?idkey=4f71054b9a644e3263f695d5f17735ce39063ad7ed4fd5b4e2c5da1ac465e53a)
 
 ### 3、联系作者
 
 微信（WeChat）：**taoist_ling**
 
 公众号：**zmister2016**
+
+博客：<https://zmister.com>
 
 ## 赞赏项目
 

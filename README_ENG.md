@@ -133,7 +133,7 @@ Submit questions on the following pages:
 
 ### 2. Join the mrdoc communication group
 
-Join the mrdoc communication Tencent QQ group ，Group number is **735507293**, join password：**mrdoc**
+Join the mrdoc communication Tencent QQ group ，Group number is **735507293**
 
 ### 3. Contact author
 
