@@ -245,7 +245,11 @@ def project_index(request,pro_id):
         # 获取搜索词
         kw = request.GET.get('kw','')
         # 获取文集下所有一级文档
-        project_docs = Doc.objects.filter(top_doc=int(pro_id), parent_doc=0, status=1).order_by('sort')
+        # project_docs = Doc.objects.filter(
+        #     top_doc=int(pro_id),
+        #     parent_doc=0,
+        #     status=1
+        # ).values('id','name','top_doc').order_by('sort')
         if kw != '':
             search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
             return render(request,'app_doc/project_doc_search.html',locals())
@@ -563,7 +567,7 @@ def doc(request,pro_id,doc_id):
             except ObjectDoesNotExist:
                 return render(request, '404.html')
             # 获取文集下一级文档
-            project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
+            # project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
             return render(request,'app_doc/doc.html',locals())
         else:
             return HttpResponse('参数错误')
@@ -1288,7 +1292,7 @@ def get_pro_doc(request):
 
 
 # 获取指定文集的文档树数据
-@login_required()
+# @login_required()
 @require_http_methods(['POST'])
 @logger.catch()
 def get_pro_doc_tree(request):
@@ -1296,35 +1300,38 @@ def get_pro_doc_tree(request):
     if pro_id:
         # 获取一级文档
         doc_list = []
-        top_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=0,status=1).order_by('sort')
+        top_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=0,status=1).values('id','name').order_by('sort')
         for doc in top_docs:
             top_item = {
-                'id':doc.id,
-                'field':doc.name,
-                'title':doc.name,
+                'id':doc['id'],
+                'field':doc['name'],
+                'title':doc['name'],
+                'href':'/project-{}/doc-{}/'.format(pro_id,doc['id']),
                 'spread':True,
                 'level':1
             }
             # 获取二级文档
-            sec_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc.id,status=1).order_by('sort')
+            sec_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name').order_by('sort')
             if sec_docs.exists():# 二级文档
                 top_item['children'] = []
                 for doc in sec_docs:
                     sec_item = {
-                        'id': doc.id,
-                        'field': doc.name,
-                        'title': doc.name,
+                        'id': doc['id'],
+                        'field': doc['name'],
+                        'title': doc['name'],
+                        'href': '/project-{}/doc-{}/'.format(pro_id, doc['id']),
                         'level':2
                     }
                     # 获取三级文档
-                    thr_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc.id,status=1).order_by('sort')
+                    thr_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name').order_by('sort')
                     if thr_docs.exists():
                         sec_item['children'] = []
                         for doc in thr_docs:
                             item = {
-                                'id': doc.id,
-                                'field': doc.name,
-                                'title': doc.name,
+                                'id': doc['id'],
+                                'field': doc['name'],
+                                'title': doc['name'],
+                                'href': '/project-{}/doc-{}/'.format(pro_id, doc['id']),
                                 'level': 3
                             }
                             sec_item['children'].append(item)

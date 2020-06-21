@@ -1,3 +1,21 @@
+/* 全局滚动条 */
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    border-radius: 5px;
+    background: rgba(0,0,0,.25);
+    -webkit-transition: color .2s ease;
+    transition: color .2s ease;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,.1);
+    border-radius: 0;
+}
+
 /* 页头下边框线 */
 .layui-header{
     border-bottom:1px solid #ddd;
@@ -299,6 +317,14 @@ li.active > a,li.active > div > a{
 
 .big-page .doc-summary{left: -300px;}
 .big-page .doc-body{margin-left: 0;}
+/* 文集、文档作者、发布时间栏等样式 */
+.project-doc-content-head{
+    color:#c2c2c2;
+    font-size:12px;
+}
+.project-doc-content-head:hover{
+    color:#333;
+}
 
 .doc-body-content{
     position: relative;

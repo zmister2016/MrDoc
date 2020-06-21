@@ -40,7 +40,7 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug')
 
-VERSIONS = '0.5.3'
+VERSIONS = '0.5.4'
 
 ALLOWED_HOSTS = ['*']
 
@@ -178,6 +178,9 @@ else:
 # 媒体文件
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+# 允许上传的图片后缀
+ALLOWED_IMG = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
 
 
 REST_FRAMEWORK = {

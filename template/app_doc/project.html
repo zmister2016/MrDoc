@@ -21,7 +21,7 @@
 
 {% block content_head %}
     <h1>{{ project.name }}</h1><hr>
-    <p style="color: #c2c2c2;font-size:12px;">
+    <p style="" class="project-doc-content-head">
         <!--<i class="fa fa-th-large"></i> 发表：{{ doc.create_time }}-->
         <i class="fa fa-user"></i> 创建人：{{ project.create_user.username }}
     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> 创建于：{{ project.create_time }}
@@ -37,36 +37,8 @@
     </div>
     <div class="layui-row">
         <h3>文集大纲：</h3>
-        <ul class="summary">
-        <!-- 一级目录 -->
-        {% for docs in project_docs %}
-            <li>
-                {% if docs.id|get_next_doc %}
-                    <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
-                    <ul class="sub-menu">
-                    <!-- 二级目录 -->
-                    {% for node in docs.id|get_next_doc %}
-                        <li>
-                            {% if node.id|get_next_doc %}
-                                <a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}">{{ node.name }}</a>
-                                <ul class="sub-menu">
-                                <!-- 三级目录 -->
-                                {% for doc in node.id|get_next_doc %}
-                                    <li><a href="{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}">{{ doc.name }}</a></li>
-                                {% endfor %}
-                                </ul>
-                            {% else %}
-                                <a href="{% url 'doc' pro_id=node.top_doc doc_id=node.id %}">{{ node.name }}</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    <a href="{% url 'doc' pro_id=docs.top_doc doc_id=docs.id %}">{{ docs.name }}</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+        <!-- <div class="layui-col-md12" id="doc-tree"></div> -->
+        <ul class="summary" id="doc-tree"></ul>
     </div>
 
     {% if enable_project_report %}
@@ -90,7 +62,8 @@
             </span>
         </p>
     </div>
-    <script>
+    <script>        
+        // 下载文件
         reportFile = function(pro_id,types){
             layer.load(1)
             var data = {'pro_id':pro_id,'types':types};
@@ -123,4 +96,52 @@
         };
     </script>
     {% endif %}
+{% endblock %}
+
+{% block custom_script %}
+<script>
+    // 生成文集目录大纲
+    var tree = layui.tree;
+    getDocTree = function(){
+        layer.load(1)
+        $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
+            if(r.status){
+                var toc_str = ""
+                layui.each(r.data,function(index,item){
+                    toc_str += "<li>"
+                    if(item['children'] != undefined){ // 存在二级文档
+                        li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +'<ul class="sub-menu">'
+                        toc_str += li
+                        layui.each(item['children'],function(index,item){// 遍历二级文档
+                            toc_str += '<li>'
+                            if(item['children'] != undefined){ //存在三级文档
+                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +'<ul class="sub-menu">'
+                                toc_str += li
+                                layui.each(item['children'],function(index,item){ // 遍历三级文档
+                                    li = '<li><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></li>'
+                                    toc_str += li
+                                })
+                                toc_str += '</ul>'
+                            }else{// 不存在三级文档
+                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
+                                toc_str += li
+                            }
+                            toc_str += '</li>'
+                        })    
+                        toc_str += '</ul>'
+                    }else{//不存在二级文档
+                       li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
+                       toc_str += li
+                    }
+                    toc_str += '</li>'
+                });
+                $("#doc-tree").append(toc_str);
+            }else{
+                layer.msg("获取文集文档大纲失败！")
+            }
+            layer.closeAll('loading')
+        });
+    };
+    getDocTree();
+</script>
 {% endblock %}

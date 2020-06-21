@@ -8,7 +8,8 @@ register = template.Library()
 # 获取文档的子文档
 @register.filter(name='get_next_doc')
 def get_next_doc(value):
-    return Doc.objects.filter(parent_doc=value,status=1).order_by('sort')
+    data = Doc.objects.filter(parent_doc=value,status=1).values('id','name').order_by('sort')
+    return data
 
 # 获取文档的所属文集
 @register.filter(name='get_doc_top')
@@ -38,7 +39,11 @@ def get_doc_next(value):
     try:
         doc_id = value
         doc = Doc.objects.get(id=int(doc_id))  # 当前文档
-        docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by('sort')  # 同级所有文档
+        docs = Doc.objects.filter(
+            parent_doc=doc.parent_doc,
+            top_doc=doc.top_doc,
+            status=1
+        ).order_by('sort')  # 同级所有文档
         docs_list = [d.id for d in docs]
 
         subdoc = Doc.objects.filter(parent_doc=doc.id,top_doc=doc.top_doc, status=1)  # 获取当前文档的所有子级文档

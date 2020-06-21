@@ -62,6 +62,10 @@ class Doc(models.Model):
     class Meta:
         verbose_name = '文档'
         verbose_name_plural = verbose_name
+        indexes = [
+            models.Index(fields=['top_doc','parent_doc','status']),
+            models.Index(fields=['sort']),
+        ]
         # ordering = ['-create_time','sort']
 
     def get_absolute_url(self):
