@@ -45,7 +45,7 @@ You can register, create project and documents. The account can be cleared from 
     - Supports the project collaboration function. A project can have one Creator and multiple collaborators, and can flexibly select collaboration permissions;
     - It supports the function of document historical version to view and compare the differences between the historical version and the existing version, and restore a historical version to the current version;
 
-Current Version : v0.5.3
+Current Version : v0.5.4
 
 Update Record : [CHANGES.md](./CHANGES.md)
 
