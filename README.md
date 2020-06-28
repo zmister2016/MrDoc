@@ -1,5 +1,7 @@
 ## MrDoc觅道文档 - 记录文档，汇聚思想 - [English](./README_ENG.md)
 
+![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.4-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+
 ![Mrdoc首页](./captrue/mrdoc-index.png)
 
 ### 介绍
@@ -20,9 +22,7 @@
 
 **GitHub:** <https://github.com/zmister2016/MrDoc>
 
-### 示例站点：
-
-<http://mrdoc.zmister.com> 可注册、可创建文集、文档，账号不定期清除，仅作测试用途，请勿编写重要文档。
+**示例站点：** <http://mrdoc.zmister.com> 可注册、可创建文集、文档，账号不定期清除，仅作测试用途，请勿编写重要文档。
 
 ### 说明文档：
 
@@ -43,8 +43,6 @@
     - 支持基于账户的**`API`接口**，可以借助账户`token`通过`API`获取文集、上传图片和创建文档；
     - 支持**文集协作**功能，一个文集可以拥有一个创建者和多个协作者，可灵活选择协作权限；
     - 支持**文档历史版本**功能，可以查看和对比历史版本与现有版本的差异，恢复某个历史版本为当前版本；
-
-当前版本为：**v0.5.4**
 
 完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
@@ -147,5 +145,7 @@ python manage.py runserver
 开源不易，需要鼓励，如果MrDoc觅道文档对你有所帮助，请给予一个`Star`。
 
 欢迎给予开发者赞赏，助力项目更好发展。
+
+**Paypal:**<https://paypal.me/zmister>
 
 ![](./captrue/mrdoc-zan.png)

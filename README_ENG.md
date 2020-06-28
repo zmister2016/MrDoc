@@ -1,5 +1,8 @@
 ## MrDoc - Writing documents, gathering ideas
 
+![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.4-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+
+
 ![Mrdoc首页](./captrue/mrdoc-index.png)
 
 ### Introduce
@@ -45,10 +48,7 @@ You can register, create project and documents. The account can be cleared from 
     - Supports the project collaboration function. A project can have one Creator and multiple collaborators, and can flexibly select collaboration permissions;
     - It supports the function of document historical version to view and compare the differences between the historical version and the existing version, and restore a historical version to the current version;
 
-Current Version : v0.5.4
-
 Update Record : [CHANGES.md](./CHANGES.md)
-
 
 ## Dependent environment
 
@@ -137,8 +137,6 @@ Join the mrdoc communication Tencent QQ group ，Group number is **735507293**
 
 ### 3. Contact author
 
-WeChat : **taoist_ling**
-
 WeChat Subscription : **zmister2016**
 
 ## Sponsor
@@ -146,5 +144,7 @@ WeChat Subscription : **zmister2016**
 Open source is not easy. We need to encourage you. If mrdoc is helpful to you, please give a `star`.
 
 Welcome to give appreciation to developers and help the project develop better.
+
+**Paypal:**<https://paypal.me/zmister>
 
 ![](./captrue/mrdoc-zan.png)
