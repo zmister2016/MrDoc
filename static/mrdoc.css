@@ -391,6 +391,16 @@ li.active > a,li.active > div > a{
     display:none;
 }
 
+/* 文档字体颜色 */
+.markdown-body{
+    color:#000;
+}
+
+/* 文档行内代码样式 */
+.markdown-body p code{
+    border:none !important;
+    color:#e91e63 !important;
+}
 
 /* 移动端小屏幕样式 */
 @media screen and (max-width:768px){
