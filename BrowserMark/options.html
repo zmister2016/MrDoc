@@ -16,30 +16,28 @@
             background-color: #fafafa;
             text-align: center;
         }
-        /* .container{
-            display: flex;
-            display: -webkit-flex;
-            justify-content: center;
-            align-items: center;
-        } */
         .login-form{
             margin-top: 15%;
             padding: 20px 50px 20px 60px;
             background-color: #fff;
             -webkit-box-shadow: #666 0px 0px 10px;
-           -moz-box-shadow: #666 0px 0px 10px;
-           box-shadow: #666 0px 0px 10px;
+            -moz-box-shadow: #666 0px 0px 10px;
+            box-shadow: #666 0px 0px 10px;
         }
         .register-link{
             font-size: 12px;
         }
-        .layui-input{
-            /* width: 500px; */
+        .layui-form-label{
+            width: auto;
         }
+        .layui-form-onswitch {
+        border-color: #1E9FFF;
+        background-color: #1E9FFF;
+    }
     </style>
 </head>
 <body>
-    <div class="layui-container">
+    <div class="layui-container" style="width: 650px;">
         <div class="login-form">
             <div class="layui-form" >
                 <div class="layui-form-item">
@@ -59,18 +57,57 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label">鼠标自动选择</label>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="mouse-auto-select" lay-filter='mouseAutoSelect' lay-skin='switch' lay-text='开启|关闭'>
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn layui-btn-normal" type="button" id="checkKey">验证</button>
                         <button class="layui-btn layui-btn-normal" type="button" id="save-btn">保存</button>
                     </div>
                 </div>
-                <a class="register-link" href="http://mrdoc.zmister.com" target="_blank">使用帮助</a> - 
+                <a class="register-link" href="http://mrdoc.zmister.com" target="_blank">帮助</a> - 
                 <a class="register-link" href="https://gitee.com/zmister/MrDoc/" target="_blank">码云</a> - 
-                <a class="register-link" href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>                
+                <a class="register-link" href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a> -
+                <a class="register-link" id="wx_qrcode" href="javascript:void(0);">微信公众号</a> - 
+                <a class="register-link" id="dashang" href="javascript:void(0);">打赏作者</a>                
             </div>
         </div>
     </div>
 </body>
+<!-- 微信公众号二维码图片 -->
+<img id="wx_qrcode_img" style="display: none;" src="img/wx_qrcode.jpg" />
+<!-- 打赏选项卡模板 -->
+<div id="dashang_img" style="display: none;">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+          <li class="layui-this">微信</li>
+          <li>支付宝</li>
+          <li>QQ支付</li>
+          <li>PayPal</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+          <div class="layui-tab-item layui-show" align='center'>
+            <img src="img/dashang_wx.jpg" style="width: 300px;height: auto;" />
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <img src="img/dashang_alipay.jpg" style="width: 300px;height: auto;" />
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <img src="img/dashang_qq.png" style="width: 300px;height: auto;" />
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <a href="https://paypal.me/zmister" target="_blank">
+                <img src="img/dashang_paypal.png" style="width: 280px;height: auto;" />
+            </a>
+          </div>
+        </div>
+      </div> 
+</div>
+
+
 <script src="js/lib/jquery-2.1.1.min.js"></script>
 <script src="layui/layui.all.js"></script>
 <script src="js/options.js"></script>

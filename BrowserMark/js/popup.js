@@ -149,12 +149,39 @@ createInspector = function(autoExtractContent) {
 createInspector(false);
 
 // 默认关闭鼠标选择标记框
-hideInspector = function(){
-    parent.postMessage({
-        name: 'hideinspectorfrommrdocpopup'
-    }, '*');
-};
-hideInspector();
+// hideInspector = function(){
+//     parent.postMessage({
+//         name: 'hideinspectorfrommrdocpopup'
+//     }, '*');
+// };
+// hideInspector();
+
+// 获取鼠标选择开关状态
+getMouseSelectStatus = function(){
+    var mrdocClipperOptions = chrome.storage.local;
+    var form = layui.form;
+    mrdocClipperOptions.get(['mouseAutoSelect'], function(r){
+        console.log(r)
+        if(r['mouseAutoSelect']){ //鼠标自动选择
+            // 开启鼠标选择器
+            parent.postMessage({
+                name: 'showinspectorfrommrdocpopup'
+            }, '*');
+            // 更新渲染popup页面鼠标选择开关状态
+            $("#mouse-select").prop('checked',true);
+            form.render('checkbox');
+        }else{ // 鼠标手动选择
+            // 关闭鼠标选择器
+            parent.postMessage({
+                name: 'hideinspectorfrommrdocpopup'
+            }, '*');
+            // 更新渲染popup页面鼠标选择开关状态
+            $("#mouse-select").prop('checked',false);
+            form.render('checkbox');
+        }
+    });
+}
+getMouseSelectStatus();
 
 
 // 处理background发送来的页面剪藏内容，将其添加到文本编辑器中
