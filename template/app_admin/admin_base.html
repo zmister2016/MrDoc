@@ -116,12 +116,13 @@
         </div>
       </div>
 
-      <div class="layui-footer" style="text-align:center;">
+      <div class="layui-footer" style="text-align:center;font-size: 12px;">
         <!-- 底部固定区域 -->
           © <a href="https://gitee.com/zmister/MrDoc" target="_blank">MrDoc 2019-2020</a>&nbsp;-&nbsp;
           当前版本：<a href="https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/" target="_blank">{{mrdoc_version}}</a>&nbsp;-&nbsp;
           <a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>&nbsp;-&nbsp;
-          <a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a>
+          <a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a>&nbsp;-&nbsp;
+          <a class="register-link" id="dashang" href="javascript:void(0);">打赏作者</a>
       </div>
 </div>
 
@@ -132,8 +133,47 @@
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
+    // 显示打赏图片
+  $("#dashang").click(function(r){
+      var layer = layui.layer;
+      layer.open({
+          type: 1,
+          title: false,
+          closeBtn: 0,
+          area: ['400px','400px'],
+          shadeClose: true,
+          content: $('#dashang_img')
+        });
+  })
 </script>
 {% block custom_script %}
 {% endblock %}
 </body>
+<!-- 打赏选项卡模板 -->
+<div id="dashang_img" style="display: none;">
+  <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+      <ul class="layui-tab-title">
+        <li class="layui-this">微信</li>
+        <li>支付宝</li>
+        <li>QQ支付</li>
+        <li>PayPal</li>
+      </ul>
+      <div class="layui-tab-content" style="height: 100px;">
+        <div class="layui-tab-item layui-show" align='center'>
+          <img src="{% static 'dashang/dashang_wx.jpg' %}" style="width: 300px;height: auto;" />
+        </div>
+        <div class="layui-tab-item" align='center'>
+          <img src="{% static 'dashang/dashang_alipay.jpg' %}" style="width: 300px;height: auto;" />
+        </div>
+        <div class="layui-tab-item" align='center'>
+          <img src="{% static 'dashang/dashang_qq.png' %}" style="width: 300px;height: auto;" />
+        </div>
+        <div class="layui-tab-item" align='center'>
+          <a href="https://paypal.me/zmister" target="_blank">
+              <img src="{% static 'dashang/dashang_paypal.png' %}" style="width: 280px;height: auto;" />
+          </a>
+        </div>
+      </div>
+    </div> 
+</div>
 </html>
