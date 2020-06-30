@@ -480,6 +480,7 @@ def admin_register_code(request):
                 )
                 return JsonResponse({'status':True,'data':'新增成功'})
             except Exception as e:
+                logger.exception("生成注册码异常")
                 return JsonResponse({'status': False,'data':'系统异常'})
         elif int(types) == 2:
             code_id = request.POST.get('code_id',None)
