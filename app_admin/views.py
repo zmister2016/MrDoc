@@ -466,7 +466,7 @@ def admin_register_code(request):
                 is_code = False
                 while is_code is False:
                     code_str = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
-                    random_code = ''.join(random.choices(code_str, k=10))
+                    random_code = ''.join(random.sample(code_str, k=10))
                     random_code_used = RegisterCode.objects.filter(code=random_code).count()
                     if random_code_used > 0: # 已存在此注册码，继续生成一个注册码
                         is_code = False
