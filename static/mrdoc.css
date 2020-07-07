@@ -397,7 +397,7 @@ li.active > a,li.active > div > a{
 }
 
 /* 文档行内代码样式 */
-.markdown-body p code{
+.markdown-body p code,.markdown-body li code,.markdown-body h1 code,.markdown-body h2 code,.markdown-body h3 code,.markdown-body h4 code,.markdown-body h5 code,.markdown-body h6 code{
     border:none !important;
     color:#e91e63 !important;
 }
