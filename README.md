@@ -22,7 +22,10 @@
 
 **GitHub:** <https://github.com/zmister2016/MrDoc>
 
-**示例站点：** <http://mrdoc.zmister.com> 可注册、可创建文集、文档，账号不定期清除，仅作测试用途，请勿编写重要文档。
+### 示例站点：
+ <http://mrdoc.zmister.com> 可注册、可创建文集、文档，账号不定期清除，仅作测试用途，请勿编写重要文档。
+ 
+ 注册码需要关注州的先生微信公众号（ID：zmister2016），发送消息 **mrdoc注册码** 获取
 
 ### 说明文档：
 
