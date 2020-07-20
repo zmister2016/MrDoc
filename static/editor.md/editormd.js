@@ -3478,6 +3478,94 @@
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg    = regexs.pageBreak;
 
+        // marked 解析图片
+        markedRenderer.image = function(href,title,text) {
+            var attr = "";
+            var begin = "";
+            var end = "";
+            // console.log(href,title,text)
+            if(/^=(.*?)/.test(text)){
+                console.log(text)
+                switch(text){
+                    case '=video':
+                        if(href.match(/^.+.(mp4|m4v|ogg|ogv|webm)$/)){
+                            return "<video src='"+ href + "' controls='controls' preload width=500></video>"
+                        }
+                        break;
+                    case '=audio':
+                        if(href.match(/^.+.(mp3|wav|flac|m4a)$/)){
+                            return "<audio src='"+ href + "' controls='controls'></audio>"
+                        }
+                        break;
+                    case '=video_iframe':                        
+                        const youtubeMatch = href.match(/\/\/(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w|-]{11})(?:(?:[\?&]t=)(\S+))?/);
+                        const youkuMatch = href.match(/\/\/v\.youku\.com\/v_show\/id_(\w+)=*\.html/);
+                        const qqMatch = href.match(/\/\/v\.qq\.com\/x\/cover\/.*\/([^\/]+)\.html\??.*/);
+                        const coubMatch = href.match(/(?:www\.|\/\/)coub\.com\/view\/(\w+)/);
+                        const facebookMatch = href.match(/(?:www\.|\/\/)facebook\.com\/([^\/]+)\/videos\/([0-9]+)/);
+                        const dailymotionMatch = href.match(/.+dailymotion.com\/(video|hub)\/(\w+)\?/);
+                        const bilibiliMatch = href.match(/(?:www\.|\/\/)bilibili\.com\/video\/(\w+)/);
+                        const tedMatch = href.match(/(?:www\.|\/\/)ted\.com\/talks\/(\w+)/);
+
+                        if (youtubeMatch && youtubeMatch[1].length === 11) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}">`
+                        } else if (youkuMatch && youkuMatch[1]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}">`
+                        } else if (qqMatch && qqMatch[1]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}">`
+                        } else if (coubMatch && coubMatch[1]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true">`
+                        } else if (facebookMatch && facebookMatch[0]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}">`
+                        } else if (dailymotionMatch && dailymotionMatch[2]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}">`
+                        } else if (bilibiliMatch && bilibiliMatch[1]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}">`
+                        } else if (tedMatch && tedMatch[1]) {
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
+                        }
+                        // return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                }
+            }
+
+            if(href && href !== ""){
+                var a =  document.createElement('a');
+                a.href = href;
+                var attrs = a.hash.match(/size=\d+x\d+/i);
+                if(attrs !== null) {
+                    a.hash = a.hash.replace(attrs[0],"");
+                    href = a.href;
+                    attrs = attrs[0].replace("size=","").split("x");
+                    if(attrs[0] > 0) {
+                        attr += " width=\"" + attrs[0] + "\""
+                    }
+                    if(attrs[1] > 0) {
+                        attr += " height=\"" + attrs[1] + "\""
+                    }
+                }
+                attrs = a.hash.match(/align=(center|left|right)/i)
+                if (attrs !== null) {
+                    var hash = a.hash.replace(attrs[0],"");
+                    if (hash.indexOf("#&") === 0) {
+                        hash = "#" + hash.substr(2);
+                    }
+                    a.hash = hash;
+
+                    href = a.href;
+                    attrs = attrs[0].replace("align=","");
+                    end = "</p>";
+                    if(attrs === "center"){
+                        begin = '<p align="center">';
+                    }else if (attrs === "left") {
+                        begin = '<p align="left">';
+                    }else if (attrs === "right") {
+                        begin = '<p align="right">';
+                    }
+                }
+            }
+            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+">" + end;
+        };
+
         // marked emoji 解析
         markedRenderer.emoji = function(text) {
             

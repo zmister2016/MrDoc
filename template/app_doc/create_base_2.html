@@ -7,6 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
@@ -104,6 +105,13 @@
         .CodeMirror-linenumber{
             width: auto !important;
         }
+        /* layui 折叠面板 边框颜色 - 用在左侧文集结构 */
+        .layui-badge-rim, .layui-colla-content, .layui-colla-item, .layui-collapse, .layui-elem-field, .layui-form-pane .layui-form-item[pane], .layui-form-pane .layui-form-label, .layui-input, .layui-layedit, .layui-layedit-tool, .layui-quote-nm, .layui-select, .layui-tab-bar, .layui-tab-card, .layui-tab-title, .layui-tab-title .layui-this:after, .layui-textarea{
+            border-color: #f8f8f8;
+        }
+        .layui-colla-content{
+            padding: 0px;
+        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -117,6 +125,7 @@
     <div class="doc-summary">
         <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
             <span style="font-size: 14px;">你正在：{% block editor_type %}{% endblock %}</span>
+            <span class="layui-badge layui-bg-cyan" id="wordcount">0</span>
         </div>
         
         <hr>
@@ -245,7 +254,7 @@
                 "undo", "redo", "|",
                 "h1", "bold", "del", "italic", "quote","kaiSpan",  
                 "list-ul", "list-ol", "hr", "link", "reference-link", 
-                "mindmap","echart","imgUpload", "attachment" ,"code", "code-block", "htmltable", 
+                "mindmap","echart","imgUpload", "attachment" ,"multimedia","code", "code-block", "htmltable", 
                 "emoji", "html-entities", "pagebreak", 
                 "watch", "preview", 
                 "help"
@@ -261,7 +270,8 @@
             attachment:'fa-upload',
             htmltable:'fa-table',
             mindmap:'fa-sitemap',
-            echart:'fa-bar-chart'
+            echart:'fa-bar-chart',
+            multimedia:'fa-youtube-play',
         },
         //设置自定义工具栏按钮的事件
         toolbarHandlers : {
@@ -284,7 +294,7 @@
                 // this == 当前editormd实例
                 //console.log("testIcon =>", this, cm, icon, cursor, selection);
             },
-            // 点击工具栏图片图标的响应函数 - 上传图片和选择图片
+            // 上传图片和选择图片
             imgUpload : function(cm,icon,cursor,selection){
                 layer.ready(function(){
                   element.init();
@@ -297,7 +307,7 @@
                     content:$('#upload-img'),
                 })
             },
-            //点击工具栏文件按钮的响应函数 - 上传和选择附件
+            // 上传和选择附件
             attachment : function(cm,icon,cursor,selection){
                 layer.ready(function(){
                   element.init();
@@ -339,7 +349,7 @@
                     }
                 })
             },
-            //点击工具栏表格按钮的响应函数 - 添加表格
+            // 添加表格
             htmltable:function(cm,icon,cursor,selection){
                 layer.ready(function(){
                   element.init();
@@ -388,11 +398,22 @@
                     cm.setCursor(cursor.line+1, cursor.ch);
                 }
             },
+            // 添加echart图
             echart:function(cm,icon,cursor,selection){
                 cm.replaceSelection('```echart\n' + selection + "\n```");
                 if(selection === "") {
                     cm.setCursor(cursor.line+1, cursor.ch);
                 }
+            },
+            // 添加音视频
+            multimedia:function(){
+                layer.open({
+                    type:'1',
+                    title:'添加音视频外链',
+                    area:['800px','600px'],
+                    id:'insertMultiMedia',//配置ID,
+                    content:$('#insertMultimedia'),
+                })
             }
         },
         //设置语言
@@ -404,6 +425,7 @@
                 htmltable:"添加表格",
                 mindmap:"添加思维导图",
                 echart:"添加Echarts图表",
+                multimedia:"添加音频、视频",
             }
         },
         //配置项
@@ -426,12 +448,17 @@
         imageUploadURL : "{% url 'upload_doc_img' %}",
         onchange:function(){
             md_changed = true;
-            //console.log("字符数：",this.getMarkdown().length)
+            // console.log("字符数：",this.getMarkdown().length)
+            var wcnt = this.getMarkdown().length;
+            $("#wordcount").text(wcnt);
         },
         onload : function() {
             // this.insertValue(" ")
+            var wcnt = this.getMarkdown().length;
+            $("#wordcount").text(wcnt);
         }
     });
+
     //粘贴上传图片
     $("#editor-md").on('paste', function (ev) {
         var data = ev.clipboardData;
@@ -518,12 +545,18 @@
         })
       }
     });
-    //插入选择的图片到编辑器
+    // 插入选择的图片到编辑器
     insertImg = function(e){
         console.log(e.src);
         editor.insertValue("\n![](" + e.src + ")");
     };
-    //切换图片分组
+    // 按钮点击插入输入框图片链接
+    insertImgUrl = function(){
+        editor.insertValue("\n![](" + $("#img_url_input").val() + ")");
+        $("#img_url_input").val("")
+        layer.closeAll();
+    };
+    // 切换图片分组
     switchImgGroup = function(e){
         layer.load(1);
         $.post("{% url 'manage_image' %}", {
@@ -557,9 +590,23 @@
             }
         })
     };
-    //插入选择的附件到编辑器
+    // 插入选择的附件到编辑器
     insertAttach = function(e){
         editor.insertValue("\n[【附件】"+ $(e).data('name') + "](/media/" + $(e).data('path') + ")");
+        layer.closeAll();
+    }
+    // 插入音视频到编辑器
+    insertMultimedia = function(e){
+        if(e === 'audio'){
+            editor.insertValue("\n![=audio](" + $("#audio_input").val() + ")");
+        }else if(e === 'video'){
+            editor.insertValue("\n![=video](" + $("#video_input").val() + ")");
+        }else if(e === 'video_iframe'){
+            editor.insertValue("\n![=video_iframe](" + $("#video_iframe_input").val() + ")");
+        }
+        $("#audio_input").val('')
+        $("#video_input").val('')
+        $("#video_iframe_input").val('')
         layer.closeAll();
     }
 </script>
@@ -577,7 +624,16 @@
       </ul>
       <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
-            <button class="layui-btn layui-btn-normal layui-btn-fluid" id="upload_img"><i class="layui-icon layui-icon-upload"></i> 点击上传图片</button>
+            <div class="layui-row">
+                <button class="layui-btn layui-btn-normal layui-btn-fluid" id="upload_img"><i class="layui-icon layui-icon-upload"></i> 点击上传图片</button>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+                <legend style="font-size: 12px;">或 插入外链图片链接</legend>
+              </fieldset>
+            <div class="layui-row" style="margin-top: 10px;">
+                <input type="text" class="layui-input" placeholder="输入图片URL" id="img_url_input" style="margin-bottom: 5px;"/>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="insertImgUrl()">插入图片链接</button>
+            </div>
         </div>
         <div class="layui-tab-item">
             <div class="layui-row" id="select-img-group">
@@ -588,6 +644,7 @@
       </div>
     </div>
 </div>
+
 <!-- 选择和上传附件div -->
 <div id="upload-attach" style="display:none;margin:20px;">
     <span>* 仅支持.zip格式的压缩文件作为附件，文件大小不超过50Mb</span>
@@ -607,6 +664,7 @@
     </table>
     <div id="select-attach-page"></div>
 </div>
+
 <!-- 添加表格div -->
 <div id="layer-table" style="display: none;margin: 10px;">
     <div class="layui-tab" lay-filter="table-tab" id="insert-table-div">
@@ -641,6 +699,38 @@
         </div>
     </div>
 </div>
+
+<!-- 添加音视频div -->
+<div id="insertMultimedia" style="display: none;margin:10px;">
+    <div class="layui-row">
+        <fieldset class="layui-elem-field">
+            <legend>插入音频链接</legend>
+            <div class="layui-field-box">
+              <input class="layui-input" type="url" id="audio_input" placeholder="填入音频文件链接，支持文件后缀格式为mp3、wav、flac、m4a" style="margin-bottom: 5px;">
+              <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('audio')"><i class="fa fa-music"></i> 插入音频</button>
+            </div>
+          </fieldset>
+    </div>
+    <div class="layui-row">
+        <fieldset class="layui-elem-field">
+            <legend>插入视频链接</legend>
+            <div class="layui-field-box">
+                <input class="layui-input" type="url" id="video_input" placeholder="填入视频文件链接，支持文件后缀格式为mp4、m4v、ogg、ogv、webm" style="margin-bottom: 5px;">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video')"><i class="fa fa-video-camera"></i> 插入视频</button>
+            </div>
+          </fieldset>
+    </div>
+    <div class="layui-row">
+        <fieldset class="layui-elem-field">
+            <legend>插入视频网站链接</legend>
+            <div class="layui-field-box">
+                <input class="layui-input" type="url" id="video_iframe_input" placeholder="填入视频网站视频播放页链接，支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站" style="margin-bottom: 5px;">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video_iframe')"><i class="fa fa-youtube-play"></i> 插入视频网站视频</button>
+            </div>
+          </fieldset>
+    </div>
+</div>
+
 <script>
     //按钮选择上传图片
     var upload = layui.upload;
@@ -691,6 +781,7 @@
         field:'attachment_upload',
         size: 51200, //最大允许上传的文件大小
     })
+
     //修改预览div中a标签链接新窗口打开
     $('div.editormd-preview').on('click','a',function(e){
         e.target.target = '_blank';

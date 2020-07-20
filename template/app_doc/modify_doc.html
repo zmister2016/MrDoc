@@ -49,26 +49,15 @@
 
         <div class="layui-col-md12" style="margin-bottom: 10px;">
             <label class="doc-form-label" style="margin-right:0px;">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp" title="插入模板内容">
-                    <i class="fa fa-clipboard"></i> 模板
+                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入文档模板">
+                    <i class="fa fa-clipboard"></i> 选择模板
                 </button>
             </label>
 
             <label class="doc-form-label" style="margin-right:0px;">
                 <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
-                    <i class="fa fa-clipboard"></i> 文本
-                </button>
-            </label>
-
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()" title="保存当前内容为草稿文档">
-                    <i class="fa fa-save"></i> 保存
-                </button>
-            </label>
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()" id="create_doc" title="发布当前内容">
-                    <i class="fa fa-save"></i> 发布
+                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
+                    <i class="fa fa-upload"></i> 导入文本
                 </button>
             </label>
         </div>
@@ -84,23 +73,46 @@
         <div class="layui-row">
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <span>点击文档树选择上级（可选）或</span>
-                <button class="layui-btn layui-btn-xs layui-btn-normal" id="clearParentDoc">不设上级</button>
+                <button class="layui-btn layui-btn-xs layui-btn-normal" id="clearParentDoc">取消上级</button>
                 <input type="text" id="parent-doc" hidden> 
             </div>
             <div class="layui-col-md12">
                 <input type="number" class="layui-input" placeholder="输入文档排序值，默认99" id="sort" value="{{doc.sort}}">
             </div>
-            
         </div>
-        <div class="layui-col-md12" id="doc-tree"></div>
-    </div>
-    <div class="layui-row" style="margin-top: 20px;">
-        <button class="layui-btn layui-btn-warm layui-btn-fluid" onclick="moveDoc()" title="复制或移动此文档到其他文集">复制/移动文档</button>
-    </div>
 
-    <div class="layui-row" style="margin-top: 10px;">
-        <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档">删除文档</button>
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">文档结构树</h2>
+                <div class="layui-colla-content layui-show" style="max-height: 400px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
+                    <div id="doc-tree"></div>
+                </div>
+            </div>
+        </div>
+        <hr>
+
+        <div class="layui-row" style="margin-top: 10px;">
+            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                <i class="fa fa-save"></i> 保存为草稿
+            </button>
+        </div>
+
+        <div class="layui-row" style="margin-top: 10px;">
+            <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                <i class="fa fa-save"></i> 发布文档
+            </button>
+        </div>
+
+        <div class="layui-row" style="margin-top: 10px;">
+            <button class="layui-btn layui-btn-warm layui-btn-fluid" onclick="moveDoc()" title="复制或移动此文档到其他文集"><i class="fa fa-copy"></i> 复制/移动文档</button>
+        </div>
+    
+        <div class="layui-row" style="margin-top: 10px;">
+            <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档"><i class="fa fa-trash"></i> 删除文档</button>
+        </div>
+
     </div>
+    
 
 </div>
 {% endblock %}
@@ -126,7 +138,7 @@
         //获取文档数和上级文档信息
         $(function(){
             layer.load(1);
-            var doc_parent_id = {{ doc.parent_doc }};
+            var doc_parent_id = '{{ doc.parent_doc }}';
             $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
                 if(r.status){
                     layer.closeAll("loading");
@@ -138,12 +150,13 @@
                         click: function(obj){
                             if(obj.data.level != 3){
                                 console.log(obj.data.id,doc_parent_id)
-                                if(obj.data.id != {{ doc.id }} ){
+                                if(obj.data.id != '{{ doc.id }}' ){
                                     $('#parent-doc').val(obj.data.id);// 设置上级文档
                                     $("div.layui-tree-set").each(function(i){
                                         var $me = $(this)
                                         if($me.data('id') == obj.data.id){
                                             // console.log('点击了')
+                                            layer.msg("你选择了上级文档："+obj.data.title)
                                             $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
                                         }else{
                                             $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
@@ -179,7 +192,7 @@
             $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load(1);
             var data = {
-                'doc_id':{{ doc.id }},
+                'doc_id':'{{ doc.id }}',
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
@@ -210,7 +223,7 @@
             $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load(1);
             var data = {
-                'doc_id':{{ doc.id }},
+                'doc_id':'{{ doc.id }}',
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
@@ -240,8 +253,8 @@
             layer.open({
               type: 1,
                 id:'temp-div',
-              content: $('#doctemp-list'),
-                area:['530px','300px'],
+                content: $('#doctemp-list'),
+                area:['530px','400px'],
             });
         });
         //插入模板
@@ -261,6 +274,7 @@
         $("#doc-history").click(function(){
             layer.open({
                 type: 1,
+                title:'查看当前文档的历史版本',
                 id:'history-div',
                 content: $('#history-list'),
                 area:['530px','300px'],
@@ -301,7 +315,7 @@
                 yes:function (index,layero) {
                     layer.load(1);
                     data = {
-                        'doc_id':{{ doc.id }},
+                        'doc_id':'{{ doc.id }}',
                     };
                     $.post("{% url 'del_doc' %}",data,function(r){
                         layer.closeAll('loading')
@@ -404,8 +418,8 @@
 <!-- 模板div块 -->
 <div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
     <div style="margin: 10px 0 0 10px;">
-        <a class="layui-btn layui-btn-normal" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
-        <a class="layui-btn layui-btn-normal" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
     </div>
     <table class="layui-table" style="margin: 10px;">
       <colgroup>
@@ -451,7 +465,7 @@
           <td>{{ history.create_time }}</td>
           <td>{{ history.create_user }}</td>
           <td>
-              <a href="{% url 'diff_doc' history.doc.id history.id %}" target="_blank">查看差异</a>
+              <a href="{% url 'diff_doc' history.doc.id history.id %}" class="layui-btn layui-btn-primary layui-btn-sm" target="_blank">查看版本差异</a>
           </td>
           <td>
               <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertHistory('{{history.doc.id}}','{{history.id}}');">恢复此版本</a>

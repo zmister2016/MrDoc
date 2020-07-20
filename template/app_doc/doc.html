@@ -52,8 +52,8 @@
 
 {% block doc_previous_next %}
     {% load doc_filter %}
-    <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;border-top: 1px #e6e6e6 solid;">
-        <hr>
+    <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;">
+        <!-- <hr> -->
         <div>
             {% if doc.id|get_doc_previous == None %}
                 <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>上一篇</button>

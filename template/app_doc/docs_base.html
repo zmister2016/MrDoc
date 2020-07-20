@@ -7,6 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
@@ -14,7 +15,6 @@
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
-    <link rel="stylesheet" href="{% static 'share.js/css/share.min.css' %}?version={{mrdoc_version}}" />
     <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -78,6 +78,19 @@
         }
         .markdown-body h6{
             font-size: .85em;
+        }
+        #url_qrcode img{
+            margin: auto;
+        }
+        #share{
+            background-color: #333;
+        }
+        /* layui弹出框颜色 */
+        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
+            border-bottom: 2px solid #333;
+        }
+        .layui-tab-brief>.layui-tab-title .layui-this{
+            color: #333;
         }
     </style>
     <!--[if lt IE 9]>
@@ -195,6 +208,11 @@
                     </div>
                     <!-- 正文结束 -->
                 </div>
+                <hr>
+                <!-- 分享栏 -->
+                <button id="share" class="layui-btn layui-btn-radius layui-btn-xs">
+                    <i class="fa fa-share-alt"></i> 分享
+                </button>
 
                 <!-- 广告代码开始 -->
                 {% if debug %}
@@ -208,10 +226,6 @@
                 <!-- 广告代码结束 -->
 
                 {% block doc_previous_next %}{% endblock %}
-                <!-- 社交分享 -->
-                <div class="share-div" style="margin-top: 10px;padding:10px;text-align: center;background-color: #fafafa">
-                    分享到：<span class="social-share"></span>
-                </div>
             </div>
 
         </div>
@@ -258,7 +272,7 @@
 
 <!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'share.js/js/social-share.min.js' %}"></script>
+<script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 
 <!-- 解析Markdown -->
 <script>
@@ -266,7 +280,6 @@
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
     //解析Markdown为HTML
-    // layer.load(1);
     editormd.markdownToHTML("content", {
         htmlDecode      : "style,script,iframe",
         emoji           : true,  //emoji表情
@@ -281,6 +294,18 @@
         atLink    : false,//禁用@链接
 
     });
+    // 显示分享弹出框
+    $("#share").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['350px','350px'],
+            shadeClose: true,
+            content: $('#share_div')
+          });
+    });
 </script>
 
 <!-- 生成文集目录大纲 -->
@@ -290,18 +315,6 @@
         $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
             $("#loading-project-toc").hide();
             if(r.status){
-                // var doc_tree = tree.render({
-                //     elem:"#project-toc",
-                //     id:'projectToc',
-                //     // showCheckbox:true,
-                //     onlyIconControl:true,
-                //     isJump:true,
-                //     data:r.data,
-                //     text: {
-                //         defaultNodeName: '未命名' //节点默认名称
-                //         ,none: '文集暂无文档' //数据为空时的提示文本
-                //         },
-                // });
                 var toc_str = ""
                 layui.each(r.data,function(index,item){
                     toc_str += "<li>"
@@ -401,6 +414,8 @@
         $(".toTop").click(function() {
             $(document).scrollTop(0);
         });
+        // 生成当前网页链接
+        $("input[name=current_url]").val(document.URL)
     });
 </script>
 
@@ -465,9 +480,27 @@
         }
     };
 </script>
-
-<!-- 展开收起左边目录 -->
+<!-- 分享选项卡模板 -->
+<div id="share_div" style="display: none;">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">微信扫一扫</li>
+            <li>复制链接</li>
+        </ul>
+    <div class="layui-tab-content" style="height: 100px;">
+        <div class="layui-tab-item layui-show" align='center'>
+            <p style="font-weight: 700;margin-bottom: 10px;">手机扫一扫进行分享</p>
+            <div id="url_qrcode"></div>
+        </div>
+        <div class="layui-tab-item" align='center'>
+            <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
+            <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" onclick="copyUrl();">复制链接</button>
+        </div>
+    </div>
+    </div> 
+</div>
 <script>
+    // 展开收起左边目录
     $(function(){
         // $(".switch-toc").click(SwitchToc);
         $("body").on('click','.switch-toc',SwitchToc)
@@ -478,10 +511,8 @@
         $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
         $(this).toggleClass("fa-chevron-left fa-chevron-down");//切换图标
     };
-</script>
 
-<!-- 展开\收起文档树 -->
-<script>
+    // 展开文档树
     function openDocTree(){
         $("nav ul.summary ul").each(function(obj){
             console.log(obj,this)
@@ -490,14 +521,31 @@
         })
         
     };
+    // 收起文档树
     function closeDocTree(){
         $("nav ul.summary ul").each(function(obj){
             console.log(obj,this)
             $(this).addClass("toc-close")
             $(this).prev().children('i').toggleClass("fa-chevron-left fa-chevron-down");//切换图标
         })
-        
     };
+    // 文档分享 - 复制链接
+    copyUrl = function(){
+        var crt_url_val = document.getElementById("copy_crt_url");
+        crt_url_val.select();
+        window.clipb
+        document.execCommand("Copy");
+        layer.msg("链接复制成功！")
+    }
+    // 生成二维码
+    var qrcode = new QRCode("url_qrcode", {
+        text: document.URL,
+        width: 200,
+        height: 200,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
 </script>
 
 <!-- 统计代码开始 -->

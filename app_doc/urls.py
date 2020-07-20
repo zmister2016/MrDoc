@@ -1,5 +1,5 @@
 from django.urls import path,re_path
-from app_doc import views,util_upload_img
+from app_doc import views,util_upload_img,import_views
 
 urlpatterns = [
     path('',views.project_list,name='pro_list'),# 文档首页
@@ -19,6 +19,8 @@ urlpatterns = [
     path('check_viewcode/',views.check_viewcode,name='check_viewcode'),# 文集访问码验证
     path('manage_project_colla/<int:pro_id>/',views.manage_project_collaborator,name="manage_pro_colla"), # 管理文集协作
     path('manage_pro_colla_self/',views.manage_pro_colla_self,name="manage_pro_colla_self"), # 我协作的文集
+    path('manage_project_import/',import_views.import_project,name="import_project"), # 导入文集
+    path('manage_project_doc_sort/',import_views.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
     #################文档相关
     path('project-<int:pro_id>/doc-<int:doc_id>/', views.doc, name='doc'),  # 文档浏览页
     path('create_doc/', views.create_doc, name="create_doc"),  # 新建文档

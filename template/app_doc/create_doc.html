@@ -17,32 +17,18 @@
 
 
 {% block left_opera %}
-<div class="layui-form" style="padding: 10px;">
+<div class="layui-form" style="padding: 0 10px 10px 10px;">
     <div class="layui-row">
-        <div class="layui-col-md12" style="margin-bottom: 10px;">
-            <label class="doc-form-label" style="margin-right:0px;">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-doctemp" title="插入模板内容">
-                    <i class="fa fa-clipboard"></i> 模板
+        <div class="layui-btn-container" style="margin-bottom: 0px;">
+                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
+                    <i class="fa fa-clipboard"></i> 选择模板
                 </button>
-            </label>
 
-            <label class="doc-form-label" style="margin-right:0px;">
                 <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
-                    <i class="fa fa-clipboard"></i> 文本
+                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
+                    <i class="fa fa-upload"></i> 导入文本
                 </button>
-            </label>
 
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDoc()" title="保存当前内容为草稿文档">
-                    <i class="fa fa-save"></i> 保存
-                </button>
-            </label>
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()" id="create_doc" title="发布当前内容">
-                    <i class="fa fa-save"></i> 发布
-                </button>
-            </label>
         </div>
 
         <div class="layui-col-md12" style="margin-bottom: 10px;">
@@ -79,15 +65,36 @@
         <div class="layui-row">
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <span>点击文档树选择上级（可选）或</span>
-                <button class="layui-btn layui-btn-xs layui-btn-normal" id="clearParentDoc">不设上级</button>
+                <button class="layui-btn layui-btn-xs layui-btn-normal" id="clearParentDoc">取消上级</button>
                 <input type="text" id="parent-doc" hidden> 
             </div>
             <div class="layui-col-md12">
                 <input type="number" class="layui-input" placeholder="输入文档排序值，默认99" id="sort">
-            </div>
-            
+            </div>    
         </div>
-        <div class="layui-col-md12" id="doc-tree"></div>
+
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">文档结构树</h2>
+                <div class="layui-colla-content layui-show" style="max-height: 400px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
+                    <div id="doc-tree"></div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="layui-row" style="margin-bottom: 10px;">
+            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                <i class="fa fa-save"></i> 保存文档为草稿
+            </button>
+        </div>
+
+        <div class="layui-row">
+            <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                <i class="fa fa-save"></i> 发布文档
+            </button>
+        </div>
         
     </div>
 </div>
@@ -169,7 +176,7 @@
                                     var $me = $(this)
                                     if($me.data('id') == obj.data.id){
                                         // console.log('点击了')
-                                        layer.msg("选择了上级文档："+obj.data.title)
+                                        layer.msg("你选择了上级文档："+obj.data.title)
                                         $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
                                     }else{
                                         $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
@@ -300,11 +307,11 @@
     //清除所选上级文档
     $("#clearParentDoc").click(function(){
         $('#parent-doc').val("");
-
         $("span.layui-tree-txt").each(function(i){
             var $me = $(this)
             $me.removeClass('selected-parent-doc')
         });
+        layer.msg("你取消了当前文档的上级文档")
     });
     //插入模板
     insertTemp = function(doctemp_id){

@@ -1,6 +1,11 @@
 {% extends 'app_doc/manage_base.html' %}
 {% load staticfiles %}
 {% block title %}图片素材管理{% endblock %}
+
+{% block custom_link %}
+<link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
