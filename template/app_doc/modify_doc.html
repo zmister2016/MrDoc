@@ -270,6 +270,44 @@
                 }
             });
         };
+        //插入本地文本文件
+        function insertLocalFile(input) {
+            var file = input.files[0];
+            //filename = file.name.split(".")[0]; // 文件名
+            //支持chrome IE10
+            if (window.FileReader) {
+                var reader = new FileReader();
+                reader.onload = function() {
+                    console.log(this.result);
+                    editor.insertValue(this.result);
+                }
+                reader.readAsText(file);
+            }
+            //支持IE 7 8 9 10
+            else if (typeof window.ActiveXObject != 'undefined'){
+                var xmlDoc;
+                xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async = false;
+                xmlDoc.load(input.value);
+                console.log(xmlDoc.xml);
+                editor.insertValue(xmlDoc.xml);
+            }
+            //支持FF
+            else if (document.implementation && document.implementation.createDocument) {
+                var xmlDoc;
+                xmlDoc = document.implementation.createDocument("", "", null);
+                xmlDoc.async = false;
+                xmlDoc.load(input.value);
+                console.log(xmlDoc.xml);
+                editor.insertValue(xmlDoc.xml);
+            } else {
+                alert('error');
+            }
+        };
+        //选择本地文本文件
+        function selectLocalFile(){
+            $("#insert-local-file").trigger("click");
+        };
         // 查看历史记录
         $("#doc-history").click(function(){
             layer.open({
