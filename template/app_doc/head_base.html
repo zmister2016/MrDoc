@@ -10,7 +10,7 @@
         </div>
         <!-- 搜索框 -->
         <div style="margin:12px;" class="layui-hide-xs">
-            <form method="get" action="">
+            <form method="get" action="{% url 'search' %}" target="_blank">
             <div class="layui-input-inline">
                 <input class="layui-input mrdoc-search-input" placeholder="搜索文集或文档" name="kw"/>
                 <button type="submit" style="position: absolute;top:12px;right: 8px;border: none;background-color: white;">
@@ -19,6 +19,12 @@
             </div>
             </form>
         </div>
+        <div class="layui-hide-lg layui-hide-md layui-hide-sm" style="margin:20px;">
+            <a href="{% url 'search' %}">
+                <i class="layui-icon layui-icon-search" style="font-size: 24px;"></i>
+            </a>
+        </div>
+        
         <!-- 新建文档按钮 -->
         <div class="layui-hide-xs" style="">
             <ul class="layui-nav" style="">
@@ -31,64 +37,64 @@
         </div>
         <!-- 用户菜单 -->
         <div class="">
-        <ul class="layui-nav layui-layout-right">
-            {% if request.user.is_authenticated %}
-          <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-                <i class="layui-icon layui-icon-friends"></i> <span class="layui-hide-xs">{{request.user.username}}</span>
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-                {% if request.user.is_superuser %}
-                <dd>
-                    <a href="{% url 'user_manage' %}">
-                        <i class="layui-icon layui-icon-console layui-hide-md"></i>
-                        <span class="layui-hide-xs">进入后台</span>
-                    </a>
-                </dd>
-                {% endif %}
-                <dd class="layui-hide-md">
-                    <a href="{% url 'create_doc' %}">
-                        <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
-                    </a>
-                </dd>
-                <dd>
-                    <a href="{% url 'manage_doc' %}">
-                        <i class="layui-icon layui-icon-app layui-hide-md"></i>
-                        <span class="layui-hide-xs">个人中心</span>
-                    </a>
-                </dd>
-                <dd>
-                    <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">
-                        <i class="layui-icon layui-icon-password layui-hide-md"></i>
-                        <span class="layui-hide-xs">修改密码</span>
-                    </a>
-                </dd>
-                <dd>
-                    <a href="{% url 'logout' %}">
-                        <i class="layui-icon layui-icon-release layui-hide-md"></i>
-                        <span class="layui-hide-xs">退出登录</span>
-                    </a>
-                </dd>
-            </dl>
-          </li>
-            {% else %}
+            <ul class="layui-nav layui-layout-right">
+                {% if request.user.is_authenticated %}
             <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> 游客
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-                {% if close_register == 'on' %}
-                <dd><a href="{% url 'login' %}">登录</a></dd>
+                <a href="javascript:void(0);">
+                    <i class="layui-icon layui-icon-friends"></i> <span class="layui-hide-xs">{{request.user.username}}</span>
+                </a>
+                <dl class="layui-nav-child">
+                <!-- <dd><a href="">基本资料</a></dd> -->
+                    {% if request.user.is_superuser %}
+                    <dd>
+                        <a href="{% url 'user_manage' %}">
+                            <i class="layui-icon layui-icon-console layui-hide-md"></i>
+                            <span class="layui-hide-xs">进入后台</span>
+                        </a>
+                    </dd>
+                    {% endif %}
+                    <dd class="layui-hide-md">
+                        <a href="{% url 'create_doc' %}">
+                            <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
+                        </a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'manage_doc' %}">
+                            <i class="layui-icon layui-icon-app layui-hide-md"></i>
+                            <span class="layui-hide-xs">个人中心</span>
+                        </a>
+                    </dd>
+                    <dd>
+                        <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">
+                            <i class="layui-icon layui-icon-password layui-hide-md"></i>
+                            <span class="layui-hide-xs">修改密码</span>
+                        </a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'logout' %}">
+                            <i class="layui-icon layui-icon-release layui-hide-md"></i>
+                            <span class="layui-hide-xs">退出登录</span>
+                        </a>
+                    </dd>
+                </dl>
+            </li>
                 {% else %}
-                <dd><a href="{% url 'register' %}">注册</a></dd>
-                <dd><a href="{% url 'login' %}">登录</a></dd>
+                <li class="layui-nav-item">
+                <a href="javascript:void(0);">
+                <i class="layui-icon layui-icon-username"></i> 游客
+                </a>
+                <dl class="layui-nav-child">
+                <!-- <dd><a href="">基本资料</a></dd> -->
+                    {% if close_register == 'on' %}
+                    <dd><a href="{% url 'login' %}">登录</a></dd>
+                    {% else %}
+                    <dd><a href="{% url 'register' %}">注册</a></dd>
+                    <dd><a href="{% url 'login' %}">登录</a></dd>
+                    {% endif %}
+                </dl>
+            </li>
                 {% endif %}
-            </dl>
-          </li>
-            {% endif %}
-        </ul>
+            </ul>
         </div>
     </div>
 </div>

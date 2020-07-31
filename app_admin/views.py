@@ -317,7 +317,7 @@ def admin_project(request):
     if request.method == 'GET':
         search_kw = request.GET.get('kw','')
         if search_kw == '':
-            project_list = Project.objects.all()
+            project_list = Project.objects.all().order_by('-create_time')
             paginator = Paginator(project_list,20)
             page = request.GET.get('page',1)
             try:

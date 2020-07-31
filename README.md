@@ -1,8 +1,15 @@
 ## MrDoc觅道文档 - 记录文档，汇聚思想 - [English](./README_ENG.md)
 
-![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.5-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.6-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
 
 ![Mrdoc首页](./captrue/mrdoc-index.png)
+
+<p>打赏项目：
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>|
+</p>
 
 ### 介绍
 

@@ -44,7 +44,7 @@
       <tbody>
         {% for pro in projects %}
         <tr>
-          <td>{{ pro.name }}</td>
+          <td><a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank">{{ pro.name }}</a></td>
           <td>{{ pro.intro }}</td>
           {% load project_filter %}
           <td>{{ pro.id | get_doc_count }}</td>
@@ -64,9 +64,9 @@
           <td>{{ pro.create_time }}</td>
           <td>{{ pro.create_user }}</td>
           <td>
-              <a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
+              <!-- <a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
                   <i class="layui-icon layui-icon-read"></i>查看
-                </a>
+                </a> -->
               <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-normal layui-btn-xs">
                 <i class="layui-icon layui-icon-edit"></i>修改
             </a>

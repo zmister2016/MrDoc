@@ -275,6 +275,7 @@ class ReportEPUB():
         seque_tag = html_soup.select('.sequence-diagram') # 查找所有时序图标签
         echart_tag = html_soup.select('.echart') # 查找所有echart图表标签
         code_tag = html_soup.find_all(name="code") # 查找code代码标签
+        iframe_tag = html_soup.find_all(name='iframe') # 查找iframe
 
         # 添加css样式标签
         style_link = html_soup.new_tag(name='link',href="../Styles/style.css",rel="stylesheet",type="text/css")
@@ -289,6 +290,12 @@ class ReportEPUB():
 
         # 添加html标签的xmlns属性
         html_soup.html['xmlns'] = "http://www.w3.org/1999/xhtml"
+
+        # 替换iframe视频为视频URL链接文本
+        for iframe in iframe_tag:
+            iframe_src = iframe.get('src')
+            iframe.name = 'p'
+            iframe.string = "本格式不支持iframe视频显示，视频地址为：{}".format(iframe_src)
 
         # 替换HTML文本中静态文件的相对链接为绝对链接
         for src in src_tag:
@@ -908,7 +915,7 @@ class ReportPDF():
                         </head>
                         <body>
                             <div style="position: fixed;font-size:8px; bottom: 5px; right: 10px; background: red; z-index: 10000">
-                                本文档由觅道文档(MrDoc)生成
+                                本文档由MrDoc觅道文档生成
                             </div>
                             <div style="text-align:center;margin-top:400px;">
                                 <h1>{project_name}</h1>

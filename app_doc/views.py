@@ -1339,7 +1339,7 @@ def get_pro_doc_tree(request):
                                 'level': 3
                             }
                             sec_item['children'].append(item)
-                            top_item['children'].append(sec_item)
+                        top_item['children'].append(sec_item)
                     else:
                         top_item['children'].append(sec_item)
                 doc_list.append(top_item)
@@ -1471,6 +1471,7 @@ def genera_project_file(request):
 
                     return JsonResponse({'status': True, 'data': epub_file})
                 except Exception as e:
+                    logger.exception("生成EPUB出错")
                     return JsonResponse({'status': False, 'data': '生成出错'})
             # 导出PDF
             elif report_type in ['pdf']:
@@ -1866,3 +1867,134 @@ def manage_attachment(request):
             return JsonResponse({'status':True,'data':attachment_list})
         else:
             return JsonResponse({'status':False,'data':'无效参数'})
+
+
+# 搜索
+def search(request):
+    kw = request.GET.get('kw', None)
+    search_type = request.GET.get('type', 'doc')  # 搜索类型，默认文档doc
+    date_type = request.GET.get('d_type', 'recent')
+    date_range = request.GET.get('d_range', 'all')  # 时间范围，默认不限，all
+    project_range = request.GET.get('p_range', 0)  # 文集范围，默认不限，all
+
+    # 处理时间范围
+    if date_type == 'recent':
+        if date_range == 'recent1':  # 最近1天
+            start_date = datetime.datetime.now() - datetime.timedelta(days=1)
+        elif date_range == 'recent7':  # 最近7天
+            start_date = datetime.datetime.now() - datetime.timedelta(days=7)
+        elif date_range == 'recent30':  # 最近30天
+            start_date = datetime.datetime.now() - datetime.timedelta(days=30)
+        elif date_range == 'recent365':  # 最近一年
+            start_date = datetime.datetime.now() - datetime.timedelta(days=365)
+        else:
+            start_date = datetime.datetime.strptime('1900-01-01', '%Y-%m-%d')
+        end_date = datetime.datetime.now()
+    elif date_type == 'day':
+        try:
+            date_list = date_range.split('|')
+            start_date = datetime.datetime.strptime(date_list[0], '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(date_list[1], '%Y-%m-%d')
+        except:
+            start_date = datetime.datetime.now() - datetime.timedelta(days=1)
+            end_date = datetime.datetime.now()
+
+    # 是否时间筛选
+    if date_range == 'all':
+        is_date_range = False
+    else:
+        is_date_range = True
+
+    # 是否认证
+    if request.user.is_authenticated:
+        is_auth = True
+    else:
+        is_auth = False
+
+    # 存在搜索关键词
+    if kw:
+        # 搜索文档
+        if search_type == 'doc':
+            if is_auth:
+                colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集
+                open_list = [i.id for i in Project.objects.filter(role=0)]  # 公开文集
+                view_list = list(set(open_list).union(set(colla_list)))  # 合并上述两个文集ID列表
+
+                data_list = Doc.objects.filter(
+                    Q(top_doc__in=view_list),  # 包含用户可浏览到的文集
+                    Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
+                    Q(name__icontains=kw) | Q(content__icontains=kw)  # 筛选文档标题和内容中包含搜索词
+                ).order_by('-create_time')
+            else:
+                view_list = [i.id for i in Project.objects.filter(role=0)]
+                data_list = Doc.objects.filter(
+                    Q(top_doc__in=view_list),
+                    Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
+                    Q(name__icontains=kw) | Q(content__icontains=kw)  # 筛选文档标题和内容中包含搜索词
+                ).order_by('-create_time')
+
+        # 搜索文集
+        elif search_type == 'pro':
+            # 认证用户
+            if is_auth:
+                colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集
+                # 查询所有可显示的文集
+                data_list = Project.objects.filter(
+                    Q(role=0) | \
+                    Q(role=2, role_value__contains=str(request.user.username)) | \
+                    Q(create_user=request.user) | \
+                    Q(id__in=colla_list),
+                    Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
+                    Q(name__icontains=kw) | Q(intro__icontains=kw)  # 筛选文集名称和简介包含搜索词
+                ).order_by('-create_time')
+            # 游客
+            else:
+                data_list = Project.objects.filter(
+                    Q(role=0),
+                    Q(name__icontains=kw) | Q(intro__icontains=kw),
+                    Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
+                ).order_by("-create_time")
+
+        # 搜索标签
+        # elif search_type == 'tag':
+        #     pass
+        else:
+            return render(request, 'app_doc/search.html')
+
+        # 分页处理
+        paginator = Paginator(data_list, 12)
+        page = request.GET.get('page', 1)
+        try:
+            datas = paginator.page(page)
+        except PageNotAnInteger:
+            datas = paginator.page(1)
+        except EmptyPage:
+            datas = paginator.page(paginator.num_pages)
+        return render(request, 'app_doc/search_result.html', locals())
+
+    # 否则跳转到搜索首页
+    else:
+        return render(request,'app_doc/search.html')
+
+# 文档Markdown文件下载
+@require_http_methods(['GET',"POST"])
+def download_doc_md(request,doc_id):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            try:
+                doc = Doc.objects.get(id=doc_id)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status':False,'data':'文档不存在'})
+        else:
+            try:
+                doc = Doc.objects.get(id=doc_id,create_user = request.user)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status':False,'data':'文档不存在'})
+    else:
+        return render(request,'404.html')
+
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename={}.md'.format(doc.name)
+    response.write(doc.pre_content)
+
+    return response

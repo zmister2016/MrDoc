@@ -112,6 +112,13 @@
         .layui-colla-content{
             padding: 0px;
         }
+        /* 预览代码宽度 */
+        ol.linenums li{
+            width: max-content;
+        }
+        #doc-tree{
+            margin-bottom: 5px;
+        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -382,6 +389,7 @@
                         
                         $("#TableGroup").empty();//清空表格
                         $("#pasteExcel").val('');
+                        editor.focus();
                         
                     },
                     btn2:function(index,layero){
@@ -406,7 +414,7 @@
                 }
             },
             // 添加音视频
-            multimedia:function(){
+            multimedia:function(cm,icon,cursor,selection){
                 layer.open({
                     type:'1',
                     title:'添加音视频外链',
@@ -478,6 +486,7 @@
                             //新一行的图片显示
                             layer.closeAll("loading");
                             editor.insertValue("\n![](" + ret.url + ")");
+                            editor.focus()
                         }else{
                             layer.closeAll("loading");
                             layer.msg("粘贴图片失败！")
@@ -549,12 +558,14 @@
     insertImg = function(e){
         console.log(e.src);
         editor.insertValue("\n![](" + e.src + ")");
+        editor.focus()
     };
     // 按钮点击插入输入框图片链接
     insertImgUrl = function(){
         editor.insertValue("\n![](" + $("#img_url_input").val() + ")");
         $("#img_url_input").val("")
         layer.closeAll();
+        editor.focus()
     };
     // 切换图片分组
     switchImgGroup = function(e){
@@ -608,6 +619,7 @@
         $("#video_input").val('')
         $("#video_iframe_input").val('')
         layer.closeAll();
+        editor.focus()
     }
 </script>
 {% block custom_script %}

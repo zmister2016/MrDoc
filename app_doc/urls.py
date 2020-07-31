@@ -32,6 +32,7 @@ urlpatterns = [
     path('move_doc/', views.move_doc, name='move_doc'), # 移动文档
     path('doc_recycle/', views.doc_recycle,name='doc_recycle'), # 文档回收站
     path('fast_pub_doc/',views.fast_publish_doc,name='fast_pub_doc'), # 一键发布文档
+    path('download_doc_md/<int:doc_id>/',views.download_doc_md,name='download_doc_md'), # 下载文档Markdown文件
     #################文档模板相关
     path('manage_doctemp/',views.manage_doctemp,name='manage_doctemp'), # 文档模板列表
     path('create_doctemp/',views.create_doctemp,name="create_doctemp"), # 创建文档模板
@@ -44,4 +45,5 @@ urlpatterns = [
     path('manage_attachment/',views.manage_attachment,name='manage_attachment'), # 附件管理
     ################其他功能相关
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
+    path('search/',views.search,name="search"), # 搜索功能
 ]

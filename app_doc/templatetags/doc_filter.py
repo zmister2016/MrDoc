@@ -2,6 +2,7 @@
 # 文档自定义模板过滤器
 from app_doc.models import *
 from django import template
+import re
 
 register = template.Library()
 
@@ -130,3 +131,31 @@ def get_doc_previous(value):
     except Exception as e:
         import traceback
         print(traceback.print_exc())
+
+
+# 获取内容的关键词上下文
+@register.filter(name='get_key_context')
+def get_key_context(value,args):
+    # print(value,args)
+    # re_result = re.findall(args, value, flags=re.IGNORECASE)
+    value = value.replace('\n','')
+    p = re.compile(args,flags=re.IGNORECASE)
+    value_list = []
+    for m in p.finditer(value):
+        # print(value,m,m.start(),m.group(),)
+        # print( m.start(), m.group())
+        start_point = m.start() - 20
+        if start_point < 0:
+            start_point = 0
+        end_point = m.end()+20
+        # print(start_point,end_point)
+        # print(value[start_point:end_point])
+        value_list.append(value[start_point:end_point])
+    # print(value_list)
+    if len(value_list) > 0:
+        r = "…".join(value_list)
+        if len(r) > 200:
+            r = r[0:200]
+    else:
+        r = value[0:200]
+    return r

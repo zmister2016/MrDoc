@@ -1,9 +1,16 @@
 ## MrDoc - Writing documents, gathering ideas
 
-![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.5-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.6-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
 
 
 ![Mrdoc首页](./captrue/mrdoc-index.png)
+
+<p>Sponsor：
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">WeChat</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">AliPay</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>|
+</p>
 
 ### Introduce
 

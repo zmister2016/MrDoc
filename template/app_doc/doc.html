@@ -50,6 +50,14 @@
 
 {% endblock %}
 
+{% block doc_bottom_block %}
+{% if request.user == doc.create_user or request.user.is_superuser %}
+<button class="layui-btn layui-btn-radius layui-btn-xs" id="download_doc" style="background-color: #333;">
+    <i class="fa fa-download"></i> 下载
+</button>
+{% endif %}
+{% endblock %}
+
 {% block doc_previous_next %}
     {% load doc_filter %}
     <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;">
@@ -72,6 +80,15 @@
 {% endblock %}
 
 {% block custom_script %}
+<!-- 下载选项卡模板 -->
+<div id="download_div" style="display: none;">
+    <div class="layui-row" style="margin: 10px;">
+        <a class="" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
+            <i class="fa fa-download"></i> 下载Markdown文件
+        </a>
+    </div>
+</div>
+
 <script src="{% static 'viewerjs/viewer.js' %}"></script>
 <script>
     var layer = layui.layer;
@@ -110,6 +127,19 @@
         title:false,
       };
     var viewer = new Viewer(document.getElementById('content'), img_options);
+
+    // 显示文档下载弹出框
+    $("#download_doc").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['350px','150px'],
+            shadeClose: true,
+            content: $('#download_div')
+          });
+    });
 </script>
 
 

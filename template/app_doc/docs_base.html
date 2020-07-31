@@ -79,12 +79,26 @@
         .markdown-body h6{
             font-size: .85em;
         }
+        .markdown-body p img{
+            max-width: 350px;
+        }
         #url_qrcode img{
             margin: auto;
         }
         #share{
             background-color: #333;
         }
+        /* 文档代码块样式 */
+        ol.linenums li{ 
+            width: max-content;
+        }
+        pre.linenums{
+            max-height: 400px;
+        }
+        li.L1, li.L3, li.L5, li.L7, li.L9 {
+            background: none !important;
+        }
+
         /* layui弹出框颜色 */
         .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
             border-bottom: 2px solid #333;
@@ -136,7 +150,7 @@
             <ul class="summary" id="project-toc"></ul>
         </nav>
         <div class="bq">
-            <a href="https://gitee.com/zmister/MrDoc" target="_blank" class="mrdoc-link">本文档使用MrDoc发布</a>
+            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">本文档使用MrDoc发布</a>
         </div>
         <!-- 右下角广告块 -->
         <!-- 广告代码开始 -->
@@ -156,11 +170,9 @@
     <div class="doc-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
-
             <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
                 <i class="fa fa-align-justify"></i>
             </a>
-
             <a class="btn pull-left font-small"  href="javascript:void(0);" title="缩小字体">
                 <i class="fa fa-font">-</i>
             </a>
@@ -213,6 +225,8 @@
                 <button id="share" class="layui-btn layui-btn-radius layui-btn-xs">
                     <i class="fa fa-share-alt"></i> 分享
                 </button>
+                {% block doc_bottom_block %}
+                {% endblock %}
 
                 <!-- 广告代码开始 -->
                 {% if debug %}
@@ -235,7 +249,12 @@
 </div>
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+
+<!-- 小屏自动收起左侧文集大纲 -->
 <script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
     //加载页面时执行一次
     changeSidebar();
     //监听浏览器宽度的改变
@@ -256,57 +275,6 @@
     }
 </script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/echarts.min.js' %}"></script>
-<!-- 脑图开始 -->
-<script src="{% static 'mindmap/d3@5.js' %}"></script>
-<script src="{% static 'mindmap/transform.min.js' %}"></script>
-<script src="{% static 'mindmap/view.min.js' %}"></script>
-<!-- 脑图结束 -->
-
-<!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
-<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
-
-<!-- 解析Markdown -->
-<script>
-    $.ajaxSetup({
-        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-    });
-    //解析Markdown为HTML
-    editormd.markdownToHTML("content", {
-        htmlDecode      : "style,script,iframe",
-        emoji           : true,  //emoji表情
-        taskList        : true,  // 任务列表
-        tex             : true,  // 科学公式
-        flowChart       : true,  // 流程图
-        sequenceDiagram : true,  // 时序图
-        tocm            : true, //目录
-        toc             :true,
-        tocContainer : "#toc-container",
-        tocDropdown   : false,
-        atLink    : false,//禁用@链接
-
-    });
-    // 显示分享弹出框
-    $("#share").click(function(r){
-        var layer = layui.layer;
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 0,
-            area: ['350px','350px'],
-            shadeClose: true,
-            content: $('#share_div')
-          });
-    });
-</script>
 
 <!-- 生成文集目录大纲 -->
 <script>
@@ -379,6 +347,55 @@
         });
     };
     getProjectToc();
+</script>
+
+<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/echarts.min.js' %}"></script>
+<!-- 脑图开始 -->
+<script src="{% static 'mindmap/d3@5.js' %}"></script>
+<script src="{% static 'mindmap/transform.min.js' %}"></script>
+<script src="{% static 'mindmap/view.min.js' %}"></script>
+<!-- 脑图结束 -->
+
+<!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
+<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
+
+<!-- 解析Markdown -->
+<script>
+    //解析Markdown为HTML
+    editormd.markdownToHTML("content", {
+        htmlDecode      : "style,script,iframe",
+        emoji           : true,  //emoji表情
+        taskList        : true,  // 任务列表
+        tex             : true,  // 科学公式
+        flowChart       : true,  // 流程图
+        sequenceDiagram : true,  // 时序图
+        tocm            : true, //目录
+        toc             :true,
+        tocContainer : "#toc-container",
+        tocDropdown   : false,
+        atLink    : false,//禁用@链接
+
+    });
+    // 显示分享弹出框
+    $("#share").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['350px','350px'],
+            shadeClose: true,
+            content: $('#share_div')
+          });
+    });
 </script>
 
 <!-- 页面初始化字体设置 -->
@@ -479,6 +496,19 @@
             console.log("xxx")
         }
     };
+
+    // 显示打赏图片
+    $("#dashang").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['480px','400px'],
+            shadeClose: true,
+            content: $('#dashang_img')
+          });
+    });
 </script>
 <!-- 分享选项卡模板 -->
 <div id="share_div" style="display: none;">
@@ -499,6 +529,43 @@
     </div>
     </div> 
 </div>
+
+<!-- 打赏选项卡模板 -->
+<div id="dashang_img" style="display: none;">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+          <li class="layui-this">微信</li>
+          <li>支付宝</li>
+          <li>QQ支付</li>
+          <li>PayPal</li>
+          <li>项目源码</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+          <div class="layui-tab-item layui-show" align='center'>
+            <img src="{% static 'dashang/dashang_wx.jpg' %}" style="width: 300px;height: auto;" />
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <img src="{% static 'dashang/dashang_alipay.jpg' %}" style="width: 300px;height: auto;" />
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <img src="{% static 'dashang/dashang_qq.png' %}" style="width: 300px;height: auto;" />
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <a href="https://paypal.me/zmister" target="_blank">
+                <img src="{% static 'dashang/dashang_paypal.png' %}" style="width: 280px;height: auto;" />
+            </a>
+          </div>
+          <div class="layui-tab-item" align='center'>
+            <p><a href="" target="_blank">GitHub：https://github.com/zmister2016/MrDoc</a></p>
+            <br>
+            <p><a href="https://gitee.com/zmister/MrDoc" target="_blank">码云：https://gitee.com/zmister/MrDoc</a> </p>
+            <br>
+            <p><a href="https://zmister.com" target="_blank">作者博客：https://zmister.com</a></p>
+          </div>
+        </div>
+      </div> 
+  </div>
+  
 <script>
     // 展开收起左边目录
     $(function(){

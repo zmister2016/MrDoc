@@ -188,7 +188,7 @@ body, html {
 .project-title{
   font-size: 20px;
   font-weight: 700;
-  margin:20px;
+  margin:0 20px;
   text-align: center;
 }
 .doc-summary {
@@ -356,12 +356,12 @@ li.active > a,li.active > div > a{
 }
 /* 返回顶部 */
 .toTop {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: #f6f6f6;
     text-align: center;
-    line-height: 70px;
+    line-height: 50px;
     /*返回顶部标签固定定位*/
     position: fixed;
     right: 35px;
