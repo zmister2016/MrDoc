@@ -249,6 +249,7 @@
 </div>
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
 
 <!-- 生成文集目录大纲 -->
 <script>
@@ -304,6 +305,7 @@
         });
     };
     getProjectToc();
+
     //为当前页面的目录链接添加蓝色样式
     tagCurrentDoc = function(){
         $("nav li a").each(function (i) {
@@ -346,81 +348,6 @@
             $("body").removeClass("big-page");
         }
     }
-</script>
-
-<script src="{% static 'layui/layui.all.js' %}"></script>
-
-<!-- 生成文集目录大纲 -->
-<script>
-    // 生成文集目录
-    getProjectToc = function(){
-        $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
-            $("#loading-project-toc").hide();
-            if(r.status){
-                var toc_str = ""
-                layui.each(r.data,function(index,item){
-                    toc_str += "<li>"
-                    if(item['children'] != undefined){ // 存在二级文档
-                        li = '<div style="display:flex;justify-content:space-between;">' + 
-                            '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +
-                            '<i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>'+
-                        '</div>'+
-                        '<ul class="sub-menu toc-close">'
-                        toc_str += li
-                        layui.each(item['children'],function(index,item){// 遍历二级文档
-                            toc_str += '<li>'
-                            if(item['children'] != undefined){ //存在三级文档
-                                li = '<div style="display:flex;justify-content:space-between;">' + 
-                                    '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +
-                                    '<i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>'+
-                                '</div>'+'<ul class="sub-menu toc-close">'
-                                toc_str += li
-                                layui.each(item['children'],function(index,item){ // 遍历三级文档
-                                    li = '<li><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></li>'
-                                    toc_str += li
-                                })
-                                toc_str += '</ul>'
-                            }else{// 不存在三级文档
-                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
-                                toc_str += li
-                            }
-                            toc_str += '</li>'
-                        })    
-                        toc_str += '</ul>'
-                    }else{//不存在二级文档
-                       li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
-                       toc_str += li
-                    }
-                    toc_str += '</li>'
-                });
-                $('#project-toc').append(toc_str)
-                tagCurrentDoc();
-            }else{
-                layer.msg("获取文集目录失败！")
-            }
-        });
-    };
-    getProjectToc();
-    //为当前页面的目录链接添加蓝色样式
-    tagCurrentDoc = function(){
-        $("nav li a").each(function (i) {
-            var $me = $(this);
-            var lochref = $.trim(window.location.href); // 获取当前URL
-            var mehref = $.trim($me.get(0).href); 
-            if (lochref.indexOf(mehref) != -1) {
-                // console.log($me,lochref,mehref)
-                $me.closest("li").addClass("active");
-                //展开当前文档的上级目录
-                $me.parent("li").parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开二级目录
-                $me.parent("div").parent('li').parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开还有子级的二级目录
-                $me.parent("li").parent('ul').parent('li').parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开三级目录
-                $me.parents("ul.sub-menu").prevAll("div").children("i").toggleClass("fa-chevron-left fa-chevron-down");//切换图标
-            } else {
-                // console.log(lochref,mehref)
-                $me.closest("li").removeClass("active");
-            }
-        });
-    };
 </script>
 
 <script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
