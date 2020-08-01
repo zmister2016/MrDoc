@@ -1917,7 +1917,10 @@ def search(request):
         if search_type == 'doc':
             if is_auth:
                 colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集
-                open_list = [i.id for i in Project.objects.filter(role=0)]  # 公开文集
+                open_list = [i.id for i in Project.objects.filter(
+                    Q(role=0) | Q(create_user=request.user)
+                )]  # 公开文集
+
                 view_list = list(set(open_list).union(set(colla_list)))  # 合并上述两个文集ID列表
 
                 data_list = Doc.objects.filter(
