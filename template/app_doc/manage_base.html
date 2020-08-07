@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - 个人中心 - 觅道文档MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link href="{% static 'mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     {% block custom_link %}
     {% endblock %}
@@ -52,6 +52,13 @@
         .layui-form-onswitch{
           border-color: #1E9FFF;
           background-color: #1E9FFF;
+        }
+        /* 选项卡样式 */
+        .layui-tab-brief>.layui-tab-title .layui-this{
+          color: #1E9FFF;
+        }
+        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
+          border-bottom: 2px solid #1E9FFF !important;
         }
     </style>
 </head>

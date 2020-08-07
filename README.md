@@ -1,6 +1,6 @@
 ## MrDoc觅道文档 - 记录文档，汇聚思想 - [English](./README_ENG.md)
 
-![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.6-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.7-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
 
 ![Mrdoc首页](./captrue/mrdoc-index.png)
 

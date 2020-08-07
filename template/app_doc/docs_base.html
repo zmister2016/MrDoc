@@ -12,12 +12,14 @@
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
     <title>{% block title %}{% endblock %} - 觅道文档MrDoc</title>
+
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
-    <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <!-- <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet"> -->
+    <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
-    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
         /*一级无序li显示实心圆点*/
         .doc-content ul li{
@@ -61,7 +63,7 @@
             border:none;
         }
         /* HTML预览样式 */
-        .markdown-body h1{
+        .markdown-body h1{ 
             font-size: 1.7em;
         }
         .markdown-body h2{
@@ -93,7 +95,7 @@
             width: max-content;
         }
         pre.linenums{
-            max-height: 400px;
+            max-height: 500px;
         }
         li.L1, li.L3, li.L5, li.L7, li.L9 {
             background: none !important;
@@ -241,11 +243,11 @@
 
                 {% block doc_previous_next %}{% endblock %}
             </div>
-
         </div>
     </div>
     <!-- 右侧文档栏结束 -->
     <div class="toTop"><i class="layui-icon layui-icon-top" style="font-size: 50px;"></i></div>
+    {% block right_widget %} {% endblock %}
 </div>
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
@@ -360,13 +362,14 @@
 <script src="{% static 'editor.md/lib/echarts.min.js' %}"></script>
 <!-- 脑图开始 -->
 <script src="{% static 'mindmap/d3@5.js' %}"></script>
-<script src="{% static 'mindmap/transform.min.js' %}"></script>
-<script src="{% static 'mindmap/view.min.js' %}"></script>
+<script src="{% static 'mindmap/transform.min.js' %}" async='async'></script>
+<script src="{% static 'mindmap/view.min.js' %}" async='async'></script>
 <!-- 脑图结束 -->
 
-<!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/editormd.min.js' %}?version={{mrdoc_version}}"></script> -->
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
+
 
 <!-- 解析Markdown -->
 <script>
@@ -511,6 +514,7 @@
           });
     });
 </script>
+
 <!-- 分享选项卡模板 -->
 <div id="share_div" style="display: none;">
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">

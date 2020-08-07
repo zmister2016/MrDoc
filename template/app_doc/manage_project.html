@@ -74,7 +74,7 @@
               {% endif %}
               </div>
           </td>
-            <td>{{ pro.id | project_collaborator_cnt }} <a href="{% url 'manage_pro_colla' pro.id %}"  title="管理文集协作"><i class="layui-icon layui-icon-edit"></i></a></td>
+            <td>{{ pro.id | project_collaborator_cnt }} <a href="{% url 'manage_pro_colla' pro.id %}"  title="管理文集协作"><i class="layui-icon layui-icon-set"></i></a></td>
           <td>
               <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-xs layui-btn-normal">
                 <i class="layui-icon layui-icon-edit"></i>修改

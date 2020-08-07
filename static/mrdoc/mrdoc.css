@@ -188,7 +188,7 @@ body, html {
 .project-title{
   font-size: 20px;
   font-weight: 700;
-  margin:0 20px;
+  margin:10px 20px 0px 20px;
   text-align: center;
 }
 .doc-summary {
@@ -376,6 +376,31 @@ li.active > a,li.active > div > a{
     cursor: pointer;
     color: red;
 }
+/* 文档目录 */
+.tocMenu{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #f6f6f6;
+    text-align: center;
+    line-height: 50px;
+    /*返回顶部标签固定定位*/
+    position: fixed;
+    right: 35px;
+    bottom: 90px;
+    z-index: 999;
+    font-size: 14px;
+}
+.tocMenu:hover {
+    background: #eeeeee;
+    font-size: 16px;
+    cursor: pointer;
+    color: red;
+}
+.doc-toc-hide{
+    display: none;
+}
+
 /*切换字号*/
 .switch-font{
     font-family: Serif;

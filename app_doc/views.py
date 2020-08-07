@@ -454,7 +454,9 @@ def manage_project_collaborator(request,pro_id):
 
     if request.method == 'GET':
         pro = project[0]
-        collaborator = ProjectCollaborator.objects.filter(project=pro)
+        collaborator = ProjectCollaborator.objects.filter(project=pro) # 获取文集的协作者
+        colla_user_list = [i.user for i in collaborator] # 文集协作用户的ID
+        colla_docs = Doc.objects.filter(top_doc=pro.id,create_user__in=colla_user_list) # 获取文集协作用户创建的文档
         return render(request, 'app_doc/manage_project_collaborator.html', locals())
 
     elif request.method == 'POST':
@@ -637,9 +639,18 @@ def modify_doc(request,doc_id):
             doc = Doc.objects.get(id=doc_id) # 查询文档信息
             project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集信息
             pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) # 查询用户的协作文集信息
+            if pro_colla.count() == 0:
+                is_pro_colla = False
+            elif pro_colla[0].role == 1:
+                is_pro_colla = True
+            else:
+                is_pro_colla = False
             project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
             colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
-            if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+            # 判断用户是否有权限进行修改
+            if (request.user == doc.create_user) or \
+                    (is_pro_colla is True) or \
+                    (request.user == project.create_user):
                 doc_list = Doc.objects.filter(top_doc=project.id)
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
                 history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
@@ -652,7 +663,7 @@ def modify_doc(request,doc_id):
     elif request.method == 'POST':
         try:
             doc_id = request.POST.get('doc_id','') # 文档ID
-            project = request.POST.get('project', '') # 文集ID
+            project_id = request.POST.get('project', '') # 文集ID
             parent_doc = request.POST.get('parent_doc', '') # 上级文档ID
             doc_name = request.POST.get('doc_name', '') # 文档名称
             doc_content = request.POST.get('content', '') # 文档内容
@@ -660,11 +671,18 @@ def modify_doc(request,doc_id):
             sort = request.POST.get('sort', '') # 文档排序
             status = request.POST.get('status',1) # 文档状态
 
-            if doc_id != '' and project != '' and doc_name != '' and project != '-1':
+            if doc_id != '' and project_id != '' and doc_name != '' and project_id != '-1':
                 doc = Doc.objects.get(id=doc_id)
+                project = Project.objects.get(id=project_id)
                 pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)
+                if pro_colla.count() == 0:
+                    is_pro_colla = False
+                elif pro_colla[0].role == 1:
+                    is_pro_colla = True
+                else:
+                    is_pro_colla = False
                 # 验证用户有权限修改文档 - 文档的创建者或文集的高级协作者
-                if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+                if (request.user == doc.create_user) or (is_pro_colla is True) or (request.user == project.create_user):
                     # 将现有文档内容写入到文档历史中
                     DocHistory.objects.create(
                         doc = doc,

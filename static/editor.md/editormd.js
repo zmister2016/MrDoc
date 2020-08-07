@@ -3720,15 +3720,17 @@
             
             text = trim(text);
             
+            var isChinese = /^[\u4e00-\u9fa5]+$/.test(text);
+            //var id        = (isChinese) ? escape(text).replace(/\%/g, "") : text.toLowerCase().replace(/[^\w]+/g, "-");
+            var id        = escape(text.toLowerCase().replace(' ','')).replace(/\%/g, "") // 生成包含中文编码的标题ID
+
             var escapedText    = text.toLowerCase().replace(/[^\w]+/g, "-");
             var toc = {
                 text  : text,
                 level : level,
-                slug  : escapedText
+                slug  : escapedText,
+                id    : "h"+ level + "-" + this.options.headerPrefix + id
             };
-            
-            var isChinese = /^[\u4e00-\u9fa5]+$/.test(text);
-            var id        = (isChinese) ? escape(text).replace(/\%/g, "") : text.toLowerCase().replace(/[^\w]+/g, "-");
 
             markdownToC.push(toc);
             
@@ -3884,6 +3886,7 @@
         {
             var text  = toc[i].text;
             var level = toc[i].level;
+            var id = toc[i].id;
             
             if (level < startLevel) {
                 continue;
@@ -3902,7 +3905,8 @@
                 html += "</ul></li>";
             }
 
-            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\">" + text + "</a><ul>";
+            //html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\">" + text + "</a><ul>";
+            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + id + "\" level=\"" + level + "\">" + text + "</a><ul>";
             lastLevel = level;
         }
         

@@ -8,7 +8,7 @@
 {% block title %}{{ doc.name }} - {{ project.name }}{% endblock %}
 
 {% block head_toolbar %}
-    {% if request.user == doc.create_user %}
+    {% if request.user == doc.create_user or request.user == project.create_user %}
         <span class="btn pull-left">|</span>
         <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
             <i class="fa fa-edit"></i> <span class="layui-hide-xs">修改</span>
@@ -31,7 +31,8 @@
         </a>
     {% endif %}
     <!-- 文档目录 -->
-    <div id="toc-container" style="display:none;padding:10px;overflow:auto;"></div>
+    <!-- <div id="toc-container" style="display:none;padding:10px;overflow:auto;"></div> -->
+    <div id="toc-container" class='sidebar'></div>
 {% endblock %}
 
 {% block content_head %}
@@ -45,7 +46,6 @@
 {% endblock %}
 
 {% block page_content %}
-    {# {{ doc.content | safe }} #}
     <textarea style="display: none;">{{ doc.pre_content }}</textarea>
 
 {% endblock %}
@@ -79,6 +79,10 @@
     </div>
 {% endblock %}
 
+{% block right_widget %}
+<div class="tocMenu" style="display: none;">目录</div>
+{% endblock %}
+
 {% block custom_script %}
 <!-- 下载选项卡模板 -->
 <div id="download_div" style="display: none;">
@@ -88,30 +92,23 @@
         </a>
     </div>
 </div>
-
+<script src="{% static 'toc/doctoc.js' %}"></script>
 <script src="{% static 'viewerjs/viewer.js' %}"></script>
 <script>
     var layer = layui.layer;
-    //初始化悬浮目录
-    var toc = $("#toc-container").find('li');
-    if(toc.length > 0){
-        var toc_index = layer.open({
-             title: '目录',
-             type:1,
-             offset:'r',//坐标
-             maxmin:true, //最大最小化
-             area: ['170px','0.8'],
-             shade: 0,
-             content: $("#toc-container"),
-        });
-    };
     // 手机屏幕上默认最小化目录
     if(window.outerWidth < 768){
         console.log('最小化目录');
-        setTimeout(function(){
-            layer.min(toc_index);
-        },500)
+        // setTimeout(function(){
+        $(".sidebar").toggleClass("doc-toc-hide");
+        // },300)
     }
+    // 切换文档目录显示与否
+    $(".tocMenu").click(function() {
+        console.log("隐藏文档目录")
+        $(".sidebar").toggleClass("doc-toc-hide");
+    });
+    
     //修改a标签链接新窗口打开
     $('#content').on('click','a',function(e){
         e.target.target = '_blank';

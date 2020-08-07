@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
-    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
         /* 编辑器图标样式 */
         .editormd-menu i{
@@ -191,8 +191,8 @@
 <!-- 脑图结束 -->
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 <!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
-<script src="{% static 'mrdoc.editor.js' %}"></script>
-<script src="{% static 'mrdoc.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mrdoc/mrdoc.editor.js' %}"></script>
+<script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },

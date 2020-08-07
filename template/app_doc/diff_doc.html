@@ -13,7 +13,7 @@
     <title>文档历史版本对比：{{ doc.name }} - MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
-    <link href="{% static 'mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
 
     <link rel=stylesheet href="{% static '/docdiff/codemirror.css' %}">
     <link rel=stylesheet href="{% static '/docdiff/merge.css' %}">
@@ -222,7 +222,7 @@
         mergeView.wrap.style.height = height + "px";
         }
     </script>
-<script src="{% static 'mrdoc.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
 {% block custom_script %}
 {% endblock %}
 </body>
