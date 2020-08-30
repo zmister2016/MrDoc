@@ -38,7 +38,7 @@
             <strong>*当前文档状态：草稿</strong>
             {% elif doc.status == 1 %}
             <strong>*当前文档状态：已发布 </strong>
-            <a class="layui-btn layui-btn-xs layui-btn-normal" target="_blank" href="{% url 'doc' doc.top_doc doc.id %}">
+            <a class="layui-btn layui-btn-xs layui-btn-normal" target="_blank" href="{% url 'doc' doc.top_doc doc.id %}" style="background-color: #2176ff;">
                 <i class="fa fa-book"></i> 查看
             </a>
             <button class="layui-btn layui-btn-xs layui-btn-normal" id="doc-history">
@@ -91,24 +91,46 @@
         </div>
         <hr>
 
-        <div class="layui-row" style="margin-top: 10px;">
-            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
-                <i class="fa fa-save"></i> 保存为草稿
-            </button>
+        <!-- 标签输入框 -->
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">标签</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{{doc_tags}}" placeholder="输入标签名">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="layui-row" style="margin-top: 10px;">
-            <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDoc()" id="create_doc" title="发布当前内容">
-                <i class="fa fa-save"></i> 发布文档
-            </button>
-        </div>
-
-        <div class="layui-row" style="margin-top: 10px;">
-            <button class="layui-btn layui-btn-warm layui-btn-fluid" onclick="moveDoc()" title="复制或移动此文档到其他文集"><i class="fa fa-copy"></i> 复制/移动文档</button>
-        </div>
-    
-        <div class="layui-row" style="margin-top: 10px;">
-            <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档"><i class="fa fa-trash"></i> 删除文档</button>
+        <!-- 发布按钮 -->
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">发布</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                        <div class="layui-row" style="margin-top: 5px;">
+                            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                                <i class="fa fa-save"></i> 保存为草稿
+                            </button>
+                        </div>
+                
+                        <div class="layui-row" style="margin-top: 5px;">
+                            <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                                <i class="fa fa-save"></i> 发布文档
+                            </button>
+                        </div>
+                
+                        <div class="layui-row" style="margin-top: 5px;">
+                            <button class="layui-btn layui-btn-warm layui-btn-fluid" onclick="moveDoc()" title="复制或移动此文档到其他文集"><i class="fa fa-copy"></i> 复制/移动文档</button>
+                        </div>
+                    
+                        <div class="layui-row" style="margin-top: 5px;">
+                            <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档"><i class="fa fa-trash"></i> 删除文档</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -195,6 +217,7 @@
                 'doc_id':'{{ doc.id }}',
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
+                'doc_tag':$("#tagsinputval").val(),
                 'doc_name':$("#doc-name").val(),
                 'content':editor.getHTML(),
                 //'content':editor.getPreviewedHTML(),
@@ -225,6 +248,7 @@
             var data = {
                 'doc_id':'{{ doc.id }}',
                 'project':$("#project").val(),
+                'doc_tag':$("#tagsinputval").val(),
                 'parent_doc':$("#parent-doc").val(),
                 'doc_name':$("#doc-name").val(),
                 'content':editor.getHTML(),

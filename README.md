@@ -1,6 +1,6 @@
 ## MrDoc觅道文档 - 记录文档，汇聚思想 - [English](./README_ENG.md)
 
-![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.7-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.8-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
 
 ![Mrdoc首页](./captrue/mrdoc-index.png)
 
@@ -140,11 +140,8 @@ python manage.py runserver
 加入MrDoc交流QQ群:
 
 - 群1（付费） **735507293** [![](http://pub.idqqimg.com/wpa/images/group.png "MrDoc交流群")](http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba) 
-- 群2（免费） **849206042**，入群密码：**mrdoc** [![](http://pub.idqqimg.com/wpa/images/group.png "MrDoc交流2群")](http://shang.qq.com/wpa/qunwpa?idkey=4f71054b9a644e3263f695d5f17735ce39063ad7ed4fd5b4e2c5da1ac465e53a)
 
 ### 3、联系作者
-
-微信（WeChat）：**taoist_ling**
 
 公众号：**zmister2016**
 

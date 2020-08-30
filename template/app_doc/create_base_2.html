@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
     <style>
         /* 编辑器图标样式 */
         .editormd-menu i{
@@ -73,14 +74,14 @@
         }
         /* layui分页组件样式 */
         .layui-laypage .layui-laypage-curr .layui-laypage-em{
-            background-color: #1E9FFF !important;
+            background-color: #2176ff !important;
         }
         .layui-form-select dl dd.layui-this{
-            background-color: #1E9FFF !important;
+            background-color: #2176ff !important;
         }
         /* layui单选样式 */
         .layui-form-radio>i:hover, .layui-form-radioed>i{
-            color: #1E9FFF;
+            color: #2176ff;
         }
         /* HTML预览样式 */
         .markdown-body h1{
@@ -104,6 +105,9 @@
         /* 编辑器行号宽度 */
         .CodeMirror-linenumber{
             width: auto !important;
+        }
+        li.L1, li.L3, li.L5, li.L7, li.L9 {
+            background: none !important;
         }
         /* layui 折叠面板 边框颜色 - 用在左侧文集结构 */
         .layui-badge-rim, .layui-colla-content, .layui-colla-item, .layui-collapse, .layui-elem-field, .layui-form-pane .layui-form-item[pane], .layui-form-pane .layui-form-label, .layui-input, .layui-layedit, .layui-layedit-tool, .layui-quote-nm, .layui-select, .layui-tab-bar, .layui-tab-card, .layui-tab-title, .layui-tab-title .layui-this:after, .layui-textarea{
@@ -177,13 +181,13 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
+<!-- <script src="{% static 'editor.md/lib/marked.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/underscore.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script> -->
 <!-- 脑图开始 -->
 <script src="{% static 'mindmap/d3@5.js' %}"></script>
 <script src="{% static 'mindmap/transform.min.js' %}"></script>
@@ -193,6 +197,8 @@
 <!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
 <script src="{% static 'mrdoc/mrdoc.editor.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
+<!-- 标签输入 -->
+<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },

@@ -3832,7 +3832,7 @@
                 }
 
                 return "<div class='echart' style='width:100%;min-height:350px;height:"+ custom_height +"px;' id='echart-"+ map_id +"'>"+code+"</div>";
-            } 
+            }
             else 
             {
                 return marked.Renderer.prototype.code.apply(this, arguments);

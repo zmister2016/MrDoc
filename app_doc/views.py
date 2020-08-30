@@ -14,6 +14,7 @@ from loguru import logger
 import datetime
 import traceback
 import re
+import random
 from app_doc.report_utils import *
 from app_admin.decorators import check_headers,allow_report_file
 import os.path
@@ -566,6 +567,7 @@ def doc(request,pro_id,doc_id):
             # 获取文档内容
             try:
                 doc = Doc.objects.get(id=int(doc_id),status=1)
+                doc_tags = DocTag.objects.filter(doc=doc)
             except ObjectDoesNotExist:
                 return render(request, '404.html')
             # 获取文集下一级文档
@@ -595,30 +597,47 @@ def create_doc(request):
             return render(request,'404.html')
     elif request.method == 'POST':
         try:
-            project = request.POST.get('project','')
-            parent_doc = request.POST.get('parent_doc','')
-            doc_name = request.POST.get('doc_name','')
-            doc_content = request.POST.get('content','')
-            pre_content = request.POST.get('pre_content','')
-            sort = request.POST.get('sort','')
-            status = request.POST.get('status',1)
+            project = request.POST.get('project','') # 文集ID
+            parent_doc = request.POST.get('parent_doc','') # 上级文档ID
+            doc_name = request.POST.get('doc_name','') # 文档标题
+            doc_tags = request.POST.get('doc_tag','') # 文档标签
+            doc_content = request.POST.get('content','') # 文档内容
+            pre_content = request.POST.get('pre_content','') # 文档Markdown内容
+            sort = request.POST.get('sort','') # 文档排序
+            status = request.POST.get('status',1) # 文档状态
             if project != '' and doc_name != '' and project != '-1':
                 # 验证请求者是否有文集的权限
                 check_project = Project.objects.filter(id=project,create_user=request.user)
                 colla_project = ProjectCollaborator.objects.filter(project=project,user=request.user)
                 if check_project.count() > 0 or colla_project.count() > 0:
-                    # 创建文档
-                    doc = Doc.objects.create(
-                        name=doc_name,
-                        content = doc_content,
-                        pre_content= pre_content,
-                        parent_doc= int(parent_doc) if parent_doc != '' else 0,
-                        top_doc= int(project),
-                        sort = sort if sort != '' else 99,
-                        create_user=request.user,
-                        status = status
-                    )
-                    return JsonResponse({'status':True,'data':{'pro':project,'doc':doc.id}})
+                    # 开启事务
+                    with transaction.atomic():
+                        save_id = transaction.savepoint()
+                        try:
+                            # 创建文档
+                            doc = Doc.objects.create(
+                                name=doc_name,
+                                content = doc_content,
+                                pre_content= pre_content,
+                                parent_doc= int(parent_doc) if parent_doc != '' else 0,
+                                top_doc= int(project),
+                                sort = sort if sort != '' else 99,
+                                create_user=request.user,
+                                status = status
+                            )
+                            # 设置文档标签
+                            for t in doc_tags.split(","):
+                                if t != '':
+                                    tag = Tag.objects.get_or_create(name=t,create_user=request.user)
+                                    DocTag.objects.get_or_create(tag=tag[0],doc=doc)
+
+                            return JsonResponse({'status': True, 'data': {'pro': project, 'doc': doc.id}})
+                        except Exception as e:
+                            logger.exception("创建文档异常")
+                            # 回滚事务
+                            transaction.savepoint_rollback(save_id)
+                        transaction.savepoint_commit(save_id)
+                        return JsonResponse({'status': False, 'data': '创建失败'})
                 else:
                     return JsonResponse({'status':False,'data':'无权操作此文集'})
             else:
@@ -637,6 +656,7 @@ def modify_doc(request,doc_id):
     if request.method == 'GET':
         try:
             doc = Doc.objects.get(id=doc_id) # 查询文档信息
+            doc_tags = ','.join([i.tag.name for i in DocTag.objects.filter(doc=doc)]) # 查询文档标签信息
             project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集信息
             pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) # 查询用户的协作文集信息
             if pro_colla.count() == 0:
@@ -666,6 +686,7 @@ def modify_doc(request,doc_id):
             project_id = request.POST.get('project', '') # 文集ID
             parent_doc = request.POST.get('parent_doc', '') # 上级文档ID
             doc_name = request.POST.get('doc_name', '') # 文档名称
+            doc_tags = request.POST.get('doc_tag','') # 文档标签
             doc_content = request.POST.get('content', '') # 文档内容
             pre_content = request.POST.get('pre_content', '') # 文档Markdown格式内容
             sort = request.POST.get('sort', '') # 文档排序
@@ -683,23 +704,53 @@ def modify_doc(request,doc_id):
                     is_pro_colla = False
                 # 验证用户有权限修改文档 - 文档的创建者或文集的高级协作者
                 if (request.user == doc.create_user) or (is_pro_colla is True) or (request.user == project.create_user):
-                    # 将现有文档内容写入到文档历史中
-                    DocHistory.objects.create(
-                        doc = doc,
-                        pre_content = doc.pre_content,
-                        create_user = request.user
-                    )
-                    # 更新文档内容
-                    Doc.objects.filter(id=int(doc_id)).update(
-                        name=doc_name,
-                        content=doc_content,
-                        pre_content=pre_content,
-                        parent_doc=int(parent_doc) if parent_doc != '' else 0,
-                        sort=sort if sort != '' else 99,
-                        modify_time = datetime.datetime.now(),
-                        status = status
-                    )
-                    return JsonResponse({'status': True,'data':'修改成功'})
+                    # 开启事务
+                    with transaction.atomic():
+                        save_id = transaction.savepoint()
+                        try:
+                            # 将现有文档内容写入到文档历史中
+                            DocHistory.objects.create(
+                                doc = doc,
+                                pre_content = doc.pre_content,
+                                create_user = request.user
+                            )
+                            # 更新文档内容
+                            Doc.objects.filter(id=int(doc_id)).update(
+                                name=doc_name,
+                                content=doc_content,
+                                pre_content=pre_content,
+                                parent_doc=int(parent_doc) if parent_doc != '' else 0,
+                                sort=sort if sort != '' else 99,
+                                modify_time = datetime.datetime.now(),
+                                status = status
+                            )
+                            # 更新文档标签
+                            doc_tag_list = doc_tags.split(",") if doc_tags != "" else []
+                            # print(doc_tags,doc_tag_list)
+                            # 如果没有设置标签，则删除此文档的所有标签
+                            if len(doc_tag_list) == 0:
+                                DocTag.objects.filter(doc=doc).delete()
+                            else:
+                                current_doc_tags = [i.tag.name for i in DocTag.objects.filter(doc=doc)] # 获取当前文档的标签
+                                # 遍历当前文档标签，如果不在新的标签列表，则删除
+                                for tag in current_doc_tags:
+                                    if tag not in doc_tag_list:
+                                        tag = Tag.objects.get(name=tag,create_user=request.user)
+                                        DocTag.objects.filter(doc=doc,tag=tag).delete()
+                                # 遍历新的标签列表，如果不在当前文档标签中，则创建
+                                for t in doc_tag_list:
+                                    if t not in current_doc_tags and current_doc_tags != '':
+                                        tag = Tag.objects.get_or_create(name=t, create_user=request.user)
+                                        DocTag.objects.get_or_create(tag=tag[0], doc=doc)
+
+                            return JsonResponse({'status': True, 'data': '修改成功'})
+                        except:
+                            logger.exception("修改文档异常")
+                            # 回滚事务
+                            transaction.savepoint_rollback(save_id)
+                        transaction.savepoint_commit(save_id)
+                    return JsonResponse({'status': False, 'data': '修改失败'})
+
                 else:
                     return JsonResponse({'status':False,'data':'未授权请求'})
             else:
@@ -1646,7 +1697,7 @@ def manage_image(request):
             if int(g_id) == 0:
                 image_list = Image.objects.filter(user=request.user).order_by('-create_time')  # 查询所有图片
             elif int(g_id) == -1:
-                image_list = Image.objects.filter(user=request.user,group_id=None).order_by('-create_time')  # 查询指定分组的图片
+                image_list = Image.objects.filter(user=request.user,group_id=None).order_by('-create_time')  # 查询未分组的图片
             else:
                 image_list = Image.objects.filter(user=request.user,group_id=g_id).order_by('-create_time')  # 查询指定分组的图片
             paginator = Paginator(image_list, 18)
@@ -1728,7 +1779,7 @@ def manage_img_group(request):
         if int(types) == 0:
             group_name = request.POST.get('group_name', '')
             if group_name not in ['','默认分组','未分组']:
-                ImageGroup.objects.create(
+                ImageGroup.objects.get_or_create(
                     user = request.user,
                     group_name = group_name
                 )
@@ -1977,8 +2028,28 @@ def search(request):
                 ).order_by("-create_time")
 
         # 搜索标签
-        # elif search_type == 'tag':
-        #     pass
+        elif search_type == 'tag':
+            # 认证用户
+            if is_auth:
+                colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集
+                open_list = [i.id for i in Project.objects.filter(
+                    Q(role=0) | Q(create_user=request.user)
+                )]  # 公开文集
+
+                view_list = list(set(open_list).union(set(colla_list)))  # 合并上述两个文集ID列表
+
+                tag_list = Tag.objects.filter(name__icontains=kw) # 查询符合条件的标签
+                tag_doc_list = [i.doc.id for i in DocTag.objects.filter(tag__in=tag_list)] # 获取符合条件的标签文档
+
+                data_list = Doc.objects.filter(
+                    Q(top_doc__in=view_list),  # 包含用户可浏览到的文集
+                    Q(id__in=tag_doc_list), # 包含符合条件标签的文档ID列表
+                    Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
+                ).order_by('-create_time')
+            # 游客
+            else:
+                pass
+
         else:
             return render(request, 'app_doc/search.html')
 
@@ -1996,6 +2067,7 @@ def search(request):
     # 否则跳转到搜索首页
     else:
         return render(request,'app_doc/search.html')
+
 
 # 文档Markdown文件下载
 @require_http_methods(['GET',"POST"])
@@ -2019,3 +2091,275 @@ def download_doc_md(request,doc_id):
     response.write(doc.pre_content)
 
     return response
+
+
+# 个人中心 - 概览
+@login_required()
+@require_http_methods(['GET'])
+def manage_overview(request):
+    pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+    colla_pro_cnt = ProjectCollaborator.objects.filter(user=request.user).count()
+    total_pro_cnt = pro_list.count() + colla_pro_cnt
+    total_doc_cnt = Doc.objects.filter(create_user=request.user).count()
+    total_tag_cnt = Tag.objects.filter(create_user=request.user).count()
+
+    doc_active_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')[:5]
+
+    return render(request,'app_doc/manage_overview.html',locals())
+
+# 个人中心 - 文档标签
+@login_required()
+@require_http_methods(['GET','POST'])
+def manage_doc_tag(request):
+    if request.method == 'GET':
+        tags = Tag.objects.filter(create_user=request.user)
+        return render(request,'app_doc/manage_doc_tag.html',locals())
+        # 操作分组
+    elif request.method == 'POST':
+        types = request.POST.get('types', None)  # 请求类型，0表示创建标签，1表示修改标签，2表示删除标签，3表示获取标签
+        # 创建分组
+        if int(types) == 0:
+            tag_name = request.POST.get('tag_name', '')
+            if tag_name != '':
+                Tag.objects.create(
+                    user=request.user,
+                    name=tag_name
+                )
+                return JsonResponse({'status': True, 'data': 'ok'})
+            else:
+                return JsonResponse({'status': False, 'data': '名称无效'})
+        # 修改分组
+        elif int(types) == 1:
+            try:
+                tag_name = request.POST.get('tag_name', '')
+                if tag_name != "":
+                    tag_id = request.POST.get('tag_id', '')
+                    if tag_id != "":
+                        print(tag_id,tag_name)
+                        Tag.objects.filter(id=tag_id, create_user=request.user).update(name=tag_name)
+                        return JsonResponse({'status': True, 'data': '修改成功'})
+                    else:
+                        return JsonResponse({'status': False, 'data': '标签ID无效'})
+                else:
+                    return JsonResponse({'status': False, 'data': '名称无效'})
+            except Exception as e:
+                logger.exception("修改异常")
+                return JsonResponse({'status': False, 'data': '异常错误'})
+
+        # 删除分组
+        elif int(types) == 2:
+            try:
+                tag_id = request.POST.get('tag_id', '')
+                tag = Tag.objects.get(id=tag_id, create_user=request.user)  # 查询分组
+                tag.delete()  # 删除标签
+                return JsonResponse({'status': True, 'data': '删除完成'})
+            except:
+                logger.exception("删除标签出错")
+                return JsonResponse({'status': False, 'data': '删除错误'})
+        # 获取分组
+        elif int(types) == 3:
+            try:
+                tag_list = []
+                return JsonResponse({'status': True, 'data': tag_list})
+            except:
+                logger.exception("获取文档标签出错")
+                return JsonResponse({'status': False, 'data': '出现错误'})
+
+
+# 标签文档关系页
+def tag_docs(request,tag_id):
+    # 获取标签
+    try:
+        # 颜色列表
+        color_list = ['#37a2da', '#32c5e9', '#67e0e3', '#9fe6b8', '#ffdb5c', '#ff9f7f', '#fb7293', '#e062ae', '#e062ae']
+        # 获取标签信息
+        tag = Tag.objects.get(id=int(tag_id))
+        # 获取标签的文档信息
+        # 如果访问者已经登录
+        if request.user.is_authenticated:
+            # 判断是否为标签的创建者
+            if request.user == tag.create_user:
+                # 获取标签的所有文档
+                view_list = [i.id for i in Project.objects.filter(create_user=request.user)]
+                docs = DocTag.objects.filter(tag=tag,doc__status=1)
+            else:
+                # 获取有权限的文档
+                colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集
+                open_list = [i.id for i in Project.objects.filter(
+                    Q(role=0) | Q(create_user=tag.create_user)
+                )]  # 公开文集
+
+                view_list = list(set(open_list).union(set(colla_list)))  # 合并上述两个文集ID列表
+                # 查询可浏览文集的文档
+                doc_list = [i for i in Doc.objects.filter(top_doc__in=view_list,status=1)]
+                # 筛选可浏览的文档的标签文档
+                docs = DocTag.objects.filter(tag=tag,doc__in=doc_list)
+
+        else:
+            # 查询标签创建者的公开文集
+            open_list = [i.id for i in Project.objects.filter(
+                role=0,create_user=tag.create_user
+            )]
+            view_list = open_list
+            doc_list = [i for i in Doc.objects.filter(top_doc__in=view_list,status=1)]
+            docs = DocTag.objects.filter(tag=tag,doc__in=doc_list)
+
+        # 获取文档的其他标签信息
+        current_link_list = [] # 文档的所有标签ID列表
+        for doc in docs:
+            other_tags = [str(i.tag.id) for i in DocTag.objects.filter(~Q(tag=tag), doc=doc.doc)]
+            current_link_list.extend(other_tags)
+
+        # 标签的节点列表
+        tag_nodes_list = [
+            # {'id':str(tag.id),'name':tag.name,'symbolSize':50,'value':docs.count(),'itemStyle':{'color':random.choice(color_list)}}
+        ]
+        # 标签的关系列表
+        tag_links_list = []
+        # 标签分类列表
+        tag_cate = []
+
+        # 添加用户创建的所有标签到节点列表
+        for t in Tag.objects.filter(create_user=tag.create_user):
+            tag_cate.append({'name':t.name})
+            if t.name == tag.name:
+                item = {
+                    'id': str(t.id),
+                    'name': t.name,
+                    'symbolSize': 50,
+                    'value': DocTag.objects.filter(tag=t,doc__status=1,doc__top_doc__in=view_list).count(),
+                    'itemStyle': {'color': random.choice(color_list)}
+                }
+            else:
+                item = {
+                    'id':str(t.id),
+                    'name':t.name,
+                    'symbolSize':25,
+                    'value':DocTag.objects.filter(tag=t,doc__status=1,doc__top_doc__in=view_list).count(),
+                    'itemStyle':{'color':random.choice(color_list)}
+                }
+            tag_nodes_list.append(item)
+            # 查询非主标签的关联标签
+            sub_tags = DocTag.objects.filter(tag=t,doc__status=1,doc__top_doc__in=view_list) # 获取包含t标签的文档
+            for sub_tag in sub_tags:
+                sub_docs = DocTag.objects.filter(doc=sub_tag.doc,doc__top_doc__in=view_list) # 获取包含文档的标签
+                for sub_doc in sub_docs:
+                    if str(sub_tag.tag.id) != str(sub_doc.tag.id):
+                        item = {
+                            'source': str(sub_tag.tag.id),
+                            'target': str(sub_doc.tag.id),
+                            'value' : sub_doc.doc.name,
+                            'id': sub_doc.doc.id,
+                            'pid': sub_doc.doc.top_doc,
+                            'label':{
+                                'normal':{
+                                    'show':'true',
+                                    'formatter':"{c}",
+                                    'fontsize':'10px',
+                                }
+                            }
+                        }
+                        item_1 = {
+                            'source': str(sub_doc.tag.id),
+                            'target': str(sub_tag.tag.id),
+                            'value': sub_doc.doc.name,
+                            'id':sub_doc.doc.id,
+                            'pid': sub_doc.doc.top_doc,
+                            'label': {
+                                'normal': {
+                                    'show': 'true',
+                                    'formatter': "{c}",
+                                    'fontsize': '10px',
+                                }
+                            }
+                        }
+                        if item_1 not in tag_links_list:
+                            tag_links_list.append(item)
+
+        return render(request, 'app_doc/tag_docs.html', locals())
+    except Exception as e:
+        logger.exception("标签文档页访问异常")
+        return render(request, '404.html')
+
+
+# 标签文档页
+@require_http_methods(['GET'])
+def tag_doc(request,tag_id,doc_id):
+    try:
+        if tag_id != '' and doc_id != '':
+            doc = Doc.objects.get(id=int(doc_id), status=1)
+            # 获取文档的文集信息，以判断是否有权限访问
+            project = Project.objects.get(id=int(doc.top_doc))
+            # 获取文集的协作用户信息
+            if request.user.is_authenticated:
+                colla_user = ProjectCollaborator.objects.filter(project=project,user=request.user)
+                if colla_user.exists():
+                    colla_user_role = colla_user[0].role
+                    colla_user = colla_user.count()
+                else:
+                    colla_user = colla_user.count()
+            else:
+                colla_user = 0
+
+            # 私密文集且访问者非创建者、协作者 - 不能访问
+            if (project.role == 1) and (request.user != project.create_user) and (colla_user == 0):
+                return render(request, '404.html')
+            # 指定用户可见文集
+            elif project.role == 2:
+                user_list = project.role_value
+                if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
+                    if (request.user.username not in user_list) and \
+                            (request.user != project.create_user) and \
+                            (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
+                        return render(request, '404.html')
+                else:  # 游客直接返回404
+                    return render(request, '404.html')
+            # 访问码可见
+            elif project.role == 3:
+                # 浏览用户不为创建者和协作者 - 需要访问码
+                if (request.user != project.create_user) and (colla_user == 0):
+                    viewcode = project.role_value
+                    viewcode_name = 'viewcode-{}'.format(project.id)
+                    r_viewcode = request.COOKIES[
+                        viewcode_name] if viewcode_name in request.COOKIES.keys() else 0  # 从cookie中获取访问码
+                    if viewcode != r_viewcode:  # cookie中的访问码不等于文集访问码，跳转到访问码认证界面
+                        return redirect('/check_viewcode/?to={}'.format(request.path))
+
+            # 获取文档内容
+            try:
+                # 获取标签信息
+                tag = Tag.objects.get(id=int(tag_id))
+                # 获取标签文档信息
+                docs = DocTag.objects.filter(tag=tag)
+                # 获取文档的标签
+                doc_tags = DocTag.objects.filter(doc=doc)
+            except ObjectDoesNotExist:
+                return render(request, '404.html')
+            return render(request,'app_doc/tag_doc_single.html',locals())
+        else:
+            return HttpResponse('参数错误')
+    except Exception as e:
+        logger.exception("文集浏览出错")
+        return render(request,'404.html')
+
+# 个人中心 - 个人设置
+@login_required()
+def manage_self(request):
+    if request.method == 'GET':
+        user = User.objects.get_by_natural_key(request.user)
+        return render(request,'app_doc/manage_self.html',locals())
+    elif request.method == 'POST':
+        first_name = request.POST.get('first_name','')
+        email = request.POST.get('email',None)
+        user = User.objects.get_by_natural_key(request.user)
+        if User.objects.filter(first_name=first_name).count() > 0 and user.first_name != first_name:
+            return JsonResponse({'status':False,'data':'昵称已被使用'})
+        if User.objects.filter(email=email).count() > 0 and user.email != email:
+            return JsonResponse({'status':False,'data':'电子邮箱已被使用'})
+        if email != '' and '@' in email:
+            user.email = email
+            user.first_name = first_name
+            user.save()
+            return JsonResponse({'status':True,'data':'ok'})
+        else:
+            return JsonResponse({'status':False,'data':'参数不正确'})

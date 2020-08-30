@@ -60,7 +60,7 @@
     transition: opacity .25s linear;
   }
   .bootstrap-tagsinput .badge:hover {
-    background-color: #16a085;
+    background-color: #4d91ff;
     color: white;
     padding-right: 28px;
     padding-left: 14px;
@@ -95,12 +95,12 @@
 }
 
 .tagsinput-primary .bootstrap-tagsinput {
-  border-color: #1abc9c;
+  border-color: #2176ff;
   margin-bottom: 0;
 }
 
 .tagsinput-primary .badge {
-  background-color: #1abc9c;
+  background-color: #2176ff;
   color: white;
 }
-.btn{background: #1ABC9C;border: none;color: #fff;padding: 10px;border-radius: 5px;margin-top: 10px;}
+/* .btn{background: #2176ff;border: none;color: #fff;padding: 10px;border-radius: 5px;margin-top: 10px;} */

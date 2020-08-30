@@ -11,55 +11,7 @@
     {% block custom_link %}
     {% endblock %}
     <style>
-        .layui-btn a{
-            color:white;
-        }
-        /* 左侧菜单栏悬浮样式 */
-        .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover{
-          background-color: #1E9FFF !important;
-        }
-        .layui-nav-tree .layui-nav-bar{
-          background-color: #1E9FFF !important;
-        }
-        /* 顶部菜单栏悬浮样式 */
-        .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after{
-          background-color: #1E9FFF !important;
-        }
-        /* 管理文档文档状态条件筛选 管理图片图片分组筛选 */
-        .doc_status_condition > a.current{
-            color: #000!important;
-        }
-        /* layui分页组件样式 */
-        .layui-laypage .layui-laypage-curr .layui-laypage-em{
-            background-color: #1E9FFF !important;
-        }
-        /* 设置输入框的高度 和layui-btn-sm一致 */
-        .layui-input{
-          height: 30px !important;
-        }
-        /* layui引用文本样式 */
-        .layui-elem-quote{
-          border-left: 5px solid #1E9FFF !important;
-        }
-        /* layui单选框样式 */
-        .layui-form-radio>i:hover, .layui-form-radioed>i{
-          color: #1E9FFF;
-        }
-        .layui-form-select dl dd.layui-this{
-            background-color: #1E9FFF !important;
-        }
-        /* 开关样式 */
-        .layui-form-onswitch{
-          border-color: #1E9FFF;
-          background-color: #1E9FFF;
-        }
-        /* 选项卡样式 */
-        .layui-tab-brief>.layui-tab-title .layui-this{
-          color: #1E9FFF;
-        }
-        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
-          border-bottom: 2px solid #1E9FFF !important;
-        }
+        
     </style>
 </head>
 <body class="layui-layout-body">
@@ -92,22 +44,31 @@
           <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
           <ul class="layui-nav layui-nav-tree"  lay-filter="test">
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'manage_project' %}"><i class="layui-icon layui-icon-list"></i> 文集管理</a>
+              <a href="{% url 'manage_overview' %}"><i class="layui-icon layui-icon-console"></i> 仪表盘</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'manage_doc' %}"><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
+              <a href="{% url 'manage_project' %}"><i class="layui-icon layui-icon-list"></i> 我的文集</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'manage_doctemp' %}"><i class="layui-icon layui-icon-template"></i> 文档模板管理</a>
+              <a href="{% url 'manage_doc' %}"><i class="layui-icon layui-icon-file-b"></i> 我的文档</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'manage_image' %}"><i class="layui-icon layui-icon-picture"></i> 图片素材管理</a>
+              <a href="{% url 'manage_doctemp' %}"><i class="layui-icon layui-icon-template"></i> 文档模板</a>
+            </li>
+            <li class="layui-nav-item layui-nav-itemed">
+              <a href="{% url 'manage_doc_tag' %}"><i class="layui-icon layui-icon-note"></i> 文档标签</a>
+            </li>
+            <li class="layui-nav-item layui-nav-itemed">
+              <a href="{% url 'manage_image' %}"><i class="layui-icon layui-icon-picture"></i> 图片素材</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'manage_attachment' %}"><i class="layui-icon layui-icon-export"></i> 附件管理</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'manage_token' %}"><i class="layui-icon layui-icon-key"></i> Token管理</a>
+              <a href="{% url 'manage_token' %}"><i class="layui-icon layui-icon-key"></i> 账户Token</a>
+            </li>
+            <li class="layui-nav-item layui-nav-itemed">
+              <a href="{% url 'manage_self' %}"><i class="layui-icon layui-icon-username"></i> 个人设置</a>
             </li>
             <li class="layui-nav-item layui-nav-itemed">
               <a href="{% url 'doc_recycle' %}"><i class="layui-icon layui-icon-delete"></i> 文档回收站</a>
@@ -121,7 +82,7 @@
 
       <div class="layui-body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;">{% block content %}{% endblock %}</div>
+        <div style="padding: 25px;">{% block content %}{% endblock %}</div>
       </div>
 
       <div class="layui-footer" style="text-align:center;font-size: 12px;">
@@ -181,13 +142,13 @@
       </ul>
       <div class="layui-tab-content" style="height: 100px;">
         <div class="layui-tab-item layui-show" align='center'>
-          <img src="{% static 'dashang/dashang_wx.jpg' %}" style="width: 300px;height: auto;" />
+          <img src="{% static 'dashang/dashang_wx.webp' %}" style="width: 300px;height: auto;" />
         </div>
         <div class="layui-tab-item" align='center'>
-          <img src="{% static 'dashang/dashang_alipay.jpg' %}" style="width: 300px;height: auto;" />
+          <img src="{% static 'dashang/dashang_alipay.webp' %}" style="width: 300px;height: auto;" />
         </div>
         <div class="layui-tab-item" align='center'>
-          <img src="{% static 'dashang/dashang_qq.png' %}" style="width: 300px;height: auto;" />
+          <img src="{% static 'dashang/dashang_qq.webp' %}" style="width: 300px;height: auto;" />
         </div>
         <div class="layui-tab-item" align='center'>
           <a href="https://paypal.me/zmister" target="_blank">

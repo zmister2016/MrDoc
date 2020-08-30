@@ -23,7 +23,7 @@
                 <input type="text" name="kw" id="kw" placeholder="输入文档标题或内容" autocomplete="off" class="layui-input">
             </div>
             <button class="layui-btn layui-btn-normal layui-btn-xs" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
-            <a href="{% url 'create_doc' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-addition"></i>新建文档</a>
+            <a href="{% url 'create_doc' %}" target="_blank" class="layui-btn layui-btn-primary layui-btn-xs"><i class="layui-icon layui-icon-addition"></i>新建</a>
         </div>
         </form>
         <div class="">
@@ -61,7 +61,7 @@
 
 
     <div class="layui-row" lay-skin="">
-        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
+        <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-even>
       <thead>
         <tr>
             <th>文档名称</th>
@@ -77,11 +77,15 @@
         <tr>
             {% if doc.status == 1 %}
                 <td>
-                    <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} <i class="layui-icon layui-icon-ok-circle" style="color:#01AAED"></i></a>
+                    <img src="{% static 'icon_img/manage-doc-icon.svg' %}" height="20px" width="20px" />
+                    <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} 
+                    </a>
                 </td>
             {% else %}
                 <td>
-                    <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} <i class="layui-icon layui-icon-menu-fill" style="color:#FF5722"></i></a>
+                    <img src="{% static 'icon_img/manage-doc-pre-icon.svg' %}" height="20px" width="20px" />
+                    <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} 
+                    </a>
                     <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="fastPubDoc('{{doc.id}}')">一键发布</button>
                 </td>
             {% endif %}
@@ -91,14 +95,14 @@
             </td>
             <td>{{ doc.create_time }}</td>
             <td>
-                <a href="{% url 'manage_doc_history' doc.id %}" class="layui-btn layui-btn-xs layui-btn-normal">
-                    <i class="layui-icon layui-icon-log"></i> 历史
+                <a href="{% url 'manage_doc_history' doc.id %}" title="查看文档历史" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-log"></i>
                 </a>
-                <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
-                    <i class="layui-icon layui-icon-edit"></i>修改
+                <a href="{% url 'modify_doc' doc_id=doc.id %}" title="修改文档" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-edit"></i>
                 </a>
-                <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
-                    <i class="layui-icon layui-icon-delete"></i>删除
+                <a href="javascript:void(0);" title="删除文档" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                    <i class="layui-icon layui-icon-delete"></i>
                 </a>
             </td>
         </tr>

@@ -40,7 +40,7 @@
             <div class="layui-form-item" style="{% if pro.role == 3 %}{% else %}display:none;{% endif %}" id="role-pwd">
                 <label class="layui-form-label">访问码</label>
                 <div class="layui-input-inline">
-                  <input type="text" name="viewcode"  placeholder="请输入访问码" autocomplete="off" class="layui-input" value="{{pro.role_value}}">
+                  <input type="text" name="viewcode"  placeholder="请输入访问码" autocomplete="off" class="layui-input" value="{% if pro.role_value != None %}{{pro.role_value}}{% endif %}">
                 </div>
                 <div class="layui-form-mid layui-word-aux">不少于4位数</div>
             </div>
@@ -49,7 +49,7 @@
                 <label class="layui-form-label">允许用户</label>
                 <div class="layui-input-block">
                     <div class="tagsinput-primary form-group">
-                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{{pro.role_value}}" placeholder="请输入用户名，回车输入多个用户">
+                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{% if pro.role_value != None %}{{pro.role_value}}{% endif %}" placeholder="请输入用户名，回车输入多个用户">
                         <!--<button class="btn" onClick="getinput()">查询</button>-->
                     </div>
                 </div>

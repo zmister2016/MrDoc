@@ -31,17 +31,17 @@
         </a>
     {% endif %}
     <!-- 文档目录 -->
-    <!-- <div id="toc-container" style="display:none;padding:10px;overflow:auto;"></div> -->
     <div id="toc-container" class='sidebar'></div>
+    
 {% endblock %}
 
 {% block content_head %}
     <h1>{{ doc.name }}</h1><hr>
 
-    <p style="" class="project-doc-content-head">
+    <!-- <p style="" class="project-doc-content-head">
         <i class="fa fa-user"></i> 作者：{{ doc.create_user.username }}
     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i> 最后修改于：{{ doc.modify_time }}
-    </p>
+    </p> -->
 
 {% endblock %}
 
@@ -51,11 +51,35 @@
 {% endblock %}
 
 {% block doc_bottom_block %}
-{% if request.user == doc.create_user or request.user.is_superuser %}
-<button class="layui-btn layui-btn-radius layui-btn-xs" id="download_doc" style="background-color: #333;">
-    <i class="fa fa-download"></i> 下载
-</button>
-{% endif %}
+<div class="layui-row" style="margin-bottom: 10px;padding-left: 20px;">
+    {% if doc_tags.count > 0 %}
+        <i class="fa fa-tag"></i>
+        {% for tag in doc_tags %}
+            <a href="{% url 'tag_docs' tag.tag.id %}" style="font-size: 12px;line-height: 14px;height: 16px;padding: 0 5px;margin-left: 0;">{{tag.tag.name}}</a>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="layui-row layui-col-space20" style="padding-left: 20px;">
+    <span>
+        <i class="fa fa-user"></i> {{ doc.create_user.username }}
+    </span>
+    <span tooltip="更新于:{{doc.modify_time}}">
+        <i class="fa fa-clock-o"></i> {{ doc.modify_time }}
+    </span>
+
+    <button id="share" class="doc-bottom-btn" tooltip="分享本文档">
+        <i class="fa fa-share-alt" ></i> 分享
+    </button>
+
+    {% if request.user == doc.create_user or request.user.is_superuser %}
+    <button class="doc-bottom-btn" tooltip="下载文档Markdown" id="download_doc">
+        <i class="fa fa-download"></i> 下载
+    </button>
+    {% endif %}
+</div>
+
+
 {% endblock %}
 
 {% block doc_previous_next %}
@@ -97,7 +121,7 @@
 <script>
     var layer = layui.layer;
     // 手机屏幕上默认最小化目录
-    if(window.outerWidth < 768){
+    if(window.outerWidth < 1300){
         console.log('最小化目录');
         // setTimeout(function(){
         $(".sidebar").toggleClass("doc-toc-hide");

@@ -52,3 +52,9 @@ def get_img_group_cnt(value):
 def get_project_collaborator_cnt(value):
     cnt = ProjectCollaborator.objects.filter(project=value).count()
     return cnt
+
+# 获取标签的文档数量
+@register.filter(name='tag_doc_cnt')
+def get_img_group_cnt(value):
+    cnt = DocTag.objects.filter(tag=value).count()
+    return cnt

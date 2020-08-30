@@ -15,7 +15,7 @@
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <style>
-        .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after{
+        .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree, .layui-nav-itemed:after {
             background-color: #333 !important;
         }
         .layui-nav .layui-nav-child dd.layui-this a, .layui-nav-child dd.layui-this{
@@ -144,7 +144,7 @@
                         <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #5FB878;"></i> {{ p.name }}</p>
                         {% endif %}
                     </div>
-                  <div class="layui-card-body">
+                  <div class="layui-card-body" style="font-size: 12px;">
                       <p class="layui-word-aux layui-elip">作者：{{p.create_user}}</p>
                       <p class="layui-word-aux layui-elip">最新：{{p.id | get_new_doc}}</p>
                       <p class="tooltip layui-word-aux">简介：
@@ -269,7 +269,7 @@
             //$(window).scroll(positionFooter).resize(positionFooter);
             //设置条件栏选中值
             var url = layui.url();
-            console.log(url)
+            // console.log(url)
             $("#sel-role").val(url.search.role);
             $("#sel-sort").val(url.search.sort);
             layui.form.render('select');
@@ -294,24 +294,24 @@
                 title:'新建文集',
                 area:'300px;',
                 id:'createPro',//配置ID
-                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea"></textarea></div>',
+                content: $('#create-project-div'),
                 btn:['确定','取消'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
-                    layer.load(1);
+                    layer.load(1)
                     data = {
                         'pname':$("#pname").val(),
                         'desc':$("#desc").val(),
+                        'role':$("#project-role").val(),
                     }
                     $.post("{% url 'create_project' %}",data,function(r){
-                        layer.closeAll("loading");
                         if(r.status){
-                            //创建成功，刷新页面
                             window.location.reload();
                         }else{
                             //创建失败，提示
                             console.log(r)
-
+                            layer.closeAll('loading')
+                            layer.msg(r.data)
                         }
                     })
                 },
@@ -397,6 +397,24 @@
             {{ static_code | safe }}
         {% endif %}
     <!-- 统计代码结束 -->
+
+    <!-- 新建文集div块 -->
+    <div style="padding: 20px;display:none;" id="create-project-div">
+        <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required">
+        <textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea>
+        <div class="layui-form-item" style="margin-top:10px;">
+            <label class="layui-form-label" style="text-align:left;padding:9px 0px;">文集权限</label>
+            <div class="layui-input-block">
+                <select name="project-role" lay-verify="" class="layui-select" id="project-role">
+                    <!--<option value="">选择文集权限</option>-->
+                    <option value="0">公开</option>
+                    <option value="1">私密</option>
+                </select>
+            </div>
+        </div>
+        <div style="color:red;font-size:12px;">*在可后台对文集权限进行进一步控制</div>
+    </div>
+    <!-- 结束新建文集div块 -->
 {% endblock %}
 </body>
 </html>

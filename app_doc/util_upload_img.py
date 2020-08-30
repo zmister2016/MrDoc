@@ -17,10 +17,21 @@ def upload_img(request):
     manage_upload = request.FILES.get('manage_upload',None) # 图片管理上传
     dir_name = request.POST.get('dirname','')
     base_img = request.POST.get('base',None)
+    group_id = request.POST.get('group_id',0)
+
+    if int(group_id) not in [0,-1]:
+        try:
+            group_id = ImageGroup.objects.get(id=group_id)
+        except:
+            group_id = None
+    else:
+        group_id = None
+
+    print('分组ID：',group_id)
     if img:# 上传普通图片文件
         result = img_upload(img, dir_name,request.user)
     elif manage_upload:
-        result = img_upload(manage_upload, dir_name, request.user)
+        result = img_upload(manage_upload, dir_name, request.user, group_id=group_id)
     elif base_img: # 上传base64编码图片
         result = base_img_upload(base_img,dir_name,request.user)
     else:
@@ -38,7 +49,7 @@ def upload_generation_dir(dir_name=''):
     return dir_name
 
 # 普通图片上传
-def img_upload(files, dir_name, user):
+def img_upload(files, dir_name, user, group_id=None):
     #允许上传文件类型
     allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp"]
     file_suffix = files.name.split(".")[-1] # 提取图片格式
@@ -61,6 +72,7 @@ def img_upload(files, dir_name, user):
         file_path=file_url,
         file_name=file_name,
         remark='本地上传',
+        group = group_id,
     )
     return {"success": 1, "url": file_url,'message':'上传图片成功'}
 

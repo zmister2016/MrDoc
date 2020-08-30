@@ -1,0 +1,150 @@
+<!-- 继承自模板：app_doc/tag_doc_base.html -->
+{% extends 'app_doc/tag_doc_base.html' %}
+<!-- 引入静态文件 -->
+{% load staticfiles %}
+
+{% block keyword %}{{ tag.name }},{% endblock %}
+{% block title %}标签：{{ tag.name }}{% endblock %}
+
+{% block content_head %}
+    <h1>标签：{{ tag.name }}</h1><hr>
+{% endblock %}
+
+{% block page_content %}
+    <div id="tag-relation-chart" style="max-width: max-content;width: 900px;height: 600px;"></div>
+{% endblock %}
+
+{% block doc_bottom_block %}
+<div class="layui-row layui-col-space20" style="padding-left: 20px;">
+    <span tooltip="标签创建人">
+        <i class="fa fa-user"></i> {{ tag.create_user }}
+    </span>
+
+    <button id="share" class="doc-bottom-btn" tooltip="分享本文档">
+        <i class="fa fa-share-alt" ></i> 分享
+    </button>
+</div>
+
+
+{% endblock %}
+
+
+{% block custom_script %}
+<script src="{% static 'toc/doctoc.js' %}"></script>
+<script src="{% static 'viewerjs/viewer.js' %}"></script>
+<script>
+    var layer = layui.layer;
+    // 手机屏幕上默认最小化目录
+    if(window.outerWidth < 1300){
+        console.log('最小化目录');
+        // setTimeout(function(){
+        $(".sidebar").toggleClass("doc-toc-hide");
+        // },300)
+    }
+    // 切换文档目录显示与否
+    $(".tocMenu").click(function() {
+        console.log("隐藏文档目录")
+        $(".sidebar").toggleClass("doc-toc-hide");
+    });
+    
+    //修改a标签链接新窗口打开
+    $('#content').on('click','a',function(e){
+        e.target.target = '_blank';
+    });
+
+    // 显示文档下载弹出框
+    $("#download_doc").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['350px','150px'],
+            shadeClose: true,
+            content: $('#download_div')
+          });
+    });
+</script>
+
+<!-- 渲染标签关系图 -->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var tagChart = echarts.init(document.getElementById('tag-relation-chart'),null,{renderer: 'svg'});
+    // 指定图表的配置项和数据
+    var option = {
+        // title: {
+        //     text: "标签：{{tag.name}} 文档关系网络图",
+        //     top: "top",
+        //     left: "left"
+        // },
+        tooltip: {},
+        animationDuration: 3000,
+        animationEasingUpdate: 'quinticInOut',
+        series: [{
+            name: '{{tag.name}}',
+            type: 'graph',
+            layout: 'circular',
+
+            force: {
+                repulsion: 300
+            },
+            legend: {
+                type: 'scroll',
+                orient: 'vertical',
+                right: 10,
+                top: 20,
+                bottom: 20,
+                data:{{ tag_cate | safe }},
+            },
+            data:{{ tag_nodes_list | safe }},
+            links:{{ tag_links_list |safe }},
+            categories: {{ tag_cate | safe }},
+            focusNodeAdjacency: true, // 突出显示节点以及节点的边和邻接节点
+            roam: true, // 开启鼠标缩放和平移漫游
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+
+                }
+            },
+            emphasis: { // 高亮的图形样式
+                label: {
+                    position: 'right',
+                    show: true
+                },
+                lineStyle: {
+                    width: 10
+                }
+            },
+            itemStyle: {
+                borderColor: '#fff',
+                borderWidth: 1,
+                shadowBlur: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.3)'
+            },
+            lineStyle: {
+                color: 'source',
+                curveness: 0.3
+            },
+        }]
+    };
+    //点击事件
+    tagChart.on('click', function (params) {
+        console.log(params)
+        if (params.dataType == 'node') {
+            if (params.name != "{{tag.name}}") {
+                window.location = "/tag_docs/" + params.data.id +'/';
+            }
+        }else if(params.dataType == 'edge'){
+            window.open("/project-"+params.data.pid+'/doc-'+params.data.id+'/', '_blank')
+        }
+    });
+
+    // 使用刚指定的配置项和数据显示图表。
+    tagChart.setOption(option);
+</script>
+
+
+
+{% endblock %}

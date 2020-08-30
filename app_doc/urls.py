@@ -43,7 +43,13 @@ urlpatterns = [
     path('manage_image/',views.manage_image,name="manage_image"), # 图片管理
     path('manage_image_group/',views.manage_img_group,name="manage_img_group"), # 图片分组管理
     path('manage_attachment/',views.manage_attachment,name='manage_attachment'), # 附件管理
+    ##############文档标签
+    path('manage_doc_tag/',views.manage_doc_tag,name="manage_doc_tag"), # 文档标签管理
+    path('tag_docs/<int:tag_id>/',views.tag_docs,name="tag_docs"), # 标签文档页
+    path('tag_doc/<int:tag_id>/<int:doc_id>/',views.tag_doc,name="tag_doc"), # 标签文档页
     ################其他功能相关
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
     path('search/',views.search,name="search"), # 搜索功能
+    path('manage_overview/',views.manage_overview,name="manage_overview"), # 个人中心概览
+    path('manage_self/',views.manage_self,name="manage_self"), # 个人设置
 ]

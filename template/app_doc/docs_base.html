@@ -87,9 +87,6 @@
         #url_qrcode img{
             margin: auto;
         }
-        #share{
-            background-color: #333;
-        }
         /* 文档代码块样式 */
         ol.linenums li{ 
             width: max-content;
@@ -224,11 +221,10 @@
                 </div>
                 <hr>
                 <!-- 分享栏 -->
-                <button id="share" class="layui-btn layui-btn-radius layui-btn-xs">
-                    <i class="fa fa-share-alt"></i> 分享
-                </button>
+                <div style="color: rgba(0,0,0,.65);margin-bottom: 10px;margin-top: 10px;">
                 {% block doc_bottom_block %}
                 {% endblock %}
+                </div>
 
                 <!-- 广告代码开始 -->
                 {% if debug %}
@@ -547,15 +543,15 @@
         </ul>
         <div class="layui-tab-content" style="height: 100px;">
           <div class="layui-tab-item layui-show" align='center'>
-            <img src="{% static 'dashang/dashang_wx.jpg' %}" style="width: 300px;height: auto;" />
+            <img src="{% static 'dashang/dashang_wx.webp' %}" style="width: 300px;height: auto;" />
           </div>
 
           <div class="layui-tab-item" align='center'>
-            <img src="{% static 'dashang/dashang_alipay.jpg' %}" style="width: 300px;height: auto;" />
+            <img src="{% static 'dashang/dashang_alipay.webp' %}" style="width: 300px;height: auto;" />
           </div>
           
           <div class="layui-tab-item" align='center'>
-            <img src="{% static 'dashang/dashang_qq.png' %}" style="width: 300px;height: auto;" />
+            <img src="{% static 'dashang/dashang_qq.webp' %}" style="width: 300px;height: auto;" />
           </div>
           
           <div class="layui-tab-item" align='center'>

@@ -1,0 +1,155 @@
+{% extends 'app_doc/manage_base.html' %}
+{% load staticfiles %}
+{% block title %}仪表盘{% endblock %}
+{% block content %}
+    <!-- <div class="layui-card-header" style="margin-bottom: 10px;">
+        <div class="layui-row">
+            <span style="font-size:18px;">个人中心</span>
+        </div>
+    </div> -->
+    <div class="layui-row layui-col-space20">
+        <div class="layui-col-md4">
+            <div class="layui-collapse">
+                <div class="layui-colla-item">
+                  <h2 class="layui-colla-title">概览</h2>
+                  <div class="layui-colla-content layui-show">
+                      <div style="display: flex;justify-content:space-between;color:rgba(0,0,0,.65)">
+                        <div style="font-size: 14px;"><img src="{% static 'icon_img/manage-pro-icon.svg' %}" width="14px;">  {{ total_pro_cnt }}个文集</div>
+                        <div style="font-size: 14px;"><img src="{% static 'icon_img/manage-doc-icon.svg' %}" width="14px;">  {{ total_doc_cnt }}篇文档</div>
+                        <div style="font-size: 14px;"><img src="{% static 'icon_img/manage-tag-icon.svg' %}" width="14px;">  {{ total_tag_cnt }}个标签</div>
+
+                      </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+        <div class="layui-col-md4">
+            <div class="layui-collapse">
+                <div class="layui-colla-item">
+                  <h2 class="layui-colla-title">动态</h2>
+                  <div class="layui-colla-content layui-show">
+                      <div style="color:rgba(0,0,0,.65)">
+                        <table class="layui-table" lay-even lay-skin='nob'>
+                          <tbody>
+                            {% for doc in doc_active_list %}
+                              <tr>
+                                {% if doc.status == 1 %}
+                                <td>{{doc.modify_time}}</td><td><a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></td>
+                                {% elif doc.status == 0 %}
+                                <td>{{doc.modify_time}}</td><td><a href="{% url 'modify_doc' doc.id %}" target="_blank">{{doc.name}}</a></td>
+                                {% endif %}
+                              </tr>
+                                
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        
+                      </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        
+        <div class="layui-col-md4">
+            <div class="layui-collapse">
+                <div class="layui-colla-item">
+                  <h2 class="layui-colla-title">快速草稿</h2>
+                  <div class="layui-colla-content layui-show">
+                    <div class="layui-form">
+                        {% csrf_token %}
+                        <input name="status" value="0" hidden>
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">标题</label>
+                          <div class="layui-input-block">
+                            <input type="text" id="doc_name" name="doc_name" required  lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">文集</label>
+                          <div class="layui-input-block">
+                            <select name="project" id="project" lay-verify="required">
+                                <option value=""></option>
+                                {% for pro in pro_list %}
+                                    {% if pro.role == 0 %}
+                                    <option value="{{pro.id}}">[公开]{{pro.name}}</option>
+                                    {% elif pro.role == 1 %}
+                                    <option value="{{pro.id}}">[私密]{{pro.name}}</option>
+                                    {% elif pro.role == 2 %}
+                                    <option value="{{pro.id}}">[指定用户]{{pro.name}}</option>
+                                    {% elif pro.role == 3 %}
+                                    <option value="{{pro.id}}">[密码]{{pro.name}}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="layui-form-item layui-form-text">
+                          <label class="layui-form-label">文本域</label>
+                          <div class="layui-input-block">
+                            <textarea name="pre_content" id="pre_content" placeholder="在想些什么呢？" class="layui-textarea"></textarea>
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <div class="layui-input-block">
+                            <button class="layui-btn layui-btn-normal" id="save_doc" onclick="manage_overview_save_doc();">保存草稿</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                          </div>
+                        </div>
+                    </div>
+                      <hr>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block custom_script %}
+<script>
+    $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+    // 保存文档草稿
+    manage_overview_save_doc = function(){
+        $('button.layui-btn').attr("disabled",true);
+        $('button.layui-btn').addClass('layui-btn-disabled');
+        var data = {
+            'project':$("#project").val(),
+            'doc_name':$("#doc_name").val(),
+            'pre_content':$("#pre_content").val(),
+            'status':0
+        }
+        console.log(data)
+        if(data.doc_name == ""){
+            layer.msg('请输入文档标题！');
+            $('button.layui-btn').attr("disabled",false);
+            $('button.layui-btn').removeClass('layui-btn-disabled');
+        }
+        else if(data.project == ""){
+            layer.msg('请选择文集！');
+            $('button.layui-btn').attr("disabled",false);
+            $('button.layui-btn').removeClass('layui-btn-disabled');
+        }
+        else{
+            layer.load(1);
+            $.post("{% url 'create_doc' %}",data,function(r){
+                if(r.status){
+                    //保存成功
+                    layer.closeAll("loading");
+                    md_changed = false;
+                    layer.msg('保存草稿成功',function(){
+                        window.location.reload()
+                    });
+                }else{
+                    //创建失败
+                    layer.closeAll("loading");
+                    layer.msg('保存草稿失败:'+r.data);
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
+                }
+            });
+        }
+    };
+</script>
+{% endblock %}

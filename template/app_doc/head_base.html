@@ -29,9 +29,25 @@
         <div class="layui-hide-xs" style="">
             <ul class="layui-nav" style="">
                 <li class="layui-nav-item">
-                    <a href="{% url 'create_doc' %}" target="_blank">
-                        <i class="layui-icon layui-icon-add-1"></i> <span class="">新建文档</span>
+                    <a>
+                        <i class="layui-icon layui-icon-add-circle" style="color:black;"></i> <span>新建</span>
                     </a>
+                    <dl class="layui-nav-child">
+                        {% if request.user.is_authenticated %}
+                        <dd>
+                            <a href="javascript:void(0);" onclick="createPro();">
+                                <img src="{% static 'icon_img/create-pro-icon.svg' %}" height="14px" width="14px"></img>
+                                <span class="layui-hide-xs">新建文集</span>
+                            </a>
+                        </dd>
+                        {% endif %}
+                        <dd>
+                            <a href="{% url 'create_doc' %}" target="_blank">
+                                <img src="{% static 'icon_img/create-doc-icon.svg' %}" height="14px" width="14px"></img>
+                                <span class="layui-hide-xs">新建文档</span>
+                            </a>
+                        </dd>
+                    </dl>
                 </li>
             </ul>
         </div>
@@ -59,7 +75,7 @@
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'manage_doc' %}">
+                        <a href="{% url 'manage_overview' %}">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
                             <span class="layui-hide-xs">个人中心</span>
                         </a>

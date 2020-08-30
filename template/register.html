@@ -30,6 +30,9 @@
         .register-link{
             font-size: 12px;
         }
+        .layui-btn-normal{
+        background-color: #2176ff !important;
+    }
         /* 移动端输入框样式 */
         @media screen and (max-width: 450px){
             .layui-form-item .layui-input-inline {
@@ -56,23 +59,23 @@
                 {% if enable_register_code %}
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
-                      <input type="text" name="register_code" required  lay-verify="required" placeholder="请输入注册码" autocomplete="off" class="layui-input">
+                      <input type="text" name="register_code" required  lay-verify="required" placeholder="请输入注册码" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
                 {% endif %}
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
-                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" value="{{username}}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
-                      <input type="email" name="email" required  lay-verify="required" placeholder="请输入电子邮箱" autocomplete="off" class="layui-input">
+                      <input type="email" name="email" required  lay-verify="required" placeholder="请输入电子邮箱" autocomplete="off" class="layui-input" value="{{email}}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
-                      <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                      <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" value="{{password}}">
                     </div>
                 </div>
                 <div class="layui-form-item">

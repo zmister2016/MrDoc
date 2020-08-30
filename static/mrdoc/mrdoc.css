@@ -289,11 +289,15 @@ li.active > a,li.active > div > a{
     font-family: helvetica neue,Helvetica,Arial,sans-serif;
     overflow: visible;
     height: 50px;
-    padding: 0 8px;
+    padding: 0 8px 0 8px;
     z-index: 2;
     font-size: .85em;
     color: #7e888b;
     background: 0 0;
+    /* 固定在顶部 */
+    /* width: 100%; */
+    /* position: fixed; */
+    /* background-color: #ffffff; */
 }
 .doc-header .btn {
     display: block;
@@ -313,6 +317,7 @@ li.active > a,li.active > div > a{
 }
 .pull-right {
     float: right!important;
+    margin-right: 10px;
 }
 .pull-left {
     float: left!important;
@@ -332,16 +337,17 @@ li.active > a,li.active > div > a{
 .doc-body-content{
     position: relative;
     outline: 0;
+    /* top:50px; */
 }
 .doc-body-content-div{
     position: relative;
-    max-width: 800px;
+    max-width: 960px;
     margin: 0 auto;
     padding: 15px 15px 15px 5px;
 }
 .doc-content{
     outline: 0;
-    max-width: 800px;
+    max-width: 900px;
     flex: 1 1 auto;
     display: block;
     padding: 0;
@@ -428,7 +434,16 @@ li.active > a,li.active > div > a{
 .markdown-body p code,.markdown-body li code,.markdown-body h1 code,.markdown-body h2 code,.markdown-body h3 code,.markdown-body h4 code,.markdown-body h5 code,.markdown-body h6 code{
     border:none !important;
     color:#e91e63 !important;
-    font-family: sans-serif;
+    /* font-family: sans-serif; */
+}
+
+/* 文档底部按钮样式 */
+.doc-bottom-btn{
+    border: none;
+    background-color: #fff;
+    line-height: 14px;
+    height: 14px;
+    color: rgba(0,0,0,.65);
 }
 
 /* 自定义按钮样式 */
@@ -436,6 +451,29 @@ li.active > a,li.active > div > a{
     border-color:#1E9FFF;
     color:#1E9FFF;
 }
+
+/* 编辑器文档标题输入框文字样式 */
+input#doc-name,input#doctemp-name{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 覆盖layUI样式 */
+  .layui-btn{
+    border-radius: 4px;
+  }
+  button.layui-btn-normal,.doctemp-list a.layui-btn-normal{
+    background-color: #2176ff !important;
+  }
+  .layui-btn-primary:hover{
+      color: #2176ff !important;
+      border-color: #2176ff !important;
+  }
+  /* 弹出层按钮 */
+  .layui-layer-btn .layui-layer-btn0{
+    border-color: #2176ff !important;
+    background-color: #2176ff !important;
+  }
 
 /* 文字悬浮提示样式 */
     /* tooltip样式 */
@@ -450,7 +488,7 @@ li.active > a,li.active > div > a{
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding: 8px 15px;
+        padding: 8px 8px;
         max-width: 200px;
         border-radius: 4px;
         box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4);

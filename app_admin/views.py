@@ -14,6 +14,7 @@ from app_admin.models import *
 from app_admin.utils import *
 import traceback
 from loguru import logger
+import re
 
 
 # 返回验证码图片
@@ -98,6 +99,12 @@ def register(request):
                         return render(request, 'register.html', locals())
                     elif username_exit.count() > 0: # 验证用户名
                         errormsg = '用户名已被使用！'
+                        return render(request, 'register.html', locals())
+                    elif re.match('^[0-9a-z]+$',username) is False:
+                        errormsg = '用户名只能为英文数字组合'
+                        return render(request, 'register.html', locals())
+                    elif len(username) < 6:
+                        errormsg = '用户名必须大于等于6位！'
                         return render(request, 'register.html', locals())
                     elif len(password) < 6: # 验证密码长度
                         errormsg = '密码必须大于等于6位！'
@@ -220,11 +227,11 @@ def admin_user(request):
         username = request.POST.get('username','')
         if username == '':
             user_data = User.objects.all().values_list(
-                'id','last_login','is_superuser','username','email','date_joined','is_active'
+                'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
             )
         else:
             user_data = User.objects.filter(username__icontains=username).values_list(
-                'id','last_login','is_superuser','username','email','date_joined','is_active'
+                'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
             )
         table_data = []
         for i in list(user_data):
@@ -235,7 +242,8 @@ def admin_user(request):
                 'username':i[3],
                 'email':i[4],
                 'date_joined':i[5],
-                'is_active':i[6]
+                'is_active':i[6],
+                'first_name':i[7]
             }
             table_data.append(item)
         return JsonResponse({'status':True,'data':table_data})
@@ -251,19 +259,35 @@ def admin_create_user(request):
         username = request.POST.get('username','') # 接收用户名参数
         email = request.POST.get('email','') # 接收email参数
         password = request.POST.get('password','') # 接收密码参数
-        if username != '' and password != '' and email != '' and '@' in email:
+        user_type = request.POST.get('user_type',0) # 用户类型 0为普通用户，1位管理员
+        if username != '' and password != '' and email != '' and \
+                '@' in email and re.match(r'^[0-9a-z]',username) and len(username) >= 6 :
+            # 不允许电子邮箱重复
+            if User.objects.filter(email = email).count() > 0:
+                return JsonResponse({'status':False,'data':'电子邮箱不可重复'})
+            # 不允许重复的用户名
+            if User.objects.filter(username = username).count() > 0:
+                return JsonResponse({'status': False,'data':'用户名不可重复'})
             try:
-                user = User.objects.create_user(
-                    username=username,
-                    password=password,
-                    email=email
-                )
-                user.save()
+                if user_type == 0:
+                    user = User.objects.create_user(
+                        username=username,
+                        password=password,
+                        email=email
+                    )
+                    user.save()
+                elif int(user_type) == 1:
+                    user = User.objects.create_superuser(
+                        username=username,
+                        password=password,
+                        email=email
+                    )
+                    user.save()
                 return JsonResponse({'status':True})
             except Exception as e:
-                return JsonResponse({'status':False})
+                return JsonResponse({'status':False,'data':'系统异常'})
         else:
-            return JsonResponse({'status':False})
+            return JsonResponse({'status':False,'data':'请检查参数'})
     else:
         return HttpResponse('方法不允许')
 

@@ -5,6 +5,7 @@
 # 博客地址：zmister.com
 
 from django.contrib.auth.models import User
+from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -107,10 +108,11 @@ class ProjectView(APIView):
             project_list = Project.objects.filter(
                 Q(create_user=request.user) | \
                 Q(id__in=colla_list)
-            )
-            page = PageNumberPagination()  # 实例化一个分页器
-            page_projects = page.paginate_queryset(project_list, request, view=self)  # 进行分页查询
-            serializer = ProjectSerializer(page_projects, many=True)  # 对分页后的结果进行序列化处理
+            ).order_by('-create_time')
+            # page = PageNumberPagination()  # 实例化一个分页器
+            # page_projects = page.paginate_queryset(project_list, request, view=self)  # 进行分页查询
+            # serializer = ProjectSerializer(page_projects, many=True)  # 对分页后的结果进行序列化处理
+            serializer = ProjectSerializer(project_list, many=True)
             resp = {
                 'code': 0,
                 'data': serializer.data,
@@ -429,9 +431,11 @@ class DocView(APIView):
 
     # 获取文档
     def get(self,request):
-        pro_id = request.query_params.get('pid','')
-        doc_id = request.query_params.get('did','')
+        pro_id = request.query_params.get('pid','') # 文集ID
+        doc_id = request.query_params.get('did','') # 文档ID
+        doc_format = request.query_params.get('type','json') # 返回格式
 
+        # 存在文集ID和文档ID，进行数据库检索
         if pro_id != '' and doc_id != '':
             # 获取文集信息
             project = Project.objects.get(id=int(pro_id))
@@ -472,13 +476,33 @@ class DocView(APIView):
             # 获取文档内容
             try:
                 doc = Doc.objects.get(id=int(doc_id), status=1)
-                serializer = DocSerializer(doc)
-                resp = {'code':0,'data':serializer.data}
-                return Response(resp)
+                if doc_format == 'json':
+                    serializer = DocSerializer(doc)
+                    resp = {'code':0,'data':serializer.data}
+                    return Response(resp)
+                elif doc_format == 'html':
+                    logger.info("返回HTML")
+                    # return Response({'status':'html'})
+                    return render(request,'app_api/single_doc_detail.html',locals())
+                else:
+                    logger.info(doc_format)
             except ObjectDoesNotExist:
                 return Response({'code':4})
+        # 不存在文集ID和文档ID，返回用户自己的文档列表
         else:
-            return Response({'code':4})
+            if request.auth:
+                doc_list = Doc.objects.filter(create_user=request.user,status=1).order_by('-modify_time')
+                page = PageNumberPagination()  # 实例化一个分页器
+                page_docs = page.paginate_queryset(doc_list, request, view=self)  # 进行分页查询
+                serializer = DocSerializer(page_docs, many=True)  # 对分页后的结果进行序列化处理
+                resp = {
+                    'code': 0,
+                    'data': serializer.data,
+                    'count': doc_list.count()
+                }
+                return Response(resp)
+            else:
+                return Response({'code':4})
 
     # 新建文档
     def post(self, request):

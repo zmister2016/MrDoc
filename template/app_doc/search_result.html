@@ -237,9 +237,10 @@
                 <!-- 筛选开始 -->
                 <div class="layui-inline">
                     <!-- 文档搜索 -->
-                    <div class="layui-input-inline">
+                    <div class="layui-input-inline" style="width: inherit;">
                         <a href="{% url 'search' %}?kw={{kw}}&type=doc&d_range={{d_range}}" class="search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>文档</a>
                         <a href="{% url 'search' %}?kw={{kw}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>文集</a>
+                        <a href="{% url 'search' %}?kw={{kw}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>标签</a>
                     </div>
                 </div>
                 <!-- 筛选结束 -->
@@ -313,7 +314,25 @@
                     <a>{{ result.create_user }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
             </div>
         {% endfor %}
+    <!-- 标签搜索结果 -->
+    {% elif search_type == 'tag' %}
+        {% load doc_filter %}
+        {% for result in datas %}
+            <div style="margin-bottom: 18px;">
+                <!-- 标题 -->
+                <h3>
+                    <a href="{% url 'doc' pro_id=result.top_doc doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
+                </h3>
+                <!-- 简介 -->
+                <div class="search_result_pre">{{ result.pre_content|get_key_context:kw }}</div>
+                <!-- 所属文集 -->
+                <p class="search_result_info">
+                    <a href="{% url 'pro_index' pro_id=result.top_doc %}" target="_blank">{{ result.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
+            </div>
+        {% endfor %}
     {% endif %}
+    
+
 
 </div>
 <!-- 主体结束 -->
@@ -417,9 +436,15 @@
             if('{{ search_type }}' == 'doc'){
                 $('#search_doc').addClass('current_search_type')
                 $('#search_project').removeClass('current_search_type')
+                $('#search_tag').removeClass('current_search_type')
             }else if('{{ search_type }}' == 'pro'){
                 $('#search_project').addClass('current_search_type')
                 $('#search_doc').removeClass('current_search_type')
+                $('#search_tag').removeClass('current_search_type')
+            }else if('{{ search_type }}' == 'tag'){
+                $('#search_tag').addClass('current_search_type')
+                $('#search_doc').removeClass('current_search_type')
+                $('#search_project').removeClass('current_search_type')
             }
         }
         tagCurrentSearchType();

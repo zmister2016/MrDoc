@@ -56,3 +56,95 @@
 .opera-img-btn i:hover{
     color:red;
 }
+
+/* 覆盖layUI样式 */
+.layui-layout-admin .layui-body{
+    /* background-color: #f0f2f5; */
+  }
+  .layui-btn a{
+      color:white;
+  }
+  .layui-icon{
+    font-size: 14px;
+  }
+  .layui-btn{
+    border-radius: 4px;
+  }
+  .layui-btn-normal{
+    background-color: #2176ff;
+  }
+  .layui-btn-warm{
+    background-color: #ff213b;
+  }
+  .layui-btn-primary:hover{
+      border-color: #2176ff;
+      color:#2176ff;
+  }
+  /* 左侧菜单栏背景 */
+  .layui-bg-black,.layui-nav {
+      background-color: #23262e!important;
+  }
+  /* 左侧菜单栏悬浮样式 */
+  .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover{
+    background-color: #2176ff !important;
+  }
+  .layui-nav-tree .layui-nav-bar{
+    background-color: #2176ff !important;
+  }
+  /* 顶部菜单栏悬浮样式 */
+  .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after{
+    background-color: #2176ff !important;
+  }
+
+  /* 管理文档文档状态条件筛选 管理图片图片分组筛选 */
+  .doc_status_condition > a.current{
+      color: #000!important;
+  }
+  /* layui分页组件样式 */
+  .layui-laypage .layui-laypage-curr .layui-laypage-em{
+      background-color: #2176ff !important;
+  }
+  /* 设置输入框的高度 和layui-btn-sm一致 */
+  .layui-input{
+    height: 30px !important;
+  }
+  /* layui引用文本样式 */
+  .layui-elem-quote{
+    border-left: 5px solid #2176ff !important;
+  }
+  /* layui单选框样式 */
+  .layui-form-radio>i:hover, .layui-form-radioed>i{
+    color: #2176ff;
+  }
+  .layui-form-select dl dd.layui-this{
+      background-color: #2176ff !important;
+  }
+  /* 开关样式 */
+  .layui-form-onswitch{
+    border-color: #2176ff;
+    background-color: #2176ff;
+  }
+  /* 选项卡样式 */
+  .layui-tab-brief>.layui-tab-title .layui-this{
+    color: #2176ff;
+  }
+  .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
+    border-bottom: 2px solid #2176ff !important;
+  }
+  /* 表格 */
+  table  thead  tr{
+    background-color: #e8ebf0 !important;
+  }
+  /* 弹出层按钮 */
+  .layui-layer-btn .layui-layer-btn0{
+    border-color: #2176ff !important;
+    background-color: #2176ff !important;
+  }
+  /* 分页按钮 */
+  .layui-laypage a:hover {
+    color: #2176ff !important;
+}
+/* 面包屑链接 */
+.layui-breadcrumb a:hover{
+  color: #2176ff !important;
+}

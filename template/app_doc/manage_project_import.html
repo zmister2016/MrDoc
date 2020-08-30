@@ -108,7 +108,17 @@
             layer.msg("文件上传出错")
         }
     });
-    
+    // 上传语雀知识库
+    $("#upload-yuque").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['350px','350px'],
+          });
+    });
+
 </script>
 <!-- 导入的文集文档排序模板div -->
 <style>

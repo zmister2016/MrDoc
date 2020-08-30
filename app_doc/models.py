@@ -105,6 +105,32 @@ class DocTemp(models.Model):
         verbose_name = '文档模板'
         verbose_name_plural = verbose_name
 
+# 标签模板
+class Tag(models.Model):
+    name = models.CharField(verbose_name='标签名',max_length=10)
+    create_user = models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = '标签'
+        verbose_name_plural = verbose_name
+
+# 文档标签
+class DocTag(models.Model):
+    tag = models.ForeignKey(Tag,on_delete=models.CASCADE)
+    doc = models.ForeignKey(Doc,on_delete=models.CASCADE)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "{}-{}".format(self.tag.name,self.doc.name)
+
+    class Meta:
+        verbose_name = '文档标签'
+        verbose_name_plural = verbose_name
+
+
 # 文集导出模型
 class ProjectReport(models.Model):
     project = models.OneToOneField(Project,unique=True,on_delete=models.CASCADE)
@@ -120,7 +146,7 @@ class ProjectReport(models.Model):
         verbose_name_plural = verbose_name
 
 
-# 文集导出文集模型
+# 文集导出文件模型
 class ProjectReportFile(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)  # 外键关联文集
     file_type = models.CharField(choices=(('epub', 'epub'), ('pdf', 'pdf'), ('docx', 'docx')), verbose_name='文件类型',max_length=10)

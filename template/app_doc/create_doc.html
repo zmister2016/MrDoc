@@ -81,19 +81,35 @@
                 </div>
             </div>
         </div>
-
         <hr>
 
-        <div class="layui-row" style="margin-bottom: 10px;">
-            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
-                <i class="fa fa-save"></i> 保存文档为草稿
-            </button>
+        <!-- 标签输入框 -->
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">标签</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="" placeholder="输入标签名">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="layui-row">
-            <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDoc()" id="create_doc" title="发布当前内容">
-                <i class="fa fa-save"></i> 发布文档
-            </button>
+        <!-- 发布按钮 -->
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">发布</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                        <button class="layui-btn layui-btn-primary mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                            <i class="fa fa-save"></i> 保存为草稿
+                        </button>
+                        <button class="layui-btn layui-btn-normal" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                            <i class="fa fa-save"></i> 发布文档
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         
     </div>
@@ -106,7 +122,7 @@
             <!-- 标题 -->
             <div style="padding-bottom:10px;">
                 <div class="layui-input-block" style="margin-left:0px;">
-                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
+                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题……" autocomplete="off" class="layui-input">
                 </div>
             </div>
         </div>
@@ -130,7 +146,6 @@
                 title:'新建文集',
                 area:'300px;',
                 id:'createPro',//配置ID
-                //content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea></div>',
                 content: $('#create-project-div'),
                 btn:['确定','取消'], //添加按钮
                 btnAlign:'c', //按钮居中
@@ -210,6 +225,7 @@
             'project':$("#project").val(),
             'parent_doc':$("#parent-doc").val(),
             'doc_name':$("#doc-name").val(),
+            'doc_tag':$("#tagsinputval").val(),
             'content':editor.getHTML(),//获取editor解析的HTML
             //'content':editor.getPreviewedHTML(),//获取预览的HTML
             'pre_content':editor.getMarkdown(),
@@ -258,6 +274,7 @@
             'project':$("#project").val(),
             'parent_doc':$("#parent-doc").val(),
             'doc_name':$("#doc-name").val(),
+            'doc_tag':$("#tagsinputval").val(),
             'content':editor.getHTML(),
             'pre_content':editor.getMarkdown(),
             'sort':$("#sort").val(),
