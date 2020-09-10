@@ -3523,8 +3523,9 @@
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}">`
                         } else if (tedMatch && tedMatch[1]) {
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
-                        }
-                        // return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                        } else {
+                            return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+			}
                 }
             }
 
