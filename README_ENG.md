@@ -3,13 +3,14 @@
 ![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.8-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
 
 
-![Mrdoc首页](./captrue/mrdoc-index.png)
+![Mrdoc首页](./captrue/mrdoc-index.webp)
 
 <p>Sponsor：
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">WeChat</a>|
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">AliPay</a>|
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>|
+<a href="https://zmister.com/mrdoc/">Home</a>
 </p>
 
 ### Introduce
@@ -21,7 +22,6 @@ Current Platform：
 - Web，[instructions](http://mrdoc.zmister.com/project-7/)；
 - Chrome Extends，[instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
 - Mobile App(developing)
-- Windows、Mac、Linux Desktop GUI(developing)
 - Windows Portable Experience Edition，[instructions](http://mrdoc.zmister.com/project-7/doc-249/)
 
 ### Source Code Address

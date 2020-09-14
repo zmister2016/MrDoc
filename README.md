@@ -2,13 +2,14 @@
 
 ![mrdoc](https://img.shields.io/badge/MrDoc-v0.5.8-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
 
-![Mrdoc首页](./captrue/mrdoc-index.png)
+![Mrdoc首页](./captrue/mrdoc-index.webp)
 
 <p>打赏项目：
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>|
+<a href="https://zmister.com/mrdoc/">官网</a>
 </p>
 
 ### 介绍
@@ -20,7 +21,6 @@
 - Web端，[安装手册](http://mrdoc.zmister.com/project-7/)，[使用手册](http://mrdoc.zmister.com/project-54/)；
 - Chrome扩展，[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
 - App端（开发中）
-- Windows、Mac、Linux桌面端（开发中）
 - Windows免安装体验版，[使用说明](http://mrdoc.zmister.com/project-7/doc-249/)
 
 ### 开源地址
