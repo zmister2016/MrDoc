@@ -28,7 +28,7 @@ def check_code(request):
         img.save(stream, "png")
         # 图片页面中显示,立即把session中的CheckCode更改为目前的随机字符串值
         request.session["CheckCode"] = code
-        return HttpResponse(stream.getvalue())
+        return HttpResponse(stream.getvalue(), content_type="image/png")
     except Exception as e:
         logger.exception("生成验证码图片异常")
         return HttpResponse("请求异常：{}".format(repr(e)))
