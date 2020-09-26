@@ -91,11 +91,11 @@
             if(res.status == 1){
                 window.location.reload();
             }else{
-                layer.msg("上传出错，请重试！")
+                layer.msg(res.data)
             }
         },
         accept: 'file', //允许上传的文件类型
-        exts:'zip', //允许上传zip压缩文件
+        //exts:'zip', //允许上传zip压缩文件
         field:'attachment_upload',
         size: 50000, //最大允许上传的文件大小
 

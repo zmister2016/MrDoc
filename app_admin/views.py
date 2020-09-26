@@ -342,7 +342,7 @@ def admin_project(request):
         search_kw = request.GET.get('kw','')
         if search_kw == '':
             project_list = Project.objects.all().order_by('-create_time')
-            paginator = Paginator(project_list,20)
+            paginator = Paginator(project_list,10)
             page = request.GET.get('page',1)
             try:
                 projects = paginator.page(page)
@@ -352,7 +352,7 @@ def admin_project(request):
                 projects = paginator.page(paginator.num_pages)
         else:
             project_list = Project.objects.filter(intro__icontains=search_kw)
-            paginator = Paginator(project_list, 20)
+            paginator = Paginator(project_list, 10)
             page = request.GET.get('page', 1)
 
             try:
@@ -625,6 +625,7 @@ def admin_setting(request):
             )
 
             return render(request,'app_admin/admin_setting.html',locals())
+        # 邮箱设置
         elif types == 'email':
             # 读取上传的参数
             emailer = request.POST.get("send_emailer",None)
@@ -679,3 +680,47 @@ def admin_setting(request):
                 email_ssl = email_settings.get(name="smtp_ssl")
                 email_pwd = email_settings.get(name="pwd")
             return render(request, 'app_admin/admin_setting.html',locals())
+        # 文档全局设置
+        elif types == 'doc':
+            # iframe白名单
+            iframe_whitelist = request.POST.get('iframe_whitelist','')
+            SysSetting.objects.update_or_create(
+                name = 'iframe_whitelist',
+                defaults = {'value':iframe_whitelist,'types':'doc'}
+            )
+            # 上传图片大小
+            img_size = request.POST.get('img_size', 10)
+            try:
+                if int(img_size) == 0:
+                    img_size = 50
+                else:
+                    img_size = abs(int(img_size))
+            except Exception as e:
+                # print(repr(e))
+                img_size = 10
+            SysSetting.objects.update_or_create(
+                name='img_size',
+                defaults={'value': img_size, 'types': 'doc'}
+            )
+
+            # 附件格式白名单
+            attachment_suffix = request.POST.get('attachment_suffix','')
+            SysSetting.objects.update_or_create(
+                name = 'attachment_suffix',
+                defaults = {'value':attachment_suffix,'types':'doc'}
+            )
+            # 附件大小
+            attachment_size = request.POST.get('attachment_size',50)
+            try:
+                if int(attachment_size) == 0:
+                    attachment_size = 50
+                else:
+                    attachment_size = abs(int(attachment_size))
+            except Exception as e:
+                # print(repr(e))
+                attachment_size = 50
+            SysSetting.objects.update_or_create(
+                name='attachment_size',
+                defaults={'value': attachment_size, 'types': 'doc'}
+            )
+            return render(request, 'app_admin/admin_setting.html', locals())

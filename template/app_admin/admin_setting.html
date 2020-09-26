@@ -13,7 +13,7 @@
           <ul class="layui-tab-title">
             <li class="layui-this">基础设置</li>
             <li>邮箱设置</li>
-            <!--<li>广告设置</li>-->
+            <li>文档设置</li>
           </ul>
           <div class="layui-tab-content">
               <!-- 网站设置 -->
@@ -152,9 +152,60 @@
                 </form>
             </div>
               <!-- 邮箱设置结束 -->
-              <!-- 广告设置 -->
-            <div class="layui-tab-item">内容3</div>
-              <!-- 广告设置结束 -->
+
+              <!-- 全局文档设置 -->
+            <div class="layui-tab-item">
+              <form action="" method="post" class="layui-form">
+                {% csrf_token %}
+                <input type="text" name="type" hidden value="doc">
+                <div class="layui-form-item" style="" id="role-user">
+                    <label class="layui-form-label">ifrme白名单</label>
+                    <div class="layui-input-inline">
+                        <div class="tagsinput-primary form-group">
+                            <input name="iframe_whitelist" id="iframe_whitelist" class="tagsinput" data-role="tagsinput" value="{% if iframe_whitelist != '' %}{{iframe_whitelist}}{% endif %}" placeholder="请输入域名">
+                        </div>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">默认支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站，仅用于EditorMD编辑器模式</div>
+                </div>
+
+                <div class="layui-form-item" style="" id="role-user">
+                  <label class="layui-form-label">图片大小</label>
+                  <div class="layui-input-inline">
+                      <div class="tagsinput-primary form-group">
+                          <input class="layui-input" type="number" name="img_size" id="img_size" value="{% if img_size != '' %}{{img_size}}{% endif %}" placeholder="">
+                      </div>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">默认限制图片大小10MB，单位MB</div>
+                </div>
+
+                <div class="layui-form-item" style="" id="role-user">
+                  <label class="layui-form-label">附件格式</label>
+                  <div class="layui-input-inline">
+                      <div class="tagsinput-primary form-group">
+                          <input name="attachment_suffix" id="attachment_suffix" class="tagsinput" data-role="tagsinput" value="{% if attachment_suffix != '' %}{{attachment_suffix}}{% endif %}" placeholder="不带.号的格式后缀">
+                      </div>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">默认支持.zip文件格式</div>
+                </div>
+
+                <div class="layui-form-item" style="" id="role-user">
+                  <label class="layui-form-label">附件大小</label>
+                  <div class="layui-input-inline">
+                      <div class="tagsinput-primary form-group">
+                          <input class="layui-input" type="number" name="attachment_size" id="attachment_size" value="{% if attachment_size != '' %}{{attachment_size}}{% endif %}" placeholder="">
+                      </div>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">默认限制附件文件大小50MB，单位MB</div>
+                </div>
+    
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="formDemo">保存文档配置</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+              <!-- 全局文档设置结束 -->
           </div>
         </div>
     </div>

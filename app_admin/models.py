@@ -8,13 +8,27 @@ class SysSetting(models.Model):
     value = models.TextField(verbose_name="内容",null=True,blank=True)
     types = models.CharField(verbose_name="类型",max_length=10,default="basic")
 
-
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name = '系统设置'
         verbose_name_plural = verbose_name
+
+
+# 用户选项配置
+class UserOptions(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    # 用户配置的编辑器选项，1表示Editormd编辑器，2表示Vditor编辑器，默认为1
+    editor_mode = models.IntegerField(default=1,verbose_name="编辑器选项")
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name = '用户设置'
+        verbose_name_plural = verbose_name
+
 
 # 电子邮件验证码模型
 class EmaiVerificationCode(models.Model):

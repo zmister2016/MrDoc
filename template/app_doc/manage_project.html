@@ -77,7 +77,10 @@
           <td>
               <a href="javascript:void(0);" title="修改文集" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-xs layui-btn-normal">
                 <i class="layui-icon layui-icon-edit"></i>
-            </a>
+                </a>
+                <!-- <a href="{% url 'modify_project' %}?pro_id={{pro.id}}" title="修改文集" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-edit"></i>
+                    </a> -->
               <a href="javascript:void(0);" title="导出文集" onclick="reportMd('{{pro.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
                 <i class="layui-icon layui-icon-export"></i>
             </a>

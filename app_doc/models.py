@@ -42,6 +42,18 @@ class ProjectCollaborator(models.Model):
         verbose_name = '文集协作'
         verbose_name_plural = verbose_name
 
+# 文集目录模型
+class ProjectToc(models.Model):
+    project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    value = models.TextField(verbose_name="文集文档层级目录")
+
+    def __str__(self):
+        return self.project
+
+    class Meta:
+        verbose_name = '文集目录'
+        verbose_name_plural = verbose_name
+
 # 文档模型
 class Doc(models.Model):
     name = models.CharField(verbose_name="文档标题",max_length=50)
@@ -55,6 +67,8 @@ class Doc(models.Model):
     modify_time = models.DateTimeField(auto_now=True)
     # 文档状态说明：0表示草稿状态，1表示发布状态，2表示删除状态
     status = models.IntegerField(choices=((0,0),(1,1)),default=1,verbose_name='文档状态')
+    # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器
+    editor_mode = models.IntegerField(default=1,verbose_name='编辑器模式')
 
     def __str__(self):
         return self.name

@@ -3484,8 +3484,9 @@
             var begin = "";
             var end = "";
             // console.log(href,title,text)
+            // console.log(iframe_whitelist)
             if(/^=(.*?)/.test(text)){
-                console.log(text)
+                // console.log(text)
                 switch(text){
                     case '=video':
                         if(href.match(/^.+.(mp4|m4v|ogg|ogv|webm)$/)){
@@ -3497,7 +3498,7 @@
                             return "<audio src='"+ href + "' controls='controls'></audio>"
                         }
                         break;
-                    case '=video_iframe':                        
+                    case '=video_iframe':                      
                         const youtubeMatch = href.match(/\/\/(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w|-]{11})(?:(?:[\?&]t=)(\S+))?/);
                         const youkuMatch = href.match(/\/\/v\.youku\.com\/v_show\/id_(\w+)=*\.html/);
                         const qqMatch = href.match(/\/\/v\.qq\.com\/x\/cover\/.*\/([^\/]+)\.html\??.*/);
@@ -3523,7 +3524,14 @@
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}">`
                         } else if (tedMatch && tedMatch[1]) {
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
+                        }else{
+                            for(var i = 0; i< iframe_whitelist.length; i++){
+                                if(href.match(iframe_whitelist[i])){
+                                    return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                                }
+                            }
                         }
+                        break;
                         // return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
                 }
             }
@@ -4130,7 +4138,7 @@
             markdown             : "",
             markdownSourceCode   : false,
             htmlDecode           : false,
-            autoLoadKaTeX        : true,
+            autoLoadKaTeX        : false, // 自动默认加载katex的js
             pageBreak            : true,
             atLink               : true,    // for @link
             emailLink            : true,    // for mail address auto link
@@ -4232,22 +4240,49 @@
         
         if (!editormd.isIE8) 
         {
+            // 渲染流程图
             if (settings.flowChart) {
-                div.find(".flowchart").flowChart(); 
+                var has_flowchart = false;
+                div.find(".flowchart").each(function(){
+                    console.log("渲染流程图");
+                    has_flowchart = true;
+                })
+                if(has_flowchart){
+                    editormd.loadScript('/static/editor.md/lib/flowchart.min',function(){
+                        editormd.loadScript('/static/editor.md/lib/jquery.flowchart.min',function(){
+                            div.find(".flowchart").flowChart(); 
+                        })
+                    })
+                }
             }
-
+            // 渲染时序图
             if (settings.sequenceDiagram) {
-                div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
+                var has_sequence_dia = false;
+                div.find(".sequence-diagram").each(function(){
+                    console.log("渲染时序图");
+                    has_sequence_dia = true;
+                })
+                if(has_sequence_dia){
+                    editormd.loadScript('/static/editor.md/lib/sequence-diagram.min',function(){
+                        div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
+                    })
+                }
+                // div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
             }
         }
 
+        // 渲染公式
         if (settings.tex)
         {
             var katexHandle = function() {
                 div.find("." + editormd.classNames.tex).each(function(){
-                    var tex  = $(this);                    
-                    katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
-                    tex.find(".katex").css("font-size", "1.6em");
+                    var tex  = $(this);
+                    editormd.loadKaTeX(function(){
+                        editormd.$katex      = katex;
+                        editormd.kaTeXLoaded = true;
+                        katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                        tex.find(".katex").css("font-size", "1.6em");
+                    })                    
                 });
             };
             if (settings.autoLoadKaTeX && !editormd.$katex && !editormd.kaTeXLoaded)
@@ -4269,9 +4304,18 @@
             // console.log("前台渲染脑图")
             var mindmapHandle = function(){
                 div.find(".mindmap").each(function(){
+                    console.log("存在脑图")
                     var mmap  = $(this);
-                    var md_data = window.markmap.transform(mmap.text().trim());
-                    window.markmap.markmap("svg#"+this.id,md_data)
+                    var mmap_id = this.id;
+                    editormd.loadScript('/static/mindmap/d3@5',function(){
+                        editormd.loadScript('/static/mindmap/transform.min',function(){
+                            editormd.loadScript('/static/mindmap/view.min',function(){
+                                var md_data = window.markmap.transform(mmap.text().trim());
+                                window.markmap.markmap("svg#"+mmap_id,md_data)
+                            })
+                        })
+                    })
+                    
                 });   
             };
             mindmapHandle();
@@ -4279,20 +4323,26 @@
 
         // 前台渲染 Echart
         if(settings.echart){
-            // console.log("前台解析echart")
             var echartHandle = function(){
                 div.find(".echart").each(function(){
+                    // console.log("存在echart")
                     var echart  = $(this);
-                    if(echart.text() != ''){
-                        var echart_data = eval("(" + echart.text() + ")");
-                        echart.empty();
-                        var myChart = echarts.init(document.getElementById(this.id),null,{renderer: 'svg'});
-                        myChart.setOption(echart_data);
-                    }
+                    var echart_id = this.id
+                    editormd.loadEcharts(
+                        function(){
+                            if(echart.text() != ''){
+                                // console.log("渲染echarts")
+                                var echart_data = eval("(" + echart.text() + ")");
+                                echart.empty();
+                                var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
+                                myChart.setOption(echart_data);
+                            }
+                        }
+                    );
+                    
                 });
             };
             echartHandle();
-            
 
         }
         
@@ -4469,7 +4519,7 @@
      */
     
     editormd.loadEcharts = function (callback) {
-        editormd.loadScript("/static/editor.md/lib/katex.min", callback || function(){});
+        editormd.loadScript("/static/editor.md/lib/echarts.min", callback || function(){});
     };
 
     /**

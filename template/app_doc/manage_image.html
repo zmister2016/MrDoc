@@ -72,7 +72,7 @@
     </div>
 {% endblock %}
 {% block custom_script %}
-<script src="{% static 'viewerjs/viewer.js' %}"></script>
+<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
 <script>
     var form = layui.form;
     var flow = layui.flow;
@@ -213,7 +213,7 @@
             if(res.success == 1){
                 window.location.reload();
             }else{
-                layer.msg("上传出错，请重试！")
+                layer.msg(res.message)
             }
         },
         error:function(){
@@ -223,7 +223,6 @@
         accept: 'images', //允许上传的文件类型
         acceptMime:'image/*',
         field:'manage_upload',
-        size: 5000, //最大允许上传的文件大小
 
     })
 </script>

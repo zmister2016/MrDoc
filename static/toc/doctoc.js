@@ -1,6 +1,7 @@
 (function () {
     'use strict';
     var toc_cnt = $(".markdown-toc-list").children().length;
+    // console.log(toc_cnt)
     if(toc_cnt > 0){
         // console.log('显示文档目录')
         $(".tocMenu").show();
@@ -32,14 +33,19 @@ function initSidebar(sidebarQuery, contentQuery) {
     var scrollFlagTimer
     sidebar.addEventListener('click', function (e) {
         e.preventDefault()
+        console.log(e.target.dataset.id)
         if (e.target.href) {
             scrollFlag = 1
             clearTimeout(scrollFlagTimer)
             scrollFlagTimer = setTimeout(() => scrollFlag = 0, 1500)
             setActive(e.target, sidebar)
             var target = document.getElementById(e.target.getAttribute('href').slice(1))
-            //console.log(e,target)
-            //console.log(e.target.getAttribute('href').slice(1))
+            // console.log(e,target)
+            // console.log(e.target.getAttribute('href').slice(1))
+            target.scrollIntoView({ behavior: 'smooth', block: "start" })
+        }else if(e.target.dataset.id){
+            console.log('vditor目录')
+            var target = document.getElementById(e.target.dataset.id)
             target.scrollIntoView({ behavior: 'smooth', block: "start" })
         }
     });

@@ -1,4 +1,4 @@
-{% extends 'app_doc/create_base_2.html' %}
+{% extends 'app_doc/create_base_vditor.html' %}
 {% load staticfiles %}
 {% block title %}新建文档{% endblock %}
 {% block editor_type %}新建文档{% endblock %}
@@ -20,14 +20,14 @@
 <div class="layui-form" style="padding: 0 10px 10px 10px;">
     <div class="layui-row">
         <div class="layui-btn-container" style="margin-bottom: 0px;">
-                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
+                <!-- <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
                     <i class="fa fa-clipboard"></i> 选择模板
-                </button>
+                </button> -->
 
-                <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
+                <!-- <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
                     <i class="fa fa-upload"></i> 导入文本
-                </button>
+                </button> -->
 
         </div>
 
@@ -227,8 +227,7 @@
             'doc_name':$("#doc-name").val(),
             'doc_tag':$("#tagsinputval").val(),
             'content':editor.getHTML(),//获取editor解析的HTML
-            //'content':editor.getPreviewedHTML(),//获取预览的HTML
-            'pre_content':editor.getMarkdown(),
+            'pre_content':editor.getValue(),
             'sort':$("#sort").val(),
         }
         console.log(data)
@@ -276,7 +275,7 @@
             'doc_name':$("#doc-name").val(),
             'doc_tag':$("#tagsinputval").val(),
             'content':editor.getHTML(),
-            'pre_content':editor.getMarkdown(),
+            'pre_content':editor.getValue(),
             'sort':$("#sort").val(),
             'status':0
         }
@@ -334,6 +333,7 @@
     insertTemp = function(doctemp_id){
         $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
             if(r.status){
+                console.log(r.data)
                 editor.insertValue(r.data);
                 layer.closeAll()
             }else{
@@ -370,8 +370,8 @@
             var xmlDoc;
             xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
             xmlDoc.async = false;
-            xmlDoc.load(input.value);
-            console.log(xmlDoc.xml);
+            // xmlDoc.load(input.value);
+            // console.log(xmlDoc.xml);
             editor.insertValue(xmlDoc.xml);
         }
         //支持FF

@@ -7,6 +7,7 @@
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
     <style>
 
     </style>
@@ -81,7 +82,7 @@
 
       <div class="layui-footer" style="text-align:center;font-size: 12px;">
         <!-- 底部固定区域 -->
-          © <a href="https://gitee.com/zmister/MrDoc" target="_blank">MrDoc 2019-2020</a>&nbsp;-&nbsp;
+          © <a href="https://zmister.com/mrdoc/" target="_blank">MrDoc 2019-2020</a>&nbsp;-&nbsp;
           当前版本：<a href="https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/" target="_blank">{{mrdoc_version}}</a>&nbsp;-&nbsp;
           <a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>&nbsp;-&nbsp;
           <a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a>&nbsp;-&nbsp;
@@ -91,6 +92,7 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
 <script>
     var form = layui.form;
     $.ajaxSetup({

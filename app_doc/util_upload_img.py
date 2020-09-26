@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 import datetime,time,json,base64,os,uuid
 from app_doc.models import Image,ImageGroup
+from app_admin.models import SysSetting
 
 @login_required()
 @csrf_exempt
@@ -27,7 +28,7 @@ def upload_img(request):
     else:
         group_id = None
 
-    print('分组ID：',group_id)
+    # print('分组ID：',group_id)
     if img:# 上传普通图片文件
         result = img_upload(img, dir_name,request.user)
     elif manage_upload:
@@ -35,7 +36,7 @@ def upload_img(request):
     elif base_img: # 上传base64编码图片
         result = base_img_upload(base_img,dir_name,request.user)
     else:
-        result = {"success": 0, "message": "出错信息"}
+        result = {"success": 0, "message": "上传出错"}
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 # 目录创建
@@ -50,12 +51,22 @@ def upload_generation_dir(dir_name=''):
 
 # 普通图片上传
 def img_upload(files, dir_name, user, group_id=None):
-    #允许上传文件类型
+    # 允许上传文件类型
     allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp"]
     file_suffix = files.name.split(".")[-1] # 提取图片格式
     # 判断图片格式
     if file_suffix.lower() not in allow_suffix:
         return {"success": 0, "message": "图片格式不正确"}
+
+    # 判断图片的大小
+    try:
+        allow_image_size = SysSetting.objects.get(types='doc', name='img_size')
+        allow_img_size = int(allow_image_size.value) * 1048576
+    except Exception as e:
+        # print(repr(e))
+        allow_img_size = 10485760
+    if files.size > allow_img_size:
+        return {"success": 0, "message": "图片大小超出{}MB".format(allow_img_size / 1048576)}
 
     relative_path = upload_generation_dir(dir_name)
     file_name = files.name.replace(file_suffix,'').replace('.','') + '_' +str(int(time.time())) + '.' + file_suffix

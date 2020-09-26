@@ -14,8 +14,10 @@ from loguru import logger
 import datetime
 import traceback
 import re
+import json
 import random
 from app_doc.report_utils import *
+from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 import os.path
 
@@ -24,6 +26,80 @@ def validateTitle(title):
   rstr = r"[\/\\\:\*\?\"\<\>\|\[\]]" # '/ \ : * ? " < > |'
   new_title = re.sub(rstr, "_", title) # 替换为下划线
   return new_title
+
+# 获取文集的文档目录
+def get_pro_toc(pro_id):
+    # try:
+    #     project = Project.objects.get(id=pro_id)
+    #     pro_toc = ProjectToc.objects.get(project=project)
+    #     doc_list = json.loads(pro_toc.value)
+    #     print("使用缓存")
+    # except:
+    # print("重新生成")
+    # 查询存在上级文档的文档
+    parent_id_list = Doc.objects.filter(top_doc=pro_id, status=1).exclude(parent_doc=0).values_list('parent_doc',
+                                                                                                    flat=True)
+    # 获取存在上级文档的上级文档ID
+    # print(parent_id_list)
+    doc_list = []
+    n = 0
+    # 获取一级文档
+    top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name').order_by('sort')
+    # 遍历一级文档
+    for doc in top_docs:
+        top_item = {
+            'id': doc['id'],
+            'name': doc['name'],
+            # 'spread': True,
+            # 'level': 1
+        }
+        # 如果一级文档存在下级文档，查询其二级文档
+        if doc['id'] in parent_id_list:
+            # 获取二级文档
+            sec_docs = Doc.objects.filter(
+                top_doc=pro_id, parent_doc=doc['id'], status=1).values('id', 'name').order_by('sort')
+            top_item['children'] = []
+            for doc in sec_docs:
+                sec_item = {
+                    'id': doc['id'],
+                    'name': doc['name'],
+                    # 'level': 2
+                }
+                # 如果二级文档存在下级文档，查询第三级文档
+                if doc['id'] in parent_id_list:
+                    # 获取三级文档
+                    thr_docs = Doc.objects.filter(
+                        top_doc=pro_id, parent_doc=doc['id'], status=1).values('id','name').order_by('sort')
+                    sec_item['children'] = []
+                    for doc in thr_docs:
+                        item = {
+                            'id': doc['id'],
+                            'name': doc['name'],
+                            # 'level': 3
+                        }
+                        sec_item['children'].append(item)
+                        n += 1
+                    top_item['children'].append(sec_item)
+                    n += 1
+                else:
+                    top_item['children'].append(sec_item)
+                    n += 1
+            doc_list.append(top_item)
+            n += 1
+        # 如果一级文档没有下级文档，直接保存
+        else:
+            doc_list.append(top_item)
+            n += 1
+    # 将文集的大纲目录写入数据库
+    # ProjectToc.objects.create(
+    #     project = project,
+    #     value = json.dumps(doc_list)
+    # )
+    # print(doc_list,n)
+    # if n > 999:
+    #     return ([],n)
+    # else:
+    return (doc_list,n)
 
 # 文集列表（首页）
 @logger.catch()
@@ -199,7 +275,6 @@ def create_project(request):
         logger.exception("创建文集出错")
         return JsonResponse({'status':False,'data':'出现异常,请检查输入值！'})
 
-
 # 文集页
 @require_http_methods(['GET'])
 @check_headers
@@ -208,6 +283,9 @@ def project_index(request,pro_id):
     try:
         # 获取文集信息
         project = Project.objects.get(id=int(pro_id))
+        # 获取文集的文档目录
+        toc_list,toc_cnt = get_pro_toc(pro_id)
+        # toc_list,toc_cnt = ([],1000)
         # 获取文集的协作用户信息
         if request.user.is_authenticated: # 对登陆用户查询其协作文档信息
             colla_user = ProjectCollaborator.objects.filter(project=project,user=request.user).count()
@@ -262,24 +340,33 @@ def project_index(request,pro_id):
 
 # 修改文集
 @login_required()
-@require_http_methods(['POST'])
+@require_http_methods(['GET','POST'])
 def modify_project(request):
-    try:
-        pro_id = request.POST.get('pro_id',None)
-        project = Project.objects.get(id=pro_id)
+    if request.method == 'GET':
+        pro_id = request.GET.get('pro_id', None)
+        pro = Project.objects.get(id=pro_id)
         # 验证用户有权限修改文集
-        if (request.user == project.create_user) or request.user.is_superuser:
-            name = request.POST.get('name',None)
-            content = request.POST.get('desc',None)
-            project.name = validateTitle(name)
-            project.intro = content
-            project.save()
-            return JsonResponse({'status':True,'data':'修改成功'})
+        if (request.user == pro.create_user) or request.user.is_superuser:
+            return render(request,'app_doc/manage_project_options.html',locals())
         else:
-            return JsonResponse({'status':False,'data':'非法请求'})
-    except Exception as e:
-        logger.exception("修改文集出错")
-        return JsonResponse({'status':False,'data':'请求出错'})
+            return Http404
+    elif request.method == 'POST':
+        try:
+            pro_id = request.POST.get('pro_id',None)
+            project = Project.objects.get(id=pro_id)
+            # 验证用户有权限修改文集
+            if (request.user == project.create_user) or request.user.is_superuser:
+                name = request.POST.get('name',None)
+                content = request.POST.get('desc',None)
+                project.name = validateTitle(name)
+                project.intro = content
+                project.save()
+                return JsonResponse({'status':True,'data':'修改成功'})
+            else:
+                return JsonResponse({'status':False,'data':'非法请求'})
+        except Exception as e:
+            logger.exception("修改文集出错")
+            return JsonResponse({'status':False,'data':'请求出错'})
 
 
 # 修改文集权限
@@ -529,6 +616,8 @@ def doc(request,pro_id,doc_id):
         if pro_id != '' and doc_id != '':
             # 获取文集信息
             project = Project.objects.get(id=int(pro_id))
+            # 获取文集的文档目录
+            toc_list,toc_cnt = get_pro_toc(pro_id)
             # 获取文集的协作用户信息
             if request.user.is_authenticated:
                 colla_user = ProjectCollaborator.objects.filter(project=project,user=request.user)
@@ -585,13 +674,26 @@ def doc(request,pro_id,doc_id):
 @require_http_methods(['GET',"POST"])
 @logger.catch()
 def create_doc(request):
+    # 获取用户的编辑器模式
+    try:
+        user_opt = UserOptions.objects.get(user=request.user)
+        if user_opt.editor_mode == 1:
+            editor_mode = 1
+        elif user_opt.editor_mode == 2:
+            editor_mode = 2
+    except ObjectDoesNotExist:
+        editor_mode = 1
     if request.method == 'GET':
         try:
             pid = request.GET.get('pid',-999)
             project_list = Project.objects.filter(create_user=request.user) # 自己创建的文集列表
             colla_project_list = ProjectCollaborator.objects.filter(user=request.user) # 协作的文集列表
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
-            return render(request,'app_doc/create_doc.html',locals())
+            # 根据编辑器模式返回不同的模板
+            if editor_mode == 1:
+                return render(request, 'app_doc/create_doc.html', locals())
+            elif editor_mode == 2:
+                return render(request, 'app_doc/create_doc_vditor.html', locals())
         except Exception as e:
             logger.exception("访问创建文档页面出错")
             return render(request,'404.html')
@@ -623,7 +725,8 @@ def create_doc(request):
                                 top_doc= int(project),
                                 sort = sort if sort != '' else 99,
                                 create_user=request.user,
-                                status = status
+                                status = status,
+                                editor_mode = editor_mode
                             )
                             # 设置文档标签
                             for t in doc_tags.split(","):
@@ -653,6 +756,15 @@ def create_doc(request):
 @login_required()
 @require_http_methods(['GET',"POST"])
 def modify_doc(request,doc_id):
+    # 获取用户的编辑器模式
+    try:
+        user_opt = UserOptions.objects.get(user=request.user)
+        if user_opt.editor_mode == 1:
+            editor_mode = 1
+        elif user_opt.editor_mode == 2:
+            editor_mode = 2
+    except ObjectDoesNotExist:
+        editor_mode = 1
     if request.method == 'GET':
         try:
             doc = Doc.objects.get(id=doc_id) # 查询文档信息
@@ -674,7 +786,12 @@ def modify_doc(request,doc_id):
                 doc_list = Doc.objects.filter(top_doc=project.id)
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
                 history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
-                return render(request,'app_doc/modify_doc.html',locals())
+                # 获取用户的编辑器模式
+                if editor_mode == 1:
+                    return render(request, 'app_doc/modify_doc.html', locals())
+                elif editor_mode == 2:
+                    return render(request, 'app_doc/modify_doc_vditor.html', locals())
+
             else:
                 return render(request,'403.html')
         except Exception as e:
@@ -722,7 +839,8 @@ def modify_doc(request,doc_id):
                                 parent_doc=int(parent_doc) if parent_doc != '' else 0,
                                 sort=sort if sort != '' else 99,
                                 modify_time = datetime.datetime.now(),
-                                status = status
+                                status = status,
+                                editor_mode = editor_mode
                             )
                             # 更新文档标签
                             doc_tag_list = doc_tags.split(",") if doc_tags != "" else []
@@ -1196,8 +1314,20 @@ def fast_publish_doc(request):
 @require_http_methods(['GET',"POST"])
 def create_doctemp(request):
     if request.method == 'GET':
+        # 获取用户的编辑器模式
+        try:
+            user_opt = UserOptions.objects.get(user=request.user)
+            if user_opt.editor_mode == 1:
+                editor_mode = 1
+            elif user_opt.editor_mode == 2:
+                editor_mode = 2
+        except ObjectDoesNotExist:
+            editor_mode = 1
         doctemps = DocTemp.objects.filter(create_user=request.user)
-        return render(request,'app_doc/create_doctemp.html',locals())
+        if editor_mode == 1:
+            return render(request,'app_doc/create_doctemp.html',locals())
+        else:
+            return render(request, 'app_doc/create_doctemp_vditor.html', locals())
     elif request.method == 'POST':
         try:
             name = request.POST.get('name','')
@@ -1225,8 +1355,20 @@ def modify_doctemp(request,doctemp_id):
         try:
             doctemp = DocTemp.objects.get(id=doctemp_id)
             if request.user.id == doctemp.create_user.id:
+                # 获取用户的编辑器模式
+                try:
+                    user_opt = UserOptions.objects.get(user=request.user)
+                    if user_opt.editor_mode == 1:
+                        editor_mode = 1
+                    elif user_opt.editor_mode == 2:
+                        editor_mode = 2
+                except ObjectDoesNotExist:
+                    editor_mode = 1
                 doctemps = DocTemp.objects.filter(create_user=request.user)
-                return render(request,'app_doc/modify_doctemp.html',locals())
+                if editor_mode == 1:
+                    return render(request,'app_doc/modify_doctemp.html',locals())
+                else:
+                    return render(request, 'app_doc/modify_doctemp_vditor.html', locals())
             else:
                 return HttpResponse('非法请求')
         except Exception as e:
@@ -1863,6 +2005,7 @@ def manage_attachment(request):
     if request.method == 'GET':
         try:
             search_kw = request.GET.get('kw', None)
+            # 搜索附件
             if search_kw:
                 attachment_list = Attachment.objects.filter(
                     user=request.user,
@@ -1877,6 +2020,7 @@ def manage_attachment(request):
                 except EmptyPage:
                     attachments = paginator.page(paginator.num_pages)
                 attachments.kw = search_kw
+            # 所有附件
             else:
                 attachment_list = Attachment.objects.filter(user=request.user).order_by('-create_time')
                 paginator = Paginator(attachment_list, 15)
@@ -1897,13 +2041,32 @@ def manage_attachment(request):
         if types in ['0',0]:
             attachment = request.FILES.get('attachment_upload',None)
             if attachment:
-                attachment_name = attachment.name
-                attachment_size = sizeFormat(attachment.size)
-                # 限制附件大小在50mb以内
-                if attachment.size > 52428800:
+                attachment_name = attachment.name # 获取附件文件名
+                attachment_size = sizeFormat(attachment.size) # 获取附件文件大小
+
+                # 限制附件大小
+                # 获取系统设置的附件文件大小，如果不存在，默认50MB
+                try:
+                    allow_attachment_size = SysSetting.objects.get(types='doc',name='attachment_size')
+                    allow_attach_size = int(allow_attachment_size.value) * 1048576
+                except Exception as e:
+                    # print(repr(e))
+                    allow_attach_size = 52428800
+                if attachment.size > allow_attach_size:
                     return JsonResponse({'status':False,'data':'文件大小超出限制'})
-                # 限制附件为ZIP格式文件
-                if attachment_name.endswith('.zip'):
+
+                # 限制附件格式
+                # 获取系统设置允许的附件格式，如果不存在，默认仅允许zip格式文件
+                try:
+                    attacement_suffix_list =  SysSetting.objects.get(types='doc',name='attachment_suffix')
+                    attacement_suffix_list = attacement_suffix_list.value.split(',')
+                except ObjectDoesNotExist:
+                    attachment_suffix_list = ['zip']
+                allow_attachment = False
+                for suffix in attacement_suffix_list:
+                    if attachment_name.split('.')[-1] in attacement_suffix_list:
+                        allow_attachment = True
+                if allow_attachment:
                     a = Attachment.objects.create(
                         file_name = attachment_name,
                         file_size = attachment_size,
@@ -2347,11 +2510,18 @@ def tag_doc(request,tag_id,doc_id):
 def manage_self(request):
     if request.method == 'GET':
         user = User.objects.get_by_natural_key(request.user)
+        try:
+            user_opt = UserOptions.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            user_opt = []
         return render(request,'app_doc/manage_self.html',locals())
     elif request.method == 'POST':
-        first_name = request.POST.get('first_name','')
-        email = request.POST.get('email',None)
+        first_name = request.POST.get('first_name','') # 昵称
+        email = request.POST.get('email',None) # 电子邮箱
+        editor_mode = request.POST.get('editor_mode',1) # 编辑器
         user = User.objects.get_by_natural_key(request.user)
+        if len(first_name) < 2 or len(first_name) > 10:
+            return JsonResponse({'status': False, 'data': '昵称长度不得小于2位大于10位'})
         if User.objects.filter(first_name=first_name).count() > 0 and user.first_name != first_name:
             return JsonResponse({'status':False,'data':'昵称已被使用'})
         if User.objects.filter(email=email).count() > 0 and user.email != email:
@@ -2360,6 +2530,10 @@ def manage_self(request):
             user.email = email
             user.first_name = first_name
             user.save()
+            user_opt = UserOptions.objects.update_or_create(
+                user = user,
+                defaults={'editor_mode':editor_mode}
+            )
             return JsonResponse({'status':True,'data':'ok'})
         else:
             return JsonResponse({'status':False,'data':'参数不正确'})

@@ -34,6 +34,19 @@
     </div>
 
     <div class="layui-form-item">
+      <label class="layui-form-label">编辑器</label>
+      <div class="layui-input-block">
+        {% if user_opt.editor_mode == 2 %}
+        <input type="radio" name="editor_mode" value="1" title="EditorMD" >
+        <input type="radio" name="editor_mode" value="2" title="Vditor" checked>
+        {% else %}
+        <input type="radio" name="editor_mode" value="1" title="EditorMD" checked>
+        <input type="radio" name="editor_mode" value="2" title="Vditor" >
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="layui-form-item">
       <div class="layui-input-block">
         <button class="layui-btn layui-btn-normal" onclick="updateUser();">更新个人资料</button>
       </div>
@@ -73,11 +86,13 @@
             },
         })
     };
+    // 更新用户选项
     updateUser = function(){
         layer.load(1)
         data = {
             'first_name':$("#first_name").val(),
             'email':$("#email").val(),
+            'editor_mode':$(':radio[name="editor_mode"]:checked').val()
         }
         $.post("{% url 'manage_self' %}",data,function(r){
             layer.closeAll("loading");

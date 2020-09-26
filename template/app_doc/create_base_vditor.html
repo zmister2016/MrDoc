@@ -13,8 +13,8 @@
     <meta name="description" content="{% block description %}{% endblock %}" />
     <title>{% block title %}{% endblock %} - 觅道文档MrDoc</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
-    <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
+    <link rel="stylesheet" href="{% static 'editor.md/css/font-awesome.min.css' %}?version={{mrdoc_version}}" />
+    <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
@@ -136,9 +136,7 @@
     <div class="doc-summary">
         <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
             <span style="font-size: 14px;">你正在：{% block editor_type %}{% endblock %}</span>
-            <span class="layui-badge layui-bg-cyan" id="wordcount">0</span>
         </div>
-        
         <hr>
         {% block left_opera %}
         {% endblock %}
@@ -178,26 +176,13 @@
     </div>
     <!-- 右侧编辑器结束 -->
 </div>
-<script>
-    // 视频iframe域名白名单
-    var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
-</script>
+
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<!-- <script src="{% static 'editor.md/lib/marked.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/underscore.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script> -->
-<!-- 脑图开始 -->
-<script src="{% static 'mindmap/d3@5.js' %}"></script>
-<script src="{% static 'mindmap/transform.min.js' %}"></script>
-<script src="{% static 'mindmap/view.min.js' %}"></script>
-<!-- 脑图结束 -->
-<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
-<!-- <script src="{% static 'editor.md/editormd.min.js' %}"></script> -->
+
+<script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
+
+
 <script src="{% static 'mrdoc/mrdoc.editor.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
 <!-- 标签输入 -->
@@ -206,7 +191,6 @@
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
-    // console.log('{{ iframe_whitelist }}')
     var tree = layui.tree;
     //加载页面时执行一次
     changeSidebar();
@@ -261,224 +245,157 @@
     var element = layui.element;
     var laypage = layui.laypage;
     var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
-    //初始化editormd
-    var editor = editormd("editor-md", {
-        width       :   "100%",
-        height      :   "800px",
-        placeholder :   "道友，开始吧……",
-        toolbarIcons : function() {
-            return [
-                "undo", "redo", "|",
-                "h1", "bold", "del", "italic", "quote","kaiSpan",  
-                "list-ul", "list-ol", "hr", "link", "reference-link", 
-                "mindmap","echart","imgUpload", "attachment" ,"multimedia","code", "code-block", "htmltable", 
-                "emoji", "html-entities", "pagebreak", 
-                "watch", "preview", 
-                "help"
-            ]
-        },
-        //自定义工具栏添加楷体按钮
-        toolbarIconTexts : {
-            kaiSpan : "楷",
-        },
-        //自定义工具栏添加图片按钮
-        toolbarIconsClass : {
-            imgUpload:'fa-image',
-            attachment:'fa-upload',
-            htmltable:'fa-table',
-            mindmap:'fa-sitemap',
-            echart:'fa-bar-chart',
-            multimedia:'fa-youtube-play',
-        },
-        //设置自定义工具栏按钮的事件
-        toolbarHandlers : {
-            /**
-             * @param {Object}      cm         CodeMirror对象
-             * @param {Object}      icon       图标按钮jQuery元素对象
-             * @param {Object}      cursor     CodeMirror的光标对象，可获取光标所在行和位置
-             * @param {String}      selection  编辑器选中的文本
-             */
-             // 点击“楷”字图标的响应函数
-            kaiSpan : function(cm, icon, cursor, selection) {
-                //var cursor    = cm.getCursor();     //获取当前光标对象，同cursor参数
-                //var selection = cm.getSelection();  //获取当前选中的文本，同selection参数
-                // 替换选中文本，如果没有选中文本，则直接插入
-                cm.replaceSelection('<span style="font-family:楷体">' + selection + "</span>");
-                // 如果当前没有选中的文本，将光标移到要输入的位置
-                if(selection === "") {
-                    cm.setCursor(cursor.line, cursor.ch + 29);
-                }
-                // this == 当前editormd实例
-                //console.log("testIcon =>", this, cm, icon, cursor, selection);
-            },
-            // 上传图片和选择图片
-            imgUpload : function(cm,icon,cursor,selection){
-                layer.ready(function(){
-                  element.init();
-                });
-                layer.open({
-                    type:'1',
-                    title:'添加图片',
-                    area:['800px','600px'],
-                    id:'uploadImg',//配置ID,
-                    content:$('#upload-img'),
-                })
-            },
-            // 上传和选择附件
-            attachment : function(cm,icon,cursor,selection){
-                layer.ready(function(){
-                  element.init();
-                });
-                layer.open({
-                    type:'1',
-                    title:'添加附件',
-                    area:['800px','600px'],
-                    id:'uploadAttach',//配置ID,
-                    content:$('#upload-attach'),
-                    success: function(layero, index){
-                        layer.load(1);
-                        $.post('{% url "manage_attachment" %}',{types:2},function(r){
-                            $("#attach_table tbody").empty()
-                            if(r.status){
-                                //调用分页显示
-                                laypage.render({
-                                    elem: 'select-attach-page',//分页的div
-                                    count: r.data.length, //数据总数
-                                    limit:10, //单页数
-                                    jump: function(obj){
-                                        //渲染HTML
-                                        $("#attach_table tbody").empty();
-                                        var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
-                                        layui.each(thisData, function(k, v){
-                                            var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
-                                            // arr.push(row);
-                                            $("#attach_table tbody").append(row)
-                                        });
-                                    }
-                                });
-                                layer.closeAll("loading");//关闭加载提示
-                            }else{
-                                layer.closeAll("loading");//关闭加载提示
-                                layer.msg("获取附件失败，请稍后重试！")
-                            }
-                        })
+    //初始化vditor
+    var editor = new Vditor('editor-md',{
+        "cdn":"{% static 'vditor' %}",
+        "toolbar": [
+            "emoji",
+            "headings",
+            "bold",
+            "italic",
+            "strike",
+            "link",
+            "|",
+            "list",
+            "ordered-list",
+            "check",
+            "outdent",
+            "indent",
+            "|",
+            "quote",
+            "line",
+            "code",
+            "inline-code",
+            "insert-before",
+            "insert-after",
+            "|",
+            // "upload",
+            {
+                name: 'insert-img',
+                tipPosition: 's',
+                tip: '图片',
+                className: 'right',
+                tipPosition:'nw',
+                icon:'<svg t="1599747832593" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4027" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><defs><style type="text/css"></style></defs><path d="M864.05 128.46H129.97c-17.68 0-32 14.33-32 32v639.61c0 17.67 14.32 32 32 32h734.08c17.68 0 32-14.33 32-32V160.46c0-17.67-14.32-32-32-32z m-32 639.61H161.97V192.46h670.08v575.61z" p-id="4028"></path><path d="M795.58 691.57a32.007 32.007 0 0 1-27.33 15.34H225.77c-12.01 0-23-6.72-28.48-17.4a31.988 31.988 0 0 1 2.5-33.28l125.3-174.17c10.17-14.13 29.78-17.54 44.12-7.67l101.77 70.03 129.73-165.51a31.995 31.995 0 0 1 28.21-12.11 31.99 31.99 0 0 1 25.42 17.2L796.7 660.26a32.018 32.018 0 0 1-1.12 31.31z" p-id="4029"></path><path d="M320.03 321.34a64.03 64.83 0 1 0 128.06 0 64.03 64.83 0 1 0-128.06 0Z" p-id="4030"></path></svg>',
+                click () {
+                    layer.ready(function(){
+                        element.init();
+                    });
+                    layer.open({
+                        type:'1',
+                        title:'添加图片',
+                        area:['800px','600px'],
+                        id:'uploadImg',//配置ID,
+                        content:$('#upload-img'),
+                    })
+                },
+                },
+            // "record",
+            {
+                name: 'insert-attachment',
+                tipPosition: 's',
+                tip: '附件',
+                className: 'right',
+                tipPosition:'nw',
+                icon:'<svg t="1599964518089" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4929" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><defs><style type="text/css"></style></defs><path d="M633.553 251.102c15.993-12.795 38.385-12.795 55.978 1.6 15.993 15.993 15.993 38.384 0 54.378L347.264 647.747c-22.39 20.792-22.39 57.577 0 81.568 20.792 22.391 57.578 22.391 81.568 0l401.444-403.042c55.978-55.979 55.978-148.742 0-204.72s-148.742-55.979-204.72 0l-47.982 47.98-12.795 12.796-369.455 369.455c-91.165 91.165-91.165 236.708 0 327.872 91.164 91.165 236.707 91.165 327.872 0L894.25 511.8c6.397-3.199 9.596-7.997 12.795-12.795 15.993-15.994 38.385-15.994 54.378 0s15.994 38.385 0 54.379l-3.198 3.199c-3.2 1.599-6.398 6.397-9.597 9.596L577.574 934.035c-119.953 119.953-316.676 119.953-436.63 0s-119.952-316.676 0-436.63l430.233-431.83c86.366-86.367 227.111-86.367 315.077 0 86.366 86.366 86.366 227.11 0 315.076L483.21 783.694c-52.78 52.78-139.145 52.78-190.325 0-52.78-52.78-52.78-139.146 0-190.326l340.667-342.266z m0 0" fill="#333333" p-id="4930"></path></svg>',
+                click () {
+                    layer.ready(function(){
+                        element.init();
+                    });
+                    layer.open({
+                        type:'1',
+                        title:'添加附件',
+                        area:['800px','600px'],
+                        id:'uploadAttach',//配置ID,
+                        content:$('#upload-attach'),
+                        success: function(layero, index){
+                            layer.load(1);
+                            $.post('{% url "manage_attachment" %}',{types:2},function(r){
+                                $("#attach_table tbody").empty()
+                                if(r.status){
+                                    //调用分页显示
+                                    laypage.render({
+                                        elem: 'select-attach-page',//分页的div
+                                        count: r.data.length, //数据总数
+                                        limit:10, //单页数
+                                        jump: function(obj){
+                                            //渲染HTML
+                                            $("#attach_table tbody").empty();
+                                            var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                            layui.each(thisData, function(k, v){
+                                                var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                                // arr.push(row);
+                                                $("#attach_table tbody").append(row)
+                                            });
+                                        }
+                                    });
+                                    layer.closeAll("loading");//关闭加载提示
+                                }else{
+                                    layer.closeAll("loading");//关闭加载提示
+                                    layer.msg("获取附件失败，请稍后重试！")
+                                }
+                            })
 
-                    }
-                })
-            },
-            // 添加表格
-            htmltable:function(cm,icon,cursor,selection){
-                layer.ready(function(){
-                  element.init();
-                });
-                layer.open({
-                    type:1,
-                    id:'addTable',
-                    title:'添加表格',
-                    area:['600px','400px'],
-                    content:$("#layer-table"),
-                    btn:['确定','取消'], //添加按钮
-                    yes:function(index,layero){
-                        var current_tab_id = $("#insert-table-div .layui-tab-title .layui-this").attr("lay-id");
-                        console.log(current_tab_id)
-                        //粘贴的表格
-                        if(current_tab_id == 'pasteTable'){
-                            // console.log("插入粘贴的表格")
-                            editor.insertValue("\n" + $("#pasteExcel").val())
-                            layer.close(index)
-                        }else{//创建编辑的表格
-                            try {
-                                var table_md = convertTable("DataTable1")
-                                // console.log(table_md)
-                                editor.insertValue("\n" + table_md);
-                                layer.close(index)
-                            } catch (error) {
-                                layer.msg("请生成表格")
-                            }
                         }
-                        
-                        $("#TableGroup").empty();//清空表格
-                        $("#pasteExcel").val('');
-                        editor.focus();
-                        
-                    },
-                    btn2:function(index,layero){
-                        $("#TableGroup").empty();//清空表格
-                        $("#pasteExcel").val('');
-                        layer.close(index) // 关闭弹出框
-                    }
-                });
+                    })
+                },
             },
-            // 添加思维导图
-            mindmap:function(cm,icon,cursor,selection){
-                cm.replaceSelection('```mindmap\n' + selection + "\n```");
-                if(selection === "") {
-                    cm.setCursor(cursor.line+1, cursor.ch);
-                }
+            "table",
+            "|",
+            "undo",
+            "redo",
+            "|",
+            "fullscreen",
+            "edit-mode",
+            {
+                name: "more",
+                toolbar: [
+                    "both",
+                    "code-theme",
+                    "content-theme",
+                    "export",
+                    "outline",
+                    "preview",
+                    "devtools",
+                    "info",
+                    "help",
+                ],
+            }],
+        "height":800,
+        "width":'100%',
+        "mode":"sv",
+        "placeholder":"道友，开始吧……",
+        "counter":{
+            enable:true, // 启用计数
+        },
+        "cache": {
+            "enable": false, // 禁用缓存
+        },
+        "preview": {
+            "markdown": {
+                "autoSpace": true,// 自动空格
+                "chinesePunct": true,// 矫正标点
+                "mark": true,//Mark标记
             },
-            // 添加echart图
-            echart:function(cm,icon,cursor,selection){
-                cm.replaceSelection('```echart\n' + selection + "\n```");
-                if(selection === "") {
-                    cm.setCursor(cursor.line+1, cursor.ch);
-                }
-            },
-            // 添加音视频
-            multimedia:function(cm,icon,cursor,selection){
-                layer.open({
-                    type:'1',
-                    title:'添加音视频外链',
-                    area:['800px','600px'],
-                    id:'insertMultiMedia',//配置ID,
-                    content:$('#insertMultimedia'),
-                })
+            "hljs":{
+                "lineNumber":true,//代码行号
             }
         },
-        //设置语言
-        lang : {
-            toolbar : {
-                kaiSpan : "添加楷体span标签",
-                imgUpload:"添加图片到文档",
-                attachment:"添加附件",
-                htmltable:"添加表格",
-                mindmap:"添加思维导图",
-                echart:"添加Echarts图表",
-                multimedia:"添加音频、视频",
+        "upload":{
+            fieldName:"editormd-image-file[]",
+            linkToImgUrl:"{% url 'upload_doc_img' %}",
+            linkToImgCallback(responseText){
+                console.log(responseText)
+            },
+            handler(files){
+                console.log(files)
             }
-        },
-        //配置项
-        pageBreak : true, //分页符
-        path        :   "/static/editor.md/lib/",
-        saveHTMLToTextarea : true,
-        atLink      :   false,//禁用@链接
-        tex         :   true,//开启科学公式
-        toc         :   false,// 关闭列表目录
-        tocm        :   false,//关闭下拉目录
-        taskList    :   true,//开启任务列表
-        tocDropdown :   false,
-        emoji       :   true,//开启Emoji
-        flowChart   :   true, //开启流程图
-        sequenceDiagram : true, //开启序列图
-        imageUpload    : true, //开启图片上传
-        codeFold       :true, //代码折叠
-        htmlDecode     : "link,style,script,iframe|on*", //解析部分HTML标签
-        imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-        imageUploadURL : "{% url 'upload_doc_img' %}",
-        onchange:function(){
-            md_changed = true;
-            // console.log("字符数：",this.getMarkdown().length)
-            var wcnt = this.getMarkdown().length;
-            $("#wordcount").text(wcnt);
-        },
-        onload : function() {
-            // this.insertValue(" ")
-            var wcnt = this.getMarkdown().length;
-            $("#wordcount").text(wcnt);
         }
     });
 
     //粘贴上传图片
     $("#editor-md").on('paste', function (ev) {
+        console.log("粘贴上传图片")
         var data = ev.clipboardData;
         var items = (event.clipboardData || event.originalEvent.clipboardData).items;
         for (var index in items) {
@@ -507,11 +424,10 @@
             }
         }
     });
-    
+
     //未保存离开提示
     window.onbeforeunload =function() {
     　　 if(md_changed){
-            //console.log("页面未保存数据")
             return 1;
         }else{
             return null;
@@ -669,7 +585,7 @@
 
 <!-- 选择和上传附件div -->
 <div id="upload-attach" style="display:none;margin:20px;">
-    <span>* 仅支持 {% if attachment_suffix != '' %}{{attachment_suffix}}{% else %}zip{% endif %} 格式文件，文件大小不超过 {% if attachment_size != '' %}{{attachment_size}}{% else %}50{% endif %}MB</span>
+    <span>* 仅支持.zip格式的压缩文件作为附件，文件大小不超过50Mb</span>
     <div style="margin: 10px 0 0 10px;">
         <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload_attachment"><i class="layui-icon layui-icon-upload"></i> 点击上传附件</button>
         <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_attachment' %}" target="_blank"><i class="fa fa-cubes"></i> 管理附件</a>
@@ -801,6 +717,10 @@
                 layer.msg("上传出错，请重试！")
             }
         },
+        error:function(){
+            layer.closeAll('loading'); //关闭loading
+            layer.msg("系统异常，请稍后再试！")
+        },
         accept: 'file', //允许上传的文件类型
         field:'attachment_upload',
     })
@@ -821,7 +741,7 @@
     function looksLikeTable(data) {
         return true
     };
-    // 表格输入框侦听paste粘贴事件
+    // 编辑器侦听paste粘贴事件
     var pasteExcel = document.getElementById('pasteExcel')
     pasteExcel.addEventListener("paste", function(event) {
         console.log('粘贴Excel')

@@ -15,7 +15,11 @@
 
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
-    <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
+    <!-- <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" /> -->
+    {% if doc.editor_mode == 2 %}
+    <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+    {% endif %}
+
     <!-- <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet"> -->
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -56,7 +60,7 @@
             padding-left:15px;
         }
         ul.markdown-toc-list a{
-            text-decoration: underline!important;
+            /* text-decoration: underline!important; */
         }
         /* 块级代码和行内代码去除边框 */
         .markdown-body p code{
@@ -105,6 +109,12 @@
         .layui-tab-brief>.layui-tab-title .layui-this{
             color: #333;
         }
+        /* 覆盖vditor样式 */
+        .vditor-outline__item{
+            padding: 0;
+            padding-bottom: 5px;
+            color: #333;
+        }
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -142,12 +152,55 @@
         </div> -->
         
         <!-- 遍历文集大纲 -->
-        <div style="text-align: center;" id='loading-project-toc'><i class="fa fa-spinner fa-pulse"></i>文集大纲加载中……</div>
-        {% load doc_filter %}
+        <!-- 如果文集的文档数量超过999，使用异步加载文集目录 -->
+        {% if toc_cnt > 999  %}
+            <div style="text-align: center;" id='loading-project-toc'><i class="fa fa-spinner fa-pulse"></i>文集大纲加载中……</div>
+            {% load doc_filter %}
+            <nav>
+                <ul class="summary" id="project-toc"></ul>
+            </nav>
+        
+        {% else %}
+        <!-- 文档数量小于999，使用同步加载文集目录 -->
         <nav>
-            <!-- <div id="project-toc"></div> -->
-            <ul class="summary" id="project-toc"></ul>
+            <ul class="summary">
+            <!-- 一级目录 -->
+            {% for docs in toc_list %}
+                <li>
+                    {% if docs.children %}
+                        <div style="display:flex;justify-content:space-between;">
+                            <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
+                            <i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>
+                        </div>
+                        <ul class="sub-menu toc-close">
+                        <!-- 二级目录 -->
+                        {% for node in docs.children %}
+                            <li>
+                                {% if node.id|get_next_doc %}
+                                    <div style="display:flex;justify-content:space-between;">
+                                        <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
+                                        <i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>
+                                    </div>
+                                    <ul class="sub-menu toc-close">
+                                    <!-- 三级目录 -->
+                                    {% for doc in node.children %}
+                                        <li><a href="{% url 'doc' pro_id=pro_id doc_id=doc.id %}" title="{{doc.name}}">{{ doc.name }}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
         </nav>
+        {% endif %}
         <div class="bq">
             <a href="javascript:void(0);" class="mrdoc-link" id="dashang">本文档使用MrDoc发布</a>
         </div>
@@ -248,13 +301,14 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-
 <!-- 生成文集目录大纲 -->
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
-    // 生成文集目录
+    // 视频iframe域名白名单
+    var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
+    // 异步生成文集目录
     getProjectToc = function(){
         $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
             $("#loading-project-toc").hide();
@@ -302,7 +356,9 @@
             }
         });
     };
-    getProjectToc();
+    {% if toc_cnt > 999 %}
+        getProjectToc();
+    {% endif %}
 
     //为当前页面的目录链接添加蓝色样式
     tagCurrentDoc = function(){
@@ -313,6 +369,7 @@
             if (lochref.indexOf(mehref) != -1) {
                 // console.log($me,lochref,mehref)
                 $me.closest("li").addClass("active");
+                this.scrollIntoView({ behavior: 'auto', block: "start" });
                 //展开当前文档的上级目录
                 $me.parent("li").parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开二级目录
                 $me.parent("div").parent('li').parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开还有子级的二级目录
@@ -324,6 +381,7 @@
             }
         });
     };
+    tagCurrentDoc();
 </script>
 
 <!-- 小屏自动收起左侧文集大纲 -->
@@ -348,42 +406,87 @@
     }
 </script>
 
+{% if doc.editor_mode == 2 %}
+<script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 1 %}
 <script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/echarts.min.js' %}"></script>
+<!-- <script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script> -->
+<!-- <script src="{% static 'editor.md/lib/echarts.min.js' %}"></script> -->
 <!-- 脑图开始 -->
-<script src="{% static 'mindmap/d3@5.js' %}"></script>
-<script src="{% static 'mindmap/transform.min.js' %}"></script>
-<script src="{% static 'mindmap/view.min.js' %}"></script>
+<!-- <script src="{% static 'mindmap/d3@5.js' %}"></script> -->
+<!-- <script src="{% static 'mindmap/transform.min.js' %}"></script> -->
+<!-- <script src="{% static 'mindmap/view.min.js' %}"></script> -->
 <!-- 脑图结束 -->
 
 <!-- <script src="{% static 'editor.md/editormd.min.js' %}?version={{mrdoc_version}}"></script> -->
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+{% endif %}
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 
 
 <!-- 解析Markdown -->
 <script>
-    //解析Markdown为HTML
-    editormd.markdownToHTML("content", {
-        htmlDecode      : "style,script,iframe",
-        emoji           : true,  //emoji表情
-        taskList        : true,  // 任务列表
-        tex             : true,  // 科学公式
-        flowChart       : true,  // 流程图
-        sequenceDiagram : true,  // 时序图
-        tocm            : true, //目录
-        toc             :true,
-        tocContainer : "#toc-container",
-        tocDropdown   : false,
-        atLink    : false,//禁用@链接
+    // EditorMD模式
+    {% if doc.editor_mode == 1 %}
+        //解析Markdown为HTML
+        editormd.markdownToHTML("content", {
+            htmlDecode      : "style,script,iframe",
+            emoji           : true,  //emoji表情
+            taskList        : true,  // 任务列表
+            tex             : true,  // 科学公式
+            flowChart       : true,  // 流程图
+            sequenceDiagram : true,  // 时序图
+            tocm            : true, //目录
+            toc             :true,
+            tocContainer : "#toc-container",
+            tocDropdown   : false,
+            atLink    : false,//禁用@链接
 
-    });
+        });
+    // Vditor模式
+    {% elif doc.editor_mode == 2 %}
+        // 渲染Markdown
+        const initRender = () => {
+            const md_content = $("#content textarea").val()
+            Vditor.preview(document.getElementById('content'),
+            md_content, {
+                speech: {
+                    enable: true,
+                },
+                anchor: 1,
+                after () {
+                    // if (window.innerWidth <= 768) {
+                    //     return
+                    // }
+                    const outlineElement = document.getElementById('toc-container')
+                    var sub_ele = "<div class='markdown-toc editormd-markdown-toc'><ul class='markdown-toc-list'></ul></div>"
+                    $("#toc-container").append(sub_ele)
+                    var toc_elem = $("#toc-container div ul.markdown-toc-list")
+                    Vditor.outlineRender(document.getElementById('content'), toc_elem[0])
+                    if (outlineElement.innerText.trim() !== '') {
+                        // 去除vditor默认添加的空格字符
+                        var toc_html = $("#toc-container");
+                        toc_html.html(toc_html.html().replace('  ',''))
+                        var toc_cnt = $(".markdown-toc-list").children().length;
+                        //console.log(toc_cnt)
+                        if(toc_cnt > 0){
+                            //console.log('显示文档目录')
+                            $(".tocMenu").show();
+                            initSidebar('.sidebar', '.doc-content');
+                        }
+                    }else{
+                        console.log("无目录")
+                    }
+                },
+            })
+        }
+        initRender();
+    {% endif %}
     // 显示分享弹出框
     $("#share").click(function(r){
         var layer = layui.layer;
