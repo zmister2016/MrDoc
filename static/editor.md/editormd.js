@@ -3491,11 +3491,23 @@
                     case '=video':
                         if(href.match(/^.+.(mp4|m4v|ogg|ogv|webm)$/)){
                             return "<video src='"+ href + "' controls='controls' preload width=500></video>"
+                        }else{
+                            for(var i = 0; i< iframe_whitelist.length; i++){
+                                if(href.match(iframe_whitelist[i])){
+                                    return "<video src='"+ href + "' controls='controls' preload width=500></video>"
+                                }
+                            }
                         }
                         break;
                     case '=audio':
                         if(href.match(/^.+.(mp3|wav|flac|m4a)$/)){
                             return "<audio src='"+ href + "' controls='controls'></audio>"
+                        }else{
+                            for(var i = 0; i< iframe_whitelist.length; i++){
+                                if(href.match(iframe_whitelist[i])){
+                                    return "<audio src='"+ href + "' controls='controls'></audio>"
+                                }
+                            }
                         }
                         break;
                     case '=video_iframe':                      
