@@ -20,7 +20,9 @@
 Current Platform：
 
 - Web，[instructions](http://mrdoc.zmister.com/project-7/)；
-- Chrome Extends，[instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
+- Chrome Extends:
+    - [instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
+    - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
 - Mobile App(developing)
 - Windows Portable Experience Edition，[instructions](http://mrdoc.zmister.com/project-7/doc-249/)
 
@@ -49,7 +51,7 @@ You can register, create project and documents. The account can be cleared from 
     
 - **Document System**
     - Document writing and reading are based on the Project, with five modules, namely **project**, **document**, **document template**, **image** and **attachment**;
-    - The `markdown` editor based on `editormd` is used to optimize and extend, and the `markdown` syntax is used for document writing, and image management and uploading, table pasting, mind mapping, flow chart drawing and sequence diagram drawing are supported;
+    - The `markdown` editor based on `editormd` and `vditor` is used to optimize and extend, and the `markdown` syntax is used for document writing, and image management and uploading, table pasting, mind mapping, flow chart drawing and sequence diagram drawing are supported;
     - Two column **document reading** page, three-level directory level display, document reading font scaling, font type switching, page social sharing, mobile reading optimization, text collection export PDF, ePub file;
     - Support the account based `API` interface, which can use the account `token` to get the corpus, upload pictures and create documents through the 'API';
     - Supports the project collaboration function. A project can have one Creator and multiple collaborators, and can flexibly select collaboration permissions;

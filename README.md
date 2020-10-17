@@ -14,12 +14,14 @@
 
 ### 介绍
 
-`MrDoc` 是基于`Python`开发的在线文档系统，适合作为个人和小型团队的文档、知识和笔记管理工具。致力于成为全平台（Web端、桌面端、移动端）的私有化在线文档部署方案。
+`MrDoc` 是基于`Python`开发的在线文档系统，适合作为个人和小型团队的文档、知识和笔记管理工具。致力于成为优秀的私有化在线文档部署方案。
 
 目前涵盖：
 
 - Web端，[安装手册](http://mrdoc.zmister.com/project-7/)，[使用手册](http://mrdoc.zmister.com/project-54/)；
-- Chrome扩展，[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
+- Chrome扩展：
+    - MrDoc官方插件：[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
+    - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
 - App端（开发中）
 - Windows免安装体验版，[使用说明](http://mrdoc.zmister.com/project-7/doc-249/)
 
@@ -48,7 +50,7 @@
     
 - **文档系统**
     - 基于文集进行文档撰写和阅读，拥有**文集**、**文档**、**文档模板**、**图片**和**附件**5大模块；
-    - 使用基于`Editormd`的`Markdown`编辑器优化和扩展，以`Markdown`语法进行文档写作，并支持图片管理和上传、表格粘贴、思维导图绘制、流程图绘制、序列图绘制：
+    - 使用基于`Editormd`和`Vditor`的`Markdown`编辑器优化和扩展，以`Markdown`语法进行文档写作，并支持图片管理和上传、表格粘贴、思维导图绘制、流程图绘制、序列图绘制：
     - 两栏式**文档阅读**页面、三级目录层级显示，文档阅读字体缩放，字体类型切换，页面社交分享，移动端阅读优化、文集导出PDF、EPUB文件；
     - 支持基于账户的**`API`接口**，可以借助账户`token`通过`API`获取文集、上传图片和创建文档；
     - 支持**文集协作**功能，一个文集可以拥有一个创建者和多个协作者，可灵活选择协作权限；
@@ -117,6 +119,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 按照提示输入用户名、电子邮箱地址和密码即可。
+
 ### 5、测试运行
 在完成上述步骤之后，即可运行使用MrDoc。
 
