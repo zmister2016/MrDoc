@@ -1,5 +1,5 @@
 {% extends 'app_doc/manage_base.html' %}
-{% load staticfiles %}
+{% load static %}
 {% block title %}文集管理{% endblock %}
 {% block content %}
     <div class="layui-card-header" style="margin-bottom: 10px;background-color: #fff;">
@@ -53,20 +53,20 @@
                 <a href="{% url 'pro_index' pro_id=pro.id %}" target="_blank" title='{{pro.name}}'>{{ pro.name }}</a>
                 <!-- 文集阅读权限 -->
                 {% if pro.role == 0 %}
-                  <a href="{% url 'modify_pro_role' pro.id %}"  title="公开文集，点击修改权限"><img src="{% static 'icon_img/manage-eye-icon.svg' %}" height="14px" width="14px" /></a>
+                  <a href="javascript:void(0);"  title="公开文集"><img src="{% static 'icon_img/manage-eye-icon.svg' %}" height="14px" width="14px" /></a>
                 {% elif pro.role == 1 %}
-                    <a href="{% url 'modify_pro_role' pro.id %}"  title="私密文集，点击修改权限"><i class="layui-icon layui-icon-password"></i></a>
+                    <a href="javascript:void(0);"  title="私密文集"><i class="layui-icon layui-icon-password"></i></a>
                 {% elif pro.role == 2 %}
-                    <a href="{% url 'modify_pro_role' pro.id %}"  title="指定用户可见，点击修改权限"><i class="layui-icon layui-icon-user"></i></a>
+                    <a href="javascript:void(0);"  title="指定用户可见"><i class="layui-icon layui-icon-user"></i></a>
                 {% elif pro.role == 3 %}
-                    <a href="{% url 'modify_pro_role' pro.id %}"  title="访问码可见，点击修改权限"><i class="layui-icon layui-icon-key"></i></a>
+                    <a href="javascript:void(0);"  title="访问码可见"><i class="layui-icon layui-icon-key"></i></a>
                 {% endif %}
 
                 <!-- 文集前台下载权限 -->
                 {% if pro.id|report_status_epub == 1 or pro.id|report_status_pdf == 1 %}
-                    <a href="{% url 'modify_pro_download' pro.id %}" title="允许前台下载，点击配置"><img src="{% static 'icon_img/manage-download-yes.svg' %}" height="14px" width="14px" /></a>
+                    <a href="javascript:void(0);" title="允许前台下载"><img src="{% static 'icon_img/manage-download-yes.svg' %}" height="14px" width="14px" /></a>
                 {% else %}
-                    <a href="{% url 'modify_pro_download' pro.id %}" title="禁止前台下载，点击配置"><img src="{% static 'icon_img/manage-download-no.svg' %}" height="14px" width="14px" /></a>
+                    <a href="javascript:void(0);" title="禁止前台下载"><img src="{% static 'icon_img/manage-download-no.svg' %}" height="14px" width="14px" /></a>
                 {% endif %}
                 
             </td>
@@ -74,20 +74,20 @@
             <td>{{ pro.id | get_doc_count }}</td>
             <td>{{ pro.create_time }}</td>
             <td>{{ pro.id | project_collaborator_cnt }} <a href="{% url 'manage_pro_colla' pro.id %}"  title="管理文集协作"><i class="layui-icon layui-icon-set"></i></a></td>
-          <td>
-              <a href="javascript:void(0);" title="修改文集" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-xs layui-btn-normal">
-                <i class="layui-icon layui-icon-edit"></i>
-                </a>
-                <!-- <a href="{% url 'modify_project' %}?pro_id={{pro.id}}" title="修改文集" class="layui-btn layui-btn-xs layui-btn-normal">
+            <td>
+                <!-- <a href="javascript:void(0);" title="修改文集" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-xs layui-btn-normal">
                     <i class="layui-icon layui-icon-edit"></i>
-                    </a> -->
-              <a href="javascript:void(0);" title="导出文集" onclick="reportMd('{{pro.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
-                <i class="layui-icon layui-icon-export"></i>
-            </a>
-            <a href="javascript:void(0);" title="删除文集" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                <i class="layui-icon layui-icon-delete"></i>
-            </a>
-          </td>
+                </a> -->
+                <a href="{% url 'modify_project' %}?pro_id={{pro.id}}" title="修改文集配置" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-set"></i>
+                </a>
+                <!-- <a href="javascript:void(0);" title="导出文集" onclick="reportMd('{{pro.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-export"></i>
+                </a>
+                <a href="javascript:void(0);" title="删除文集" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                    <i class="layui-icon layui-icon-delete"></i>
+                </a> -->
+            </td>
         </tr>
         {% endfor %}
       </tbody>

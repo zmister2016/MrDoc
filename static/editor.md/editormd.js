@@ -3853,6 +3853,30 @@
 
                 return "<div class='echart' style='width:100%;min-height:350px;height:"+ custom_height +"px;' id='echart-"+ map_id +"'>"+code+"</div>";
             }
+            else if(/^timeline/i.test(lang)){ // 时间线
+                var time_line = '<ul class="layui-timeline">'
+                // console.log(code)
+                var timeline_code = code.split(/[(\r\n)\r\n]+/);
+                // console.log(timeline_code)
+                timeline_code.forEach(function(item,index){
+                    // console.log(item,index)
+                    if(item.match(/^# /)){ // 时间标题
+                        time_line += '<li class="layui-timeline-item" style="list-style:none;">'
+                        time_line += '<i class="layui-icon layui-timeline-axis">&#xe63f;</i>'
+                        time_line += '<div class="layui-timeline-content layui-text">'
+                        time_line += '<h3 class="layui-timeline-title" style="margin-top:0px;">'
+                        time_line += item.replace('# ','')
+                        time_line += '</h3>'
+                    }else if(/^[=]{4,}$/.test(item)){
+                        time_line += '</div></li>'
+                    }else{
+                        time_line += marked(item)
+                    }
+                })
+
+                time_line += '</ul>'
+                return time_line;
+            }
             else 
             {
                 return marked.Renderer.prototype.code.apply(this, arguments);

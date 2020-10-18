@@ -360,6 +360,8 @@ li.active > a,li.active > div > a{
   font-size: 28px;
   font-weight: 700;
 }
+
+/* 文档右侧悬浮工具 */
 /* 返回顶部 */
 .toTop {
     width: 40px;
@@ -371,14 +373,14 @@ li.active > a,li.active > div > a{
     /*返回顶部标签固定定位*/
     position: fixed;
     right: 35px;
-    bottom: 35px;
+    bottom: 45px;
     z-index: 999;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .toTop:hover {
     background: #eeeeee;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     color: red;
 }
@@ -395,16 +397,31 @@ li.active > a,li.active > div > a{
     right: 35px;
     bottom: 90px;
     z-index: 999;
-    font-size: 14px;
+    font-size: 12px;
 }
-.tocMenu:hover {
+.tocMenu:hover,.shareDoc:hover {
     background: #eeeeee;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     color: red;
 }
 .doc-toc-hide{
     display: none;
+}
+/* 分享按钮 */
+.shareDoc{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f6f6f6;
+    text-align: center;
+    line-height: 40px;
+    /*返回顶部标签固定定位*/
+    position: fixed;
+    right: 35px;
+    bottom: 135px;
+    z-index: 999;
+    font-size: 14px;
 }
 
 /*切换字号*/

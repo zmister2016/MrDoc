@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>用户登录 - MrDoc觅道文档</title>
+	<title>用户登录 - {% if site_name != None %}{{site_name}} {% else %}觅道文档MrDoc{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -59,7 +59,7 @@
             <form class="layui-form" action="{% url 'login' %}"  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h2><strong>登录 - <a href="/">MrDoc</a></strong></h2>
+                    <h2><strong>登录 - <a href="/">{% if site_name != None %}{{site_name}} {% else %}觅道文档{% endif %}</a></strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">

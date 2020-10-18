@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
-	<title>用户注册 - MrDoc</title>
+	<title>用户注册 - {% if site_name != None %}{{site_name}} {% else %}觅道文档MrDoc{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -53,7 +53,7 @@
             <form class="layui-form" action="{% url 'register' %}"  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h2><strong>注册 - MrDoc</strong></h2>
+                    <h2><strong>注册 - {% if site_name != None %}{{site_name}} {% else %}觅道文档{% endif %}</strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 {% if enable_register_code %}

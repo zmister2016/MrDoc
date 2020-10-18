@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -9,9 +9,7 @@
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
-    <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>{% block title %}{% endblock %} - 觅道文档MrDoc</title>
+    <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />

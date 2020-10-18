@@ -21,11 +21,13 @@ from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 import os.path
 
+
 # 替换前端传来的非法字符
 def validateTitle(title):
   rstr = r"[\/\\\:\*\?\"\<\>\|\[\]]" # '/ \ : * ? " < > |'
   new_title = re.sub(rstr, "_", title) # 替换为下划线
   return new_title
+
 
 # 获取文集的文档目录
 def get_pro_toc(pro_id):
@@ -101,16 +103,26 @@ def get_pro_toc(pro_id):
     # else:
     return (doc_list,n)
 
+
 # 文集列表（首页）
 @logger.catch()
 def project_list(request):
     kw = request.GET.get('kw','') # 搜索词
-    sort = request.GET.get('sort',0) # 排序,0表示按时间升序排序，1表示按时间降序排序，默认为0
+    sort = request.GET.get('sort','') # 排序,0表示按时间升序排序，1表示按时间降序排序，''表示按后台配置排序，默认为''
     role = request.GET.get('role',-1) # 筛选文集权限，默认为显示所有可显示的文集
 
     # 是否排序
-    if sort in ['',0,'0']:
+    if sort in [0,'0']:
         sort_str = ''
+    elif sort == '':
+        try:
+            index_project_sort = SysSetting.objects.get(name='index_project_sort')
+            if index_project_sort.value == '-1':
+                sort_str = '-'
+            else:
+                sort_str = ''
+        except:
+            sort_str = ''
     else:
         sort_str = '-'
 
@@ -249,6 +261,7 @@ def project_list(request):
         projects = paginator.page(paginator.num_pages)
     return render(request, 'app_doc/pro_list.html', locals())
 
+
 # 创建文集
 @login_required()
 @require_http_methods(['POST'])
@@ -345,6 +358,7 @@ def modify_project(request):
     if request.method == 'GET':
         pro_id = request.GET.get('pro_id', None)
         pro = Project.objects.get(id=pro_id)
+        project_files = ProjectReportFile.objects.filter(project=pro) # 文集的导出文件列表
         # 验证用户有权限修改文集
         if (request.user == pro.create_user) or request.user.is_superuser:
             return render(request,'app_doc/manage_project_options.html',locals())
@@ -386,27 +400,31 @@ def modify_project_role(request,pro_id):
         elif request.method == 'POST':
             role_type = request.POST.get('role','')
             if role_type != '':
-                if int(role_type) in [0,1]:# 公开或私密
-                    Project.objects.filter(id=int(pro_id)).update(
-                        role = role_type,
-                        modify_time = datetime.datetime.now()
-                    )
-                if int(role_type) == 2: # 指定用户可见
-                    role_value = request.POST.get('tagsinput','')
-                    Project.objects.filter(id=int(pro_id)).update(
-                        role=role_type,
-                        role_value = role_value,
-                        modify_time = datetime.datetime.now()
-                    )
-                if int(role_type) == 3: # 访问码可见
-                    role_value = request.POST.get('viewcode','')
-                    Project.objects.filter(id=int(pro_id)).update(
-                        role=role_type,
-                        role_value=role_value,
-                        modify_time=datetime.datetime.now()
-                    )
-                pro = Project.objects.get(id=int(pro_id))
-                return render(request, 'app_doc/manage_project_role.html', locals())
+                try:
+                    if int(role_type) in [0,1]:# 公开或私密
+                        Project.objects.filter(id=int(pro_id)).update(
+                            role = role_type,
+                            modify_time = datetime.datetime.now()
+                        )
+                    if int(role_type) == 2: # 指定用户可见
+                        role_value = request.POST.get('tagsinput','')
+                        Project.objects.filter(id=int(pro_id)).update(
+                            role=role_type,
+                            role_value = role_value,
+                            modify_time = datetime.datetime.now()
+                        )
+                    if int(role_type) == 3: # 访问码可见
+                        role_value = request.POST.get('viewcode','')
+                        Project.objects.filter(id=int(pro_id)).update(
+                            role=role_type,
+                            role_value=role_value,
+                            modify_time=datetime.datetime.now()
+                        )
+                    pro = Project.objects.get(id=int(pro_id))
+                    # return render(request, 'app_doc/manage_project_role.html', locals())
+                    return JsonResponse({'status':True,'data':'ok'})
+                except:
+                    return JsonResponse({'status':False,'data':'出错'})
             else:
                 return Http404
 
@@ -528,7 +546,8 @@ def modify_project_download(request,pro_id):
             ProjectReport.objects.update_or_create(
                 project=pro, defaults={'allow_pdf': pdf_status}
             )
-            return render(request,'app_doc/manage_project_download.html',locals())
+            # return render(request,'app_doc/manage_project_download.html',locals())
+            return JsonResponse({'status':True,'data':'ok'})
 
 
 # 文集协作管理
@@ -607,6 +626,38 @@ def manage_project_collaborator(request,pro_id):
 def manage_pro_colla_self(request):
     colla_pros = ProjectCollaborator.objects.filter(user=request.user)
     return render(request,'app_doc/manage_project_self_colla.html',locals())
+
+
+# 转让文集
+@login_required()
+@require_http_methods(['GET',"POST"])
+def manage_project_transfer(request,pro_id):
+    try:
+        pro = Project.objects.get(id=pro_id)
+    except ObjectDoesNotExist:
+        return Http404
+    if (pro.create_user != request.user) and (request.user.is_superuser is False):
+        return render(request,'403.html')
+    else:
+        if request.method == 'GET':
+            user_list = User.objects.filter(~Q(username=request.user.username))
+            return render(request,'app_doc/manage_project_transfer.html',locals())
+        elif request.method == 'POST':
+            user_name = request.POST.get('username',None)
+            try:
+                transfer_user = User.objects.get(username=user_name)
+                init_user = pro.create_user
+                # 修改文集的创建者
+                pro.create_user = transfer_user
+                pro.save()
+                # 修改文集文档的创建者
+                Doc.objects.filter(create_user=init_user,top_doc=pro_id).update(
+                    create_user=transfer_user
+                )
+                return JsonResponse({'status':True,'data':'ok'})
+
+            except:
+                return JsonResponse({'status':False,'data':'用户不存在'})
 
 
 # 文档浏览页
@@ -898,8 +949,11 @@ def del_doc(request):
                     colla_user_role = 0
             except ObjectDoesNotExist:
                 return JsonResponse({'status': False, 'data': '文档不存在'})
-            # 如果请求用户为文档创建者、高级权限的协作者、文集的创建者，可以删除
-            if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
+            # 如果请求用户为站点管理员、文档创建者、高级权限的协作者、文集的创建者，可以删除
+            if (request.user == doc.create_user) \
+                    or (colla_user_role == 1) \
+                    or (request.user == project.create_user)\
+                    or (request.user.is_superuser):
                 # 修改状态为删除
                 doc.status = 3
                 doc.modify_time = datetime.datetime.now()
@@ -1308,6 +1362,7 @@ def fast_publish_doc(request):
             return JsonResponse({'status':False,'data':'发布失败'})
     else:
         return JsonResponse({'status':False,'data':'非法请求'})
+
 
 # 创建文档模板
 @login_required()
@@ -2158,14 +2213,14 @@ def search(request):
                 data_list = Doc.objects.filter(
                     Q(top_doc__in=view_list),  # 包含用户可浏览到的文集
                     Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
-                    Q(name__icontains=kw) | Q(content__icontains=kw)  # 筛选文档标题和内容中包含搜索词
+                    Q(name__icontains=kw) | Q(content__icontains=kw) | Q(pre_content__icontains=kw)  # 筛选文档标题和内容中包含搜索词
                 ).order_by('-create_time')
             else:
                 view_list = [i.id for i in Project.objects.filter(role=0)]
                 data_list = Doc.objects.filter(
                     Q(top_doc__in=view_list),
                     Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
-                    Q(name__icontains=kw) | Q(content__icontains=kw)  # 筛选文档标题和内容中包含搜索词
+                    Q(name__icontains=kw) | Q(content__icontains=kw) | Q(pre_content__icontains=kw)  # 筛选文档标题和内容中包含搜索词
                 ).order_by('-create_time')
 
         # 搜索文集

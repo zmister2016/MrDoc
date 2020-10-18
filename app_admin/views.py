@@ -564,16 +564,27 @@ def admin_setting(request):
         types = request.POST.get('type',None)
         # 基础设置
         if types == 'basic':
+            site_name = request.POST.get('site_name',None) # 站点名称
+            site_sub_name = request.POST.get('site_sub_name', None)  # 站点子标题
+            site_keywords = request.POST.get('site_keywords', None)  # 站点关键词
+            site_desc = request.POST.get('site_desc', None)  # 站点描述
+            beian_code = request.POST.get('beian_code', None)  # 备案号
+            index_project_sort = request.POST.get('index_project_sort','1') # 首页文集默认排序
             close_register = request.POST.get('close_register',None) # 禁止注册
             require_login = request.POST.get('require_login',None) # 全站登录
             static_code = request.POST.get('static_code',None) # 统计代码
             ad_code = request.POST.get('ad_code',None) # 广告位1
             ad_code_2 = request.POST.get('ad_code_2',None) # 广告位2
             ad_code_3 = request.POST.get('ad_code_3', None)  # 广告位3
-            beian_code = request.POST.get('beian_code',None) # 备案号
             enbale_email = request.POST.get("enable_email",None) # 启用邮箱
+            img_scale = request.POST.get('img_scale',None) # 图片缩略
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
             enable_project_report = request.POST.get('enable_project_report',None) # 文集导出
+            # 更新首页文集默认排序
+            SysSetting.objects.update_or_create(
+                name='index_project_sort',
+                defaults={'value': index_project_sort, 'types': 'basic'}
+            )
             # 更新开放注册状态
             SysSetting.objects.update_or_create(
                 name='require_login',
@@ -607,6 +618,32 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name='beian_code',
                 defaults={'value':beian_code,'types':'basic'}
+            )
+            # 更新站点名称
+            SysSetting.objects.update_or_create(
+                name='site_name',
+                defaults={'value': site_name, 'types': 'basic'}
+            )
+            # 更新站点子标题
+            SysSetting.objects.update_or_create(
+                name='site_sub_name',
+                defaults={'value': site_sub_name, 'types': 'basic'}
+            )
+            # 更新站点关键词
+            SysSetting.objects.update_or_create(
+                name='site_keywords',
+                defaults={'value': site_keywords, 'types': 'basic'}
+            )
+            # 更新站点描述
+            SysSetting.objects.update_or_create(
+                name='site_desc',
+                defaults={'value': site_desc, 'types': 'basic'}
+            )
+
+            # 更新图片缩略状态
+            SysSetting.objects.update_or_create(
+                name='img_scale',
+                defaults={'value': img_scale, 'types': 'basic'}
             )
             # 更新邮箱启用状态
             SysSetting.objects.update_or_create(

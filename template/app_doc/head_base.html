@@ -57,7 +57,8 @@
                 {% if request.user.is_authenticated %}
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">
-                    <i class="layui-icon layui-icon-friends"></i> <span class="layui-hide-xs">{{request.user.username}}</span>
+                    <i class="layui-icon layui-icon-friends"></i> 
+                    <span class="layui-hide-xs">{% if request.user.first_name != '' %} {{request.user.first_name}} {% else %} {{request.user.username}}{% endif %}</span>
                 </a>
                 <dl class="layui-nav-child">
                 <!-- <dd><a href="">基本资料</a></dd> -->

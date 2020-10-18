@@ -1,5 +1,5 @@
 {% extends 'app_admin/admin_base.html' %}
-{% load staticfiles %}
+{% load static %}
 {% block title %}文集管理{% endblock %}
 {% block content %}
     <div class="layui-card-header" style="margin-bottom: 10px;">
@@ -23,9 +23,9 @@
         <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-size='' lay-even>
             <colgroup>
                 <col width="90">
-                <col width="120">
+                <col width="100">
                 <col width="40">
-                <col width="50">
+                <col width="60">
                 <col width="90">
                 <col width="30">
                 <col width="50">
@@ -68,10 +68,10 @@
                   <i class="layui-icon layui-icon-read"></i>查看
                 </a> -->
               <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-normal layui-btn-xs">
-                <i class="layui-icon layui-icon-edit"></i>修改
+                <i class="layui-icon layui-icon-edit"></i>
             </a>
-              <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">
-                <i class="layui-icon layui-icon-delete"></i>删除
+              <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-warm layui-btn-xs">
+                <i class="layui-icon layui-icon-delete"></i>
             </a>
           </td>
         </tr>

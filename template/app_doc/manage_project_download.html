@@ -1,5 +1,5 @@
 {% extends 'app_doc/manage_base.html' %}
-{% load staticfiles %}
+{% load static %}
 {% block title %}文集下载状态管理 - {{pro.name}}{% endblock %}
 {% block content %}
     {% if enable_project_report %}
@@ -92,17 +92,17 @@
 <script>
     var form = layui.form;
     reportFile = function(pro_id,types){
-            layer.load(1)
-            var data = {'pro_id':pro_id,'types':types};
-            $.post("{% url 'genera_project_file' %}",data,function(r){
-                layer.closeAll('loading');
-                if(r.status){
-                    layer.msg("生成完成")
-                    window.location.reload();
-                }else{
-                    layer.msg("生成出错，请稍后重试")
-                }
-            })
-        }
+        layer.load(1)
+        var data = {'pro_id':pro_id,'types':types};
+        $.post("{% url 'genera_project_file' %}",data,function(r){
+            layer.closeAll('loading');
+            if(r.status){
+                layer.msg("生成完成")
+                window.location.reload();
+            }else{
+                layer.msg("生成出错，请稍后重试")
+            }
+        })
+    }
 </script>
 {% endblock %}

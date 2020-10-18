@@ -1,6 +1,6 @@
 {% extends 'app_doc/create_base_vditor.html' %}
-{% load staticfiles %}
-{% block title %}新建文档{% endblock %}
+{% load static %}
+{% block title %}新建文档 - Vditor编辑模式{% endblock %}
 {% block editor_type %}新建文档{% endblock %}
 
 {% block head_toolbar %}
@@ -20,9 +20,9 @@
 <div class="layui-form" style="padding: 0 10px 10px 10px;">
     <div class="layui-row">
         <div class="layui-btn-container" style="margin-bottom: 0px;">
-                <!-- <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
+                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
                     <i class="fa fa-clipboard"></i> 选择模板
-                </button> -->
+                </button>
 
                 <!-- <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
@@ -334,7 +334,8 @@
         $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
             if(r.status){
                 console.log(r.data)
-                editor.insertValue(r.data);
+                // editor.insertValue(r.data);
+                editor.setValue(r.data);
                 layer.closeAll()
             }else{
                 layer.msg(r.data)

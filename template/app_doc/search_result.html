@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -7,10 +7,10 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
-    <meta name="keywords" content="觅道文档,mrdoc,markdown,文档写作,在线教程,Python文档系统,django应用"/>
-    <meta name="description" content="MrDoc觅道文档是一个开源的在线文档系统，由州的先生（zmister.com）基于 Python 的 Django 进行开发框架，适合作为个人和小型团队的文档、笔记和知识管理工具。" />
+    <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
+    <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ kw }} - 觅道搜索 - MrDoc觅道文档</title>
+    <title>{{ kw }} - 觅道搜索 - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -148,7 +148,8 @@
                 {% if request.user.is_authenticated %}
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">
-                    <i class="layui-icon layui-icon-friends"></i> <span class="layui-hide-xs">{{request.user.username}}</span>
+                    <i class="layui-icon layui-icon-friends"></i> 
+                    <span class="layui-hide-xs">{% if request.user.first_name != '' %}{{request.user.first_name}}{% else %}{{request.user.username}}{% endif %}</span>
                 </a>
                 <dl class="layui-nav-child">
                 <!-- <dd><a href="">基本资料</a></dd> -->

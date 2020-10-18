@@ -4,4 +4,9 @@
         <a href="https://zmister.com" target="_blank">州的先生</a>出品 |
         <a href="{% url 'sitemap' %}" target="_blank">网站地图</a>
     </div>
+    {% if beian_code != None %}
+    <div style="margin-top:5px;margin-bottom: 5px;">
+        <a href="http://beian.miit.gov.cn/" target="_blank">{{beian_code}}</a>
+    </div>
+    {% endif %}
 </div>

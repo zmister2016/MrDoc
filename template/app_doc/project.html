@@ -1,7 +1,7 @@
 <!-- 继承自模板：app_doc/docs_base.html -->
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
-{% load staticfiles %}
+{% load static %}
 
 {% block title %}{{ project.name }}{% endblock %}
 
@@ -23,7 +23,7 @@
     <h1>{{ project.name }}</h1><hr>
     <p style="" class="project-doc-content-head">
         <!--<i class="fa fa-th-large"></i> 发表：{{ doc.create_time }}-->
-        <i class="fa fa-user"></i> 创建人：{{ project.create_user.username }}
+        <i class="fa fa-user"></i> 创建人：{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user}}{% endif %}
     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> 创建于：{{ project.create_time }}
     </p>
 {% endblock %}

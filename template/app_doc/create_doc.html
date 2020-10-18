@@ -1,6 +1,6 @@
 {% extends 'app_doc/create_base_2.html' %}
-{% load staticfiles %}
-{% block title %}新建文档{% endblock %}
+{% load static %}
+{% block title %}新建文档 - Editormd编辑模式{% endblock %}
 {% block editor_type %}新建文档{% endblock %}
 
 {% block head_toolbar %}
@@ -21,12 +21,12 @@
     <div class="layui-row">
         <div class="layui-btn-container" style="margin-bottom: 0px;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
-                    <i class="fa fa-clipboard"></i> 选择模板
+                    <i class="fa fa-clipboard"></i>
                 </button>
 
                 <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
-                    <i class="fa fa-upload"></i> 导入文本
+                    <i class="fa fa-upload"></i>
                 </button>
 
         </div>
@@ -101,11 +101,11 @@
                 <h2 class="layui-colla-title">发布</h2>
                 <div class="layui-colla-content layui-show">
                     <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        <button class="layui-btn layui-btn-primary mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
-                            <i class="fa fa-save"></i> 保存为草稿
+                        <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                            <i class="fa fa-save"></i> 保存
                         </button>
-                        <button class="layui-btn layui-btn-normal" onclick="createDoc()" id="create_doc" title="发布当前内容">
-                            <i class="fa fa-save"></i> 发布文档
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                            <i class="fa fa-save"></i> 发布
                         </button>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 <!-- 继承自模板：app_doc/docs_base.html -->
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
-{% load staticfiles %}
+{% load static %}
 
 {% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
@@ -62,7 +62,7 @@
 
 <div class="layui-row layui-col-space20" style="padding-left: 20px;">
     <span>
-        <i class="fa fa-user"></i> {{ doc.create_user.username }}
+        <i class="fa fa-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
     </span>
     <span tooltip="更新于:{{doc.modify_time}}">
         <i class="fa fa-clock-o"></i> {{ doc.modify_time }}
@@ -104,7 +104,12 @@
 {% endblock %}
 
 {% block right_widget %}
-<div class="tocMenu" style="display: none;">目录</div>
+<!-- 目录 -->
+<div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
+<!-- 分享按钮 -->
+<!-- {% if project.role == 1 and request.user == doc.create_user %}
+    <div class="shareDoc" id="shareDoc" ><i class="fa fa-share"></i></div>
+{% endif %} -->
 {% endblock %}
 
 {% block custom_script %}
@@ -122,7 +127,7 @@
     var layer = layui.layer;
     // 手机屏幕上默认最小化目录
     if(window.outerWidth < 1300){
-        console.log('最小化目录');
+        // console.log('最小化目录');
         // setTimeout(function(){
         $(".sidebar").toggleClass("doc-toc-hide");
         // },300)
@@ -161,6 +166,14 @@
             content: $('#download_div')
           });
     });
+    // 分享文档
+    $("#shareDoc").click(function(){
+        layer.open({
+            type:1,
+            title:'分享文档',
+
+        })
+    })
 </script>
 
 

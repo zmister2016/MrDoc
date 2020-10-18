@@ -1,7 +1,7 @@
 <!-- 继承自模板：app_doc/tag_doc_base.html -->
 {% extends 'app_doc/tag_doc_base.html' %}
 <!-- 引入静态文件 -->
-{% load staticfiles %}
+{% load static %}
 
 {% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}

@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -7,10 +7,10 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
-    <meta name="keywords" content="觅道文档,mrdoc,markdown,文档写作,在线教程,Python文档系统,django应用"/>
-    <meta name="description" content="MrDoc觅道文档是一个开源的在线文档系统，由州的先生（zmister.com）基于 Python 的 Django 进行开发框架，适合作为个人和小型团队的文档、笔记和知识管理工具。" />
+    <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
+    <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>MrDoc觅道文档 - 一个简单的开源在线文档系统</title>
+    <title>{% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %} - {% if site_sub_name != None %}{{site_sub_name}} {% else %}又一个MrDoc站点{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -145,7 +145,7 @@
                         {% endif %}
                     </div>
                   <div class="layui-card-body" style="font-size: 12px;">
-                      <p class="layui-word-aux layui-elip">作者：{{p.create_user}}</p>
+                      <p class="layui-word-aux layui-elip">作者：{% if p.create_user.first_name != '' %} {{p.create_user.first_name}} {% else %} {{p.create_user}}{% endif %}</p>
                       <p class="layui-word-aux layui-elip">最新：{{p.id | get_new_doc}}</p>
                       <p class="tooltip layui-word-aux">简介：
                           {% if p.intro == "" %}
@@ -248,7 +248,7 @@
             /*
                 scrollTop() 设置或获取位于对象最顶端和窗口中可见内容的最顶端之间的距离
             */
-            footerTop = ($(window).scrollTop() + $(window).height() - footerHeight - 35)+"px";
+            footerTop = ($(window).scrollTop() + $(window).height() - footerHeight - 20)+"px";
             // console.log("页脚高度：",footerHeight)
             // console.log(footerTop)
             // console.log($(".layui-header").height()+$(".layui-container").height())
@@ -274,9 +274,6 @@
             $("#sel-sort").val(url.search.sort);
             layui.form.render('select');
         });
-
-        
-
 
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){

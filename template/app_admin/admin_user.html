@@ -1,5 +1,5 @@
 {% extends 'app_admin/admin_base.html' %}
-{% load staticfiles %}
+{% load static %}
 {% block title %}用户管理{% endblock %}
 {% block content %}
     <div class="layui-card-header" style="margin-bottom: 10px;">
@@ -9,8 +9,6 @@
       </div>
   </div>
     <div class="layui-row">
-{#        <form action="{% url 'user_manage' %}" method="post">#}
-{#             {% csrf_token %}#}
         <div class="layui-form-item">
             <div class="layui-input-inline">
                 <input type="text" name="username" id="username" required lay-verify="required" placeholder="输入用户名" autocomplete="off" class="layui-input">
@@ -19,7 +17,6 @@
             <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createUser()" type="button"><i class="layui-icon layui-icon-addition"></i>新增用户</button>
             <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createSuperUser()" type="button"><i class="layui-icon layui-icon-addition"></i>添加管理员</button>
         </div>
-{#        </form>#}
     </div>
     <div class="layui-row" lay-skin="line">
         <table class="layui-table"  id="user-list"></table>
