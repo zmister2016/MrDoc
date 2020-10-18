@@ -200,9 +200,12 @@
         <!-- 列表布局结束 -->
     {% endfor %}
     {% if project_list.count == 0 %}
-    <img src="{% static 'non_doc.png' %}">
-    {% endif %}
+<div>
+    <img src="{% static 'non_doc.png' %}" style="width: 100%;height:auto;">
 </div>
+{% endif %}
+</div>
+
 <!-- 主体结束 -->
 <!-- 分页 -->
 <div class="layui-row project-list-page" style="text-align: center;">
