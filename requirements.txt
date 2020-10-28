@@ -5,3 +5,4 @@ pillow==6.2.2
 pyppeteer==0.0.25
 loguru==0.4.1
 djangorestframework==3.9.1
+requests

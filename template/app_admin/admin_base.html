@@ -75,6 +75,7 @@
             {% if debug %}
                 <blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
             {% endif %}
+            <blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;display: none;">检测到新版本发布，请及时更新！下载地址：<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
             {% block content %}{% endblock %}
         </div>
       </div>
@@ -109,6 +110,40 @@
           content: $('#dashang_img')
         });
   })
+
+</script>
+<script async>
+  // 检测版本更新
+  checkUpdate = function(){
+    $.get("{% url 'check_update' %}",function(r){
+      console.log(r)
+      if(r.status){
+        var new_version = r.data.name.slice(1,5)
+        var current_version = '{{mrdoc_version}}'
+        // 如果存在新版本，顶部提示div
+        if(new_version > current_version){
+          $("#check_update_div").show()
+        }
+      }      
+    })
+  }
+  
+  var check_update = window.localStorage.getItem('check_update')
+  // console.log(check_update)
+  // 如果没有检测过，立即检测
+  if(check_update == null){
+    checkUpdate();
+    window.localStorage.setItem('check_update',new Date().getTime())
+  }else{
+    // 如果上次检测时间距今超过5天，再次检测
+    var time_diff = (new Date().getTime() - check_update)/86400000
+    // console.log(time_diff)
+    if(time_diff > 5){
+      checkUpdate()
+      window.localStorage.setItem('check_update',new Date().getTime())
+    }
+  }
+  
 </script>
 {% block custom_script %}
 {% endblock %}

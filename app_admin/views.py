@@ -8,7 +8,8 @@ from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPa
 from app_admin.decorators import superuser_only,open_register
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-import json,datetime,hashlib,random
+import datetime
+import requests
 from app_doc.models import *
 from app_admin.models import *
 from app_admin.utils import *
@@ -761,3 +762,10 @@ def admin_setting(request):
                 defaults={'value': attachment_size, 'types': 'doc'}
             )
             return render(request, 'app_admin/admin_setting.html', locals())
+
+
+# 检测版本更新
+def check_update(request):
+    url = 'https://gitee.com/api/v5/repos/zmister/MrDoc/tags'
+    resp = requests.get(url,timeout=5).json()
+    return JsonResponse({'status':True,'data':resp[-1]})
