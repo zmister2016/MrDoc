@@ -39,10 +39,10 @@
             <li>文集下载</li>
             {% endif %}
         </ul>
-        <div class="layui-tab-content">
+        <div class="layui-tab-content" style="padding: 0;">
             <!-- 文集简介 -->
             <div class="layui-tab-item layui-show">
-                <p>{{project.intro}}</p>
+                <div id="project-desc"><textarea style="display: none;">{{project.intro}}</textarea></div>
             </div>
             <!-- 目录大纲 -->
             <div class="layui-tab-item">
@@ -129,6 +129,8 @@
 {% endblock %}
 
 {% block custom_script %}
+<link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+<script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
     // 生成文集目录大纲
     var tree = layui.tree;
@@ -173,5 +175,17 @@
         });
     };
     getDocTree();
+    // 渲染文集简介Markdown
+    const renderDesc = () => {
+        const md_desc = $("#project-desc textarea").val()
+        Vditor.preview(document.getElementById('project-desc'),
+            md_desc, {
+                speech: {
+                    enable: true,
+                },
+                anchor: 1,
+            })
+    }
+    renderDesc();
 </script>
 {% endblock %}
