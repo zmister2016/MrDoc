@@ -296,6 +296,8 @@ def project_index(request,pro_id):
     try:
         # 获取文集信息
         project = Project.objects.get(id=int(pro_id))
+        # 获取文集最新的5篇文档
+        new_docs = Doc.objects.filter(top_doc=pro_id,status=1).order_by('-modify_time')[:5]
         # 获取文集的文档目录
         toc_list,toc_cnt = get_pro_toc(pro_id)
         # toc_list,toc_cnt = ([],1000)
