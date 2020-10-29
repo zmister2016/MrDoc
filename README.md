@@ -41,7 +41,12 @@
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212511.png" height=300>
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212543.png" height=300>
 </p>
-
+<p align="center">
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>
+</p>
 ## 功能特性
 
 - **站点管理**
