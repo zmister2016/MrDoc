@@ -186,6 +186,7 @@
         const md_desc = $("#project-desc textarea").val()
         Vditor.preview(document.getElementById('project-desc'),
             md_desc, {
+                "cdn":"{% static 'vditor' %}",
                 speech: {
                     enable: true,
                 },

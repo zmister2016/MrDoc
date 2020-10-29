@@ -447,6 +447,7 @@
             const md_content = $("#content textarea").val()
             Vditor.preview(document.getElementById('content'),
             md_content, {
+                "cdn":"{% static 'vditor' %}",
                 speech: {
                     enable: true,
                 },
