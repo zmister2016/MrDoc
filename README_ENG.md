@@ -1,17 +1,24 @@
-## MrDoc - Writing documents, gathering ideas
+<h1 align="center">MrDoc - Writing documents, gathering ideas</h1>
 
-![mrdoc](https://img.shields.io/badge/MrDoc-v0.6.0-brightgreen.svg) ![python](https://img.shields.io/badge/Python-3.5+-blue.svg) ![mrdoc](https://img.shields.io/badge/Django-v2.2-important.svg)
+<p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
-
-![Mrdoc首页](./captrue/mrdoc-index.webp)
-
-<p>Sponsor：
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">WeChat</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">AliPay</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>|
-<a href="https://zmister.com/mrdoc/">Home</a>
+<p align="center">
+<img src="https://img.shields.io/badge/MrDoc-v0.6.0-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
+<img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
+
+<p align="center">
+<a href="http://mrdoc.zmister.com/project-7/">Installation Manual</a> | 
+<a href="http://mrdoc.zmister.com/project-20/">Document Example</a> |
+<a href="http://mrdoc.zmister.com/">Example Site</a> |
+<a href="./README_ENG.md">English</a>
+</p>
+
+<p align="center">Source code：<a href="https://gitee.com/zmister/MrDoc">Gitee</a> | 
+<a href="https://github.com/zmister2016/MrDoc">GitHub</a>
+</p>
+
 
 ### Introduce
 
@@ -26,21 +33,14 @@ Current Platform：
 - Mobile App(developing)
 - Windows Portable Experience Edition，[instructions](http://mrdoc.zmister.com/project-7/doc-249/)
 
-### Source Code Address
+## Donate
 
-**Gitee:** <https://gitee.com/zmister/MrDoc>
-
-**GitHub:** <https://github.com/zmister2016/MrDoc>
-
-### Example Site:
-
-<http://mrdoc.zmister.com> 
-
-You can register, create project and documents. The account can be cleared from time to time. It is only for testing purposes. Please do not write important documents.
-
-### Documentation
-
-[MrDoc Install Manual](http://mrdoc.zmister.com/project-7/),[MrDoc User Manual](http://mrdoc.zmister.com/project-54/),[Document Example](http://mrdoc.zmister.com/project-20/)
+<p align="center">Donate a can of Red Bull to the author to speed up the development</p>
+<p align="center">
+<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212410.png" height=300>
+<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212511.png" height=300>
+<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212543.png" height=300>
+</p>
 
 ## Feature
 
@@ -58,10 +58,6 @@ You can register, create project and documents. The account can be cleared from 
     - It supports the function of document historical version to view and compare the differences between the historical version and the existing version, and restore a historical version to the current version;
 
 Update Record : [CHANGES.md](./CHANGES.md)
-
-## Dependent environment
-
-`Mrdoc` is developed on `Python 3.6` + `Django 2.2`, and tested well on Django 2.1, 2.2 and python 3.5, 3.6 and 3.7. Running mrdoc in other environments does not exclude unknown exceptions.
 
 ## Simple Installation Tutorial
 
@@ -147,13 +143,3 @@ Join the mrdoc communication Tencent QQ group ，Group number is **735507293**
 ### 3. Contact author
 
 WeChat Subscription : **zmister2016**
-
-## Sponsor
-
-Open source is not easy. We need to encourage you. If mrdoc is helpful to you, please give a `star`.
-
-Welcome to give appreciation to developers and help the project develop better.
-
-**Paypal:**<https://paypal.me/zmister>
-
-![](./captrue/mrdoc-zan.png)
