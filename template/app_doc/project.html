@@ -130,6 +130,12 @@
 
 {% block custom_script %}
 <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+<style>
+    .vditor-reset{
+        font-size: inherit;
+        font-family:inherit;
+    }
+</style>
 <script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
     // 生成文集目录大纲
