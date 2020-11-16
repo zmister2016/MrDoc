@@ -802,4 +802,7 @@ input#doc-name,input#doctemp-name{
     div.doc-summary{
         z-index: 9999;
     }
+    .markdown-body{
+        width: 100%;
+    }
 }
