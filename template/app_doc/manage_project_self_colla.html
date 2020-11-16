@@ -1,21 +1,16 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}我协作的文集{% endblock %}
 {% block content %}
-    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
-    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
-        <span class="layui-breadcrumb" lay-separator=">">
-          <a href="{% url 'manage_project' %}">文集管理</a>
-          <a><cite>我协作的文集</cite></a>
-        </span>
-    </div>
+<div class="layui-card">
+    <div class="layui-card-body">
     <div class="layui-card-header" style="margin-bottom: 10px;">
 
       <div class="layui-row">
-          <span style="font-size:18px;">协作的文集列表
+          <span style="font-size:18px;">我的协作文集
           </span>
       </div>
-  </div>
+    </div>
     {% if colla_pros.count != 0 %}
     <div class="layui-row">
         <table class="layui-table">
@@ -52,13 +47,20 @@
         你还没有成为任何文集的协作者
     </div>
     {% endif %}
+    </div>
+</div>
 {% endblock %}
 {% block custom_script %}
-<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
 <script>
-    $.ajaxSetup({
+    layui.use(['table','jquery','form','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-    var form = layui.form;
+    })
 </script>
 {% endblock %}

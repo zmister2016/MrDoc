@@ -1,28 +1,26 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}导入文集{% endblock %}
 {% block content %}
-    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
-        <span class="layui-breadcrumb" lay-separator=">">
-          <a href="{% url 'manage_project' %}">文集管理</a>
-          <a><cite>导入文集</cite></a>
-        </span>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+        <span style="font-size:18px;">导入文集到MrDoc</span>
+        </div>
+        <div class="layui-row" >
+            <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload-zip"><i class="layui-icon layui-icon-upload"></i>导入Markdown压缩包（.Zip）</button>
+        </div>
     </div>
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-      <span style="font-size:18px;">导入文集到MrDoc</span>
-    </div>
-    <div class="layui-row" >
-        <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload-zip"><i class="layui-icon layui-icon-upload"></i>导入Markdown压缩包（.Zip）</button>
-    </div>
-
+</div>
 {% endblock %}
 {% block custom_script %}
-
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
-    var upload = layui.upload;
+    var upload = layui.upload,form=layui.form;
     // 上传Zip文件
     var uploadZip = upload.render({
         elem: '#upload-zip', //绑定元素

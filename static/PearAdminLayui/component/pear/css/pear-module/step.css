@@ -1,0 +1,88 @@
+.lay-step {
+    font-size: 0;
+    margin: 0 auto;
+    max-width: 100%;
+	width: 60%;
+	padding-left: 15%;
+	
+}
+
+.step-item {
+    display: inline-block;
+    line-height: 35px;
+    position: relative;
+    font-size: 15px;
+    vertical-align: top;
+}
+
+.step-item-tail {
+    width: 100%;
+    padding: 0 10px;
+    position: absolute;
+    left: 0;
+    top: 13px;
+}
+
+.step-item-tail i {
+    display: inline-block;
+    width: 100%;
+    height: 2px;
+	margin-top: 4px;
+    vertical-align: top;
+    background: #5FB878;
+    position: relative;
+}
+
+.step-item-tail .step-item-tail-done {
+    background:  #5FB878;
+	height: 3px;
+	margin-top: 4px;
+}
+
+.step-item-head {
+    position: relative;
+    display: inline-block;
+    height: 35px;
+    width: 35px;
+    text-align: center;
+    vertical-align: top;
+    color: #5FB878;
+    border: 2px solid #5FB878;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.step-item-head.step-item-head-active {
+    background: #5FB878;
+    color: #ffffff;
+}
+
+.step-item-main {
+    display: block;
+    position: relative;
+    margin-left: -50%;
+    margin-right: 50%;
+    padding-left: 26px;
+    text-align: center;
+}
+
+.step-item-main-title {
+    font-weight: bolder;
+    color: #555555;
+}
+
+.step-item-main-desc {
+    color: #aaaaaa;
+}
+
+.step-item-main-time {
+    color: #aaaaaa;
+}
+
+.lay-step + [carousel-item]:before {
+    display: none;
+}
+
+.lay-step + [carousel-item] > * {
+    background-color: transparent;
+}

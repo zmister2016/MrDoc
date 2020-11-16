@@ -1,13 +1,15 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}文档模板管理{% endblock %}
 {% block content %}
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-      <div class="layui-row">
-          <span style="font-size:18px;">文档模板管理
-          </span>
-      </div>
-  </div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <div class="layui-row">
+                <span style="font-size:18px;">文档模板管理
+                </span>
+            </div>
+        </div>
     <div class="layui-row">
         <form action="{% url 'manage_doctemp' %}" method="get">
         <div class="layui-form-item">
@@ -73,10 +75,20 @@
                 {% endif %}
         </div>
     </div>
+    </div>
+</div>
 {% endblock %}
 {% block custom_script %}
 <script>
-    delTemp = function(doctemp_id){
+    layui.use(['table', 'form', 'jquery', 'layer'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        delTemp = function(doctemp_id){
         layer.open({
             type:1,
             title:'删除文档',
@@ -105,5 +117,6 @@
             },
         });
     }
+    })
 </script>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.urls import path,re_path
-from app_doc import views,util_upload_img,import_views
+from app_doc import views,views_user,util_upload_img,import_views
 
 urlpatterns = [
     path('',views.project_list,name='pro_list'),# 文档首页
@@ -34,6 +34,10 @@ urlpatterns = [
     path('doc_recycle/', views.doc_recycle,name='doc_recycle'), # 文档回收站
     path('fast_pub_doc/',views.fast_publish_doc,name='fast_pub_doc'), # 一键发布文档
     path('download_doc_md/<int:doc_id>/',views.download_doc_md,name='download_doc_md'), # 下载文档Markdown文件
+    #################文档分享相关
+    path('share_doc/', views.share_doc, name='share_doc'),  # 私密文档分享
+    path('share_doc_check/', views.share_doc_check, name='share_doc_check'),  # 私密文档验证
+    path('manage_doc_share/',views.manage_doc_share,name="manage_doc_share"), # 分享文档管理
     #################文档模板相关
     path('manage_doctemp/',views.manage_doctemp,name='manage_doctemp'), # 文档模板列表
     path('create_doctemp/',views.create_doctemp,name="create_doctemp"), # 创建文档模板
@@ -49,6 +53,8 @@ urlpatterns = [
     path('tag_docs/<int:tag_id>/',views.tag_docs,name="tag_docs"), # 标签文档页
     path('tag_doc/<int:tag_id>/<int:doc_id>/',views.tag_doc,name="tag_doc"), # 标签文档页
     ################其他功能相关
+    path('user_center/',views_user.user_center,name="user_center"), # 个人中心
+    path('user/center_menu/',views_user.user_center_menu,name="user_center_menu"), # 个人中心菜单数据
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
     path('search/',views.search,name="search"), # 搜索功能
     path('manage_overview/',views.manage_overview,name="manage_overview"), # 个人中心概览

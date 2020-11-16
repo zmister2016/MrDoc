@@ -1,0 +1,80 @@
+.pear-container {
+	background-color: whitesmoke;
+	margin: 10px;
+}
+.layui-body {
+	padding: 25px;
+}
+.text-center {
+	text-align: center;
+}
+.user-info-head {
+	width: 110px;
+	height: 110px;
+	line-height: 110px;
+	position: relative;
+	display: inline-block;
+	border-radius: 50%;
+	overflow: hidden;
+	cursor: pointer;
+	margin: 0 auto;
+}
+.layui-line-dash {
+	border-bottom: 1px dashed #ccc;
+	margin: 15px 0;
+}
+.comment {
+	position: absolute;
+	bottom: 3px;
+	right: 10px;
+	font-size: 12px;
+	color: dimgray;
+}
+.content {
+	padding-left: 13px;
+	font-size: 13px;
+	color: dimgray;
+}
+.title {
+	padding-left: 13.5px;
+}
+.layui-tab-title {
+	border-bottom: none;
+}
+.fl-item {
+	height: 30px;
+	font-size: 13.5;
+}
+.dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50px;
+	background-color: gray;
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.list .list-item {
+	height: 32px;
+	line-height: 32px;
+	color: gray;
+	padding: 5px;
+	padding-left: 15px;
+	border-radius: 4px;
+	margin-top: 5.2px;
+}
+
+.list .list-item:hover {
+	background-color: whitesmoke;
+}
+
+.list .list-item .title {
+	font-size: 13px;
+	width: 100%;
+}
+
+.list .list-item .footer {
+	position: absolute;
+	right: 30px;
+	font-size: 12px;
+}

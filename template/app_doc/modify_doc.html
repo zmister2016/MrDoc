@@ -103,6 +103,24 @@
             </div>
         </div>
 
+        <!-- 文档下级目录展开设置 -->
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">下级目录</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                        {%if doc.open_children %}
+                        <input type="radio" name="open-children" value="true" title="展开" checked>
+                        <input type="radio" name="open-children" value="false" title="收起">
+                        {% else %}
+                        <input type="radio" name="open-children" value="true" title="展开">
+                        <input type="radio" name="open-children" value="false" title="收起" checked>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 发布按钮 -->
         <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
             <div class="layui-colla-item">
@@ -220,9 +238,10 @@
                 'doc_tag':$("#tagsinputval").val(),
                 'doc_name':$("#doc-name").val(),
                 'content':editor.getHTML(),
-                //'content':editor.getPreviewedHTML(),
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
+                'status':1,
+                'open_children':$('input:radio[name="open-children"]:checked').val(),
             };
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 layer.closeAll("loading");
@@ -254,7 +273,8 @@
                 'content':editor.getHTML(),
                 'pre_content':editor.getMarkdown(),
                 'sort':$("#sort").val(),
-                'status':0
+                'status':0,
+                'open_children':$('input:radio[name="open-children"]:checked').val(),
             }
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 layer.closeAll("loading");

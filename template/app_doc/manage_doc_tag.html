@@ -1,116 +1,128 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}文档标签管理{% endblock %}
 {% block content %}
-    <div class="layui-card-header" style="margin-bottom: 10px;">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
           <span style="font-size:18px;">文档标签管理
           </span>
       </div>
-  </div>
-    <div class="layui-row">
-        <form action="{% url 'manage_doctemp' %}" method="get">
-        <div class="layui-form-item">
-            <!--<button class="layui-btn layui-btn-normal" type="button" onclick="createImgGroup()">新建分组</button>-->
         </div>
-        </form>
+        <div class="layui-row">
+            <form action="{% url 'manage_doctemp' %}" method="get">
+            <div class="layui-form-item">
+            </div>
+            </form>
+        </div>
+        <div class="layui-row">
+            <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
+                <colgroup>
+                <col width="200">
+                <col width="200">
+                <col>
+        </colgroup>
+        <thead>
+            <tr>
+            <th>标签名称</th>
+            <th>标签文档数量</th>
+            <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% load project_filter %}
+            {% for tag in tags %}
+            <tr>
+            <td><a href="{% url 'tag_docs' tag.id %}" target="_blank">{{ tag.name }}</a></td>
+            <td>{{ tag.id | tag_doc_cnt }}</td>
+            <td>
+                <a href="javascript:void(0);"  onclick="modifyTag('{{tag.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-edit"></i>修改
+                </a>
+                <a href="javascript:void(0);" onclick="delTag('{{tag.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                    <i class="layui-icon layui-icon-delete"></i>删除
+                </a>
+            </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+        </div>
     </div>
-    <div class="layui-row">
-        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
-            <colgroup>
-            <col width="200">
-            <col width="200">
-            <col>
-      </colgroup>
-      <thead>
-        <tr>
-          <th>标签名称</th>
-          <th>标签文档数量</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% load project_filter %}
-        {% for tag in tags %}
-        <tr>
-          <td><a href="{% url 'tag_docs' tag.id %}" target="_blank">{{ tag.name }}</a></td>
-          <td>{{ tag.id | tag_doc_cnt }}</td>
-          <td>
-              <a href="javascript:void(0);"  onclick="modifyTag('{{tag.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
-                <i class="layui-icon layui-icon-edit"></i>修改
-            </a>
-              <a href="javascript:void(0);" onclick="delTag('{{tag.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                <i class="layui-icon layui-icon-delete"></i>删除
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-        </table>
-    </div>
+</div>
 {% endblock %}
 {% block custom_script %}
 <script>
-    delTag = function(group_id){
-        layer.open({
-            type:1,
-            title:'删除分组',
-            area:'300px;',
-            id:'delGroup',//配置ID
-            content:'<div style="margin-left:10px;">警告：操作将删除此标签！</div>',
-            btn:['确定','取消'], //添加按钮
-            btnAlign:'c', //按钮居中
-            yes:function (index,layero) {
-                layer.load(1);
-                data = {
-                    'types':2,
-                    'tag_id':group_id,
-                }
-                $.post("{% url 'manage_doc_tag' %}",data,function(r){
-                    layer.closeAll('loading')
-                    if(r.status){
-                        //删除成功
-                        window.location.reload();
-                        //layer.close(index)
-                    }else{
-                        //删除失败，提示
-                        console.log(r)
-                        layer.msg(r.data)
-                    }
-                })
-            },
+    layui.use(['table', 'form', 'jquery', 'layer'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-    };
-    modifyTag = function(group_id){
-        layer.open({
-            type:1,
-            title:'修改分组',
-            area:'300px;',
-            id:'modifyGroup',//配置ID
-            content:'<div style="margin:10px;"><input class="layui-input" placeholder="输入标签的新名称" id="new-group-name"></input></div>',
-            btn:['确定','取消'], //添加按钮
-            btnAlign:'c', //按钮居中
-            yes:function (index,layero) {
-                layer.load(1);
-                data = {
-                    'types':1,
-                    'tag_id':group_id,
-                    'tag_name':$("#new-group-name").val()
-                }
-                $.post("{% url 'manage_doc_tag' %}",data,function(r){
-                    layer.closeAll('loading')
-                    if(r.status){
-                        //修改成功
-                        window.location.reload();
-                        //layer.close(index)
-                    }else{
-                        //修改失败，提示
-                        // console.log(r)
-                        layer.msg(r.data)
+        delTag = function(group_id){
+            layer.open({
+                type:1,
+                title:'删除分组',
+                area:'300px;',
+                id:'delGroup',//配置ID
+                content:'<div style="margin-left:10px;">警告：操作将删除此标签！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'types':2,
+                        'tag_id':group_id,
                     }
-                })
-            },
-        });
-    }
+                    $.post("{% url 'manage_doc_tag' %}",data,function(r){
+                        layer.closeAll('loading')
+                        if(r.status){
+                            //删除成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //删除失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        };
+        modifyTag = function(group_id){
+            layer.open({
+                type:1,
+                title:'修改分组',
+                area:'300px;',
+                id:'modifyGroup',//配置ID
+                content:'<div style="margin:10px;"><input class="layui-input" placeholder="输入标签的新名称" id="new-group-name"></input></div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'types':1,
+                        'tag_id':group_id,
+                        'tag_name':$("#new-group-name").val()
+                    }
+                    $.post("{% url 'manage_doc_tag' %}",data,function(r){
+                        layer.closeAll('loading')
+                        if(r.status){
+                            //修改成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //修改失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        }
+    })
 </script>
 {% endblock %}

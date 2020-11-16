@@ -380,26 +380,14 @@
             }
         },
         "upload":{
-            fieldName:"editormd-image-file[]",
+            // fieldName:"editormd-image-file[]",
+            url:"{% url 'upload_doc_img' %}",
             linkToImgUrl:"{% url 'upload_doc_img' %}",
             linkToImgCallback(responseText){
-                console.log(responseText)
+                // console.log(responseText)
             },
-            handler(files){
+            handler(files){//自定义粘贴上传图片
                 console.log(files)
-            }
-        }
-    });
-
-    //粘贴上传图片
-    $("#editor-md").on('paste', function (ev) {
-        console.log("粘贴上传图片")
-        var data = ev.clipboardData;
-        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-        for (var index in items) {
-            var item = items[index];
-            if (item.kind === 'file') {
-                var blob = item.getAsFile();
                 var reader = new FileReader();
                 reader.onload = function (event) {
                     var base64 = event.target.result;
@@ -418,7 +406,7 @@
                         }
                     });
                 }; // data url!
-                var url = reader.readAsDataURL(blob);
+                var url = reader.readAsDataURL(files[0]);
             }
         }
     });
@@ -464,7 +452,7 @@
                             var arr = []
                             var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                             layui.each(thisData, function(index, item){
-                                arr.push('<li class="select-img-list"><img class="select-img-list-i" onclick="insertImg(this);" src="' + item.path + '" title="' + item.name + '" /></li>');
+                                arr.push('<li class="select-img-list"><img class="select-img-list-i" onclick="insertImg(this);" src="' + item.path + '" title="' + item.name + '"data-url="' + item.path +'" /></li>');
                             });
                         return arr.join('');
                         }();
@@ -480,8 +468,8 @@
     });
     // 插入选择的图片到编辑器
     insertImg = function(e){
-        console.log(e.src);
-        editor.insertValue("\n![](" + e.src + ")");
+        // console.log(e);
+        editor.insertValue("\n![](" + e.getAttribute('data-url') + ")");
         editor.focus()
     };
     // 按钮点击插入输入框图片链接
@@ -712,6 +700,7 @@
                 layer.closeAll();
                 layer.msg("上传成功");
             }else{
+                layer.closeAll('loading');
                 layer.msg("上传出错，请重试！")
             }
         },

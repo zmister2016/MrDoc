@@ -3,7 +3,7 @@
 <p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.6.0-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.6.1-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
@@ -66,30 +66,7 @@ Update Record : [CHANGES.md](./CHANGES.md)
 pip install -r requirements.txt
 ```
 
-### 2. configure database info
-
-By default, mrdoc uses Django's SQLite database. If you use SQLite database, you do not need to configure another database.
-
-If you need to configure other databases, please first follow Django's official [database support instructions](https://docs.djangoproject.com/zh-hans/2.2/ref/databases/),Install a python binding library for a specific database.
-
-Then open it in the `/mrdoc/config` directory `conig.ini` File, modify according to your own database information:
-
-```python
-# engine，指定数据库类型，接受sqlite、mysql、oracle、postgresql
-engine = sqlite
-# name表示数据库的名称
-# name = db_name
-# user表示数据库用户名
-# user = db_user
-# password表示数据库用户密码
-# password = db_pwd
-# host表示数据库主机地址
-# host = db_host
-# port表示数据库端口
-# port = db_port
-```
-
-### 3. Initialize database
+### 2. Initialize database
 
 After installing the required third-party library and configuring the database information, we need to initialize the database.
 
@@ -107,7 +84,7 @@ python manage.py migrate
 
 After execution, the database is initialized.
 
-### 4. Create Super User
+### 3. Create Super User
 
 After initializing the database, you need to create an administrator account to manage the whole mrdoc. Open the command line terminal in the project path and run the following command:
 
@@ -117,7 +94,7 @@ python manage.py createsuperuser
 
 Follow the prompts to enter the user name, email address and password.
 
-### 5、Test Running
+### 4、Test Running
 
 After completing the above steps, you can run and use mrdoc.
 

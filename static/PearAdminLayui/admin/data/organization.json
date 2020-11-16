@@ -1,0 +1,41 @@
+{
+	"code": 0,
+	"msg": "...",
+	"count": 3,
+	"data": [{
+		"name": "软件部",
+		"userCount": 324,
+		"location": "二楼201",
+		"leader": "皮卡丘"
+	},{
+		"name": "美工部",
+		"userCount": 98,
+		"location": "二楼101",
+		"leader": "皮卡丘"
+	},{
+		"name": "设计部",
+		"userCount": 43,
+		"location": "六楼602",
+		"leader": "皮卡丘"
+	},{
+		"name": "销售部",
+		"userCount": 12,
+		"location": "一楼131",
+		"leader": "皮卡丘"
+	},{
+		"name": "产品部",
+		"userCount": 128,
+		"location": "四楼401",
+		"leader": "皮卡丘"
+	},{
+		"name": "财务部",
+		"userCount": 23,
+		"location": "三楼105",
+		"leader": "皮卡丘"
+	},{
+		"name": "人事部",
+		"userCount": 67,
+		"location": "二楼201",
+		"leader": "皮卡丘"
+	}]
+}

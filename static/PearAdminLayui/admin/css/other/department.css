@@ -1,0 +1,6 @@
+.organizationTree {
+	width: 100% !important;
+	height: -webkit-calc(100vh - 130px);
+	height: -moz-calc(100vh - 130px);
+	height: calc(100vh - 130px);
+}

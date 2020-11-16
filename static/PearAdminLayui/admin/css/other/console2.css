@@ -1,0 +1,18 @@
+			.pear-container {background-color: whitesmoke;margin: 10px;}
+			.pear-card {width: 100%;height: 66px;background-color: #F8F8F8;display: inline-block;border-radius: 5px;text-align: center;margin-bottom: 3px;}
+            .pear-card:hover,.pear-card2:hover{box-shadow: 2px 0 8px 0 lightgray!important;}.pear-card2 {width: 100%;height: 90px;background-color: #F8F8F8;display: inline-block;border-radius: 5px;text-align: center;margin-bottom: 3px;}
+			.pear-card2 i {font-size: 30px;height: 90px;line-height: 90px;}
+			.pear-card i {font-size: 30px;height: 66px;line-height: 66px;}
+			.layui-col-md3 {text-align: center;}
+			.pear-card-title {margin-top: 3px;}
+			.person img {width: 90px;height: 90px;border-radius: 4px;margin-top: 8px;margin-left: 8px;}
+			.pear-card2 .count {color: #51A351;font-size: 30px;margin-top: 12px;}
+			.pear-card2 .title {color: gray;font-size: 14px;margin-top: 14px;}
+			.pear-card-status {padding: 0 10px 10px;}
+			.pear-card-status li {position: relative;padding: 10px 0;border-bottom: 1px solid #EEE;}
+			.pear-card-status li h3 {padding-bottom: 5px;font-weight: 700;}
+			.pear-card-status li p {padding-bottom: 10px;padding-top: 3px ;}
+			.pear-card-status li>span {color: #999;}
+			.pear-reply {position: absolute;right: 20px;}
+			.person .title{font-size: 17px;font-weight: 600;margin-left: 18px;margin-top: 16px;position: absolute;display: inline-block;}
+			.person .desc{font-size: 16px;font-weight: 600;margin-left: 115px;margin-top: -30px;position: absolute;display: inline-block;}

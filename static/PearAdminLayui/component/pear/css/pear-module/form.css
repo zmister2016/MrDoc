@@ -1,0 +1,33 @@
+.layui-form-item {
+	margin-bottom: 0px !important;
+	margin-top: 5px !important;
+}
+
+.layui-input {
+	height: 36px !important;
+	line-height: 36px !important;
+	border-radius: 3px !important;
+}
+
+.layui-form-label.layui-required:after {
+	content: "*";
+	color: red;
+	position: absolute;
+	top: 5px;
+	left: 15px;
+}
+
+.layui-input[hover]:focus {
+	box-shadow: 0px 0px 3px 1px #5FB878 !important;
+	border: #5FB878 1px solid;
+}
+
+.layui-input[success] {
+	box-shadow: 0px 0px 3px 1px #5FB878 !important;
+	border: #5FB878 1px solid;
+}
+
+.layui-input[failure] {
+	box-shadow: 0px 0px 3px 1px #F56C6C;
+	border: #F56C6C 1px solid;
+}

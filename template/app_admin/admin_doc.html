@@ -2,123 +2,137 @@
 {% load static %}
 {% block title %}文档管理{% endblock %}
 {% block content %}
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-      <div class="layui-row">
-          <span style="font-size:18px;">文档管理
-          </span>
-      </div>
-  </div>
-    <div class="layui-row">
-        <form action="{% url 'doc_manage' %}" method="get">
-        <div class="layui-form-item">
-            <div class="layui-input-inline">
-                <input type="text" name="kw" id="kw" placeholder="输入文档标题或内容" autocomplete="off" class="layui-input">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+        <div class="layui-row">
+            <span style="font-size:18px;">文档管理
+            </span>
+        </div>
+        </div>
+        <div class="layui-row">
+            <form action="{% url 'doc_manage' %}" method="get">
+            <div class="layui-form-item">
+                <div class="layui-input-inline">
+                    <input type="text" name="kw" id="kw" placeholder="输入文档标题或内容" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                <a href="{% url 'create_doc' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-addition"></i>新建文档</a>
             </div>
-            <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
-            <a href="{% url 'create_doc' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-addition"></i>新建文档</a>
+            </form>
         </div>
-        </form>
-    </div>
-    <!-- 表格数据 -->
-    <div class="layui-row">
-        <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-even>
-      <thead>
-        <tr>
-            <th>文档名称</th>
-            <th>上级文档</th>
-            <th>所属文集</th>
-            <th>创建人</th>
-            <th>创建时间</th>
-            <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% load doc_filter %}
-        {% for doc in docs %}
-        <tr>
-            {% if doc.status == 1 %}
-                <td>
-                    <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} 
-                        <i class="layui-icon layui-icon-circle-dot" style="color: #1E9FFF;"></i>
+        <!-- 表格数据 -->
+        <div class="layui-row">
+            <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-even>
+        <thead>
+            <tr>
+                <th>文档名称</th>
+                <th>上级文档</th>
+                <th>所属文集</th>
+                <th>创建人</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% load doc_filter %}
+            {% for doc in docs %}
+            <tr>
+                {% if doc.status == 1 %}
+                    <td>
+                        <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} 
+                            <i class="layui-icon layui-icon-circle-dot" style="color: #1E9FFF;"></i>
+                        </a>
+                    </td>
+                {% else %}
+                    <td>
+                        <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} 
+                            <i class="layui-icon layui-icon-circle-dot" style="color: #FF5722;"></i>
+                        </a>
+                    </td>
+                {% endif %}
+                <td>{{ doc.parent_doc|get_doc_parent }}</td>
+                <td>{{ doc.top_doc|get_doc_top }}</td>
+                <td>{{ doc.create_user }}</td>
+            <td>{{ doc.create_time }}</td>
+            <td>
+                <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
+                    <i class="layui-icon layui-icon-edit"></i>修改
                     </a>
-                </td>
-            {% else %}
-                <td>
-                    <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} 
-                        <i class="layui-icon layui-icon-circle-dot" style="color: #FF5722;"></i>
-                    </a>
-                </td>
-            {% endif %}
-            <td>{{ doc.parent_doc|get_doc_parent }}</td>
-            <td>{{ doc.top_doc|get_doc_top }}</td>
-            <td>{{ doc.create_user }}</td>
-          <td>{{ doc.create_time }}</td>
-          <td>
-              <a href="{% url 'modify_doc' doc_id=doc.id %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
-                  <i class="layui-icon layui-icon-edit"></i>修改
+                <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-warm layui-btn-xs">
+                    <i class="layui-icon layui-icon-delete"></i>删除
                 </a>
-              <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-warm layui-btn-xs">
-                <i class="layui-icon layui-icon-delete"></i>删除
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-        </table>
-    </div>
-    <!-- 分页 -->
-    <div class="layui-row">
-        <div class="layui-box layui-laypage layui-laypage-default">
-                <!-- 上一页 -->
-                {% if docs.has_previous %}
-                    <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
-                {% else %}
-                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
-                {% endif %}
-                <!-- 当前页 -->
-                <span class="layui-laypage-curr">
-                    <em class="layui-laypage-em"></em>
-                    <em>{{ docs.number }}/{{ docs.paginator.num_pages }}</em>
-                </span>
-                <!-- 下一页 -->
-                {% if docs.has_next %}
-                    <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
-                {% else %}
-                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
-                {% endif %}
+            </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+        </div>
+        <!-- 分页 -->
+        <div class="layui-row">
+            <div class="layui-box layui-laypage layui-laypage-default">
+                    <!-- 上一页 -->
+                    {% if docs.has_previous %}
+                        <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                    {% else %}
+                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                    {% endif %}
+                    <!-- 当前页 -->
+                    <span class="layui-laypage-curr">
+                        <em class="layui-laypage-em"></em>
+                        <em>{{ docs.number }}/{{ docs.paginator.num_pages }}</em>
+                    </span>
+                    <!-- 下一页 -->
+                    {% if docs.has_next %}
+                        <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                    {% else %}
+                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                    {% endif %}
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}
 {% block custom_script %}
 <script>
-    delDoc = function(doc_id){
-        layer.open({
-            type:1,
-            title:'删除文档',
-            area:'300px;',
-            id:'delPro',//配置ID
-            content:'<div style="margin-left:10px;">警告：将删除此文档！</div>',
-            btn:['确定','取消'], //添加按钮
-            btnAlign:'c', //按钮居中
-            yes:function (index,layero) {
-                layer.load(1);
-                data = {
-                    'doc_id':doc_id,
-                }
-                $.post("{% url 'del_doc' %}",data,function(r){
-                    layer.closeAll('loading');
-                    if(r.status){
-                        //修改成功
-                        window.location.reload();
-                        //layer.close(index)
-                    }else{
-                        //修改失败，提示
-                        console.log(r)
-                        layer.msg(r.data)
-                    }
-                })
-            },
+    layui.use(['table','jquery','form','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-    }
+        delDoc = function(doc_id){
+            layer.open({
+                type:1,
+                title:'删除文档',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：将删除此文档！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'doc_id':doc_id,
+                    }
+                    $.post("{% url 'del_doc' %}",data,function(r){
+                        layer.closeAll('loading');
+                        if(r.status){
+                            //修改成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //修改失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        }
+    });
 </script>
 {% endblock %}

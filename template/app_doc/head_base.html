@@ -64,7 +64,7 @@
                 <!-- <dd><a href="">基本资料</a></dd> -->
                     {% if request.user.is_superuser %}
                     <dd>
-                        <a href="{% url 'user_manage' %}">
+                        <a href="{% url 'admin_center' %}">
                             <i class="layui-icon layui-icon-console layui-hide-md"></i>
                             <span class="layui-hide-xs">进入后台</span>
                         </a>
@@ -76,7 +76,7 @@
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'manage_overview' %}">
+                        <a href="{% url 'user_center' %}">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
                             <span class="layui-hide-xs">个人中心</span>
                         </a>

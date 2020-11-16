@@ -162,7 +162,8 @@ function addAllStyle(highlightColor) {
         overflow-x: auto;
         overflow-y: auto;
         padding: 20px 20px 20px 20px;
-        max-width: 250px;
+        // max-width: 250px;
+        width:200px;
         background-color:white;
         border-left:2px solid #dddddd;
     }`)

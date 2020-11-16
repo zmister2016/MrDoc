@@ -1,0 +1,9 @@
+html,body{background-color: whitesmoke}
+.layui-fluid{margin-top: 15px;}
+.content{min-height: 796px;}
+.nav{text-align: center;}
+.nav button{margin-bottom: 3px;width: 100%;margin-top: 3px;margin-bottom: 3px;border-radius: 1px;}
+.nav button:hover{background-color: #5FB878;border: 1px solid #5FB878;color: white;}
+.layui-card-body .layui-btn+.layui-btn{margin-left: 0px;}
+.code-show{min-height: 454px;}
+.js-show{min-height: 200px;}

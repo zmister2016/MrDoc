@@ -1,0 +1,221 @@
+.pear-nav-tree {
+	width: 230px;
+	border-radius: 0px;
+	background-color: #28333E;
+}
+
+.pear-nav-tree .layui-nav-item>a {
+	height: 56px;
+	line-height: 56px;
+}
+
+.pear-nav-tree .layui-nav-item dd a {
+	height: 48px;
+	line-height: 48px;
+}
+
+.pear-nav-tree .layui-nav-child {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.pear-nav-tree .layui-nav-child dd.layui-this,
+.layui-nav-tree .layui-nav-child dd.layui-this a,
+.layui-nav-tree .layui-this,
+.layui-nav-tree .layui-this>a,
+.layui-nav-tree .layui-this>a:hover {
+
+	background-color: #5FB878;
+}
+
+.pear-nav-tree .toast {
+	font-size: 14px;
+	margin: 5px;
+	margin-right: 8px;
+	text-align: center;
+	height: 40px;
+	line-height: 40px;
+	color: lightgray;
+}
+
+
+.pear-nav-tree .layui-nav-item a i {
+	margin-right: 12px;
+}
+
+.pear-nav-tree .layui-nav-item a span {
+	letter-spacing: 2px;
+	font-size: 13.5px;
+}
+
+.pear-nav-tree .layui-nav-item a:hover {
+	background-color: transparent;
+}
+
+.pear-nav-tree .layui-nav-more {
+	margin-right: 5px;
+}
+
+.pear-nav-tree .layui-nav-bar {
+	display: none;
+}
+
+
+
+/** 实 现 菜 单 隐 藏 */
+.pear-nav-mini {
+	overflow: hidden;
+}
+
+.pear-nav-mini .layui-nav-item a span {
+	display: none;
+}
+
+.pear-nav-mini .layui-nav-child {
+	display: none;
+}
+
+.pear-nav-mini .layui-nav-more {
+	display: none !important;
+}
+
+.pear-nav-control.pc a {
+	font-weight: 500;
+	font-size: 14px;
+}
+
+.pear-nav-control.pc .layui-nav-bar {
+	top: 0px !important;
+}
+
+.pear-nav-control.pc .layui-this * {
+	color: #5FB878!important;
+	font-weight: 600;
+}
+.pear-nav-control.pc .layui-nav-bar{
+	display: none!important;
+}
+
+/** 隐 藏 后 子 级 悬 浮 菜 单 */
+.pear-nav-tree .layui-nav-hover {
+	border-radius: 4px;
+	overflow: hidden;
+	background-color: #28333E;
+	display: block;
+	position: fixed;
+	min-width: 130px;
+	margin-left: 62px;
+	padding-top: 4px !important;
+	padding-bottom: 4px !important;
+	box-shadow: 0px 0px 3px lightgray;
+}
+.pear-nav-tree .layui-nav-hover a span {
+	display: inline-block !important;
+}
+.pear-nav-tree .layui-nav-hover a i {
+	display: none;
+}
+.pear-nav-tree .layui-nav-child dd a span {
+	margin-left: 30px !important;
+}
+.pear-nav-tree .layui-nav-child dd a i {
+	display: none;
+}
+.pear-nav-tree .layui-nav-hover dd a span {
+	margin-left: 0px !important;
+}
+/** 亮 样 式*/
+
+/** 亮 样 式*/
+
+.dark-theme .layui-nav-tree{
+	background-color: #28333E!important; 
+}
+
+.light-theme{
+	background-color: white!important;
+}
+
+.light-theme .pear-nav-tree,
+.light-theme .pear-nav-tree .layui-nav-child{
+	background-color: white!important;
+}
+
+.light-theme .pear-nav-tree a,
+.light-theme .pear-nav-tree .layui-nav-more{
+	color: dimgray!important;
+	border-top-color: dimgray;
+}
+
+.light-theme .pear-nav-tree .layui-nav-itemed>a>.layui-nav-more{
+	border-top-color: white!important;
+	border-bottom-color: dimgray!important;
+}
+
+.light-theme .pear-nav-tree .layui-nav-child{
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.light-theme .pear-nav-tree .layui-this a,
+.light-theme .pear-nav-tree .layui-this{
+	color: white!important;
+	background-color: #5FB878!important;
+	
+}
+
+.light-theme .pear-nav-tree .layui-this a:hover{
+	background-color: #5FB878!important;
+	
+}
+ 
+.light-theme .pear-nav-tree .layui-nav-bar{
+	display: none;
+	
+}
+
+/** 下 拉 图 标 */
+.pear-nav-tree.arrow .layui-nav-more {
+	font-family: layui-icon !important;
+	font-size: 12px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow: hidden;
+	width: auto;
+	height: auto;
+	line-height: normal;
+	border: none;
+	top: 23px;
+	margin-right: 5px !important;
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+	transition: all .2s;
+	-webkit-transition: all .2s;
+}
+
+.pear-nav-tree.arrow .layui-nav-child .layui-nav-more {
+	top: 17px;
+}
+
+.pear-nav-tree.arrow .layui-nav-more:before {
+	content: "\e61a";
+}
+
+.pear-nav-tree.arrow .layui-nav-itemed>a>.layui-nav-more {
+	transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	width: 12px;
+	text-align: center;
+}
+
+.pear-nav-tree.arrow .layui-nav-itemed>a>.layui-nav-more:before {
+	content: '\e61a';
+	background-color: transparent;
+	display: inline-block;
+	vertical-align: middle;
+}

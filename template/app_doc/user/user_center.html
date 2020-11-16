@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>个人中心{% if site_name != None and site_name != '' %} - {{site_name}} {% endif %} - 觅道文档MrDoc</title>
+		<link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+		<!-- 依 赖 样 式 -->
+		<link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
+		<!-- 加 载 样 式-->
+		<link rel="stylesheet" href="{% static 'PearAdminLayui/admin/css/load.css' %}" />
+		<!-- 布 局 样 式 -->
+		<link rel="stylesheet" href="{% static 'PearAdminLayui/admin/css/admin.css' %}" />
+		<!-- 主 题 更 换 -->
+		<style id="pearadmin-bg-color"></style>
+		<!-- 头 部 结 束 -->
+	</head>
+	<!-- 结 构 代 码 -->
+	<body class="layui-layout-body pear-admin">
+		<!-- 布 局 框 架 -->
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<!-- 顶 部 左 侧 功 能 -->
+				<ul class="layui-nav layui-layout-left">
+					<li class="collaspe layui-nav-item"><a href="#" class="layui-icon layui-icon-shrink-right"></a></li>
+					<li class="refresh layui-nav-item"><a href="#" class="layui-icon layui-icon-refresh-1" loading=600></a></li>
+				</ul>
+				<!-- 顶 部 右 侧 菜 单 -->
+				<div id="control" class="layui-layout-control"></div>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
+					<li class="layui-nav-item">
+						<!-- 头 像 -->
+						<a href="javascript:;">
+							<img src="{% static 'PearAdminLayui/avatar.svg' %}" class="layui-nav-img">
+							{% if request.user.first_name != '' %} {{request.user.first_name}} {% else %} {{request.user.username}}{% endif %}
+						</a>
+						<!-- 功 能 菜 单 -->
+						<dl class="layui-nav-child">
+							{% if request.user.is_superuser %}
+							<dd><a href="{% url 'admin_center' %}">后台管理</a></dd>
+							{% endif %}
+							<dd><a href="{% url 'pro_list' %}" target="_blank">站点首页</a></dd>
+						  	<dd><a href="{% url 'logout' %}">注销登录</a></dd>
+						</dl>
+					</li>
+					<li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
+				</ul>
+			</div>
+			<!-- 侧 边 区 域 -->
+			<div class="layui-side layui-bg-black">
+				<!-- 顶 部 图 标 -->
+				<div class="layui-logo">
+					<img class="logo"></img>
+					<span class="title"></span>
+				</div>
+				<!-- 侧 边 菜 单 -->
+				<div class="layui-side-scroll">
+					<div id="sideMenu"></div>
+				</div>
+			</div>
+			<!-- 视 图 页 面 -->
+			<div class="layui-body">
+				<div id="content"></div>
+			</div>
+		</div>
+		<!-- 遮 盖 层 -->
+		<div class="pear-cover"></div>
+		<!-- 加 载 动 画-->
+		<div class="loader-main">
+			<div class="loader"></div>
+		</div>
+		<!-- 依 赖 脚 本 -->
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<!-- 框 架 初 始 化 -->
+		<script>
+			layui.use(['admin'], function() {
+                var pear_admin_config = {
+                    "logo": {
+                        "title": "个人中心",
+                        "image": "{% static 'mrdoc_logo_ridus.png' %}"
+                    },
+                    "menu": {
+                        "data": "{% url 'user_center_menu' %}",
+                        "accordion": true,
+                        "control": false,
+                        "select": "10"
+                    },
+                    "tab": {
+                        "muiltTab": true,
+                        "keepState": true,
+                        "tabMax": 30,
+                        "index": {
+                            "id": "10",
+                            "href": "{% url 'manage_overview' %}",
+                            "title": "首页"
+                        }
+                    },
+                    "theme": {
+                        "defaultColor": "2",
+                        "defaultMenu": "dark-theme",
+                        "allowCustom": true
+                    },
+                    "colors": [{
+                            "id": "1",
+                            "color": "#FF5722"
+                        },
+                        {
+                            "id": "2",
+                            "color": "#5FB878"
+                        },
+                        {
+                            "id": "3",
+                            // "color": "#1E9FFF"
+							"color":"#2176ff"
+                        }, {
+                            "id": "4",
+                            "color": "#FFB800"
+                        }, {
+                            "id": "5",
+                            "color": "darkgray"
+                        }
+                    ],
+                    "links": [{
+                            "icon": "layui-icon layui-icon-website",
+                            "title": "官方网站",
+                            "href": "http://zmister.com/mrdoc/"
+                        },
+                        {
+                            "icon": "layui-icon layui-icon-read",
+                            "title": "说明文档",
+                            "href": "http://mrdoc.zmister.com/project-7/"
+                        },
+                        {
+                            "icon": "layui-icon layui-icon-fonts-code",
+                            "title": "开源地址",
+                            "href": "https://gitee.com/zmister/MrDoc"
+                        },
+                        {
+                            "icon": "layui-icon layui-icon-survey",
+                            "title": "QQ群",
+                            "href": "http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"
+                        },
+						{
+                            "icon": "layui-icon layui-icon-log",
+                            "title": "当前版本：{{mrdoc_version}}",
+                            "href": "https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/"
+                        }
+                    ],
+                    "other": {
+                        "keepLoad": 400
+                    }
+                }
+				var admin = layui.admin;
+				admin.render(pear_admin_config);
+			})
+		</script>
+	</body>
+</html>

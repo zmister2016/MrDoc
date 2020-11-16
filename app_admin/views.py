@@ -8,6 +8,7 @@ from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPa
 from app_admin.decorators import superuser_only,open_register
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+from django.urls import reverse
 import datetime
 import requests
 from app_doc.models import *
@@ -217,7 +218,28 @@ def send_email_vcode(request):
     else:
         return JsonResponse({'status':False,'data':'方法错误'})
 
-# 管理员后台首页 - 用户管理
+
+# 后台管理 - 仪表盘
+@superuser_only
+def admin_overview(request):
+    if request.method == 'GET':
+        # 用户数
+        user_cnt = User.objects.all().count()
+        # 文集数
+        pro_cnt = Project.objects.all().count() # 文集总数
+        # 文档数
+        doc_cnt = Doc.objects.all().count() # 文档总数
+        total_tag_cnt = Tag.objects.filter(create_user=request.user).count()
+        img_cnt = Image.objects.filter(user=request.user).count()
+        attachment_cnt = Attachment.objects.filter(user=request.user).count()
+        # 文档动态
+        doc_active_list = Doc.objects.all().order_by('-modify_time')[:5]
+
+        return render(request,'app_admin/admin_overview.html',locals())
+    else:
+        pass
+
+# 后台管理 - 用户管理
 @superuser_only
 @logger.catch()
 def admin_user(request):
@@ -252,7 +274,7 @@ def admin_user(request):
         return JsonResponse({'status':False,'data':'方法错误'})
 
 
-# 管理员后台首页 - 创建用户
+# 后台管理 - 创建用户
 @superuser_only
 @logger.catch()
 def admin_create_user(request):
@@ -293,7 +315,7 @@ def admin_create_user(request):
         return HttpResponse('方法不允许')
 
 
-# 管理员后台 - 修改密码
+# 后台管理 - 修改密码
 @superuser_only
 @logger.catch()
 def admin_change_pwd(request):
@@ -319,7 +341,7 @@ def admin_change_pwd(request):
         return JsonResponse({'status':False,'data':'方法错误'})
 
 
-# 管理员后台 - 删除用户
+# 后台管理 - 删除用户
 @superuser_only
 @logger.catch()
 def admin_del_user(request):
@@ -335,7 +357,7 @@ def admin_del_user(request):
         return JsonResponse({'status':False,'data':'方法错误'})
 
 
-# 管理员后台 - 文集管理
+# 后台管理 - 文集管理
 @superuser_only
 @logger.catch()
 def admin_project(request):
@@ -367,7 +389,7 @@ def admin_project(request):
     else:
         return HttpResponse('方法错误')
 
-# 管理员后台 - 修改文集权限
+# 后台管理 - 修改文集权限
 @superuser_only
 @logger.catch()
 def admin_project_role(request,pro_id):
@@ -402,7 +424,7 @@ def admin_project_role(request,pro_id):
             return Http404
 
 
-# 管理员后台 - 文档管理
+# 后台管理 - 文档管理
 @superuser_only
 @logger.catch()
 def admin_doc(request):
@@ -432,7 +454,7 @@ def admin_doc(request):
         return render(request,'app_admin/admin_doc.html',locals())
 
 
-# 管理员后台 - 文档模板管理
+# 后台管理 - 文档模板管理
 @superuser_only
 @logger.catch()
 def admin_doctemp(request):
@@ -462,7 +484,7 @@ def admin_doctemp(request):
         return render(request,'app_admin/admin_doctemp.html',locals())
 
 
-# 管理员后台 - 注册邀请码管理
+# 后台管理 - 注册邀请码管理
 @superuser_only
 @logger.catch()
 def admin_register_code(request):
@@ -547,7 +569,7 @@ def change_pwd(request):
         return HttpResponse('方法错误')
 
 
-# 管理员后台 - 应用设置
+# 后台管理 - 应用设置
 @superuser_only
 @logger.catch()
 def admin_setting(request):
@@ -769,3 +791,65 @@ def check_update(request):
     url = 'https://gitee.com/api/v5/repos/zmister/MrDoc/tags'
     resp = requests.get(url,timeout=5).json()
     return JsonResponse({'status':True,'data':resp[-1]})
+
+
+# 后台管理
+@superuser_only
+def admin_center(request):
+    return render(request,'app_admin/admin_center.html',locals())
+
+
+# 后台管理菜单
+def admin_center_menu(request):
+    menu_data = [
+        {
+            "id": 1,
+            "title": "仪表盘",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('admin_overview'),
+        },
+        {
+            "id": 2,
+            "title": "文集管理",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('project_manage'),
+        },
+        {
+            "id": 3,
+            "title": "文档管理",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('doc_manage'),
+        },
+        {
+            "id": 4,
+            "title": "文档模板管理",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('doctemp_manage'),
+        },
+        {
+            "id": 5,
+            "title": "注册码管理",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('register_code_manage'),
+        },
+        {
+            "id": 6,
+            "title": "用户管理",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('user_manage'),
+        },
+        {
+            "id": 7,
+            "title": "站点设置",
+            "type": 1,
+            "icon": "layui-icon layui-icon-console",
+            "href": reverse('sys_setting'),
+        },
+    ]
+    return JsonResponse(menu_data,safe=False)

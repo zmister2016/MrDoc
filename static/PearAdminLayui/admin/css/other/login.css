@@ -1,0 +1,83 @@
+.layui-form {
+	width: 320px !important;
+	margin: auto !important;
+	margin-top: 160px !important;
+}
+
+.layui-form button {
+	width: 100% !important;
+	height: 44px !important;
+	line-height: 44px !important;
+	font-size: 16px !important;
+	background-color: #5FB878 !important;
+	font-weight: 550 !important;
+}
+
+.layui-form-checked[lay-skin=primary] i {
+	border-color: #5FB878 !important;
+	background-color: #5FB878 !important;
+	color: #fff !important;
+}
+
+.layui-tab-content {
+	margin-top: 15px !important;
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
+.layui-form-item {
+	margin-top: 20px !important;
+}
+
+.layui-input {
+	height: 44px !important;
+	line-height: 44px !important;
+	padding-left: 15px !important;
+	border-radius: 3px !important;
+}
+
+.layui-input:focus {
+	box-shadow: 0px 0px 3px 1px #5FB878 !important;
+}
+
+.logo {
+	width: 60px !important;
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+	margin-left: 20px !important;
+}
+
+.title {
+	font-size: 30px !important;
+	font-weight: 550 !important;
+	margin-left: 20px !important;
+	color: #5FB878 !important;
+	display: inline-block !important;
+	height: 60px !important;
+	line-height: 60px !important;
+	margin-top: 10px !important;
+	position: absolute !important;
+}
+
+.desc {
+	width: 100% !important;
+	text-align: center !important;
+	color: gray !important;
+	height: 60px !important;
+	line-height: 60px !important;
+}
+
+body {
+	background-color: whitesmoke;
+	height: 100%;
+}
+
+.code {
+	margin-right: 13px;
+	border: #e6e6e6 1px solid;
+}
+
+.codeImage {
+	height: 42px;
+	border: #e6e6e6 1px solid;
+}

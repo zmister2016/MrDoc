@@ -20,17 +20,16 @@
 <div class="layui-form" style="padding: 0 10px 10px 10px;">
     <div class="layui-row">
         <div class="layui-btn-container" style="margin-bottom: 0px;">
-                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
-                    <i class="fa fa-clipboard"></i>
-                </button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
+                <i class="fa fa-clipboard"></i>
+            </button>
 
-                <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
-                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
-                    <i class="fa fa-upload"></i>
-                </button>
-
+            <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
+            <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-local" onclick="selectLocalFile()" title="插入本地文本文件内容">
+                <i class="fa fa-upload"></i>
+            </button>
         </div>
-
+        <!-- 选择文集 -->
         <div class="layui-col-md12" style="margin-bottom: 10px;">
             <div class="layui-input-inblock">
               <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
@@ -62,6 +61,7 @@
             </div>
         </div>
 
+        <!-- 设置文档排序 -->
         <div class="layui-row">
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <span>点击文档树选择上级（可选）或</span>
@@ -73,6 +73,7 @@
             </div>    
         </div>
 
+        <!-- 文档结构树 -->
         <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
             <div class="layui-colla-item">
                 <h2 class="layui-colla-title">文档结构树</h2>
@@ -95,16 +96,34 @@
             </div>
         </div>
 
+        <!-- 文档下级目录展开设置 -->
+        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">下级目录</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                        {%if doc.open_children %}
+                        <input type="radio" name="open-children" value="true" title="展开" checked>
+                        <input type="radio" name="open-children" value="false" title="收起">
+                        {% else %}
+                        <input type="radio" name="open-children" value="true" title="展开">
+                        <input type="radio" name="open-children" value="false" title="收起" checked>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 发布按钮 -->
         <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
             <div class="layui-colla-item">
                 <h2 class="layui-colla-title">发布</h2>
                 <div class="layui-colla-content layui-show">
                     <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                        <button class="layui-btn layui-btn-primary mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
                             <i class="fa fa-save"></i> 保存
                         </button>
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                        <button class="layui-btn layui-btn-normal" onclick="createDoc()" id="create_doc" title="发布当前内容">
                             <i class="fa fa-save"></i> 发布
                         </button>
                     </div>
@@ -227,11 +246,11 @@
             'doc_name':$("#doc-name").val(),
             'doc_tag':$("#tagsinputval").val(),
             'content':editor.getHTML(),//获取editor解析的HTML
-            //'content':editor.getPreviewedHTML(),//获取预览的HTML
             'pre_content':editor.getMarkdown(),
             'sort':$("#sort").val(),
+            'open_children':$('input:radio[name="open-children"]:checked').val(),
         }
-        console.log(data)
+        // console.log(data)
         if(data.doc_name == ""){
             layer.msg('请输入文档标题！');
             $('button.layui-btn').attr("disabled",false);
@@ -278,9 +297,10 @@
             'content':editor.getHTML(),
             'pre_content':editor.getMarkdown(),
             'sort':$("#sort").val(),
-            'status':0
+            'status':0,
+            'open_children':$('input:radio[name="open-children"]:checked').val(),
         }
-        console.log(data)
+        // console.log(data)
         if(data.doc_name == ""){
             layer.msg('请输入文档标题！');
             $('button.layui-btn').attr("disabled",false);

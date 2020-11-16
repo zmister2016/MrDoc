@@ -15,7 +15,10 @@ def get_next_doc(value):
 # 获取文档的所属文集
 @register.filter(name='get_doc_top')
 def get_doc_top(value):
-    return Project.objects.get(id=int(value))
+    try:
+        return Project.objects.get(id=int(value))
+    except Exception:
+        return ''
 
 # 获取用户是否为文集创建者
 @register.filter(name='is_colla_pro')

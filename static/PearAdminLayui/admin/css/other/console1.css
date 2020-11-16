@@ -1,0 +1,140 @@
+.top-panel {
+	border-radius: 4px;
+	text-align: center;
+}
+
+.top-panel>.layui-card-body {
+	height: 60px;
+}
+
+.top-panel-number {
+	line-height: 60px;
+	font-size: 30px;
+	border-right: 1px solid #eceff9;
+}
+
+.top-panel-tips {
+	padding-left: 8px;
+	padding-top: 16px;
+	line-height: 30px;
+	font-size: 12px;
+}
+
+.pear-container {
+	background-color: whitesmoke;
+	margin: 10px;
+}
+
+.card {
+	width: 100%;
+	height: 160px;
+	background-color: whitesmoke;
+	border-radius: 4px;
+}
+
+.card .header .avatar {
+	width: 28px;
+	height: 28px;
+	margin: 20px;
+	border-radius: 50px;
+}
+
+.card .header {
+	color: dimgray;
+}
+
+.card .body {
+	color: gray;
+}
+
+.card .body {
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.card .footer {
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 20px;
+	font-size: 13px;
+	color: gray;
+	position: absolute;
+}
+
+.custom-tab .layui-tab-title {
+	border-bottom-width: 0px;
+	border-bottom-style: none;
+}
+
+.custom-tab .layui-tab-title li {
+	margin-left: 10px;
+}
+.list .list-item {
+	height: 32px;
+	line-height: 32px;
+	color: gray;
+	padding: 5px;
+	padding-left: 15px;
+	border-radius: 4px;
+	margin-top: 5.2px;
+}
+
+.list .list-item:hover {
+	background-color: whitesmoke;
+}
+
+.list .list-item .title {
+	font-size: 13px;
+	width: 100%;
+}
+
+.list .list-item .footer {
+	position: absolute;
+	right: 30px;
+	font-size: 12px;
+}
+
+.top-panel-tips i {
+	font-size: 33px;
+}
+
+.layuiadmin-card-status {
+	padding: 0 10px 10px;
+}
+
+.layuiadmin-card-status dd {
+	padding: 15px 0;
+	border-bottom: 1px solid #EEE;
+	display: -webkit-flex;
+	display: flex;
+}
+
+.layuiadmin-card-status dd div.layui-status-img,
+.layuiadmin-card-team .layui-team-img {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	margin-right: 15px;
+}
+
+.layuiadmin-card-status dd div.layui-status-img a {
+	width: 100%;
+	height: 100%;
+	display: inline-block;
+	text-align: center;
+	line-height: 32px;
+}
+
+.layuiadmin-card-status dd div span {
+	color: #BBB;
+}
+
+.layuiadmin-card-status dd div a {
+	color: #01AAED;
+}
+
+.top-panel-tips svg {
+	margin-top: -12px;
+	width: 50px;
+	height: 50px;
+}

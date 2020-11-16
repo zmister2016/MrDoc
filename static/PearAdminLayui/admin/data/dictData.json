@@ -1,0 +1,36 @@
+{
+	"code": 0,
+	"msg": null,
+	"count": 2,
+	"data": [{
+		"createTime": null,
+		"createBy": null,
+		"createName": null,
+		"updateTime": null,
+		"updateBy": null,
+		"updateName": null,
+		"remark": "男 : body",
+		"params": null,
+		"dataId": "1317401149287956480",
+		"dataLabel": "男",
+		"dataValue": "boy",
+		"typeCode": "user_sex",
+		"isDefault": null,
+		"enable": "0"
+	}, {
+		"createTime": null,
+		"createBy": null,
+		"createName": null,
+		"updateTime": null,
+		"updateBy": null,
+		"updateName": null,
+		"remark": "女 : girl",
+		"params": null,
+		"dataId": "1317402976670711808",
+		"dataLabel": "女",
+		"dataValue": "girl",
+		"typeCode": "user_sex",
+		"isDefault": null,
+		"enable": "0"
+	}]
+}

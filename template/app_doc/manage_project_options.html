@@ -1,21 +1,30 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}文集设置{% endblock %}
+{% block custom_element %}
+<link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
 {% block content %}
-    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
-    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
+<div class="layui-card">
+    <div class="layui-card-body">
+    <div class="layui-row" style="padding-left:15px;">
         <span class="layui-breadcrumb" lay-separator=">">
           <a href="{% url 'manage_project' %}">文集管理</a>
           <a><cite>文集设置</cite></a>
         </span>
     </div>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
     <div class="layui-card-header" style="margin-bottom: 10px;">
 
       <div class="layui-row">
           <span style="font-size:18px;">文集：{{pro.name}}
           </span>
       </div>
-  </div>
+    </div>
 
     <div class="layui-tab">
         <ul class="layui-tab-title">
@@ -176,28 +185,33 @@
             
         </div>
     </div>
+    </div>
+</div>
 {% endblock %}
 {% block custom_script %}
+
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
 <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
 <script>
     $.ajaxSetup({
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-        });
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
     var form = layui.form;
     //监听单选事件
     form.on('radio(role)', function(data){
-      console.log(data.elem); //得到radio原始DOM对象
-      console.log(data.value); //被点击的radio的value值
-      if(data.value in [0,1]){
+    console.log(data.elem); //得到radio原始DOM对象
+    console.log(data.value); //被点击的radio的value值
+    if(data.value in [0,1]){
             $("#role-pwd").css("display","none");
             $("#role-user").css("display","none");
-      }else if(data.value == 2){
+    }else if(data.value == 2){
             $("#role-user").css("display","block");
             $("#role-pwd").css("display","none");
-      }else if(data.value == 3){
+    }else if(data.value == 3){
             $("#role-user").css("display","none");
             $("#role-pwd").css("display","block");
-      }
+    }
     });
     //修改文集基础信息
     modifyProject = function(pro_id,pro_name,pro_intro){
@@ -369,5 +383,6 @@
         }
         })
     };
+
 </script>
 {% endblock %}

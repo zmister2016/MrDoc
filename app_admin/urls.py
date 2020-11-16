@@ -20,5 +20,8 @@ urlpatterns = [
     path('send_email_vcode/',views.send_email_vcode,name='send_email_vcode'), # 忘记密码发送邮件验证码
     path('admin_register_code/',views.admin_register_code,name='register_code_manage'), # 注册邀请码管理
     path('check_update/',views.check_update,name='check_update'), # 检测版本更新
+    path('admin_center/',views.admin_center,name="admin_center"), # 后台管理
+    path('admin/center_menu/',views.admin_center_menu,name="admin_center_menu"), # 后台管理菜单数据
+    path('admin_overview/',views.admin_overview,name="admin_overview"), # 后台管理仪表盘
 
 ]

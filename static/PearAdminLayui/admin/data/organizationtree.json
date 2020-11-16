@@ -1,0 +1,143 @@
+{
+	"status": {
+		"code": 200,
+		"message": "操作成功"
+	},
+	"data": [{
+		"id": "0",
+		"title": "济南总部",
+		"last": false,
+		"parentId": "9527",
+		"children": [{
+				"id": "001",
+				"title": "杭州市",
+				"last": false,
+				"parentId": "0",
+				"children": [{
+						"id": "001001",
+						"title": "软件部",
+						"last": true,
+						"parentId": "001"
+					},
+					{
+						"id": "001002",
+						"title": "销售部",
+						"last": true,
+						"parentId": "001"
+					},
+					{
+						"id": "001003",
+						"title": "财务部",
+						"last": true,
+						"parentId": "001"
+					},
+					{
+						"id": "001004",
+						"title": "人事部",
+						"last": true,
+						"parentId": "001"
+					},
+					{
+						"id": "001005",
+						"title": "行政部",
+						"last": true,
+						"parentId": "001"
+					}
+				]
+			},
+			{
+				"id": "002",
+				"title": "湖北省",
+				"last": false,
+				"parentId": "0",
+				"children": [{
+						"id": "002001",
+						"title": "武汉市",
+						"last": true,
+						"parentId": "002"
+					},
+					{
+						"id": "002002",
+						"title": "黄冈市",
+						"last": true,
+						"parentId": "002"
+					},
+					{
+						"id": "002003",
+						"title": "潜江市",
+						"last": true,
+						"parentId": "002"
+					},
+					{
+						"id": "002004",
+						"title": "荆州市",
+						"last": true,
+						"parentId": "002"
+					},
+					{
+						"id": "002005",
+						"title": "襄阳市",
+						"last": true,
+						"parentId": "002"
+					}
+				]
+			},
+			{
+				"id": "003",
+				"title": "广东省",
+				"last": false,
+				"parentId": "0",
+				"children": [{
+						"id": "003001",
+						"title": "广州市",
+						"last": false,
+						"parentId": "003",
+						"children": [{
+								"id": "003001001",
+								"title": "天河区",
+								"last": true,
+								"parentId": "003001"
+							},
+							{
+								"id": "003001002",
+								"title": "花都区",
+								"last": true,
+								"parentId": "003001"
+							}
+						]
+					},
+					{
+						"id": "003002",
+						"title": "深圳市",
+						"last": true,
+						"parentId": "003"
+					},
+					{
+						"id": "003003",
+						"title": "中山市",
+						"last": true,
+						"parentId": "003"
+					},
+					{
+						"id": "003004",
+						"title": "东莞市",
+						"last": true,
+						"parentId": "003"
+					},
+					{
+						"id": "003005",
+						"title": "珠海市",
+						"last": true,
+						"parentId": "003"
+					},
+					{
+						"id": "003006",
+						"title": "韶关市",
+						"last": true,
+						"parentId": "003"
+					}
+				]
+			}
+		]
+	}]
+}

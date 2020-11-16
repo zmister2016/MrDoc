@@ -1,73 +1,124 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}仪表盘{% endblock %}
+
+{% block custom_element %}
+    <link rel="stylesheet" href="{% static 'PearAdminLayui/admin/css/other/console1.css' %}" />
+{% endblock %}
+
 {% block content %}
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-        <div class="layui-row">
-            <span style="font-size:18px;">工作台</span>
+<div>
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-xs6 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">文集总数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="pro_cnt">
+                            {{ pro_cnt }}
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <svg t="1604800601357" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1093" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M91.89 238.457c-29.899 0-54.133 24.239-54.133 54.134 0 29.899 24.234 54.137 54.133 54.137s54.138-24.238 54.138-54.137c0-29.896-24.239-54.134-54.138-54.134z" fill="#E5594F" p-id="1094"></path><path d="M91.89 462.463c-29.899 0-54.133 24.239-54.133 54.139 0 29.895 24.234 54.133 54.133 54.133s54.138-24.238 54.138-54.133c0-29.9-24.239-54.139-54.138-54.139z" fill="#C45FA0" p-id="1095"></path><path d="M91.89 686.475c-29.899 0-54.133 24.237-54.133 54.133 0 29.899 24.234 54.138 54.133 54.138s54.138-24.238 54.138-54.138c0-29.896-24.239-54.133-54.138-54.133z" fill="#F39A2B" p-id="1096"></path><path d="M941.26 234.723H328.964c-28.867 0-52.263 23.4-52.263 52.268v3.734c0 28.868 23.396 52.269 52.263 52.269H941.26c28.869 0 52.269-23.401 52.269-52.269v-3.734c-0.001-28.868-23.4-52.268-52.269-52.268z" fill="#F0D043" p-id="1097"></path><path d="M941.26 682.74H328.964c-28.867 0-52.263 23.399-52.263 52.268v3.734c0 28.863 23.396 52.269 52.263 52.269H941.26c28.869 0 52.269-23.405 52.269-52.269v-3.734c-0.001-28.868-23.4-52.268-52.269-52.268z" fill="#4A5699" p-id="1098"></path><path d="M709.781 458.729H328.964c-28.867 0-52.263 23.4-52.263 52.269v3.734c0 28.873 23.396 52.269 52.263 52.269h380.817c28.866 0 52.271-23.396 52.271-52.269v-3.734c0.001-28.869-23.405-52.269-52.271-52.269z" fill="#E5594F" p-id="1099"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs6 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">文档数量</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="doc_cnt">
+                            {{ doc_cnt }}
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <svg t="1604800659268" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1245" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M899.984 19.873h-3.452c-26.123 0-47.296 21.172-47.296 47.296v888.508c0 26.127 21.173 47.298 47.296 47.298h3.452c26.119 0 47.297-21.171 47.297-47.298V67.169c0-26.124-21.177-47.296-47.297-47.296z" fill="#4A5699" p-id="1246"></path><path d="M132.643 19.873h-3.449c-26.12 0-47.296 21.172-47.296 47.296v888.508c0 26.127 21.177 47.298 47.296 47.298h3.449c26.123 0 47.299-21.171 47.299-47.298V67.169c0-26.124-21.176-47.296-47.299-47.296z" fill="#C45FA0" p-id="1247"></path><path d="M899.463 19.873H129.194c-26.12 0-47.296 21.172-47.296 47.296v3.377c0 26.12 21.177 47.299 47.296 47.299h770.269c26.123 0 47.296-21.179 47.296-47.299v-3.377c0-26.124-21.173-47.296-47.296-47.296z" fill="#6277BA" p-id="1248"></path><path d="M899.463 905.006H129.194c-26.12 0-47.296 21.17-47.296 47.29v3.381c0 26.127 21.177 47.298 47.296 47.298h770.269c26.123 0 47.296-21.171 47.296-47.298v-3.381c0-26.12-21.173-47.29-47.296-47.29z" fill="#C45FA0" p-id="1249"></path><path d="M717.962 543.153H542.047c-26.121 0-47.298 21.175-47.298 47.297v3.724c0 26.123 21.177 47.293 47.298 47.293h175.915c26.121 0 47.297-21.17 47.297-47.293v-3.724c0-26.122-21.176-47.297-47.297-47.297z" fill="#E5594F" p-id="1250"></path><path d="M689.268 198.849H513.355c-26.122 0-47.298 21.175-47.298 47.297v3.722c0 26.12 21.176 47.297 47.298 47.297h175.912c26.122 0 47.298-21.177 47.298-47.297v-3.722c0-26.122-21.175-47.297-47.297-47.297z" fill="#F0D043" p-id="1251"></path><path d="M757.789 353.081H261.17c-26.121 0-47.297 21.172-47.297 47.296v3.377c0 26.121 21.177 47.299 47.297 47.299h496.619c26.121 0 47.296-21.178 47.296-47.299v-3.377c0-26.125-21.175-47.296-47.296-47.296z" fill="#E5594F" p-id="1252"></path><path d="M762.638 726.225h-496.62c-26.12 0-47.294 21.18-47.294 47.301v3.377c0 26.12 21.174 47.3 47.294 47.3h496.62c26.122 0 47.296-21.18 47.296-47.3v-3.377c0-26.122-21.174-47.301-47.296-47.301z" fill="#6277BA" p-id="1253"></path><path d="M355.734 543.328H281.41c-26.122 0-47.297 21.17-47.297 47.293v3.378c0 26.118 21.175 47.297 47.297 47.297h74.324c26.123 0 47.296-21.179 47.296-47.297v-3.378c0-26.123-21.174-47.293-47.296-47.293z" fill="#F39A2B" p-id="1254"></path><path d="M334.85 248.006m-48.986 0a48.986 48.986 0 1 0 97.972 0 48.986 48.986 0 1 0-97.972 0Z" fill="#F39A2B" p-id="1255"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs6 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">图片数量</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="img_cnt">
+                            {{img_cnt}}
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4  top-panel-tips">
+                            <svg t="1604800713657" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1553" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M144.302 134.343c-46.171 0-83.599 37.904-83.599 84.666 0 46.753 37.428 84.661 83.599 84.661 46.179 0 83.607-37.908 83.607-84.661 0-46.761-37.429-84.666-83.607-84.666z" fill="#F0D043" p-id="1554"></path><path d="M392.166 305.246l-2.804-1.718c-21.688-13.291-49.909-6.259-63.035 15.704L19.112 833.375c-13.122 21.964-6.178 50.541 15.511 63.836l2.803 1.717c21.692 13.29 49.909 6.262 63.035-15.701l307.21-514.147c13.122-21.965 6.182-50.542-15.505-63.834z" fill="#6277BA" p-id="1555"></path><path d="M965.247 808.733H58.243c-25.673 0-46.481 20.812-46.481 46.484v3.319c0 25.674 20.808 46.481 46.481 46.481h907.004c25.67 0 46.481-20.808 46.481-46.481v-3.319c0.001-25.672-20.811-46.484-46.481-46.484z" fill="#4A5699" p-id="1556"></path><path d="M1012.051 845.512L796.742 221.268c-7.921-22.964-32.76-34.998-55.493-26.805l-2.944 1.061c-22.77 8.204-34.696 33.548-26.633 56.531L930.879 876.79c7.431 21.168 30.965 31.502 52.562 23.154l2.791-1.081c21.557-8.341 33.116-32.2 25.819-53.351z" fill="#F3A43D" p-id="1557"></path><path d="M570.545 577.868L406.071 317.869c-13.67-21.618-42.063-27.913-63.408-14.066l-2.758 1.792c-21.349 13.844-27.563 42.595-13.893 64.209l164.475 259.997c13.674 21.616 42.064 27.915 63.406 14.064l2.763-1.786c21.349-13.846 27.563-42.6 13.889-64.211z" fill="#C45FA0" p-id="1558"></path><path d="M776.738 198.775l-2.854-1.544c-21.998-11.928-50.051-4.265-62.77 17.169L492.012 583.709c-13.774 23.227-6.701 52.796 15.921 65.989l2.934 1.706c22.701 13.239 52.28 4.892 65.938-18.582l217.178-373.22c12.604-21.655 4.829-48.863-17.245-60.827z" fill="#E7685F" p-id="1559"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs6 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">附件数量</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="attachment_cnt">
+                            {{attachment_cnt}}
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <svg t="1604800765039" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1705" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M736.68 435.86a173.773 173.773 0 0 1 172.042 172.038c0.578 44.907-18.093 87.822-48.461 119.698-32.761 34.387-76.991 51.744-123.581 52.343-68.202 0.876-68.284 106.718 0 105.841 152.654-1.964 275.918-125.229 277.883-277.883 1.964-152.664-128.188-275.956-277.883-277.879-68.284-0.878-68.202 104.965 0 105.842zM285.262 779.307A173.773 173.773 0 0 1 113.22 607.266c-0.577-44.909 18.09-87.823 48.461-119.705 32.759-34.386 76.988-51.737 123.58-52.337 68.2-0.877 68.284-106.721 0-105.842C132.605 331.344 9.341 454.607 7.379 607.266 5.417 759.929 135.565 883.225 285.262 885.148c68.284 0.876 68.2-104.965 0-105.841z" fill="#4A5699" p-id="1706"></path><path d="M339.68 384.204a173.762 173.762 0 0 1 172.037-172.038c44.908-0.577 87.822 18.092 119.698 48.462 34.388 32.759 51.743 76.985 52.343 123.576 0.877 68.199 106.72 68.284 105.843 0-1.964-152.653-125.231-275.917-277.884-277.879-152.664-1.962-275.954 128.182-277.878 277.879-0.88 68.284 104.964 68.199 105.841 0z" fill="#C45FA0" p-id="1707"></path><path d="M545.039 473.078c16.542 16.542 16.542 43.356 0 59.896l-122.89 122.895c-16.542 16.538-43.357 16.538-59.896 0-16.542-16.546-16.542-43.362 0-59.899l122.892-122.892c16.537-16.542 43.355-16.542 59.894 0z" fill="#F39A2B" p-id="1708"></path><path d="M485.17 473.078c16.537-16.539 43.354-16.539 59.892 0l122.896 122.896c16.538 16.533 16.538 43.354 0 59.896-16.541 16.538-43.361 16.538-59.898 0L485.17 532.979c-16.547-16.543-16.547-43.359 0-59.901z" fill="#F39A2B" p-id="1709"></path><path d="M514.045 634.097c23.972 0 43.402 19.433 43.402 43.399v178.086c0 23.968-19.432 43.398-43.402 43.398-23.964 0-43.396-19.432-43.396-43.398V677.496c0.001-23.968 19.433-43.399 43.396-43.399z" fill="#E5594F" p-id="1710"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="layui-row layui-col-space20">
-        <div class="layui-col-md4">
-            <div class="layui-collapse">
-                <div class="layui-colla-item">
-                  <h2 class="layui-colla-title">概览</h2>
-                  <div class="layui-colla-content layui-show">
-                      <div style="display: flex;justify-content:space-between;color:rgba(0,0,0,.65)">
-                        <div style="font-size: 14px;"><img src="{% static 'icon_img/manage-pro-icon.svg' %}" width="14px;">  {{ total_pro_cnt }}个文集</div>
-                        <div style="font-size: 14px;"><img src="{% static 'icon_img/manage-doc-icon.svg' %}" width="14px;">  {{ total_doc_cnt }}篇文档</div>
-                        <div style="font-size: 14px;"><img src="{% static 'icon_img/manage-tag-icon.svg' %}" width="14px;">  {{ total_tag_cnt }}个标签</div>
-
-                      </div>
-                  </div>
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md6">
+            <!-- <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-tab custom-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                        <div id="echarts-records" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+                    </div>
                 </div>
-              </div>
-        </div>
-
-        <div class="layui-col-md4">
-            <div class="layui-collapse">
-                <div class="layui-colla-item">
-                  <h2 class="layui-colla-title">动态</h2>
-                  <div class="layui-colla-content layui-show">
-                      <div style="color:rgba(0,0,0,.65)">
-                        <table class="layui-table" lay-even lay-skin='nob'>
-                          <tbody>
-                            {% for doc in doc_active_list %}
-                              <tr>
+            </div> -->
+            <div class="layui-card">
+                <div class="layui-card-header">动态</div>
+                <div class="layui-card-body">
+                    <dl class="layuiadmin-card-status">
+                        {% for doc in doc_active_list %}
+                        <dd>
+                            <div class="layui-status-img"><a href="javascript:;"><img style="width: 32px;height: 32px;border-radius: 50px;"
+                                        src="{% static 'PearAdminLayui/avatar.svg' %}"></a></div>
+                            <div>
                                 {% if doc.status == 1 %}
-                                <td>{{doc.modify_time}}</td><td><a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></td>
+                                <p>{{doc.create_user.first_name}} 发布了文档 <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></p>
                                 {% elif doc.status == 0 %}
-                                <td>{{doc.modify_time}}</td><td><a href="{% url 'modify_doc' doc.id %}" target="_blank">{{doc.name}}</a></td>
+                                <p>{{doc.create_user.first_name}} 保存了文档 <a href="{% url 'modify_doc' doc.id %}" target="_blank">{{doc.name}}</a></p>
+                                {% else %}
+                                <p>{{doc.create_user.first_name}} 删除了文档 <a>{{doc.name}}</a></p>
                                 {% endif %}
-                              </tr>
-                                
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                        
-                      </div>
-                  </div>
+                                <span>{{doc.modify_time}}</span>
+                            </div>
+                        </dd>
+                        {% endfor %}
+                    </dl>
                 </div>
-              </div>
+            </div>
         </div>
-        
-        <div class="layui-col-md4">
-            <div class="layui-collapse">
-                <div class="layui-colla-item">
-                  <h2 class="layui-colla-title">快速草稿</h2>
-                  <div class="layui-colla-content layui-show">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">快速草稿</div>
+                <div class="layui-card-body">
                     <div class="layui-form">
                         {% csrf_token %}
                         <input name="status" value="0" hidden>
                         <div class="layui-form-item">
-                          <label class="layui-form-label">标题</label>
-                          <div class="layui-input-block">
+                            <label class="layui-form-label">标题</label>
+                            <div class="layui-input-block">
                             <input type="text" id="doc_name" name="doc_name" required  lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
-                          </div>
+                            </div>
                         </div>
                         <div class="layui-form-item">
-                          <label class="layui-form-label">文集</label>
-                          <div class="layui-input-block">
+                            <label class="layui-form-label">文集</label>
+                            <div class="layui-input-block">
                             <select name="project" id="project" lay-verify="required">
                                 <option value=""></option>
                                 {% for pro in pro_list %}
@@ -82,74 +133,135 @@
                                     {% endif %}
                                 {% endfor %}
                             </select>
-                          </div>
+                            </div>
                         </div>
                         <div class="layui-form-item layui-form-text">
-                          <label class="layui-form-label">文本域</label>
-                          <div class="layui-input-block">
+                            <label class="layui-form-label">文本域</label>
+                            <div class="layui-input-block">
                             <textarea name="pre_content" id="pre_content" placeholder="在想些什么呢？" class="layui-textarea"></textarea>
-                          </div>
+                            </div>
                         </div>
                         <div class="layui-form-item">
-                          <div class="layui-input-block">
+                            <div class="layui-input-block">
                             <button class="layui-btn layui-btn-normal" id="save_doc" onclick="manage_overview_save_doc();">保存草稿</button>
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                          </div>
+                            </div>
                         </div>
                     </div>
-                      <hr>
-                  </div>
                 </div>
-              </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    链接
+                </div>
+                <div class="layui-card-body">
+                    <a target="_blank" href="http://mrdoc.zmister.com/project-7/doc-434/" class="pear-btn pear-btn-primary layui-btn-fluid" style="height: 50px;line-height: 50px;">
+                        <i class="layui-icon layui-icon-praise"></i> 支持项目发展
+                    </a>
+                    <br/>
+                    <a target="_blank" href="https://zmister.com/mrdoc/" class="pear-btn pear-btn-success layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
+                        <i class="layui-icon layui-icon-website"></i> 觅 道 文 档 官 网
+                    </a>
+                    <br/>
+                    <a target="_blank" href="http://mrdoc.zmister.com" class="pear-btn pear-btn-primary  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
+                        <i class="layui-icon layui-icon-read"></i> 使 用 手 册
+                    </a>
+                    <br/>
+                    <a target="_blank" href="https://gitee.com/zmister/MrDoc" class="pear-btn pear-btn-warming  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
+                        <i class="layui-icon layui-icon-download-circle"></i> 源 码 下 载
+                    </a>
+                </div>
+            </div>
         </div>
-
     </div>
+</div>
+<!--</div>-->
 {% endblock %}
+
 {% block custom_script %}
-<script>
-    $.ajaxSetup({
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-        });
-    // 保存文档草稿
-    manage_overview_save_doc = function(){
-        $('button.layui-btn').attr("disabled",true);
-        $('button.layui-btn').addClass('layui-btn-disabled');
-        var data = {
-            'project':$("#project").val(),
-            'doc_name':$("#doc_name").val(),
-            'pre_content':$("#pre_content").val(),
-            'status':0
-        }
-        console.log(data)
-        if(data.doc_name == ""){
-            layer.msg('请输入文档标题！');
-            $('button.layui-btn').attr("disabled",false);
-            $('button.layui-btn').removeClass('layui-btn-disabled');
-        }
-        else if(data.project == ""){
-            layer.msg('请选择文集！');
-            $('button.layui-btn').attr("disabled",false);
-            $('button.layui-btn').removeClass('layui-btn-disabled');
-        }
-        else{
-            layer.load(1);
-            $.post("{% url 'create_doc' %}",data,function(r){
-                if(r.status){
-                    //保存成功
-                    layer.closeAll("loading");
-                    md_changed = false;
-                    layer.msg('保存草稿成功',function(){
-                        window.location.reload()
-                    });
-                }else{
-                    //创建失败
-                    layer.closeAll("loading");
-                    layer.msg('保存草稿失败:'+r.data);
+    <script>
+        layui.use(['layer', 'echarts', 'element', 'count','topBar','form'], function() {
+            var $ = layui.jquery,
+                layer = layui.layer,
+                form = layui.form,
+                element = layui.element,
+                count = layui.count,
+                echarts = layui.echarts;
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            // count.up("pro_cnt", {
+            //     time: 4000,
+            //     num: {{ pro_cnt }},
+            //     bit: 0,
+            //     regulator: 50
+            // });
+
+            // count.up("doc_cnt", {
+            //     time: 4000,
+            //     num: {{ doc_cnt }},
+            //     bit: 0,
+            //     regulator: 50
+            // });
+
+            // count.up("img_cnt", {
+            //     time: 4000,
+            //     num: {{ img_cnt }},
+            //     bit: 0,
+            //     regulator: 50
+            // });
+
+            // count.up("attachment_cnt", {
+            //     time: 4000,
+            //     bit: 0,
+            //     num: {{ attachment_cnt }},
+            //     regulator: 50
+            // });
+
+            // window.onresize = function() {
+            //     echartsRecords.resize();
+            // };
+            // 保存文档草稿
+            manage_overview_save_doc = function(){
+                $('button.layui-btn').attr("disabled",true);
+                $('button.layui-btn').addClass('layui-btn-disabled');
+                var data = {
+                    'project':$("#project").val(),
+                    'doc_name':$("#doc_name").val(),
+                    'pre_content':$("#pre_content").val(),
+                    'status':0
+                }
+                console.log(data)
+                if(data.doc_name == ""){
+                    layer.msg('请输入文档标题！');
                     $('button.layui-btn').attr("disabled",false);
                     $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
-            });
-        }
-    };
-</script>
+                else if(data.project == ""){
+                    layer.msg('请选择文集！');
+                    $('button.layui-btn').attr("disabled",false);
+                    $('button.layui-btn').removeClass('layui-btn-disabled');
+                }
+                else{
+                    layer.load(1);
+                    $.post("{% url 'create_doc' %}",data,function(r){
+                        if(r.status){
+                            //保存成功
+                            layer.closeAll("loading");
+                            md_changed = false;
+                            layer.msg('保存草稿成功',function(){
+                                window.location.reload()
+                            });
+                        }else{
+                            //创建失败
+                            layer.closeAll("loading");
+                            layer.msg('保存草稿失败:'+r.data);
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
+                        }
+                    });
+                }
+            };
+        });
+    </script>
 {% endblock %}

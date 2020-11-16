@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # 文集模型
 class Project(models.Model):
     name = models.CharField(verbose_name="文档名称",max_length=50)
@@ -26,6 +27,7 @@ class Project(models.Model):
                            "pro_id":self.pk}
                        )
 
+
 # 文集协作模型
 class ProjectCollaborator(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE) # 文集
@@ -42,6 +44,7 @@ class ProjectCollaborator(models.Model):
         verbose_name = '文集协作'
         verbose_name_plural = verbose_name
 
+
 # 文集目录模型
 class ProjectToc(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
@@ -53,6 +56,7 @@ class ProjectToc(models.Model):
     class Meta:
         verbose_name = '文集目录'
         verbose_name_plural = verbose_name
+
 
 # 文档模型
 class Doc(models.Model):
@@ -69,6 +73,7 @@ class Doc(models.Model):
     status = models.IntegerField(choices=((0,0),(1,1)),default=1,verbose_name='文档状态')
     # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器
     editor_mode = models.IntegerField(default=1,verbose_name='编辑器模式')
+    open_children = models.BooleanField(default=False,verbose_name="展开下级目录")
 
     def __str__(self):
         return self.name
@@ -90,6 +95,7 @@ class Doc(models.Model):
                            "doc_id":self.pk}
                        )
 
+
 # 文档历史模型
 class DocHistory(models.Model):
     doc = models.ForeignKey(Doc,on_delete=models.CASCADE)
@@ -103,6 +109,7 @@ class DocHistory(models.Model):
     class Meta:
         verbose_name = '文档历史'
         verbose_name_plural = verbose_name
+
 
 # 文档模板模型
 class DocTemp(models.Model):
@@ -119,6 +126,26 @@ class DocTemp(models.Model):
         verbose_name = '文档模板'
         verbose_name_plural = verbose_name
 
+# 文档分享模型
+class DocShare(models.Model):
+    token = models.CharField(verbose_name="分享Token",max_length=100,blank=True,null=True)
+    doc = models.ForeignKey(Doc,on_delete=models.CASCADE) # 文档
+    # 文档分享类型，0表示公开分享，1表示私密分享
+    share_type = models.IntegerField(choices=((0,0),(1,1)),default=0)
+    # 文档分享码，当分享类型为私密分享时，需要验证分享码
+    share_value = models.CharField(max_length=10,verbose_name="分享码",blank=True,null=True)
+    # 分享有效期，默认为0，表示永久有效，值为整数，表示创建时间起多久过期
+    # effective_time = models.IntegerField(default=0,blank=True,null=True)
+    is_enable = models.BooleanField(default=True,verbose_name="启用状态")
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.doc.name
+
+    class Meta:
+        verbose_name = '文档分享'
+        verbose_name_plural = verbose_name
+
 # 标签模板
 class Tag(models.Model):
     name = models.CharField(verbose_name='标签名',max_length=10)
@@ -130,6 +157,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = '标签'
         verbose_name_plural = verbose_name
+
 
 # 文档标签
 class DocTag(models.Model):
@@ -175,6 +203,7 @@ class ProjectReportFile(models.Model):
         verbose_name = '附件管理'
         verbose_name_plural = verbose_name
 
+
 # 图片分组模型
 class ImageGroup(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -186,6 +215,7 @@ class ImageGroup(models.Model):
     class Meta:
         verbose_name = '图片分组'
         verbose_name_plural = verbose_name
+
 
 # 图片模型
 class Image(models.Model):

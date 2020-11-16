@@ -1,0 +1,10 @@
+{
+"status":{"code":200,"message":"操作成功"},
+"data": [
+  {"id":"001","title": "湖南省","checkArr": "0","parentId": "0"},
+  {"id":"002","title": "湖北省","checkArr": "0","parentId": "0"},
+  {"id":"003","title": "广东省","checkArr": "0","parentId": "0"},
+  {"id":"004","title": "浙江省","checkArr": "0","parentId": "0"},
+  {"id":"005","title": "福建省","checkArr": "0","parentId": "0"}
+]
+}

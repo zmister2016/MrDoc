@@ -1,0 +1,299 @@
+.pear-admin .layui-header,
+.pear-admin .layui-body,
+.pear-admin .layui-logo,
+.pear-admin .layui-side,
+.pear-admin .layui-header .layui-layout-left{
+	transition: all .3s;
+}
+
+.pear-admin .layui-logo .title {
+	font-size: 20px;
+}
+
+.pear-admin .layui-header {
+	left: 230px;
+	width: calc(100% - 230px);
+	background-color: white;
+	border-bottom: 1px solid whitesmoke;
+}
+
+.pear-admin .layui-header .layui-nav-img {
+	width: 30px;
+	height: 30px;
+}
+
+.pear-admin .layui-layout-control {
+	left: 120px;
+	position: absolute;
+}
+
+.pear-admin .layui-logo {
+	width: 230px;
+	height: 60px;
+	line-height: 60px;
+	position: relative;
+	background-color: #28333E;
+
+}
+
+.pear-admin .layui-logo img {
+	width: 34px;
+	height: 34px;
+}
+
+.pear-admin .layui-logo .title {
+	font-size: 21px;
+	font-weight: 550;
+	color: #5FB878;
+	position: relative;
+	top: 5px;
+	margin-left: 5px;
+}
+
+.pear-admin .layui-logo .logo {
+	display: none;
+}
+
+.pear-admin .layui-side {
+	top: 0px;
+	width: 230px;
+	box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
+	z-index: 9999;
+}
+
+.pear-admin .layui-side-scroll::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+}
+
+.pear-admin .layui-side-scroll {
+	height: calc(100% - 60px)!important;
+	background-color: #28333E;
+	width: 247px;
+
+}
+
+.pear-admin .layui-header .layui-nav .layui-nav-item>a {
+	color: black;
+	font-size: 15px;
+}
+
+.pear-admin .layui-body {
+	left: 230px;
+	bottom: 0px;
+}
+
+.pear-admin .layui-layout-left {
+	left: 0px;
+
+}
+
+/** 隐 藏 布 局 样 式 */
+.pear-mini .layui-logo .title {
+	display: none;
+}
+.pear-mini .layui-logo .logo {
+	display: inline-block;
+}
+.pear-mini .layui-side {
+	width: 60px;
+}
+.pear-mini .layui-header {
+	left: 60px;
+	width: calc(100% - 60px);
+}
+.pear-mini .layui-body {
+	left: 60px;
+}
+.pear-mini .layui-logo {
+	width: 60px;
+}
+.pear-mini .layui-nav-tree .layui-nav-item span {
+	display: none;
+}
+.pear-mini .bottom-nav li {
+	width: 100% !important;
+}
+.pear-mini .layui-side-scroll {
+	height: calc(100% - 60px);
+}
+
+.pear-admin .layui-header .layui-nav .layui-nav-bar {
+	top: 0px !important;
+	height: 2px !important;
+	background-color: #5FB878;
+}
+.pear-admin .layui-header .layui-nav .layui-this:after {
+	display: none;
+}
+/** 新增兼容 */
+@media screen and (max-width:768px) {
+	.pear-mini .bottom-nav {
+		display: none;
+	}
+	.pear-mini .layui-side-scroll {
+		height: calc(100% - 62px);
+	}
+	/** 隐 藏 布 局 样 式 */
+	.pear-mini .layui-side {
+		width: 0px;
+	}
+	.pear-mini .layui-header {
+		left: 0px;
+		width: 100%;
+	}
+	.pear-mini .layui-body {
+		left: 0px;
+	}
+	.pear-mini .layui-logo {
+		width: 0px;
+	}
+	.pear-admin .layui-body {
+		left: 0px;
+	}
+	.pear-admin .layui-header {
+		left: 0px;
+		width: 100%;
+	}
+	.pear-admin .pear-cover {
+		width: 100%;
+		height: 100%;
+		background-color: #1E1E1E;
+		display: block;
+		position: absolute;
+		z-index: 1000;
+		opacity: 0;
+		margin-top: -60px;
+	}
+	.pear-mini .pear-cover {
+		display: none;
+	}
+}
+@-webkit-keyframes am-horizontal-roll_show {
+	0% {
+		opacity: 1;
+		-webkit-transform: translateX(2000px);
+		transform: translateX(2000px)
+	}
+
+	100% {
+		opacity: 1;
+		-webkit-transform: translateX(0);
+		transform: translateX(0)
+	}
+}
+@keyframes am-horizontal-roll_show {
+	0% {
+		opacity: 1;
+		-webkit-transform: translateX(800px);
+		-ms-transform: translateX(800px);
+		transform: translateX(800px)
+	}
+
+	100% {
+		opacity: 1;
+		-webkit-transform: translateX(0);
+		-ms-transform: translateX(0);
+		transform: translateX(0)
+	}
+}
+.layer-anim-right {
+	-webkit-animation: am-horizontal-roll_show .6s ease-out;
+	animation: am-horizontal-roll_show .6s ease-out;
+
+}
+/** 亮色侧边风格 */
+.light-theme .layui-logo {
+	background-color: white !important;
+	color: black !important;
+}
+.light-theme .layui-side-scroll {
+	background-color: white !important;
+	color: black !important;
+}
+.light-theme .layui-side{
+	box-shadow: 2px 0 8px 0 rgba(29,35,41,.05)!important;
+}
+/** 主 题 选 择 界 面 样 式 */
+.pearone-color .color-title {padding: 15px 0 0px 20px;margin-bottom: 4px;}
+.pearone-color .color-content {
+	padding: 15px 10px 0 20px;
+}
+.pearone-color .color-content ul {
+	list-style: none;
+	padding: 0px;
+}
+.pearone-color .color-content ul li {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	width: 70px;
+	height: 50px;
+	margin: 0 20px 20px 0;
+	padding: 2px 2px 2px 2px;
+	background-color: #f2f2f2;
+	cursor: pointer;
+	font-size: 12px;
+	color: #666;
+}
+.pearone-color .color-content li.layui-this:after,
+.pearone-color .color-content li:hover:after {
+	width: 100%;
+	height: 100%;
+	padding: 4px;
+	top: -5px;
+	left: -5px;
+	border: #5FB878 2px solid;
+	opacity: 1;
+	border-radius: 4px;
+}
+.pearone-color .color-content li:after {
+	content: '';
+	position: absolute;
+	z-index: 20;
+	top: 50%;
+	left: 50%;
+	width: 1px;
+	height: 0;
+	border: 1px solid #F2F2F2;
+	transition: all .3s;
+	-webkit-transition: all .3s;
+	opacity: 0;
+}
+.select-color {
+	margin-bottom: 30px;
+}
+.select-color .select-color-title {
+	padding: 15px 0 0px 20px;
+	margin-bottom: 4px;
+}
+.select-color .select-color-content {
+	padding: 20px 0 0px 0px;
+	margin-bottom: 4px;
+}
+.select-color .select-color-content .select-color-item {
+	background-color: gray;
+	width: 30px;
+	height: 30px;
+	border-radius: 3px;
+	float: left;
+	margin-left: 20px;
+	color: white;
+	font-size: 18px;
+	text-align: center;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .15);
+	line-height: 30px;
+}
+
+/** 友情链接 */
+.more-setting {margin-top: 45px;}
+.more-setting form {margin-top: 30px;}
+.more-setting-title {padding: 15px 0 0px 20px;margin-bottom: 4px;}
+.more-setting .layui-form-label {width: 60px;}
+.more-menu-list {width: 100%;margin-top: 80px;}
+.more-menu-item:first-child {border-top: 1px solid #e8e8e8;}
+.more-menu-item .layui-icon {font-size: 18px;padding-right: 10px;}
+.more-menu-item {color: #595959;height: 50px;line-height: 50px;font-size: 16px;padding: 0 25px;border-bottom: 1px solid #e8e8e8;font-style: normal;display: block;}
+.more-menu-item:hover {background-color: whitesmoke;}
+.more-menu-item:after {color: #8c8c8c;right: 16px;content: "\e602";position: absolute;font-family: layui-icon !important;}
+

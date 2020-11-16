@@ -2,160 +2,171 @@
 {% load static %}
 {% block title %}注册码管理{% endblock %}
 {% block content %}
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-      <div class="layui-row">
-          <span style="font-size:18px;">注册邀请码管理
-          </span>
-      </div>
-  </div>
-    <div class="layui-row">
-        <form action="{% url 'project_manage' %}" method="get">
-        <div class="layui-form-item">
-            <!--<div class="layui-input-inline">-->
-                <!--<input type="text" name="kw" id="kw" placeholder="输入文集内容" autocomplete="off" class="layui-input">-->
-            <!--</div>-->
-            <!--<button class="layui-btn layui-btn-normal" type="submit">搜索</button>-->
-            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createRegisterCode()" type="button"><i class="layui-icon layui-icon-addition"></i>新增注册码</button>
-        </div>
-        </form>
-    </div>
-    <div class="layui-row" lay-skin="line">
-        <table class="layui-table"  id="register-code-list" lay-skin="nob">
-            <colgroup>
-                <col width="100">
-                <col width="120">
-                <col width="120">
-                <col width="80">
-                <col width="400">
-                <col width="180">
-                <col width="100">
-            </colgroup>
-      <thead>
-        <tr>
-            <th>注册码</th>
-            <th>最大使用次数</th>
-            <th>已使用次数</th>
-            <th>状态</th>
-            <th>使用的用户</th>
-            <th>创建时间</th>
-            <th>创建用户</th>
-            <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for code in codes %}
-        <tr>
-          <td>{{ code.code }}</td>
-          <td>{{ code.all_cnt }}</td>
-          <td>{{ code.used_cnt }}</td>
-          <td>
-              {% if code.status == 1 %}
-              <i class="layui-icon layui-icon-ok-circle" style="color:#1E9FFF;"></i> 有效
-              {% elif code.status == 0 %}
-              <i class="layui-icon layui-icon-close-fill" style="color: #FF5722;"></i> 失效
-              {% endif %}
-          </td>
-          <td>
-              {% if code.user_list is None %}
-              暂无注册用户使用
-              {% else %}
-              {{ code.user_list }}
-              {% endif %}
-          </td>
-          <td>{{ code.create_time }}</td>
-          <td>{{ code.create_user }}</td>
-          <td>
-              <a href="javascript:void(0);" onclick="delRegisterCode('{{code.id}}')" class="layui-btn layui-btn-danger layui-btn-xs">
-                <i class="layui-icon layui-icon-delete"></i>删除
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-        </table>
-    </div>
-    <!-- 分页 -->
-    <div class="layui-row">
-        <div class="pagination">
-            <span class="step-links">
-                {% if codes.has_previous %}
-                    <a href="?page={{ codes.previous_page_number }}&kw={{codes.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
-                {% endif %}
-                <span class="current">
-                    当前页： {{ codes.number }} 共 {{ codes.paginator.num_pages }} 页
-                </span>
-                {% if codes.has_next %}
-                    <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs">下一页</a>
-                {% endif %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+        <div class="layui-row">
+            <span style="font-size:18px;">注册邀请码管理
             </span>
         </div>
+        </div>
+        <div class="layui-row">
+            <form action="{% url 'project_manage' %}" method="get">
+            <div class="layui-form-item">
+                <!--<div class="layui-input-inline">-->
+                    <!--<input type="text" name="kw" id="kw" placeholder="输入文集内容" autocomplete="off" class="layui-input">-->
+                <!--</div>-->
+                <!--<button class="layui-btn layui-btn-normal" type="submit">搜索</button>-->
+                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createRegisterCode()" type="button"><i class="layui-icon layui-icon-addition"></i>新增注册码</button>
+            </div>
+            </form>
+        </div>
+        <div class="layui-row" lay-skin="line">
+            <table class="layui-table"  id="register-code-list" lay-skin="nob">
+                <colgroup>
+                    <col width="100">
+                    <col width="120">
+                    <col width="120">
+                    <col width="80">
+                    <col width="400">
+                    <col width="180">
+                    <col width="100">
+                </colgroup>
+        <thead>
+            <tr>
+                <th>注册码</th>
+                <th>最大使用次数</th>
+                <th>已使用次数</th>
+                <th>状态</th>
+                <th>使用的用户</th>
+                <th>创建时间</th>
+                <th>创建用户</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for code in codes %}
+            <tr>
+            <td>{{ code.code }}</td>
+            <td>{{ code.all_cnt }}</td>
+            <td>{{ code.used_cnt }}</td>
+            <td>
+                {% if code.status == 1 %}
+                <i class="layui-icon layui-icon-ok-circle" style="color:#1E9FFF;"></i> 有效
+                {% elif code.status == 0 %}
+                <i class="layui-icon layui-icon-close-fill" style="color: #FF5722;"></i> 失效
+                {% endif %}
+            </td>
+            <td>
+                {% if code.user_list is None %}
+                暂无注册用户使用
+                {% else %}
+                {{ code.user_list }}
+                {% endif %}
+            </td>
+            <td>{{ code.create_time }}</td>
+            <td>{{ code.create_user }}</td>
+            <td>
+                <a href="javascript:void(0);" onclick="delRegisterCode('{{code.id}}')" class="layui-btn layui-btn-danger layui-btn-xs">
+                    <i class="layui-icon layui-icon-delete"></i>删除
+                </a>
+            </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+        </div>
+        <!-- 分页 -->
+        <div class="layui-row">
+            <div class="pagination">
+                <span class="step-links">
+                    {% if codes.has_previous %}
+                        <a href="?page={{ codes.previous_page_number }}&kw={{codes.kw}}" class="layui-btn layui-btn-normal layui-btn-xs">上一页</a>
+                    {% endif %}
+                    <span class="current">
+                        当前页： {{ codes.number }} 共 {{ codes.paginator.num_pages }} 页
+                    </span>
+                    {% if codes.has_next %}
+                        <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs">下一页</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block custom_script %}
 <script>
-    $.ajaxSetup({
-        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-    });
-    //新增注册码
-    createRegisterCode = function(){
-        layer.open({
-            type:1,
-            title:'新增注册码',
-            area:'300px;',
-            id:'createRegCode',//配置ID
-            content:'<div style="margin:10px;"><input class="layui-input" id="regCodeCnt" type="number" value=1 placeholder="输入注册码最大使用次数"/></div>',
-            btn:['确定','取消'], //添加按钮
-            btnAlign:'c', //按钮居中
-            yes:function (index,layero) {
-                layer.load(1);
-                data = {
-                    'types':1,
-                    'all_cnt':$("#regCodeCnt").val(),
-                }
-                $.post("{% url 'register_code_manage' %}",data,function(r){
-                    layer.closeAll('loading');
-                    if(r.status){
-                        //新增成功，刷新页面
-                        window.location.reload();
-                        //layer.close(index)
-                    }else{
-                        //新增失败，提示
-                        console.log(r)
-                        layer.msg(r.data)
-                    }
-                })
-            },
+    layui.use(['table','jquery','form','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-    }
-    //删除注册码
-    delRegisterCode = function(code_id){
-        layer.open({
-            type:1,
-            title:'删除文档',
-            area:'300px;',
-            id:'delRegCode',//配置ID
-            content:'<div style="margin-left:10px;">警告：此操作将删除此注册码！</div>',
-            btn:['确定','取消'], //添加按钮
-            btnAlign:'c', //按钮居中
-            yes:function (index,layero) {
-                data = {
-                    'types':2,
-                    'code_id':code_id,
-                }
-                $.post("{% url 'register_code_manage' %}",data,function(r){
-                    if(r.status){
-                        //删除成功，刷新页面
-                        window.location.reload();
-                        //layer.close(index)
-                    }else{
-                        //删除失败，提示
-                        console.log(r)
-                        layer.msg(r.data)
+        //新增注册码
+        createRegisterCode = function(){
+            layer.open({
+                type:1,
+                title:'新增注册码',
+                area:'300px;',
+                id:'createRegCode',//配置ID
+                content:'<div style="margin:10px;"><input class="layui-input" id="regCodeCnt" type="number" value=1 placeholder="输入注册码最大使用次数"/></div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'types':1,
+                        'all_cnt':$("#regCodeCnt").val(),
                     }
-                })
-            },
-        });
-    }
+                    $.post("{% url 'register_code_manage' %}",data,function(r){
+                        layer.closeAll('loading');
+                        if(r.status){
+                            //新增成功，刷新页面
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //新增失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        }
+        //删除注册码
+        delRegisterCode = function(code_id){
+            layer.open({
+                type:1,
+                title:'删除文档',
+                area:'300px;',
+                id:'delRegCode',//配置ID
+                content:'<div style="margin-left:10px;">警告：此操作将删除此注册码！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    data = {
+                        'types':2,
+                        'code_id':code_id,
+                    }
+                    $.post("{% url 'register_code_manage' %}",data,function(r){
+                        if(r.status){
+                            //删除成功，刷新页面
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //删除失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        }
+    })
 </script>
 {% endblock %}

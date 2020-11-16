@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required # 登录需求装饰�
 import datetime,time,json,base64,os,uuid
 from app_doc.models import Image,ImageGroup
 from app_admin.models import SysSetting
+import requests
 
 @login_required()
 @csrf_exempt
@@ -16,6 +17,10 @@ def upload_img(request):
     ##################
     img = request.FILES.get("editormd-image-file", None) # 编辑器上传
     manage_upload = request.FILES.get('manage_upload',None) # 图片管理上传
+    try:
+        url_img = json.loads(request.body.decode())['url']
+    except:
+        url_img = None
     dir_name = request.POST.get('dirname','')
     base_img = request.POST.get('base',None)
     group_id = request.POST.get('group_id',0)
@@ -28,16 +33,22 @@ def upload_img(request):
     else:
         group_id = None
 
-    # print('分组ID：',group_id)
-    if img:# 上传普通图片文件
+    # 上传普通图片文件
+    if img:
         result = img_upload(img, dir_name,request.user)
+    # 图片管理上传
     elif manage_upload:
         result = img_upload(manage_upload, dir_name, request.user, group_id=group_id)
-    elif base_img: # 上传base64编码图片
+    # 上传base64编码图片
+    elif base_img:
         result = base_img_upload(base_img,dir_name,request.user)
+    # 上传图片URL地址
+    elif url_img:
+        result = url_img_upload(url_img,dir_name,request.user)
     else:
         result = {"success": 0, "message": "上传出错"}
     return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 # 目录创建
 def upload_generation_dir(dir_name=''):
@@ -48,6 +59,7 @@ def upload_generation_dir(dir_name=''):
         # print("创建目录")
         os.makedirs(settings.MEDIA_ROOT + dir_name)
     return dir_name
+
 
 # 普通图片上传
 def img_upload(files, dir_name, user, group_id=None):
@@ -87,6 +99,7 @@ def img_upload(files, dir_name, user, group_id=None):
     )
     return {"success": 1, "url": file_url,'message':'上传图片成功'}
 
+
 # base64编码图片上传
 def base_img_upload(files,dir_name, user):
     files_str = files.split(';base64,')[-1] # 截取图片正文
@@ -107,3 +120,39 @@ def base_img_upload(files,dir_name, user):
         remark = '粘贴上传',
     )
     return {"success": 1, "url": file_url, 'message': '上传图片成功'}
+
+
+# url图片上传
+def url_img_upload(url,dir_name,user):
+
+    relative_path = upload_generation_dir(dir_name)
+    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').split('.')[0] + '.png'  # 日期时间
+    path_file = os.path.join(relative_path, file_name)
+    path_file = settings.MEDIA_ROOT + path_file
+    # print('文件路径：', path_file)
+    file_url = settings.MEDIA_URL + relative_path + file_name
+    # print("文件URL：", file_url)
+    header = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
+    }
+    r = requests.get(url, headers=header, stream=True)
+
+    if r.status_code == 200:
+        with open(path_file, 'wb') as f:
+            f.write(r.content)  # 保存文件
+        Image.objects.create(
+            user=user,
+            file_path=file_url,
+            file_name=file_name,
+            remark='粘贴上传',
+        )
+    resp_data = {
+         'msg': '',
+         'code': 0,
+         'data' : {
+           'originalURL': url,
+           'url': file_url
+         }
+        }
+    return resp_data
+    # return {"success": 1, "url": file_url, 'message': '上传图片成功'}

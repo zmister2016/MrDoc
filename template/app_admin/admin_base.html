@@ -1,178 +1,66 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %} - 后台管理 {% if site_name != None %}- {{site_name}} {% endif %} - 觅道文档MrDoc</title>
-    <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
-    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
-    <style>
-    </style>
-</head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo">
-          <a class="logo" href="{% url 'pro_list' %}">  
-            <h1 style="color: white;">
-                <strong>MrDoc</strong>
-                <span style="font-size: 14px;" class="layui-badge-rim">后台管理</span>
-            </h1>
-          </a>
-        </div>
-        <ul class="layui-nav layui-layout-right">
-          <li class="layui-nav-item">
-            <a href="javascript:void(0);">
-              <i class="layui-icon layui-icon-username"></i> {% if request.user.first_name != '' %} {{request.user.first_name}} {% else %} {{request.user.username}}{% endif %}
-            </a>
-            <dl class="layui-nav-child">
-              <!-- <dd><a href="">基本资料</a></dd> -->
-              <dd><a href="{% url 'manage_overview' %}">个人中心</a></dd>
-              <dd><a href="{% url 'logout' %}">退出登录</a></dd>
-            </dl>
-          </li>
-        </ul>
-    </div>
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-          <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-          <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-            <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'project_manage' %}"><i class="layui-icon layui-icon-list"></i> 文集管理</a>
-            </li>
-            <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'doc_manage' %}"><i class="layui-icon layui-icon-file-b"></i> 文档管理</a>
-            </li>
-              <li class="layui-nav-item layui-nav-itemed">
-              <a href="{% url 'doctemp_manage' %}"><i class="layui-icon layui-icon-template"></i> 文档模板管理</a>
-            </li>
-              {% if request.user.is_superuser %}
-               <li class="layui-nav-item layui-nav-itemed">
-                  <a href="{% url 'user_manage' %}"><i class="layui-icon layui-icon-user"></i> 用户管理</a>
-               </li>
-              <li class="layui-nav-item layui-nav-itemed">
-                  <a href="{% url 'register_code_manage' %}"><i class="layui-icon layui-icon-engine"></i> 注册码管理</a>
-               </li>
-              <li class="layui-nav-item layui-nav-itemed">
-                  <a href="{% url 'sys_setting' %}"><i class="layui-icon layui-icon-set-sm"></i> 站点设置</a>
-               </li>
-              <li class="layui-nav-item layui-nav-itemed">
-                <a href="http://mrdoc.zmister.com/project-7/" target="_blank"><i class="layui-icon layui-icon-tips"></i> 配置手册</a>
-              </li>
-              <li class="layui-nav-item layui-nav-itemed">
-                <a href="http://mrdoc.zmister.com/project-54/" target="_blank"><i class="layui-icon layui-icon-help"></i> 使用手册</a>
-              </li>
-              {% endif %}
-          </ul>
-        </div>
-      </div>
-
-      <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">
-            {% if debug %}
-                <blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
-            {% endif %}
-            <blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;display: none;">检测到新版本发布，请及时更新！下载地址：<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
-            {% block content %}{% endblock %}
-        </div>
-      </div>
-
-      <div class="layui-footer" style="text-align:center;font-size: 12px;">
-        <!-- 底部固定区域 -->
-          © <a href="https://zmister.com/mrdoc/" target="_blank">MrDoc 2019-2020</a>&nbsp;-&nbsp;
-          当前版本：<a href="https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/" target="_blank">{{mrdoc_version}}</a>&nbsp;-&nbsp;
-          <a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>&nbsp;-&nbsp;
-          <a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a>&nbsp;-&nbsp;
-          <a class="register-link" id="dashang" href="javascript:void(0);">打赏项目</a>
-      </div>
-</div>
-
-<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
-<script>
-    var form = layui.form;
-    $.ajaxSetup({
-        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-    });
-    // 显示打赏图片
-  $("#dashang").click(function(r){
-      var layer = layui.layer;
-      layer.open({
-          type: 1,
-          title: false,
-          closeBtn: 0,
-          area: ['400px','400px'],
-          shadeClose: true,
-          content: $('#dashang_img')
-        });
-  })
-
-</script>
-<script async>
-  // 检测版本更新
-  checkUpdate = function(){
-    $.get("{% url 'check_update' %}",function(r){
-      console.log(r)
-      if(r.status){
-        var new_version = r.data.name.slice(1,5)
-        var current_version = '{{mrdoc_version}}'
-        // 如果存在新版本，顶部提示div
-        if(new_version > current_version){
-          $("#check_update_div").show()
-        }
-      }      
-    })
-  }
-  
-  var check_update = window.localStorage.getItem('check_update')
-  // console.log(check_update)
-  // 如果没有检测过，立即检测
-  if(check_update == null){
-    checkUpdate();
-    window.localStorage.setItem('check_update',new Date().getTime())
-  }else{
-    // 如果上次检测时间距今超过5天，再次检测
-    var time_diff = (new Date().getTime() - check_update)/86400000
-    // console.log(time_diff)
-    if(time_diff > 5){
-      checkUpdate()
-      window.localStorage.setItem('check_update',new Date().getTime())
-    }
-  }
-  
-</script>
-{% block custom_script %}
-{% endblock %}
-</body>
-<!-- 打赏选项卡模板 -->
-<div id="dashang_img" style="display: none;">
-  <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-      <ul class="layui-tab-title">
-        <li class="layui-this">微信</li>
-        <li>支付宝</li>
-        <li>QQ支付</li>
-        <li>PayPal</li>
-      </ul>
-      <div class="layui-tab-content" style="height: 100px;">
-        <div class="layui-tab-item layui-show" align='center'>
-          <img src="{% static 'dashang/dashang_wx.webp' %}" style="width: 300px;height: auto;" />
-        </div>
-        <div class="layui-tab-item" align='center'>
-          <img src="{% static 'dashang/dashang_alipay.webp' %}" style="width: 300px;height: auto;" />
-        </div>
-        <div class="layui-tab-item" align='center'>
-          <img src="{% static 'dashang/dashang_qq.webp' %}" style="width: 300px;height: auto;" />
-        </div>
-        <div class="layui-tab-item" align='center'>
-          <a href="https://paypal.me/zmister" target="_blank">
-              <img src="{% static 'dashang/dashang_paypal.png' %}" style="width: 280px;height: auto;" />
-          </a>
-        </div>
-      </div>
-    </div> 
-</div>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>{% block title %}{% endblock %}</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
+        <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+        {% block custom_element %}
+        {% endblock %}
+	</head>
+	<body class="pear-container">
+		<div class="layui-card">
+			<div class="layui-card-body">
+			  {% if debug %}
+			  <blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
+			  {% endif %}
+			  <blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;display: none;">检测到新版本发布，请及时更新！下载地址：<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
+			</div>
+		  </div>
+        {% block content %}
+        {% endblock %}
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<script async>
+			layui.use(['jquery'], function() {
+				let $ = layui.jquery;
+				// 检测版本更新
+				checkUpdate = function(){
+					$.get("{% url 'check_update' %}",function(r){
+						console.log(r)
+						if(r.status){
+						var new_version = r.data.name.slice(1,5)
+						var current_version = '{{mrdoc_version}}'
+						// 如果存在新版本，顶部提示div
+						if(new_version > current_version){
+							$("#check_update_div").show()
+						}
+						}      
+					})
+				}
+				
+				var check_update = window.localStorage.getItem('check_update')
+				// console.log(check_update)
+				// 如果没有检测过，立即检测
+				if(check_update == null){
+				checkUpdate();
+				window.localStorage.setItem('check_update',new Date().getTime())
+				}else{
+				// 如果上次检测时间距今超过5天，再次检测
+				var time_diff = (new Date().getTime() - check_update)/86400000
+				// console.log(time_diff)
+				if(time_diff > 5){
+					checkUpdate()
+					window.localStorage.setItem('check_update',new Date().getTime())
+				}
+				}
+			})
+		  </script>
+        {% block custom_script %}
+        {% endblock %}
+	</body>
 </html>

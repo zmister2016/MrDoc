@@ -1,0 +1,158 @@
+.pear-frame {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+}
+
+.pear-frame .dot {
+	width: 5px;
+	height: 24px;
+	background-color: #5FB878;
+	margin-top: 8px;
+	margin-left: 15px;
+	border-radius: 2px;
+	display: inline-block;
+}
+
+.pear-frame .title {
+	position: absolute;
+	margin-top: 0px;
+	margin-left: 12px;
+	color: dimgray;
+	display: inline-block;
+	letter-spacing: 2px;
+}
+
+.pear-frame .pear-frame-title {
+	height: 40px;
+	line-height: 40px;
+	background-color: white;
+	border: whitesmoke 1px solid;
+}
+
+.pear-frame .pear-frame-content {
+	width: 100%;
+	height: calc(100% - 45px) !important;
+}
+
+.pear-frame-loading {
+	position: absolute;
+	display: none;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	z-index: 19;
+	background-color: #fff
+}
+
+.pear-frame-loading.close {
+	animation: close 1s;
+	-webkit-animation: close 1s;
+	animation-fill-mode: forwards;
+}
+
+.ball-loader {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%)
+}
+
+.ball-loader>span,
+.signal-loader>span {
+	background-color: #4aca85;
+	display: inline-block
+}
+
+.ball-loader>span:nth-child(1),
+.ball-loader.sm>span:nth-child(1),
+.signal-loader>span:nth-child(1),
+.signal-loader.sm>span:nth-child(1) {
+	-webkit-animation-delay: 0s;
+	animation-delay: 0s
+}
+
+.ball-loader>span:nth-child(2),
+.ball-loader.sm>span:nth-child(2),
+.signal-loader>span:nth-child(2),
+.signal-loader.sm>span:nth-child(2) {
+	-webkit-animation-delay: .1s;
+	animation-delay: .1s
+}
+
+.ball-loader>span:nth-child(3),
+.ball-loader.sm>span:nth-child(3),
+.signal-loader>span:nth-child(3),
+.signal-loader.sm>span:nth-child(3) {
+	-webkit-animation-delay: .15s;
+	animation-delay: .15s
+}
+
+.ball-loader>span:nth-child(4),
+.ball-loader.sm>span:nth-child(4),
+.signal-loader>span:nth-child(4),
+.signal-loader.sm>span:nth-child(4) {
+	-webkit-animation-delay: .2s;
+	animation-delay: .2s
+}
+
+.ball-loader>span {
+	width: 20px;
+	height: 20px;
+	margin: 0 3px;
+	border-radius: 50%;
+	transform: scale(0);
+	-ms-transform: scale(0);
+	-webkit-transform: scale(0);
+	animation: ball-load 1s ease-in-out infinite;
+	-webkit-animation: 1s ball-load ease-in-out infinite
+}
+
+@-webkit-keyframes ball-load {
+	0% {
+		transform: scale(0);
+		-webkit-transform: scale(0)
+	}
+
+	50% {
+		transform: scale(1);
+		-webkit-transform: scale(1)
+	}
+
+	100% {
+		transform: scale(0);
+		-webkit-transform: scale(0)
+	}
+}
+
+@keyframes ball-load {
+	0% {
+		transform: scale(0);
+		-webkit-transform: scale(0)
+	}
+
+	50% {
+		transform: scale(1);
+		-webkit-transform: scale(1)
+	}
+
+	100% {
+		transform: scale(0);
+		-webkit-transform: scale(0)
+	}
+}
+
+@-webkit-keyframes close {
+	0% {
+		opacity: 1;
+		/*display: block;*/
+	}
+
+	100% {
+		opacity: 0;
+		/*display: none;*/
+	}
+}

@@ -1,77 +1,94 @@
-{% extends 'app_doc/manage_base.html' %}
+{% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% block title %}文档历史版本管理{% endblock %}
 {% block content %}
-    <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
-        <span class="layui-breadcrumb" lay-separator=">">
-        <a href="{% url 'manage_doc' %}">文档管理</a>
-        <a><cite>历史版本管理</cite></a>
-        </span>
-    </div>
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-      <div class="layui-row">
-          <span style="font-size:18px;">文档：{{doc.name}} 的历史版本管理
-          </span>
-      </div>
-  </div>
-    <div class="layui-row" >
-        <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
-            <colgroup>
-            <col width="200">
-            <col width="200">
-            <col>
-      </colgroup>
-      <thead>
-        <tr>
-          <th>创建时间</th>
-          <th>创建人</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for his in historys %}
-        <tr>
-          <td>{{ his.create_time }}</td>
-          <td>{{ his.create_user }}</td>
-          <td>
-              <a href="{% url 'diff_doc' doc.id his.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
-                  <i class="layui-icon layui-icon-edit"></i>对比
-              </a>
-              <a href="javascript:void(0);" onclick="delDocHis('{{his.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
-                <i class="layui-icon layui-icon-delete"></i>删除
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-        </table>
-    </div>
-    <!-- 分页 -->
-    <div class="layui-row">
-        <div class="layui-box layui-laypage layui-laypage-default">
-                <!-- 上一页 -->
-                {% if historys.has_previous %}
-                    <a href="?page={{ historys.previous_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
-                {% else %}
-                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
-                {% endif %}
-                <!-- 当前页 -->
-                <span class="layui-laypage-curr">
-                    <em class="layui-laypage-em"></em>
-                    <em>{{ historys.number }}/{{ historys.paginator.num_pages }}</em>
-                </span>
-                <!-- 下一页 -->
-                {% if historys.has_next %}
-                    <a href="?page={{ historys.next_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
-                {% else %}
-                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
-                {% endif %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-row" style="padding-left:15px;">
+            <span class="layui-breadcrumb" lay-separator=">">
+            <a href="{% url 'manage_doc' %}">文档管理</a>
+            <a><cite>历史版本管理</cite></a>
+            </span>
         </div>
     </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header">
+        <div class="layui-row">
+            <span style="font-size:18px;">文档：{{doc.name}} 的历史版本管理</span>
+        </div>
+        </div>
+        <div class="layui-row" >
+            <table class="layui-table"  id="doctemp-list" lay-skin="" lay-even>
+                <colgroup>
+                <col width="200">
+                <col width="200">
+                <col>
+        </colgroup>
+        <thead>
+            <tr>
+            <th>创建时间</th>
+            <th>创建人</th>
+            <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for his in historys %}
+            <tr>
+            <td>{{ his.create_time }}</td>
+            <td>{{ his.create_user }}</td>
+            <td>
+                <a href="{% url 'diff_doc' doc.id his.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
+                    <i class="layui-icon layui-icon-edit"></i>对比
+                </a>
+                <a href="javascript:void(0);" onclick="delDocHis('{{his.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                    <i class="layui-icon layui-icon-delete"></i>删除
+                </a>
+            </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+        </div>
+        <!-- 分页 -->
+        <div class="layui-row">
+            <div class="layui-box layui-laypage layui-laypage-default">
+                    <!-- 上一页 -->
+                    {% if historys.has_previous %}
+                        <a href="?page={{ historys.previous_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                    {% else %}
+                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                    {% endif %}
+                    <!-- 当前页 -->
+                    <span class="layui-laypage-curr">
+                        <em class="layui-laypage-em"></em>
+                        <em>{{ historys.number }}/{{ historys.paginator.num_pages }}</em>
+                    </span>
+                    <!-- 下一页 -->
+                    {% if historys.has_next %}
+                        <a href="?page={{ historys.next_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                    {% else %}
+                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 {% block custom_script %}
 <script>
-    delDocHis = function(history_id){
+    layui.use(['table', 'form', 'jquery','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        var layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        delDocHis = function(history_id){
         layer.open({
             type:1,
             title:'删除历史记录',
@@ -99,5 +116,6 @@
             },
         });
     }
+    })
 </script>
 {% endblock %}

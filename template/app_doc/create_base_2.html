@@ -57,7 +57,6 @@
             text-align: center;
             overflow: hidden;
         }
-
         .select-img-list:hover{
             background-color: #EAFFEA;
         }
@@ -69,17 +68,6 @@
             border: 1px solid transparent;
             border-radius: 3px;
             overflow: hidden;
-        }
-        /* layui分页组件样式 */
-        .layui-laypage .layui-laypage-curr .layui-laypage-em{
-            background-color: #2176ff !important;
-        }
-        .layui-form-select dl dd.layui-this{
-            background-color: #2176ff !important;
-        }
-        /* layui单选样式 */
-        .layui-form-radio>i:hover, .layui-form-radioed>i{
-            color: #2176ff;
         }
         /* HTML预览样式 */
         .markdown-body h1{
@@ -483,6 +471,7 @@
             var item = items[index];
             if (item.kind === 'file') {
                 var blob = item.getAsFile();
+                console.log(blob)
                 var reader = new FileReader();
                 reader.onload = function (event) {
                     var base64 = event.target.result;
@@ -548,7 +537,7 @@
                             var arr = []
                             var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                             layui.each(thisData, function(index, item){
-                                arr.push('<li class="select-img-list"><img class="select-img-list-i" onclick="insertImg(this);" src="' + item.path + '" title="' + item.name + '" /></li>');
+                                arr.push('<li class="select-img-list"><img class="select-img-list-i" onclick="insertImg(this);" src="' + item.path + '" title="' + item.name + '"data-url="' + item.path +'" /></li>');
                             });
                         return arr.join('');
                         }();
@@ -564,8 +553,8 @@
     });
     // 插入选择的图片到编辑器
     insertImg = function(e){
-        console.log(e.src);
-        editor.insertValue("\n![](" + e.src + ")");
+        // console.log(e);
+        editor.insertValue("\n![](" + e.getAttribute('data-url') + ")");
         editor.focus()
     };
     // 按钮点击插入输入框图片链接
@@ -796,6 +785,7 @@
                 layer.closeAll();
                 layer.msg("上传成功");
             }else{
+                layer.closeAll('loading');
                 layer.msg("上传出错，请重试！")
             }
         },

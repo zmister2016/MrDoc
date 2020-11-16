@@ -98,7 +98,7 @@
 
   /* 管理文档文档状态条件筛选 管理图片图片分组筛选 */
   .doc_status_condition > a.current{
-      color: #000!important;
+      color: #2176ff!important;
   }
   /* layui分页组件样式 */
   .layui-laypage .layui-laypage-curr .layui-laypage-em{

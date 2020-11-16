@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required # 登录需求装饰�
 from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
+from django.core.serializers import serialize
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -20,6 +21,8 @@ from app_doc.report_utils import *
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 import os.path
+import base64
+import hashlib
 
 
 # 替换前端传来的非法字符
@@ -46,12 +49,13 @@ def get_pro_toc(pro_id):
     doc_list = []
     n = 0
     # 获取一级文档
-    top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name').order_by('sort')
+    top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name','open_children').order_by('sort')
     # 遍历一级文档
     for doc in top_docs:
         top_item = {
             'id': doc['id'],
             'name': doc['name'],
+            'open_children':doc['open_children']
             # 'spread': True,
             # 'level': 1
         }
@@ -59,12 +63,13 @@ def get_pro_toc(pro_id):
         if doc['id'] in parent_id_list:
             # 获取二级文档
             sec_docs = Doc.objects.filter(
-                top_doc=pro_id, parent_doc=doc['id'], status=1).values('id', 'name').order_by('sort')
+                top_doc=pro_id, parent_doc=doc['id'], status=1).values('id', 'name','open_children').order_by('sort')
             top_item['children'] = []
             for doc in sec_docs:
                 sec_item = {
                     'id': doc['id'],
                     'name': doc['name'],
+                    'open_children': doc['open_children']
                     # 'level': 2
                 }
                 # 如果二级文档存在下级文档，查询第三级文档
@@ -460,18 +465,34 @@ def check_viewcode(request):
 @require_http_methods(["POST"])
 def del_project(request):
     try:
+        range = request.POST.get('range','single')
         pro_id = request.POST.get('pro_id','')
         if pro_id != '':
-            pro = Project.objects.get(id=pro_id)
-            if (request.user == pro.create_user) or request.user.is_superuser:
-                # 删除文集下的文档
-                pro_doc_list = Doc.objects.filter(top_doc=int(pro_id))
-                pro_doc_list.delete()
-                # 删除文集
-                pro.delete()
-                return JsonResponse({'status':True})
+            if range == 'single':
+                pro = Project.objects.get(id=pro_id)
+                if (request.user == pro.create_user) or request.user.is_superuser:
+                    # 删除文集下的文档
+                    pro_doc_list = Doc.objects.filter(top_doc=int(pro_id))
+                    pro_doc_list.delete()
+                    # 删除文集
+                    pro.delete()
+                    return JsonResponse({'status':True})
+                else:
+                    return JsonResponse({'status':False,'data':'非法请求'})
+            elif range == 'multi':
+                pros = pro_id.split(",")
+                try:
+                    projects = Project.objects.filter(id__in=pros, create_user=request.user)
+                    # 删除文集下的文档
+                    pro_doc_list = Doc.objects.filter(top_doc__in=[i.id for i in projects])
+                    pro_doc_list.delete()
+                    projects.delete()
+                    return JsonResponse({'status': True, 'data': 'ok'})
+                except Exception:
+                    logger.exception("异常")
+                    return JsonResponse({'status': False, 'data': '无指定内容'})
             else:
-                return JsonResponse({'status':False,'data':'非法请求'})
+                return JsonResponse({'status': False, 'data': '类型错误'})
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
@@ -481,35 +502,69 @@ def del_project(request):
 
 # 管理文集
 @login_required()
-@require_http_methods(['GET'])
+@require_http_methods(['GET','POST'])
 def manage_project(request):
-    try:
-        search_kw = request.GET.get('kw', None)
-        if search_kw:
-            pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw).order_by('-create_time')
-            paginator = Paginator(pro_list, 15)
-            page = request.GET.get('page', 1)
-            try:
-                pros = paginator.page(page)
-            except PageNotAnInteger:
-                pros = paginator.page(1)
-            except EmptyPage:
-                pros = paginator.page(paginator.num_pages)
-            pros.kw = search_kw
-        else:
-            pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
-            paginator = Paginator(pro_list, 15)
-            page = request.GET.get('page', 1)
-            try:
-                pros = paginator.page(page)
-            except PageNotAnInteger:
-                pros = paginator.page(1)
-            except EmptyPage:
-                pros = paginator.page(paginator.num_pages)
-        return render(request,'app_doc/manage_project.html',locals())
-    except Exception as e:
-        logger.exception("管理文集出错")
-        return render(request,'404.html')
+    if request.method == 'GET':
+        try:
+            search_kw = request.GET.get('kw', None)
+            if search_kw:
+                pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw).order_by('-create_time')
+                paginator = Paginator(pro_list, 15)
+                page = request.GET.get('page', 1)
+                try:
+                    pros = paginator.page(page)
+                except PageNotAnInteger:
+                    pros = paginator.page(1)
+                except EmptyPage:
+                    pros = paginator.page(paginator.num_pages)
+                pros.kw = search_kw
+            else:
+                pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+                paginator = Paginator(pro_list, 15)
+                page = request.GET.get('page', 1)
+                try:
+                    pros = paginator.page(page)
+                except PageNotAnInteger:
+                    pros = paginator.page(1)
+                except EmptyPage:
+                    pros = paginator.page(paginator.num_pages)
+            return render(request,'app_doc/manage_project.html',locals())
+        except Exception as e:
+            logger.exception("管理文集出错")
+            return render(request,'404.html')
+    else:
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 获取文集列表
+        project_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+        paginator = Paginator(project_list, limit)
+        try:
+            pros = paginator.page(page)
+        except PageNotAnInteger:
+            pros = paginator.page(1)
+        except EmptyPage:
+            pros = paginator.page(paginator.num_pages)
+        table_data = []
+        for project in pros:
+            item = {
+                'id':project.id,
+                'name':project.name,
+                'intro':project.intro,
+                'doc_total':Doc.objects.filter(top_doc=project.id).count(),
+                'role':project.role,
+                'role_value':project.role_value,
+                'colla_total':ProjectCollaborator.objects.filter(project=project).count(),
+                'create_time':project.create_time,
+                'modify_time':project.modify_time
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": project_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
 
 
 # 修改文集前台下载权限
@@ -562,6 +617,7 @@ def manage_project_collaborator(request,pro_id):
         return Http404
 
     if request.method == 'GET':
+        user_list = User.objects.filter(~Q(username=request.user.username)) # 获取用户列表
         pro = project[0]
         collaborator = ProjectCollaborator.objects.filter(project=pro) # 获取文集的协作者
         colla_user_list = [i.user for i in collaborator] # 文集协作用户的ID
@@ -708,10 +764,16 @@ def doc(request,pro_id,doc_id):
 
             # 获取文档内容
             try:
-                doc = Doc.objects.get(id=int(doc_id),status=1)
-                doc_tags = DocTag.objects.filter(doc=doc)
+                doc = Doc.objects.get(id=int(doc_id),status=1) # 文档信息
+                doc_tags = DocTag.objects.filter(doc=doc) # 文档标签信息
             except ObjectDoesNotExist:
                 return render(request, '404.html')
+            # 获取文档分享信息
+            try:
+                doc_share = DocShare.objects.get(doc=doc)
+                is_share = True
+            except ObjectDoesNotExist:
+                is_share = False
             # 获取文集下一级文档
             # project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
             return render(request,'app_doc/doc.html',locals())
@@ -760,6 +822,11 @@ def create_doc(request):
             pre_content = request.POST.get('pre_content','') # 文档Markdown内容
             sort = request.POST.get('sort','') # 文档排序
             status = request.POST.get('status',1) # 文档状态
+            open_children = request.POST.get('open_children', False)  # 展示下级目录
+            if open_children == 'true':
+                open_children = True
+            else:
+                open_children = False
             if project != '' and doc_name != '' and project != '-1':
                 # 验证请求者是否有文集的权限
                 check_project = Project.objects.filter(id=project,create_user=request.user)
@@ -779,7 +846,8 @@ def create_doc(request):
                                 sort = sort if sort != '' else 99,
                                 create_user=request.user,
                                 status = status,
-                                editor_mode = editor_mode
+                                editor_mode = editor_mode,
+                                open_children = open_children
                             )
                             # 设置文档标签
                             for t in doc_tags.split(","):
@@ -861,6 +929,11 @@ def modify_doc(request,doc_id):
             pre_content = request.POST.get('pre_content', '') # 文档Markdown格式内容
             sort = request.POST.get('sort', '') # 文档排序
             status = request.POST.get('status',1) # 文档状态
+            open_children = request.POST.get('open_children',False) # 展示下级目录
+            if open_children == 'true':
+                open_children = True
+            else:
+                open_children = False
 
             if doc_id != '' and project_id != '' and doc_name != '' and project_id != '-1':
                 doc = Doc.objects.get(id=doc_id)
@@ -893,7 +966,8 @@ def modify_doc(request,doc_id):
                                 sort=sort if sort != '' else 99,
                                 modify_time = datetime.datetime.now(),
                                 status = status,
-                                editor_mode = editor_mode
+                                editor_mode = editor_mode,
+                                open_children = open_children
                             )
                             # 更新文档标签
                             doc_tag_list = doc_tags.split(",") if doc_tags != "" else []
@@ -944,7 +1018,7 @@ def del_doc(request):
                 doc = Doc.objects.get(id=doc_id)
                 project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
                 # 获取文档所属文集的协作信息
-                pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) #
+                pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user)
                 if pro_colla.exists():
                     colla_user_role = pro_colla[0].role
                 else:
@@ -979,7 +1053,7 @@ def del_doc(request):
 # 管理文档
 @login_required()
 @require_http_methods(['GET'])
-@logger.catch()
+# @logger.catch()
 def manage_doc(request):
     # 文档内容搜索参数
     search_kw = request.GET.get('kw','')
@@ -1107,7 +1181,6 @@ def manage_doc(request):
     draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
     # 所有文档数量
     all_cnt = published_doc_cnt + draft_doc_cnt
-
 
     # 分页处理
     paginator = Paginator(doc_list, 15)
@@ -1366,6 +1439,175 @@ def fast_publish_doc(request):
         return JsonResponse({'status':False,'data':'非法请求'})
 
 
+# 私密文档分享
+@require_http_methods(['GET','POST'])
+def share_doc(request):
+    if request.method == 'GET':
+        share_token = request.GET.get('token')
+        # 判断是否存在分享
+        try:
+            share_doc = DocShare.objects.get(token=share_token,is_enable=True)
+            doc = share_doc.doc
+            # 公开分享
+            if share_doc.share_type == 0:
+                return render(request, 'app_doc/share/share_doc.html', locals())
+            # 私密分享
+            else:
+                doc_id_base64 = base64.standard_b64encode(str(share_doc.doc.id).encode())
+                # 不存在公开分享的文档，则判断验证分享码
+                share_cookie_name = 'sharedoc-{}'.format(share_token)
+                share_value = request.COOKIES.get(share_cookie_name) if share_cookie_name in request.COOKIES.keys() else 0
+                if share_doc.share_value == share_value:
+                    return render(request, 'app_doc/share/share_doc.html', locals())
+                else:
+                    return redirect('/share_doc_check/?surl={}'.format(share_token))
+        except ObjectDoesNotExist:
+            return render(request,'404.html')
+    elif request.method == 'POST':
+        doc_id = request.POST.get('id')
+        try:
+            # 获取请求参数
+            doc = Doc.objects.get(id=doc_id,create_user=request.user)
+            share_type = request.POST.get('share_type',0)
+            share_value = request.POST.get('share_value',0)
+            is_enable = request.POST.get('is_enable',True)
+            if is_enable == 'false':
+                is_enable = False
+            else:
+                is_enable = True
+            # 生成分享文档Token
+            share_token = hashlib.md5()
+            share_token.update("{}_{}".format(doc_id,request.user.username).encode())
+            share_token = share_token.hexdigest()
+            # 创建或更新分享信息
+            doc_share = DocShare.objects.update_or_create(
+                token=share_token,
+                defaults={'doc': doc,
+                          'share_type': share_type,
+                          'share_value':share_value,
+                          'is_enable':is_enable
+                          }
+            )
+            if int(share_type) == 0:
+                data = {
+                    'doc':share_token
+                }
+            else:
+                data = {
+                    'doc': share_token,
+                    'share_value':share_value
+                }
+            return JsonResponse({'status':True,'data':data})
+        except ObjectDoesNotExist:
+            return JsonResponse({'status':False,'data':'文档不存在'})
+
+
+# 验证文档分享码
+def share_doc_check(request):
+    doc_token = request.GET.get('surl', '')
+    if request.method == 'GET':
+        if doc_token != '':
+            doc_share = DocShare.objects.get(token=doc_token)
+            share_cookie_name = 'sharedoc-{}'.format(doc_token)
+            share_value = request.COOKIES.get(share_cookie_name) if share_cookie_name in request.COOKIES.keys() else 0
+            if doc_share.share_value == share_value:
+                return redirect("/share_doc/?token={}".format(doc_token))
+            else:
+                return render(request,'app_doc/share/share_check.html',locals())
+        else:
+            return render(request,'404.html')
+    else:
+        # 接收参数值
+        share_value = request.POST.get('share_value','')
+        # 查询数据
+        if DocShare.objects.filter(token=doc_token,share_type=1,share_value=share_value).exists():
+            obj = redirect("/share_doc/?token={}".format(doc_token))
+            obj.set_cookie('sharedoc-{}'.format(doc_token),share_value)
+            return obj
+        else:
+            errormsg = "分享码错误"
+            return render(request, 'app_doc/share/share_check.html', locals())
+
+
+# 管理文档分享
+@login_required()
+@require_http_methods(['GET','POST'])
+def manage_doc_share(request):
+    if request.method == 'GET':
+        return render(request, 'app_doc/manage_doc_share.html', locals())
+    else:
+        types = request.POST.get('type')
+        # 请求类型 1：获取列表 2：删除 3：修改
+        if types == '1':
+            page = request.POST.get('page', 1)
+            limit = request.POST.get('limit', 10)
+            # share_doc = DocShare.objects.filter(doc__create_user=request.user).order_by('-create_time')
+            docshare_list = DocShare.objects.filter(doc__create_user=request.user).order_by('-create_time')
+            paginator = Paginator(docshare_list, limit)
+            page = request.GET.get('page', page)
+            try:
+                docshares = paginator.page(page)
+            except PageNotAnInteger:
+                docshares = paginator.page(1)
+            except EmptyPage:
+                docshares = paginator.page(paginator.num_pages)
+            share_list = []
+            for doc in docshares:
+                item = {
+                    'token':doc.token,
+                    'doc_name':doc.doc.name,
+                    'share_type':doc.share_type,
+                    'share_value':doc.share_value,
+                    'share_status':doc.is_enable,
+                    'create_time':doc.create_time
+                }
+                share_list.append(item)
+            resp_data = {
+                "code":0,
+                "msg":"ok",
+                "count":docshare_list.count(),
+                "data":share_list
+            }
+            return JsonResponse(resp_data)
+        # 删除
+        elif types == '2':
+            range = request.POST.get("range")
+            token = request.POST.get("token")
+            if range == 'single':
+                try:
+                    share = DocShare.objects.get(token=token,doc__create_user=request.user)
+                    share.delete()
+                    return JsonResponse({'status':True,'data':'ok'})
+                except:
+                    return JsonResponse({'status':False,'data':'无指定内容'})
+            elif range == "multi":
+                tokens = token.split(",")
+                try:
+                    share = DocShare.objects.filter(token__in=tokens,doc__create_user=request.user)
+                    share.delete()
+                    return JsonResponse({'status':True,'data':'ok'})
+                except:
+                    return JsonResponse({'status':False,'data':'无指定内容'})
+            else:
+                return JsonResponse({'status':False,'data':'类型错误'})
+        # 修改
+        elif types == '3':
+            token = request.POST.get("token",'')
+            name = request.POST.get('key','')
+            value = request.POST.get('value','')
+            # 修改分享状态
+            if name == 'share_status':
+                is_enable = True if value == 'true' else False
+                DocShare.objects.filter(token=token).update(is_enable=is_enable)
+            # 修改分享类型
+            elif name == 'share_type':
+                share_type = 0 if value == '0' else 1
+                DocShare.objects.filter(token=token).update(share_type=share_type)
+            else:
+                return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':True,'data':'ok'})
+
+
 # 创建文档模板
 @login_required()
 @require_http_methods(['GET',"POST"])
@@ -1560,7 +1802,6 @@ def get_pro_doc(request):
 
 
 # 获取指定文集的文档树数据
-# @login_required()
 @require_http_methods(['POST'])
 @logger.catch()
 def get_pro_doc_tree(request):
@@ -2117,6 +2358,8 @@ def manage_attachment(request):
                 try:
                     attacement_suffix_list =  SysSetting.objects.get(types='doc',name='attachment_suffix')
                     attacement_suffix_list = attacement_suffix_list.value.split(',')
+                    if attacement_suffix_list == ['']:
+                        attacement_suffix_list = ['zip']
                 except ObjectDoesNotExist:
                     attachment_suffix_list = ['zip']
                 allow_attachment = False
@@ -2254,7 +2497,7 @@ def search(request):
                 colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集
                 open_list = [i.id for i in Project.objects.filter(
                     Q(role=0) | Q(create_user=request.user)
-                )]  # 公开文集
+                )]  # 公开文集和自己创建的文集
 
                 view_list = list(set(open_list).union(set(colla_list)))  # 合并上述两个文集ID列表
 
@@ -2268,7 +2511,18 @@ def search(request):
                 ).order_by('-create_time')
             # 游客
             else:
-                pass
+                open_list = [i.id for i in Project.objects.filter(Q(role=0))]  # 公开文集
+
+                view_list = list(set(open_list))
+
+                tag_list = Tag.objects.filter(name__icontains=kw)  # 查询符合条件的标签
+                tag_doc_list = [i.doc.id for i in DocTag.objects.filter(tag__in=tag_list)]  # 获取符合条件的标签文档
+
+                data_list = Doc.objects.filter(
+                    Q(top_doc__in=view_list),  # 包含用户可浏览到的文集
+                    Q(id__in=tag_doc_list),  # 包含符合条件标签的文档ID列表
+                    Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
+                ).order_by('-create_time')
 
         else:
             return render(request, 'app_doc/search.html')
@@ -2315,17 +2569,23 @@ def download_doc_md(request,doc_id):
 
 # 个人中心 - 概览
 @login_required()
-@require_http_methods(['GET'])
+@require_http_methods(['GET','POST'])
 def manage_overview(request):
-    pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
-    colla_pro_cnt = ProjectCollaborator.objects.filter(user=request.user).count()
-    total_pro_cnt = pro_list.count() + colla_pro_cnt
-    total_doc_cnt = Doc.objects.filter(create_user=request.user).count()
-    total_tag_cnt = Tag.objects.filter(create_user=request.user).count()
+    if request.method == 'GET':
+        pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+        colla_pro_cnt = ProjectCollaborator.objects.filter(user=request.user).count()
+        pro_cnt = pro_list.count() + colla_pro_cnt # 文集总数
+        doc_cnt = Doc.objects.filter(create_user=request.user).count() # 文档总数
+        total_tag_cnt = Tag.objects.filter(create_user=request.user).count()
+        img_cnt = Image.objects.filter(user=request.user).count()
+        attachment_cnt = Attachment.objects.filter(user=request.user).count()
 
-    doc_active_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')[:5]
+        doc_active_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')[:5]
 
-    return render(request,'app_doc/manage_overview.html',locals())
+        return render(request,'app_doc/manage_overview.html',locals())
+    else:
+        pass
+
 
 # 个人中心 - 文档标签
 @login_required()
@@ -2561,6 +2821,7 @@ def tag_doc(request,tag_id,doc_id):
     except Exception as e:
         logger.exception("文集浏览出错")
         return render(request,'404.html')
+
 
 # 个人中心 - 个人设置
 @login_required()
