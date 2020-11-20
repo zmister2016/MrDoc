@@ -389,17 +389,23 @@
             if (lochref.indexOf(mehref) != -1) {
                 // console.log($me,lochref,mehref)
                 $me.closest("li").addClass("active");
-                //展开当前文档的上级目录
+                // 展开当前文档的下级目录
+                if($me.parent().next("ul.sub-menu").hasClass("toc-close")){
+                    // console.log("展开下级目录")
+                    $me.parent().next("ul.sub-menu").toggleClass("toc-close");
+                    $me.next("i").toggleClass("fa-chevron-left fa-chevron-down");
+                }
+                // 展开当前文档的所有上级目录
                 if($me.parent("li").parent('ul.sub-menu').hasClass("toc-close")){
-                    console.log("展开二级文档目录")
+                    // console.log("展开二级文档目录")
                     $me.parent("li").parent('ul.sub-menu').toggleClass("toc-close");
                 }
                 if($me.parent("div").parent('li').parent('ul.sub-menu').hasClass("toc-close")){
-                    console.log("展开包含下级的二级文档目录")
+                    // console.log("展开包含下级的二级文档目录")
                     $me.parent("div").parent('li').parent('ul.sub-menu').toggleClass("toc-close");
                 }
                 if($me.parent("li").parent('ul').parent('li').parent('ul.sub-menu').hasClass("toc-close")){
-                    console.log("展开三级目录")
+                    // console.log("展开三级目录")
                     $me.parent("li").parent('ul').parent('li').parent('ul.sub-menu').toggleClass("toc-close");
                 }
                 // 切换图标
