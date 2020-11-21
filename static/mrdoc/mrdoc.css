@@ -374,7 +374,7 @@ li.active > a,li.active > div > a{
 }
 
 /* 返回顶部 */
-.toTop {
+.toTop,.tocMenu,.shareDoc,.editDoc{
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -389,28 +389,7 @@ li.active > a,li.active > div > a{
     font-size: 12px; */
 }
 
-.toTop:hover {
-    background: #eeeeee;
-    font-size: 14px;
-    cursor: pointer;
-    color: red;
-}
-/* 文档目录 */
-.tocMenu{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #f6f6f6;
-    text-align: center;
-    line-height: 40px;
-    /*返回顶部标签固定定位*/
-    /* position: fixed;
-    right: 35px;
-    bottom: 90px;
-    z-index: 999;
-    font-size: 12px; */
-}
-.tocMenu:hover,.shareDoc:hover {
+.toTop:hover,.tocMenu:hover,.shareDoc:hover,.editDoc:hover {
     background: #eeeeee;
     font-size: 14px;
     cursor: pointer;
@@ -419,21 +398,7 @@ li.active > a,li.active > div > a{
 .doc-toc-hide{
     display: none;
 }
-/* 分享按钮 */
-.shareDoc{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #f6f6f6;
-    text-align: center;
-    line-height: 40px;
-    /*返回顶部标签固定定位*/
-    /* position: fixed;
-    right: 35px;
-    bottom: 135px;
-    z-index: 999;
-    font-size: 14px; */
-}
+
 
 /*切换字号*/
 .switch-font{
