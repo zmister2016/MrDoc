@@ -489,6 +489,7 @@
                             layer.msg("粘贴图片失败！")
                         }
                     });
+                    layer.closeAll("loading");
                 }; // data url!
                 var url = reader.readAsDataURL(blob);
             }
