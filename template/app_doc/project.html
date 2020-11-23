@@ -146,6 +146,7 @@
 <script>
     // 生成文集目录大纲
     var tree = layui.tree;
+    var layer = layui.layer;
     getDocTree = function(){
         layer.load(1)
         $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
@@ -189,6 +190,7 @@
     getDocTree();
     // 渲染文集简介Markdown
     const renderDesc = () => {
+        layer.load(1);
         const md_desc = $("#project-desc textarea").val()
         Vditor.preview(document.getElementById('project-desc'),
             md_desc, {
@@ -197,6 +199,9 @@
                     enable: true,
                 },
                 anchor: 1,
+                after:function(){
+                    layer.closeAll('loading');
+                }
             })
     }
     renderDesc();
