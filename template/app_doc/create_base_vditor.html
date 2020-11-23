@@ -244,6 +244,7 @@
     var laypage = layui.laypage;
     var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
     //初始化vditor
+    layer.load(1)
     var editor = new Vditor('editor-md',{
         "cdn":"{% static 'vditor' %}",
         "toolbar": [
@@ -379,6 +380,9 @@
                 "lineNumber":true,//代码行号
             }
         },
+        "after":function(){
+            layer.closeAll('loading');
+        },
         "upload":{
             // fieldName:"editormd-image-file[]",
             url:"{% url 'upload_doc_img' %}",
@@ -410,7 +414,6 @@
             }
         }
     });
-
     //未保存离开提示
     window.onbeforeunload =function() {
     　　 if(md_changed){
