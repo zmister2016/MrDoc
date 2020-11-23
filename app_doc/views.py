@@ -470,9 +470,13 @@ def del_project(request):
         if pro_id != '':
             if range == 'single':
                 pro = Project.objects.get(id=pro_id)
-                if (request.user == pro.create_user) or request.user.is_superuser:
-                    # 删除文集下的文档
+                if (request.user == pro.create_user) or (request.user.is_superuser):
+                    # 删除文集下的文档、文档历史、文档分享、文档标签
                     pro_doc_list = Doc.objects.filter(top_doc=int(pro_id))
+                    for doc in pro_doc_list:
+                        DocHistory.objects.filter(doc=doc).delete()
+                        DocShare.objects.filter(doc=doc).delete()
+                        DocTag.objects.filter(doc=doc).delete()
                     pro_doc_list.delete()
                     # 删除文集
                     pro.delete()
@@ -483,8 +487,12 @@ def del_project(request):
                 pros = pro_id.split(",")
                 try:
                     projects = Project.objects.filter(id__in=pros, create_user=request.user)
-                    # 删除文集下的文档
+                    # 删除文集下的文档、文档历史、文档分享、文档标签
                     pro_doc_list = Doc.objects.filter(top_doc__in=[i.id for i in projects])
+                    for doc in pro_doc_list:
+                        DocHistory.objects.filter(doc=doc).delete()
+                        DocShare.objects.filter(doc=doc).delete()
+                        DocTag.objects.filter(doc=doc).delete()
                     pro_doc_list.delete()
                     projects.delete()
                     return JsonResponse({'status': True, 'data': 'ok'})
@@ -566,6 +574,100 @@ def manage_project(request):
         }
         return JsonResponse(resp_data)
 
+
+# 管理文集 - 文集文档排序
+@login_required()
+@require_http_methods(['GET','POST'])
+def manage_project_doc_sort(request,pro_id):
+    if request.method == 'GET':
+        pro = Project.objects.filter(id=pro_id,create_user=request.user)
+        if pro.count() == 1:
+            pro = pro[0]
+            # 查询存在上级文档的文档
+            parent_id_list = Doc.objects.filter(top_doc=pro_id, status=1).exclude(parent_doc=0).values_list(
+                'parent_doc', flat=True)
+            # 获取存在上级文档的上级文档ID
+            doc_list = []
+            # 获取一级文档
+            top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name').order_by('sort')
+            # 遍历一级文档
+            for doc in top_docs:
+                top_item = {
+                    'id': doc['id'],
+                    'field': doc['name'],
+                    'title': doc['name'],
+                    'spread': True,
+                    'level': 1
+                }
+                # 如果一级文档存在下级文档，查询其二级文档
+                if doc['id'] in parent_id_list:
+                    # 获取二级文档
+                    sec_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=doc['id'], status=1).values('id',
+                                                                                                         'name').order_by(
+                        'sort')
+                    top_item['children'] = []
+                    for doc in sec_docs:
+                        sec_item = {
+                            'id': doc['id'],
+                            'field': doc['name'],
+                            'title': doc['name'],
+                            'level': 2
+                        }
+                        # 如果二级文档存在下级文档，查询第三级文档
+                        if doc['id'] in parent_id_list:
+                            # 获取三级文档
+                            thr_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=doc['id'], status=1).values('id',
+                                                                                                                 'name').order_by(
+                                'sort')
+                            sec_item['children'] = []
+                            for doc in thr_docs:
+                                item = {
+                                    'id': doc['id'],
+                                    'field': doc['name'],
+                                    'title': doc['name'],
+                                    'level': 3
+                                }
+                                sec_item['children'].append(item)
+                            top_item['children'].append(sec_item)
+                        else:
+                            top_item['children'].append(sec_item)
+                    doc_list.append(top_item)
+                # 如果一级文档没有下级文档，直接保存
+                else:
+                    doc_list.append(top_item)
+            return render(request,'app_doc/manage_project_doc_sort.html',locals())
+    else:
+        project_id = request.POST.get('pid', None)  # 文集ID
+        sort_data = request.POST.get('sort_data', '[]')  # 文档排序列表
+        try:
+            sort_data = json.loads(sort_data)
+        except Exception:
+            return JsonResponse({'status': False, 'data': '文档参数错误'})
+
+        try:
+            Project.objects.get(id=project_id, create_user=request.user)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': False, 'data': '没有匹配的文集'})
+
+        # 文档排序
+        n = 10
+        # 第一级文档
+        for data in sort_data:
+            Doc.objects.filter(id=data['id']).update(sort=n)
+            n += 10
+            # 存在第二级文档
+            if 'children' in data.keys():
+                n1 = 10
+                for c1 in data['children']:
+                    Doc.objects.filter(id=c1['id']).update(sort=n1, parent_doc=data['id'])
+                    n1 += 10
+                    # 存在第三级文档
+                    if 'children' in c1.keys():
+                        n2 = 10
+                        for c2 in c1['children']:
+                            Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'])
+
+        return JsonResponse({'status': True, 'data': 'ok'})
 
 # 修改文集前台下载权限
 @login_required()
@@ -1016,7 +1118,11 @@ def del_doc(request):
             # 查询文档
             try:
                 doc = Doc.objects.get(id=doc_id)
-                project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
+                try:
+                    project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
+                except ObjectDoesNotExist:
+                    logger.error("文档{}的所属文集不存在。".format(doc_id))
+                    project = 0
                 # 获取文档所属文集的协作信息
                 pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user)
                 if pro_colla.exists():
@@ -1384,6 +1490,10 @@ def doc_recycle(request):
                         doc.save()
                     # 删除文档
                     elif types == 'del':
+                        # 删除文档历史、分享、标签
+                        DocHistory.objects.filter(doc=doc).delete()
+                        DocShare.objects.filter(doc=doc).delete()
+                        DocTag.objects.filter(doc=doc).delete()
                         # 删除文档
                         doc.delete()
                     else:
@@ -1394,6 +1504,11 @@ def doc_recycle(request):
             # 清空回收站
             elif types == 'empty':
                 docs = Doc.objects.filter(status=3,create_user=request.user)
+                for doc in docs:
+                    # 删除文档历史、分享、标签
+                    DocHistory.objects.filter(doc=doc).delete()
+                    DocShare.objects.filter(doc=doc).delete()
+                    DocTag.objects.filter(doc=doc).delete()
                 docs.delete()
                 return JsonResponse({'status': True, 'data': '清空成功'})
             # 还原回收站
@@ -2594,10 +2709,10 @@ def manage_doc_tag(request):
     if request.method == 'GET':
         tags = Tag.objects.filter(create_user=request.user)
         return render(request,'app_doc/manage_doc_tag.html',locals())
-        # 操作分组
+    # 操作标签
     elif request.method == 'POST':
         types = request.POST.get('types', None)  # 请求类型，0表示创建标签，1表示修改标签，2表示删除标签，3表示获取标签
-        # 创建分组
+        # 创建标签
         if int(types) == 0:
             tag_name = request.POST.get('tag_name', '')
             if tag_name != '':
@@ -2608,7 +2723,7 @@ def manage_doc_tag(request):
                 return JsonResponse({'status': True, 'data': 'ok'})
             else:
                 return JsonResponse({'status': False, 'data': '名称无效'})
-        # 修改分组
+        # 修改标签
         elif int(types) == 1:
             try:
                 tag_name = request.POST.get('tag_name', '')
@@ -2626,7 +2741,7 @@ def manage_doc_tag(request):
                 logger.exception("修改异常")
                 return JsonResponse({'status': False, 'data': '异常错误'})
 
-        # 删除分组
+        # 删除标签
         elif int(types) == 2:
             try:
                 tag_id = request.POST.get('tag_id', '')
@@ -2636,7 +2751,7 @@ def manage_doc_tag(request):
             except:
                 logger.exception("删除标签出错")
                 return JsonResponse({'status': False, 'data': '删除错误'})
-        # 获取分组
+        # 获取标签
         elif int(types) == 3:
             try:
                 tag_list = []
