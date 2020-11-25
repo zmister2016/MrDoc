@@ -574,7 +574,7 @@
 
 <!-- 选择和上传附件div -->
 <div id="upload-attach" style="display:none;margin:20px;">
-    <span>* 仅支持.zip格式的压缩文件作为附件，文件大小不超过50Mb</span>
+    <span>* 仅支持 {% if attachment_suffix and attachment_suffix != '' %}{{attachment_suffix}}{% else %}zip{% endif %} 格式文件，文件大小不超过 {% if attachment_size and attachment_size != '' %}{{attachment_size}}{% else %}50{% endif %}MB</span>
     <div style="margin: 10px 0 0 10px;">
         <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload_attachment"><i class="layui-icon layui-icon-upload"></i> 点击上传附件</button>
         <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_attachment' %}" target="_blank"><i class="fa fa-cubes"></i> 管理附件</a>
