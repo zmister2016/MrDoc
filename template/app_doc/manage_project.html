@@ -10,31 +10,42 @@
 
 <!-- 表格工具栏 -->
 <script type="text/html" id="project-toolbar">
-    <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
-        <i class="layui-icon layui-icon-add-1"></i>新增
-    </button>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>删除
-    </button>
     <div class="layui-input-inline">
         <input type="text" name="project-search-kw" placeholder="" class="layui-input">
     </div>
     <button class="layui-btn layui-btn-primary pear-btn-sm" lay-event="search">
         <i class="layui-icon layui-icon-search"></i>搜索
     </button>
+    <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>新增
+    </button>
+    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>删除
+    </button>
+    
 </script>
 
 <!-- 文集名称 -->
 <script type="text/html" id="project-name">
     {% verbatim %}
-    <a href="/project-{{d.id}}/" target="_blank">{{d.name}}</a>
+    <a href="/project-{{d.id}}/" target="_blank">
+        {{d.name}}
+        {{#if (d.role == 0) { }}
+        {{# }else if(d.role == 1){ }}
+        <span  tooltip="私密" placement="right"><i class="layui-icon layui-icon-password"></i></span>
+        {{# }else if(d.role == 2){ }}
+        <span  tooltip="指定用户" placement="right"><i class="layui-icon layui-icon-user"></i></span>
+        {{# }else if(d.role == 3){ }}
+        <span  tooltip="访问码" placement="right"><i class="layui-icon layui-icon-key"></i></span>
+        {{# } }}
+    </a>
     {% endverbatim %}
 </script>
 
 <!-- 单个文集操作 -->
 <script type="text/html" id="project-bar">
     {% verbatim %}
-    <!-- <button class="pear-btn pear-btn-normal pear-btn-md" lay-event="sort" ><i class="layui-icon layui-icon-cols"></i></button> -->
+    <a href="/manage_pro_doc_sort/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a>
     <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
     <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
@@ -82,11 +93,11 @@
         let cols = [
             [
                 {type: 'checkbox',width:20},
-                {title: '文集名称',field: 'name',align: 'left',templet:"#project-name"},
-                {title: '简介',field: 'intro',align: 'left',templet:"#share-type"},
-                {title: '权限',field: 'role',align: 'left',templet:"#project-role"},
-                {title: '文档总数',field: 'doc_total',align: 'left',width: 100},
-                {title: '协作人数',field: 'colla_total',align: 'left',width: 90,templet:"#colla-cnt"},
+                {title: '文集名称',field: 'name',align: 'left',templet:"#project-name",minWidth:200},
+                // {title: '简介',field: 'intro',align: 'left',templet:"#share-type"},
+                // {title: '权限',field: 'role',align: 'left',templet:"#project-role"},
+                {title: '文档数',field: 'doc_total',align: 'left',width:90},
+                {title: '协作人数',field: 'colla_total',align: 'left',templet:"#colla-cnt",width:90},
                 {title: '创建时间',field: 'create_time',align: 'left',templet:"#project-create-time"},
                 {title: '操作',toolbar: '#project-bar',align: 'left',}
             ]

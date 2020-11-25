@@ -2471,15 +2471,15 @@ def manage_attachment(request):
                 # 限制附件格式
                 # 获取系统设置允许的附件格式，如果不存在，默认仅允许zip格式文件
                 try:
-                    attacement_suffix_list =  SysSetting.objects.get(types='doc',name='attachment_suffix')
-                    attacement_suffix_list = attacement_suffix_list.value.split(',')
-                    if attacement_suffix_list == ['']:
-                        attacement_suffix_list = ['zip']
+                    attachment_suffix_list =  SysSetting.objects.get(types='doc',name='attachment_suffix')
+                    attachment_suffix_list = attachment_suffix_list.value.split(',')
+                    if attachment_suffix_list == ['']:
+                        attachment_suffix_list = ['zip']
                 except ObjectDoesNotExist:
                     attachment_suffix_list = ['zip']
                 allow_attachment = False
-                for suffix in attacement_suffix_list:
-                    if attachment_name.split('.')[-1] in attacement_suffix_list:
+                for suffix in attachment_suffix_list:
+                    if attachment_name.split('.')[-1] in attachment_suffix_list:
                         allow_attachment = True
                 if allow_attachment:
                     a = Attachment.objects.create(
