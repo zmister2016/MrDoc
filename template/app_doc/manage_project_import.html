@@ -5,9 +5,19 @@
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-card-header" style="margin-bottom: 10px;">
-        <span style="font-size:18px;">导入文集到MrDoc</span>
+            <span style="font-size:18px;">导入文集到MrDoc</span>
         </div>
-            <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload-zip"><i class="layui-icon layui-icon-upload"></i>导入Markdown压缩包（.Zip）</button>
+        <div>
+            <div style="width: 142px;cursor: pointer;" id="upload-zip" tooltip="导入Markdown文件压缩包" placement="bottom">
+                <div style="width: 70px;height: 70px;margin: 0 auto;">
+                    <img src="{% static 'icon_img/file-zip.svg' %}">
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: #262626;font-size:14px;">Markdown</div>
+                    <div style="color: #8c8c8c;font-size:12px;">.zip</div>
+                </div>
+            </div>
+            <!-- <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload-zip"><i class="layui-icon layui-icon-upload"></i>导入Markdown压缩包（.Zip）</button> -->
         </div>
     </div>
 </div>

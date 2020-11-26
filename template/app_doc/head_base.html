@@ -32,6 +32,12 @@
                         <i class="layui-icon layui-icon-add-circle" style="color:black;"></i> <span>新建</span>
                     </a>
                     <dl class="layui-nav-child">
+                        <dd>
+                            <a href="{% url 'create_doc' %}" target="_blank">
+                                <img src="{% static 'icon_img/create-doc-icon.svg' %}" height="14px" width="14px"></img>
+                                <span class="layui-hide-xs">新建文档</span>
+                            </a>
+                        </dd>
                         {% if request.user.is_authenticated %}
                         <dd>
                             <a href="javascript:void(0);" onclick="createPro();">
@@ -40,12 +46,6 @@
                             </a>
                         </dd>
                         {% endif %}
-                        <dd>
-                            <a href="{% url 'create_doc' %}" target="_blank">
-                                <img src="{% static 'icon_img/create-doc-icon.svg' %}" height="14px" width="14px"></img>
-                                <span class="layui-hide-xs">新建文档</span>
-                            </a>
-                        </dd>
                     </dl>
                 </li>
             </ul>
