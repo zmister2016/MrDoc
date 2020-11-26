@@ -1,18 +1,17 @@
-{% load staticfiles %}
+{% load static %}
 <div class="layui-header layui-fluid">
     <div class="" style="display:flex;flex-direction:row;justify-content:space-between;">
         <!-- LOGO -->
         <div class="">
             <a class="logo" href="{% url 'pro_list' %}">
                 <img src="{% static 'logo.jpg' %}" style="height: 32px;width: auto;">
-                <!-- <h1><strong>MrDoc</strong></h1> -->
             </a>
         </div>
         <!-- 搜索框 -->
         <div style="margin:12px;" class="layui-hide-xs">
-            <form method="get" action="{% url 'search' %}" target="_blank">
+            <form method="get" action="{% url 'doc_search' %}" target="_blank">
             <div class="layui-input-inline">
-                <input class="layui-input mrdoc-search-input" placeholder="搜索文集或文档" name="kw"/>
+                <input class="layui-input mrdoc-search-input" placeholder="搜索文档" name="q"/>
                 <button type="submit" style="position: absolute;top:12px;right: 8px;border: none;background-color: white;">
                     <i class="layui-icon layui-icon-search" ></i>
                 </button>
