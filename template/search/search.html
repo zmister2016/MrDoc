@@ -10,7 +10,7 @@
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ kw }} - 觅道搜索 - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
+    <title>{{ query }} - 觅道搜索 - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-search-result.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -33,7 +33,7 @@
             <form method="get" action="">
             <div class="layui-input-inline">
                 <input class="layui-input mrdoc-search-input" 
-                    placeholder="搜索文集或文档" name="kw" style="width: 500px;border-radius:5px" value="{{kw}}"/>
+                    placeholder="搜索文集或文档" name="q" style="width: 500px;border-radius:5px" value="{{query}}"/>
                 <input name="type" value="{{search_type}}" hidden>
                 <button type="submit" 
                     style="position: absolute;top:12px;right: 8px;border: none;background-color: white;">
@@ -70,12 +70,6 @@
                         <a href="{% url 'manage_doc' %}">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
                             <span class="layui-hide-xs">个人中心</span>
-                        </a>
-                    </dd>
-                    <dd>
-                        <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">
-                            <i class="layui-icon layui-icon-password layui-hide-md"></i>
-                            <span class="layui-hide-xs">修改密码</span>
                         </a>
                     </dd>
                     <dd>
@@ -116,7 +110,7 @@
             <div class="layui-inline">
                 <div class="layui-input-inline">
                     <input class="layui-input mrdoc-search-input" 
-                    placeholder="搜索文集或文档" name="kw" style="border-radius:5px" value="{{kw}}"/>
+                    placeholder="搜索文集或文档" name="q" style="border-radius:5px" value="{{kw}}"/>
                     <input name="type" value="{{search_type}}" hidden>
                 </div>
                 <div class="layui-input-inline">
@@ -139,9 +133,9 @@
                 <div class="layui-inline">
                     <!-- 文档搜索 -->
                     <div class="layui-input-inline" style="width: inherit;">
-                        <a href="{% url 'doc_search' %}?q={{kw}}&d_range={{d_range}}" class="search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>文档</a>
-                        <a href="{% url 'search' %}?kw={{kw}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>文集</a>
-                        <a href="{% url 'search' %}?kw={{kw}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>标签</a>
+                        <a href="?q={{query}}&type=doc&d_range={{d_range}}" class="search_type current_search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>文档</a>
+                        <a href="{% url 'search' %}?kw={{query}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>文集</a>
+                        <a href="{% url 'search' %}?kw={{query}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>标签</a>
                     </div>
                 </div>
                 <!-- 筛选结束 -->
@@ -162,7 +156,7 @@
 </div>
 
 <!-- 搜索结果提示 -->
-{% if kw != '' %}
+{% if query != '' %}
     <div style="padding: 0 15px;margin-top: 10px;margin-bottom: 10px;color: #999;">
         觅道文档在
             {% if date_range == 'recent1' %}
@@ -176,87 +170,58 @@
             {% else %}
             全部时间内
             {% endif %}
-        搜索到 {{ data_list.count }} 条结果
+        搜索到 {{ page.paginator.count }} 条结果
     </div>
 {% endif %}
 
 <!-- 主体 -->
-<div class="layui-container search_result" id="search_result" style="padding: 0 20px;">
+<div class="layui-container search_result"  style="padding: 0 20px;">
     <!-- 遍历搜索结果列表 -->
+        {% if query %}
+            {% load doc_filter %}
+            {% load highlight %}
+            {% for result in page.object_list %}
+                <div style="margin-bottom: 18px;">
+                    <!-- 标题 -->
+                    <h3>
+                        <a href="{{ result.object.get_absolute_url }}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
+                    </h3>
+                    <!-- 简介 -->
+                    {% highlight result.object.pre_content with query %}
+                    <!-- 所属文集 -->
+                    <p class="search_result_info">
+                        <a href="{% url 'pro_index' pro_id=result.object.top_doc %}" target="_blank">{{ result.object.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.object.modify_time}}</span></p>
+                </div>
+            {% empty %}
+                <p>没有搜索结果。</p>
+            {% endfor %}
+        {% else %}
+            {# Show some example queries to run, maybe query syntax, something else? #}
+        {% endif %}
     <!-- 文档搜索结果 -->
-    {% if search_type == 'doc' %}
-        {% load doc_filter %}
-        {% for result in datas %}
-            <div style="margin-bottom: 18px;">
-                <!-- 标题 -->
-                <h3>
-                    <a href="{% url 'doc' pro_id=result.top_doc doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
-                </h3>
-                <!-- 简介 -->
-                <div class="search_result_pre">{{ result.pre_content|get_key_context:kw }}</div>
-                <!-- 所属文集 -->
-                <p class="search_result_info">
-                    <a href="{% url 'pro_index' pro_id=result.top_doc %}" target="_blank">{{ result.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
-            </div>
-        {% endfor %}
-    <!-- 文集搜索结果 -->
-    {% elif search_type == 'pro' %}
-        {% load project_filter %}
-        {% for result in datas %}
-            <div style="margin-bottom: 18px;">
-                <!-- 标题 -->
-                <h3>
-                    <a href="{% url 'pro_index' pro_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
-                </h3>
-                <!-- 简介 -->
-                <div class="search_result_pre">{{ result.intro|get_key_context:kw }}</div>
-                <!-- 所属文集 -->
-                <p class="search_result_info">
-                    <a>{% if result.create_user.first_name != '' %}{{ result.create_user.first_name }}{% else %}{{result.create_user}}{% endif %}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
-            </div>
-        {% endfor %}
-    <!-- 标签搜索结果 -->
-    {% elif search_type == 'tag' %}
-        {% load doc_filter %}
-        {% for result in datas %}
-            <div style="margin-bottom: 18px;">
-                <!-- 标题 -->
-                <h3>
-                    <a href="{% url 'doc' pro_id=result.top_doc doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
-                </h3>
-                <!-- 简介 -->
-                <div class="search_result_pre">{{ result.pre_content|get_key_context:kw }}</div>
-                <!-- 所属文集 -->
-                <p class="search_result_info">
-                    <a href="{% url 'pro_index' pro_id=result.top_doc %}" target="_blank">{{ result.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
-            </div>
-        {% endfor %}
-    {% endif %}
-    
-
-
 </div>
+
 <!-- 主体结束 -->
 <!-- 分页 -->
 <div class="layui-row project-list-page" style="text-align: center;">
-    <div class="layui-box layui-laypage layui-laypage-default">
-            <!-- 上一页 -->
-            {% if datas.has_previous %}
-                <a href="?page={{ datas.previous_page_number }}&kw={{kw}}&type={{search_type}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
-            {% else %}
-                <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
-            {% endif %}
-            <!-- 当前页 -->
-            <span class="layui-laypage-curr">
-                <em class="layui-laypage-em"></em>
-                <em>{{ datas.number }}/{{ datas.paginator.num_pages }}</em>
-            </span>
-            <!-- 下一页 -->
-            {% if datas.has_next %}
-                <a href="?page={{ datas.next_page_number }}&kw={{kw}}&type={{search_type}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
-            {% else %}
-                <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
-            {% endif %}
+    <div class="layui-box layui-laypage layui-laypage-default">            
+        <!-- 上一页 -->
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}&q={{query}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+         {% else %}
+             <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+         {% endif %}
+         <!-- 当前页 -->
+         <span class="layui-laypage-curr">
+             <em class="layui-laypage-em"></em>
+             <em>{{ page.number }}/{{ page.paginator.num_pages }}</em>
+         </span>
+         <!-- 下一页 -->
+         {% if page.has_next %}
+             <a href="?page={{ page.next_page_number }}&q={{query}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+         {% else %}
+             <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+         {% endif %}
     </div>
 </div>
 <!-- 分页结束 -->
@@ -296,7 +261,7 @@
             //$(window).scroll(positionFooter).resize(positionFooter);
             //设置条件栏选中值
             var url = layui.url();
-            console.log(url)
+            // console.log(url)
             $("#sel-role").val(url.search.role);
             $("#sel-sort").val(url.search.sort);
             layui.form.render('select');
@@ -323,13 +288,13 @@
             });
             oDiv.innerHTML = sText;
         };
-        keyLight('search_result',"{{kw}}")
+        // keyLight('search_result',"{{query}}")
 
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){
             var filter_data = form.val("filter-time-form");
             console.log(filter_data)
-            window.location.href = '{% url "search" %}?kw={{kw}}&type={{search_type}}' + '&d_range=' + filter_data['d_range']
+            window.location.href = '?q={{query}}&d_range=' + filter_data['d_range']
         });
 
         // 当前搜索类型动态设置
@@ -350,38 +315,6 @@
         }
         tagCurrentSearchType();
 
-    </script>
-    <script>        
-        //修改用户密码
-        changePwd = function(uid,username){
-            layer.open({
-                type:1,
-                title:'修改密码',
-                area:'300px;',
-                id:'changePwd',
-                content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
-                btn:['确认修改','取消'],
-                yes:function (index,layero) {
-                    layer.load(1);
-                    data = {
-                        'password':$("#newPwd1").val(),
-                        'password2':$("#newPwd2").val(),
-                    }
-                    $.post("{% url 'modify_pwd' %}",data,function(r){
-                        layer.closeAll("loading");
-                        if(r.status){
-                            //修改成功
-                            window.location.reload();
-                            //layer.close(index)
-                        }else{
-                            //修改失败，提示
-                            //console.log(r)
-                            layer.msg(r.data)
-                        }
-                    })
-                },
-            })
-        };
     </script>
     <!-- 统计代码开始 -->
         {% if debug %}

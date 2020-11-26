@@ -1,5 +1,5 @@
-from django.urls import path,re_path
-from app_doc import views,views_user,util_upload_img,import_views
+from django.urls import path,re_path,include
+from app_doc import views,views_user,views_search,util_upload_img,import_views
 
 urlpatterns = [
     path('',views.project_list,name='pro_list'),# 文档首页
@@ -22,6 +22,7 @@ urlpatterns = [
     path('manage_project_import/',import_views.import_project,name="import_project"), # 导入文集
     path('manage_project_doc_sort/',import_views.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
     path('manage_project_transfer/<int:pro_id>/',views.manage_project_transfer,name='manage_pro_transfer'), # 文集转让
+    path('manage_pro_doc_sort/<int:pro_id>/',views.manage_project_doc_sort,name='manage_pro_doc_sort'), # 文集排序
     #################文档相关
     path('project-<int:pro_id>/doc-<int:doc_id>/', views.doc, name='doc'),  # 文档浏览页
     path('create_doc/', views.create_doc, name="create_doc"),  # 新建文档
@@ -57,6 +58,8 @@ urlpatterns = [
     path('user/center_menu/',views_user.user_center_menu,name="user_center_menu"), # 个人中心菜单数据
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
     path('search/',views.search,name="search"), # 搜索功能
+    # path('doc_search/', include('haystack.urls')),  # 全文检索框架
+    path('doc_search/', views_search.DocSearchView(),name="doc_search"),  # 全文检索框架
     path('manage_overview/',views.manage_overview,name="manage_overview"), # 个人中心概览
     path('manage_self/',views.manage_self,name="manage_self"), # 个人设置
 ]
