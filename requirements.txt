@@ -8,3 +8,4 @@ djangorestframework==3.9.1
 requests==2.24.0
 whoosh==2.7.4
 django-haystack==3.0
+Markdown-3.3.3
