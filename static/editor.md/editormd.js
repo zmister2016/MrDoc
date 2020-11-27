@@ -3799,8 +3799,26 @@
                            : ( (pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.emoji(text)) + "</p>\n" );
         };
         // marked 解析代码块
-        markedRenderer.code = function (code, lang, escaped) { 
+        markedRenderer.code = function (code, lang, escaped) {
+            // 自定义颜色function
+            function custom_color(color) {
+                if(color === 'red'){
+                    return 'layui-bg-red';
+                }else if (color === 'orange'){
+                    return 'layui-bg-orange';
+                }else if (color === 'green'){
+                    return 'layui-bg-green';
+                }else if (color === 'cyan'){
+                    return 'layui-bg-cyan';
+                }else if (color === 'black'){
+                    return 'layui-bg-black';
+                }else if (color === 'grey'){
+                    return 'layui-bg-grey';
+                }else{
+                    return '';
+                }
 
+            }
             if (lang === "seq" || lang === "sequence")
             {
                 return "<div class=\"sequence-diagram\">" + code + "</div>";
@@ -3876,6 +3894,76 @@
 
                 time_line += '</ul>'
                 return time_line;
+            }
+            else if(/^title/i.test(lang)){ // site-title
+                var site_title = '<div class="site-title" style="margin:30px 0 20px;">'
+                // console.log(code)
+                var title_code = code.split(/[(\r\n)\r\n]+/);
+                // console.log(title_code)
+                title_code.forEach(function(item,index){
+                    // console.log(item,index)
+                    if(item.match(/^# /)){ // 时间标题
+                        site_title += '<fieldset style="border: none;padding: 0;border-top: 1px solid #eee;">'
+                        site_title += '<legend style="margin-left: 20px;  padding: 0 10px; font-size: 22px; font-weight: 300;">'
+                        site_title += '<div name="default">'
+                        site_title += item.replace('# ','')
+                        site_title += '</div></legend></fieldset>'
+                    }else{
+                        site_title += marked(item)
+                    }
+                })
+
+                site_title += '</div>'
+                return site_title;
+            }
+            else if(/^tblock/i.test(lang)){ // site-title-block
+                var title_block = '<div class="site-text" style="position: relative;">'
+                // console.log(code)
+                var titleblock_code = code.split(/[(\r\n)\r\n]+/);
+                // console.log(titleblock_code)
+                titleblock_code.forEach(function(item,index){
+                    // console.log(item,index)
+                    if(item.match(/^# /)){ // 时间标题
+                        title_block += '<fieldset class="layui-elem-field">'
+                        title_block += '<legend>'
+                        title_block += item.replace('# ','')
+                        title_block += '</div></legend><div class="layui-field-box">'
+                    }else{
+                        title_block += marked(item)
+                    }
+                })
+
+                title_block += '</fieldset></div>'
+                return title_block;
+            }
+            else if(/^hr/i.test(lang)){ // 分割线
+                var color = lang.split(' ')[1];
+                var ccolor = custom_color(color);
+                var hr = '<hr class="' + ccolor + '">'
+                hr += '</hr>'
+                return hr;
+            }
+            else if(/^card/i.test(lang)){ // 卡片面板
+                var color = lang.split(' ')[1];
+                var ccolor = custom_color(color);
+                var card = '<div class="layui-card">'
+                // console.log(code)
+                var card_code = code.split(/[(\r\n)\r\n]+/);
+                // console.log(card_code)
+                card_code.forEach(function(item,index){
+                    // console.log(item,index)
+                    if(item.match(/^# /)){ // 时间标题
+                        card += '<div class="layui-card-header ' + ccolor + '">'
+                        card += item.replace('# ','')
+                        card += '</div>'
+                        card += '<div class="layui-card-body">'
+                    }else{
+                        card += marked(item)
+                    }
+                })
+
+                card += '</div>'
+                return card;
             }
             else 
             {
