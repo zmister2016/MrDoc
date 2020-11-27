@@ -23,6 +23,8 @@ from app_admin.decorators import check_headers,allow_report_file
 import os.path
 import base64
 import hashlib
+from django.utils.html import strip_tags
+import markdown
 
 
 # 替换前端传来的非法字符
@@ -31,6 +33,11 @@ def validateTitle(title):
   new_title = re.sub(rstr, "_", title) # 替换为下划线
   return new_title
 
+# markdown文本生成摘要（不带markdown标记）
+def remove_markdown_tag(docs):
+   for doc in docs:        
+      doc.pre_content = strip_tags(markdown.markdown(doc.pre_content)) 
+   return;
 
 # 获取文集的文档目录
 def get_pro_toc(pro_id):
@@ -303,6 +310,8 @@ def project_index(request,pro_id):
         project = Project.objects.get(id=int(pro_id))
         # 获取文集最新的5篇文档
         new_docs = Doc.objects.filter(top_doc=pro_id,status=1).order_by('-modify_time')[:5]
+        # markdown文本生成摘要（不带markdown标记）
+        remove_markdown_tag(new_docs)
         # 获取文集的文档目录
         toc_list,toc_cnt = get_pro_toc(pro_id)
         # toc_list,toc_cnt = ([],1000)
