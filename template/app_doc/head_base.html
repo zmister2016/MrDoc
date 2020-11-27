@@ -1,18 +1,17 @@
-{% load staticfiles %}
+{% load static %}
 <div class="layui-header layui-fluid">
     <div class="" style="display:flex;flex-direction:row;justify-content:space-between;">
         <!-- LOGO -->
         <div class="">
             <a class="logo" href="{% url 'pro_list' %}">
                 <img src="{% static 'logo.jpg' %}" style="height: 32px;width: auto;">
-                <!-- <h1><strong>MrDoc</strong></h1> -->
             </a>
         </div>
         <!-- 搜索框 -->
         <div style="margin:12px;" class="layui-hide-xs">
-            <form method="get" action="{% url 'search' %}" target="_blank">
+            <form method="get" action="{% url 'doc_search' %}" target="_blank">
             <div class="layui-input-inline">
-                <input class="layui-input mrdoc-search-input" placeholder="搜索文集或文档" name="kw"/>
+                <input class="layui-input mrdoc-search-input" placeholder="搜索文档" name="q"/>
                 <button type="submit" style="position: absolute;top:12px;right: 8px;border: none;background-color: white;">
                     <i class="layui-icon layui-icon-search" ></i>
                 </button>
@@ -33,6 +32,12 @@
                         <i class="layui-icon layui-icon-add-circle" style="color:black;"></i> <span>新建</span>
                     </a>
                     <dl class="layui-nav-child">
+                        <dd>
+                            <a href="{% url 'create_doc' %}" target="_blank">
+                                <img src="{% static 'icon_img/create-doc-icon.svg' %}" height="14px" width="14px"></img>
+                                <span class="layui-hide-xs">新建文档</span>
+                            </a>
+                        </dd>
                         {% if request.user.is_authenticated %}
                         <dd>
                             <a href="javascript:void(0);" onclick="createPro();">
@@ -41,12 +46,6 @@
                             </a>
                         </dd>
                         {% endif %}
-                        <dd>
-                            <a href="{% url 'create_doc' %}" target="_blank">
-                                <img src="{% static 'icon_img/create-doc-icon.svg' %}" height="14px" width="14px"></img>
-                                <span class="layui-hide-xs">新建文档</span>
-                            </a>
-                        </dd>
                     </dl>
                 </li>
             </ul>

@@ -1,0 +1,101 @@
+.layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after{
+    background-color: #0885ff !important;
+}
+.layui-nav .layui-nav-child dd.layui-this a, .layui-nav-child dd.layui-this{
+    background-color: #0885ff !important;
+}
+/* layui分页组件样式 */
+.layui-laypage .layui-laypage-curr .layui-laypage-em{
+    background-color: #0885ff !important;
+}
+.index-control .layui-input{
+    height: 25px;
+    border: none;
+}
+.index-control .layui-form-select dl {
+    top: 30px;
+}
+.index-control .layui-form-item{
+    margin-bottom: 0px;
+}
+/* 文集列表样式 */
+.project-item-list{
+    /* float: left; */
+    min-width: 0;
+    width: 100vw;
+    height: 120px;
+    /* margin-top: 20px; */
+    /* margin-left: 20px; */
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.055);
+}
+/* 搜索类型 */
+a.search_type{
+    color: #999;
+    margin-left: 15px;
+    font-size: 16px;
+    padding-bottom: 5px;
+}
+a.search_type:hover{
+    color: #333;
+}
+/* 当前搜索类型链接样式 */
+.current_search_type{
+    color: #333 !important;
+    border-bottom: 2px solid#007fff !important;
+}
+/* 搜索结果标题 */
+.search_result_title{
+    color: #00c;
+    font-weight: 400;
+    font-size: medium;
+    line-height:26px;
+}
+.search_result_title:hover{
+    color: #00c;
+}
+/* 搜索结果简介 */
+.search_result_pre{
+    font-size: 13px;
+    color: #333;
+    line-height: 20px;
+    word-break: break-word;
+}
+/* 搜索结果归属 */
+.search_result_info a{
+    color: green;
+}
+/* 时间筛选下拉框 */
+.layui-form-select dl dd.layui-this{
+    background-color:#0885ff;
+}
+
+/* 搜索词高亮 */
+.highlighted{
+    color:#c00;
+}
+
+@media screen and (min-width: 1200px){
+    .layui-container {
+        width: 970px;
+    }
+}
+
+
+/* 移动端筛选控制栏样式 */
+@media screen and (max-width: 768px){
+    /* 控制栏样式 */
+    .index-control .layui-form-item .layui-inline{
+        display: -webkit-inline-box;
+    }
+    .index-control .layui-form-item .layui-input-inline{
+        display: -webkit-inline-box;
+        float: none;
+        left: -3px;
+        /* width: auto; */
+        margin: 0;
+    }
+
+}

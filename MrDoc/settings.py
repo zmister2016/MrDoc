@@ -53,10 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'app_admin',
-    'app_doc',
-    'app_api',
-    'django.contrib.sitemaps',
+    'haystack', # 全文搜索
+    'app_admin', # 管理APP
+    'app_doc', # 文档APP
+    'app_api', # API APP
+    'django.contrib.sitemaps', # 站点地图
     'rest_framework',
 ]
 
@@ -201,3 +202,19 @@ try:
     CHROMIUM_ARGS = CONFIG['chromium']['args'].split(',')
 except:
     CHROMIUM_ARGS = []
+
+
+# 全文检索配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用whoosh引擎
+        'ENGINE': 'app_doc.search.whoosh_cn_backend.WhooshEngine',
+        # 索引文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+# 自定义高亮
+HAYSTACK_CUSTOM_HIGHLIGHTER = "app_doc.search.highlight.MyHighLighter"
