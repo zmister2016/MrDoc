@@ -30,23 +30,25 @@
     - MrDoc官方插件：[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
     - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
 - App端（开发中）
-- Windows免安装体验版，[使用说明](http://mrdoc.zmister.com/project-7/doc-249/)
-
 
 ## 打赏
 
 <p align="center">给作者打赏一罐红牛，祝他天天能迭代，日日可更新</p>
+
+<p align="center">
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
+<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
+<a href="https://paypal.me/zmister">PayPal</a> |
+<a href="https://ko-fi.com/zmister">Ko-Fi</a>
+</p>
+
 <p align="center">
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212410.png" height=300>
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212511.png" height=300>
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212543.png" height=300>
 </p>
-<p align="center">
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>
-</p>
+
 
 ## 功能特性
 
@@ -68,13 +70,14 @@
 	- `Editor.md`、`Vditor`双编辑器加持，自由选择、自由切换；
 	- 图片、附件、科学公式、音视频、思维导图、流程图、Echart图表；
 	- 文档排序、文档上级设置、文档模板插入；
-	- 标签设置
+	- 标签设置；
 
 - **文档阅读**
 	- 两栏式布局，三级目录层级显示，左侧文集大纲，右侧文档正文；
 	- 文档阅读字体缩放、字体类型切换、页面社交分享、移动端阅读优化；
 	- 文集EPUB、PDF文件下载，文档Markdown文件下载；
 	- 标签关系网络图；
+	- 文档全文搜索；
 
 完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
@@ -118,9 +121,9 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## 交流：
+## 交流
 
-微信公众号：州的先生（ID：zmister2016）
+<p>微信公众号：州的先生（ID：zmister2016）</p>
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_213550.png" height=150 />
 
 <p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>

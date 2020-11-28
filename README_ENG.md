@@ -12,7 +12,7 @@
 <a href="http://mrdoc.zmister.com/project-7/">Installation Manual</a> | 
 <a href="http://mrdoc.zmister.com/project-20/">Document Example</a> |
 <a href="http://mrdoc.zmister.com/">Example Site</a> |
-<a href="./README_ENG.md">English</a>
+<a href="./README.md">中文</a>
 </p>
 
 <p align="center">Source code：<a href="https://gitee.com/zmister/MrDoc">Gitee</a> | 
@@ -31,11 +31,14 @@ Current Platform：
     - [instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
     - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
 - Mobile App(developing)
-- Windows Portable Experience Edition，[instructions](http://mrdoc.zmister.com/project-7/doc-249/)
 
 ## Donate
 
-<p align="center">Donate a can of Red Bull to the author to speed up the development</p>
+<p align="center">Donate a can of Coffee to the author to speed up the development</p>
+<p>    
+<a href="https://ko-fi.com/zmister">Ko-Fi</a> |
+<a href="https://paypal.me/zmister">PayPal</a> |
+</p>
 <p align="center">
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212410.png" height=300>
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212511.png" height=300>
