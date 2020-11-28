@@ -30,7 +30,7 @@
     <![endif]-->
 
 </head>
-<body>
+<body class="big-page">
 <div class="doc layui-fluid" style="padding-left:0px;">
     <!-- 左侧目录栏 -->
     <div class="doc-summary">
@@ -54,11 +54,6 @@
             </p>
         </div>
         <hr>
-        <!-- <div style="margin-left:15px;">
-            <a href="javascript:void(0);" onclick="openDocTree()"><i class="fa fa-bars"></i> 展开</a>
-            <a href="javascript:void(0);" onclick="closeDocTree()"><i class="fa fa-bars"></i> 折叠</a>
-        </div> -->
-        
         <!-- 遍历文集大纲 -->
         <!-- 如果文集的文档数量超过999，使用异步加载文集目录 -->
         {% if toc_cnt > 999  %}
@@ -67,7 +62,6 @@
             <nav>
                 <ul class="summary" id="project-toc"></ul>
             </nav>
-        
         {% else %}
         <!-- 文档数量小于999，使用同步加载文集目录 -->
         <nav>
@@ -338,7 +332,7 @@
 <!-- 小屏自动收起左侧文集大纲 -->
 <script>
     //加载页面时执行一次
-    changeSidebar();
+    // changeSidebar();
     //监听浏览器宽度的改变
     window.onresize = function(){
         changeSidebar();
@@ -349,7 +343,7 @@
         //判断匹配状态
         if(screen_width.matches){
             //如果匹配到，切换侧边栏
-            //console.log('小屏幕')
+            console.log('小屏幕')
             $("body").addClass("big-page");
         }else{
             $("body").removeClass("big-page");
@@ -357,9 +351,58 @@
     }
     // 监听文档div点击
     document.querySelector('.doc-body').addEventListener('click', function (e) {
-        // console.log("点击了div")
-        changeSidebar();
+        var screen_width = window.matchMedia('(max-width: 768px)');
+        // 小屏下收起左侧文集大纲
+        if(screen_width.matches){
+            // console.log("点击了div")
+            changeSidebar();
+        }
     });
+</script>
+
+<!-- 切换隐藏侧边栏 -->
+<script>
+    // 初始化左侧文集大纲状态
+    function init_sidebar(){
+        var screen_width = window.matchMedia('(max-width: 768px)');
+        if(screen_width.matches){}else{
+            // 读取浏览器存储
+            bgpage_status = window.localStorage.getItem('bgpage')
+            console.log("左侧大纲状态：",bgpage_status)
+            if(bgpage_status === null){ // 如果没有值，则默认展开
+                $("body").toggleClass("big-page");
+            }else if(bgpage_status === '1'){ // 如果值为1，则默认展开
+                if($("body").hasClass("big-page")){}else{
+                    $("body").toggleClass("big-page");
+                }
+            }
+            else{ // 否则收起
+                if($("body").hasClass("big-page")){
+                    $("body").toggleClass("big-page");
+                }else{
+                    window.localStorage.setItem('bgpage','0')
+                }
+                
+            }
+        }
+        
+    }
+    init_sidebar();
+    // 切换侧边栏
+    $(function(){
+        $(".js-toolbar-action").click(toggleSidebar);
+    });
+    //切换侧边栏显示隐藏
+    function toggleSidebar(){
+        console.log("切换侧边栏")
+        $("body").toggleClass("big-page");
+        if(window.localStorage.getItem('bgpage') === '1'){
+            window.localStorage.setItem('bgpage','0')
+        }else{
+            window.localStorage.setItem('bgpage','1')
+        }
+        return false;
+    }
 </script>
 
 {% if doc.editor_mode == 2 %}
@@ -375,7 +418,7 @@
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 
 
-<!-- 解析Markdown -->
+<!-- 解析渲染Markdown -->
 <script>
     // EditorMD模式
     {% if doc.editor_mode == 1 %}
@@ -487,20 +530,6 @@
         // 生成当前网页链接
         $("input[name=current_url]").val(document.URL)
     });
-</script>
-
-<!-- 切换隐藏侧边栏 -->
-<script>
-    // 切换侧边栏
-    $(function(){
-        $(".js-toolbar-action").click(toggleSidebar);
-    });
-    //切换侧边栏显示隐藏
-    function toggleSidebar(){
-        console.log("切换侧边栏")
-        $("body").toggleClass("big-page");
-        return false;
-    }
 </script>
 
 <!-- 切换内容字体 -->

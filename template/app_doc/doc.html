@@ -31,7 +31,7 @@
         </a>
     {% endif %}
     <!-- 文档目录 -->
-    <div id="toc-container" class='sidebar'></div>
+    <div id="toc-container" class='sidebar doc-toc-hide'></div>
     
 {% endblock %}
 
@@ -173,13 +173,13 @@
 <script>
     var layer = layui.layer;
     var form = layui.form;
-    // 手机屏幕上默认最小化目录
-    if(window.outerWidth < 1300){
+    // 非小屏默认展开文档目录
+    if(window.innerWidth > 1650){
         $(".sidebar").toggleClass("doc-toc-hide");
     }
     // 切换文档目录显示与否
     $(".tocMenu").click(function() {
-        console.log("隐藏文档目录")
+        console.log("切换文档目录显示")
         $(".sidebar").toggleClass("doc-toc-hide");
     });
     
