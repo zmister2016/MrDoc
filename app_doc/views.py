@@ -377,7 +377,7 @@ def modify_project(request):
         project_files = ProjectReportFile.objects.filter(project=pro) # 文集的导出文件列表
         # 验证用户有权限修改文集
         if (request.user == pro.create_user) or request.user.is_superuser:
-            return render(request,'app_doc/manage_project_options.html',locals())
+            return render(request,'app_doc/manage/manage_project_options.html',locals())
         else:
             return Http404
     elif request.method == 'POST':
@@ -412,7 +412,7 @@ def modify_project_role(request,pro_id):
         return render(request,'403.html')
     else:
         if request.method == 'GET':
-            return render(request,'app_doc/manage_project_role.html',locals())
+            return render(request,'app_doc/manage/manage_project_role.html',locals())
         elif request.method == 'POST':
             role_type = request.POST.get('role','')
             if role_type != '':
@@ -437,7 +437,7 @@ def modify_project_role(request,pro_id):
                             modify_time=datetime.datetime.now()
                         )
                     pro = Project.objects.get(id=int(pro_id))
-                    # return render(request, 'app_doc/manage_project_role.html', locals())
+                    # return render(request, 'app_doc/manage/manage_project_role.html', locals())
                     return JsonResponse({'status':True,'data':'ok'})
                 except:
                     return JsonResponse({'status':False,'data':'出错'})
@@ -545,7 +545,7 @@ def manage_project(request):
                     pros = paginator.page(1)
                 except EmptyPage:
                     pros = paginator.page(paginator.num_pages)
-            return render(request,'app_doc/manage_project.html',locals())
+            return render(request,'app_doc/manage/manage_project.html',locals())
         except Exception as e:
             logger.exception("管理文集出错")
             return render(request,'404.html')
@@ -644,7 +644,7 @@ def manage_project_doc_sort(request,pro_id):
                 # 如果一级文档没有下级文档，直接保存
                 else:
                     doc_list.append(top_item)
-            return render(request,'app_doc/manage_project_doc_sort.html',locals())
+            return render(request,'app_doc/manage/manage_project_doc_sort.html',locals())
     else:
         project_id = request.POST.get('pid', None)  # 文集ID
         sort_data = request.POST.get('sort_data', '[]')  # 文档排序列表
@@ -692,7 +692,7 @@ def modify_project_download(request,pro_id):
     else:
         project_files = ProjectReportFile.objects.filter(project=pro)
         if request.method == 'GET':
-            return render(request,'app_doc/manage_project_download.html',locals())
+            return render(request,'app_doc/manage/manage_project_download.html',locals())
         elif request.method == 'POST':
             download_epub = request.POST.get('download_epub',None)
             download_pdf = request.POST.get('download_pdf', None)
@@ -714,7 +714,7 @@ def modify_project_download(request,pro_id):
             ProjectReport.objects.update_or_create(
                 project=pro, defaults={'allow_pdf': pdf_status}
             )
-            # return render(request,'app_doc/manage_project_download.html',locals())
+            # return render(request,'app_doc/manage/manage_project_download.html',locals())
             return JsonResponse({'status':True,'data':'ok'})
 
 
@@ -733,7 +733,7 @@ def manage_project_collaborator(request,pro_id):
         collaborator = ProjectCollaborator.objects.filter(project=pro) # 获取文集的协作者
         colla_user_list = [i.user for i in collaborator] # 文集协作用户的ID
         colla_docs = Doc.objects.filter(top_doc=pro.id,create_user__in=colla_user_list) # 获取文集协作用户创建的文档
-        return render(request, 'app_doc/manage_project_collaborator.html', locals())
+        return render(request, 'app_doc/manage/manage_project_collaborator.html', locals())
 
     elif request.method == 'POST':
         # type类型：0表示新增协作者、1表示删除协作者、2表示修改协作者
@@ -794,7 +794,7 @@ def manage_project_collaborator(request,pro_id):
 @logger.catch()
 def manage_pro_colla_self(request):
     colla_pros = ProjectCollaborator.objects.filter(user=request.user)
-    return render(request,'app_doc/manage_project_self_colla.html',locals())
+    return render(request,'app_doc/manage/manage_project_self_colla.html',locals())
 
 
 # 转让文集
@@ -810,7 +810,7 @@ def manage_project_transfer(request,pro_id):
     else:
         if request.method == 'GET':
             user_list = User.objects.filter(~Q(username=request.user.username))
-            return render(request,'app_doc/manage_project_transfer.html',locals())
+            return render(request,'app_doc/manage/manage_project_transfer.html',locals())
         elif request.method == 'POST':
             user_name = request.POST.get('username',None)
             try:
@@ -917,9 +917,9 @@ def create_doc(request):
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
             # 根据编辑器模式返回不同的模板
             if editor_mode == 1:
-                return render(request, 'app_doc/create_doc.html', locals())
+                return render(request, 'app_doc/editor/create_doc.html', locals())
             elif editor_mode == 2:
-                return render(request, 'app_doc/create_doc_vditor.html', locals())
+                return render(request, 'app_doc/editor/create_doc_vditor.html', locals())
         except Exception as e:
             logger.exception("访问创建文档页面出错")
             return render(request,'404.html')
@@ -1020,9 +1020,9 @@ def modify_doc(request,doc_id):
                 history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
                 # 获取用户的编辑器模式
                 if editor_mode == 1:
-                    return render(request, 'app_doc/modify_doc.html', locals())
+                    return render(request, 'app_doc/editor/modify_doc.html', locals())
                 elif editor_mode == 2:
-                    return render(request, 'app_doc/modify_doc_vditor.html', locals())
+                    return render(request, 'app_doc/editor/modify_doc_vditor.html', locals())
 
             else:
                 return render(request,'403.html')
@@ -1309,7 +1309,7 @@ def manage_doc(request):
     docs.status = doc_status
     docs.pid = doc_pro_id
     docs.kw = search_kw
-    return render(request,'app_doc/manage_doc.html',locals())
+    return render(request,'app_doc/manage/manage_doc.html',locals())
 
 
 # 移动文档
@@ -1440,7 +1440,7 @@ def manage_doc_history(request,doc_id):
                 historys = paginator.page(1)
             except EmptyPage:
                 historys = paginator.page(paginator.num_pages)
-            return render(request, 'app_doc/manage_doc_history.html', locals())
+            return render(request, 'app_doc/manage/manage_doc_history.html', locals())
         except Exception as e:
             logger.exception("管理文档历史版本页面访问出错")
             return render(request, '404.html')
@@ -1470,7 +1470,7 @@ def doc_recycle(request):
             docs = paginator.page(1)
         except EmptyPage:
             docs = paginator.page(paginator.num_pages)
-        return render(request,'app_doc/manage_doc_recycle.html',locals())
+        return render(request,'app_doc/manage/manage_doc_recycle.html',locals())
     elif request.method == 'POST':
         try:
             # 获取参数
@@ -1658,7 +1658,7 @@ def share_doc_check(request):
 @require_http_methods(['GET','POST'])
 def manage_doc_share(request):
     if request.method == 'GET':
-        return render(request, 'app_doc/manage_doc_share.html', locals())
+        return render(request, 'app_doc/manage/manage_doc_share.html', locals())
     else:
         types = request.POST.get('type')
         # 请求类型 1：获取列表 2：删除 3：修改
@@ -1748,9 +1748,9 @@ def create_doctemp(request):
             editor_mode = 1
         doctemps = DocTemp.objects.filter(create_user=request.user)
         if editor_mode == 1:
-            return render(request,'app_doc/create_doctemp.html',locals())
+            return render(request,'app_doc/editor/create_doctemp.html',locals())
         else:
-            return render(request, 'app_doc/create_doctemp_vditor.html', locals())
+            return render(request, 'app_doc/editor/create_doctemp_vditor.html', locals())
     elif request.method == 'POST':
         try:
             name = request.POST.get('name','')
@@ -1789,9 +1789,9 @@ def modify_doctemp(request,doctemp_id):
                     editor_mode = 1
                 doctemps = DocTemp.objects.filter(create_user=request.user)
                 if editor_mode == 1:
-                    return render(request,'app_doc/modify_doctemp.html',locals())
+                    return render(request,'app_doc/editor/modify_doctemp.html',locals())
                 else:
-                    return render(request, 'app_doc/modify_doctemp_vditor.html', locals())
+                    return render(request, 'app_doc/editor/modify_doctemp_vditor.html', locals())
             else:
                 return HttpResponse('非法请求')
         except Exception as e:
@@ -1867,7 +1867,7 @@ def manage_doctemp(request):
                 doctemps = paginator.page(1)
             except EmptyPage:
                 doctemps = paginator.page(paginator.num_pages)
-        return render(request, 'app_doc/manage_doctemp.html', locals())
+        return render(request, 'app_doc/manage/manage_doctemp.html', locals())
     except Exception as e:
         logger.exception("管理文档模板页面访问出错")
         return render(request, '404.html')
@@ -2273,7 +2273,7 @@ def manage_image(request):
             except EmptyPage:
                 images = paginator.page(paginator.num_pages)
             images.group = g_id
-            return render(request,'app_doc/manage_image.html',locals())
+            return render(request,'app_doc/manage/manage_image.html',locals())
         except:
             logger.exception("图片素材管理出错")
             return render(request,'404.html')
@@ -2335,7 +2335,7 @@ def manage_image(request):
 def manage_img_group(request):
     if request.method == 'GET':
         groups = ImageGroup.objects.filter(user=request.user)
-        return render(request,'app_doc/manage_image_group.html',locals())
+        return render(request,'app_doc/manage/manage_image_group.html',locals())
     # 操作分组
     elif request.method == 'POST':
         types = request.POST.get('types',None) # 请求类型，0表示创建分组，1表示修改分组，2表示删除分组，3表示获取分组
@@ -2453,7 +2453,7 @@ def manage_attachment(request):
                     attachments = paginator.page(1)
                 except EmptyPage:
                     attachments = paginator.page(paginator.num_pages)
-            return render(request, 'app_doc/manage_attachment.html', locals())
+            return render(request, 'app_doc/manage/manage_attachment.html', locals())
         except Exception as e:
             logger.exception("附件管理访问出错")
             return render(request,'404.html')
@@ -2706,7 +2706,7 @@ def manage_overview(request):
 
         doc_active_list = Doc.objects.filter(create_user=request.user).order_by('-modify_time')[:5]
 
-        return render(request,'app_doc/manage_overview.html',locals())
+        return render(request,'app_doc/manage/manage_overview.html',locals())
     else:
         pass
 
@@ -2717,7 +2717,7 @@ def manage_overview(request):
 def manage_doc_tag(request):
     if request.method == 'GET':
         tags = Tag.objects.filter(create_user=request.user)
-        return render(request,'app_doc/manage_doc_tag.html',locals())
+        return render(request,'app_doc/manage/manage_doc_tag.html',locals())
     # 操作标签
     elif request.method == 'POST':
         types = request.POST.get('types', None)  # 请求类型，0表示创建标签，1表示修改标签，2表示删除标签，3表示获取标签
@@ -2956,7 +2956,7 @@ def manage_self(request):
             user_opt = UserOptions.objects.get(user=request.user)
         except ObjectDoesNotExist:
             user_opt = []
-        return render(request,'app_doc/manage_self.html',locals())
+        return render(request,'app_doc/manage/manage_self.html',locals())
     elif request.method == 'POST':
         first_name = request.POST.get('first_name','') # 昵称
         email = request.POST.get('email',None) # 电子邮箱

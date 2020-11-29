@@ -1,10 +1,10 @@
-{% extends 'app_doc/create_base_vditor.html' %}
+{% extends 'app_doc/editor/create_base_2.html' %}
 {% load static %}
-{% block title %}新建文档模板{% endblock %}
-{% block editor_type %}新建模板{% endblock %}
+{% block title %}修改文档模板{% endblock %}
+{% block editor_type %}修改文档模板{% endblock %}
 
 {% block head_toolbar %}
-<a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
+<a class="btn pull-left" aria-label="" href="{% url 'create_doctemp' %}?pid={{project.id}}" target="_blank">
     <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">新建模板</span>
 </a>
 <a class="btn pull-left" aria-label="" href="{% url 'manage_doctemp' %}?pid={{project.id}}" target="_blank">
@@ -20,7 +20,7 @@
     <div class="layui-row">
         <div class="layui-col-md12" style="margin-bottom: 10px;">
             <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDocTemp()">
+                <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="modifyDocTemp()">
                     <i class="fa fa-save"></i> 保存模板
                 </button>
             </label>
@@ -45,38 +45,38 @@
     <div class="create-doc-form">
         <div class="layui-form" style="padding-bottom:10px;">
             <div class="layui-input-block" style="margin-left:0px;">
-              <input type="text" name="doc-name" id="doctemp-name" required lay-verify="required" placeholder="请输入模板标题" autocomplete="off" class="layui-input">
+              <input type="text" name="doc-name" id="doctemp-name" required lay-verify="required" value="{{doctemp.name}}" placeholder="请输入模板名称" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
     <div id="editor-md">
-        <textarea style="display:none;"></textarea>
+        <textarea style="display:none;">{{doctemp.content}}</textarea>
         <textarea class="editormd-html-textarea" name="$id-html-code"></textarea>
     </div>
 {% endblock %}
 
 {% block custom_script %}
     <script>
-        //保存文档模板
-        createDocTemp = function(){
+        //修改文档模板
+        modifyDocTemp = function(){
             $('button.layui-btn').attr("disabled",true);
             $('button.layui-btn').addClass('layui-btn-disabled');
-            layer.load();
+            layer.load(1);
             var data = {
+                'doctemp_id':'{{ doctemp.id }}',
                 'name':$("#doctemp-name").val(),
-                'content':editor.getValue(),
+                'content':editor.getMarkdown(),
             }
-            $.post("{% url 'create_doctemp' %}",data,function(r){
+            $.post("{% url 'modify_doctemp' doctemp_id=doctemp.id %}",data,function(r){
+                layer.closeAll("loading");
                 if(r.status){
-                    //创建成功
-                    layer.closeAll("loading");
-                    layer.msg('保存成功',function(){
+                    //修改成功
+                    layer.msg('修改成功，即将跳转',function(){
                         md_changed = false;
                         window.location.href = "{% url 'manage_doctemp' %}";
                     });
                 }else{
                     //创建失败
-                    layer.closeAll("loading");
                     layer.msg('保存失败');
                     $('button.layui-btn').attr("disabled",false);
                     $('button.layui-btn').removeClass('layui-btn-disabled');

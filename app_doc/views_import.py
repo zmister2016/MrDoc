@@ -31,7 +31,7 @@ from app_doc.import_utils import *
 @require_http_methods(['GET','POST'])
 def import_project(request):
     if request.method == 'GET':
-        return render(request,'app_doc/manage_project_import.html',locals())
+        return render(request,'app_doc/manage/manage_project_import.html',locals())
     elif request.method == 'POST':
         file_type = request.POST.get('type',None)
         # 上传Zip压缩文件

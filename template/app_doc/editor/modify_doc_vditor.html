@@ -1,4 +1,4 @@
-{% extends 'app_doc/create_base_vditor.html' %}
+{% extends 'app_doc/editor/create_base_vditor.html' %}
 {% load static %}
 {% block title %}修改文档{% endblock %}
 {% block editor_type %}修改文档{% endblock %}
@@ -128,13 +128,13 @@
                 <div class="layui-colla-content layui-show">
                     <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
                         <div class="layui-row" style="margin-top: 5px;">
-                            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" onclick="saveDoc()" title="保存当前内容为草稿文档">
+                            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" id="modify_save_doc" title="保存当前内容为草稿文档">
                                 <i class="fa fa-save"></i> 保存为草稿
                             </button>
                         </div>
                 
                         <div class="layui-row" style="margin-top: 5px;">
-                            <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="createDoc()" id="create_doc" title="发布当前内容">
+                            <button class="layui-btn layui-btn-normal layui-btn-fluid" id="modify_pub_doc" title="发布当前内容">
                                 <i class="fa fa-save"></i> 发布文档
                             </button>
                         </div>
@@ -174,325 +174,309 @@
 {% endblock %}
 
 {% block custom_script %}
-    <script>
-        //获取文档数和上级文档信息
-        $(function(){
-            layer.load(1);
-            var doc_parent_id = '{{ doc.parent_doc }}';
-            $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
-                if(r.status){
-                    layer.closeAll("loading");
-                    var doc_tree = tree.render({
-                        elem:"#doc-tree",
-                        id:'docTree',
-                        onlyIconControl:true,
-                        data:r.data,
-                        click: function(obj){
-                            if(obj.data.level != 3){
-                                console.log(obj.data.id,doc_parent_id)
-                                if(obj.data.id != '{{ doc.id }}' ){
-                                    $('#parent-doc').val(obj.data.id);// 设置上级文档
-                                    $("div.layui-tree-set").each(function(i){
-                                        var $me = $(this)
-                                        if($me.data('id') == obj.data.id){
-                                            // console.log('点击了')
-                                            layer.msg("你选择了上级文档："+obj.data.title)
-                                            $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                                        }else{
-                                            $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                                        }
-                                    });
-                                }else{
-                                    layer.msg("不可选择自己作为上级")
-                                };
-                                
+<script>
+    //获取文档数和上级文档信息
+    $(function(){
+        layer.load(1);
+        var doc_parent_id = '{{ doc.parent_doc }}';
+        $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
+            if(r.status){
+                layer.closeAll("loading");
+                var doc_tree = tree.render({
+                    elem:"#doc-tree",
+                    id:'docTree',
+                    onlyIconControl:true,
+                    data:r.data,
+                    click: function(obj){
+                        if(obj.data.level != 3){
+                            console.log(obj.data.id,doc_parent_id)
+                            if(obj.data.id != '{{ doc.id }}' ){
+                                $('#parent-doc').val(obj.data.id);// 设置上级文档
+                                $("div.layui-tree-set").each(function(i){
+                                    var $me = $(this)
+                                    if($me.data('id') == obj.data.id){
+                                        // console.log('点击了')
+                                        layer.msg("你选择了上级文档："+obj.data.title)
+                                        $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                                    }else{
+                                        $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                                    }
+                                });
                             }else{
-                                layer.msg("第三级文档不能作为上级文档")
+                                layer.msg("不可选择自己作为上级")
                             };
                             
-                        }
-                    });
-                    $('#parent-doc').val(doc_parent_id);// 设置上级文档
-                    $("div.layui-tree-set").each(function(i){
-                        var $me = $(this)
-                        if($me.data('id') == doc_parent_id){
-                            $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
                         }else{
-                            $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                        }
-                    });
-                }else{
-                    layer.msg("获取下级文档失败！")
-                }
-            });
+                            layer.msg("第三级文档不能作为上级文档")
+                        };
+                        
+                    }
+                });
+                $('#parent-doc').val(doc_parent_id);// 设置上级文档
+                $("div.layui-tree-set").each(function(i){
+                    var $me = $(this)
+                    if($me.data('id') == doc_parent_id){
+                        $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                    }else{
+                        $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                    }
+                });
+            }else{
+                layer.msg("获取下级文档失败！")
+            }
         });
-        //发布文档
-        createDoc = function(){
-            $('button.layui-btn').attr("disabled",true);
-            $('button.layui-btn').addClass('layui-btn-disabled');
-            layer.load(1);
-            var data = {
-                'doc_id':'{{ doc.id }}',
-                'project':$("#project").val(),
-                'parent_doc':$("#parent-doc").val(),
-                'doc_tag':$("#tagsinputval").val(),
-                'doc_name':$("#doc-name").val(),
-                'content':editor.getHTML(),
-                'pre_content':editor.getValue(),
-                'sort':$("#sort").val(),
-                'open_children':$('input:radio[name="open-children"]:checked').val(),
-            };
-            $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
-                layer.closeAll("loading");
-                if(r.status){
-                    //修改成功
+    });
+    //修改文档
+    modifyDoc = function(status){
+        $('button.layui-btn').attr("disabled",true);
+        $('button.layui-btn').addClass('layui-btn-disabled');
+        layer.load(1);
+        var data = {
+            'doc_id':'{{ doc.id }}',
+            'project':$("#project").val(),
+            'parent_doc':$("#parent-doc").val(),
+            'doc_tag':$("#tagsinputval").val(),
+            'doc_name':$("#doc-name").val(),
+            'content':editor.getHTML(),
+            'pre_content':editor.getValue(),
+            'sort':$("#sort").val(),
+            'status':status,
+            'open_children':$('input:radio[name="open-children"]:checked').val(),
+        };
+        $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
+            layer.closeAll("loading");
+            if(r.status){
+                //修改成功
+                window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
+                if(status === 1){
                     layer.msg('发布成功，即将跳转',function(){
                         md_changed = false;
                         window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                     });
                 }else{
-                    //修改失败
-                    layer.msg('保存失败');
-                    $('button.layui-btn').attr("disabled",false);
-                    $('button.layui-btn').removeClass('layui-btn-disabled');
-                }
-            });
-        };
-        //保存草稿
-        saveDoc = function(){
-            $('button.layui-btn').attr("disabled",true);
-            $('button.layui-btn').addClass('layui-btn-disabled');
-            layer.load(1);
-            var data = {
-                'doc_id':'{{ doc.id }}',
-                'project':$("#project").val(),
-                'doc_tag':$("#tagsinputval").val(),
-                'parent_doc':$("#parent-doc").val(),
-                'doc_name':$("#doc-name").val(),
-                'content':editor.getHTML(),
-                'pre_content':editor.getValue(),
-                'sort':$("#sort").val(),
-                'status':0,
-                'open_children':$('input:radio[name="open-children"]:checked').val(),
-            }
-            $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
-                layer.closeAll("loading");
-                if(r.status){
                     //修改成功
                     layer.msg('保存成功',function(){
                         md_changed = false;
                         window.location.href = "{% url 'modify_doc' doc.id %}";
                     });
-                }else{
-                    //修改失败
-                    layer.msg('保存失败');
-                    $('button.layui-btn').attr("disabled",false);
-                    $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
-            });
-        };
-        //选择文档模板
-        $("#sel-doctemp").click(function(){
-            layer.open({
-              type: 1,
-                id:'temp-div',
-                content: $('#doctemp-list'),
-                area:['530px','400px'],
-            });
+            }else{
+                //修改失败
+                layer.msg('修改失败');
+                $('button.layui-btn').attr("disabled",false);
+                $('button.layui-btn').removeClass('layui-btn-disabled');
+            }
         });
-        //插入模板
-        insertTemp = function(doctemp_id){
-            layer.load();
-            $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
-                if(r.status){
-                    editor.insertValue(r.data);
-                    layer.closeAll()
-                }else{
-                    layer.closeAll("loading");
-                    layer.msg(r.data)
-                }
-            });
-        };
-        //插入本地文本文件
-        function insertLocalFile(input) {
-            var file = input.files[0];
-            //filename = file.name.split(".")[0]; // 文件名
-            //支持chrome IE10
-            if (window.FileReader) {
-                var reader = new FileReader();
-                reader.onload = function() {
-                    console.log(this.result);
-                    editor.insertValue(this.result);
-                }
-                reader.readAsText(file);
-            }
-            //支持IE 7 8 9 10
-            else if (typeof window.ActiveXObject != 'undefined'){
-                var xmlDoc;
-                xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-                xmlDoc.async = false;
-                xmlDoc.load(input.value);
-                console.log(xmlDoc.xml);
-                editor.insertValue(xmlDoc.xml);
-            }
-            //支持FF
-            else if (document.implementation && document.implementation.createDocument) {
-                var xmlDoc;
-                xmlDoc = document.implementation.createDocument("", "", null);
-                xmlDoc.async = false;
-                xmlDoc.load(input.value);
-                console.log(xmlDoc.xml);
-                editor.insertValue(xmlDoc.xml);
-            } else {
-                alert('error');
-            }
-        };
-        //选择本地文本文件
-        function selectLocalFile(){
-            $("#insert-local-file").trigger("click");
-        };
-        // 查看历史记录
-        $("#doc-history").click(function(){
-            layer.open({
-                type: 1,
-                title:'查看当前文档的历史版本',
-                id:'history-div',
-                content: $('#history-list'),
-                area:['530px','300px'],
-            });
-        });
-        //清除所选上级文档
-        $("#clearParentDoc").click(function(){
-            $('#parent-doc').val("");
-            $("span.layui-tree-txt").each(function(i){
-                var $me = $(this)
-                $me.removeClass('selected-parent-doc')
-            });
-        });
-        // 插入历史版本
-        insertHistory = function(doc_id,history_id){
-            layer.load(1);
-            var url = "{% url 'diff_doc' 0 1 %}";
-            url = url.replace(0,doc_id).replace(1,history_id)
-            $.post(url,function(r){
-                layer.closeAll("loading");
-                if(r.status){
-                    editor.setMarkdown(r.data);
-                }else{
-                    layer.msg(r.data)
-                }
-            });
-        };
-        // 删除文档
-        delDoc = function(doc_id){
-            layer.open({
-                type:1,
-                title:'删除文档',
-                area:'300px;',
-                id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将删除此文档！</div>',
-                btn:['确定','取消'], //添加按钮
-                btnAlign:'c', //按钮居中
-                yes:function (index,layero) {
-                    layer.load(1);
-                    data = {
-                        'doc_id':'{{ doc.id }}',
-                    };
-                    $.post("{% url 'del_doc' %}",data,function(r){
-                        layer.closeAll('loading')
-                        if(r.status){
-                            //修改成功
-                            layer.msg("文档已删除，即将跳转至文集")
-                            // window.location.reload();
-                            window.location.href = "{% url 'pro_index' doc.top_doc %}"
-                            //layer.close(index)
-                        }else{
-                            //修改失败，提示
-                            // console.log(r)
-                            layer.msg(r.data)
-                        }
-                    })
-                },
-            });
-        };
-        // 移动文档
-        moveDoc = function(doc_id){
-            layer.open({
-                type:1,
-                title:'复制或移动此文档到指定文集',
-                id:'moveDoc',
-                area:'450px;',
-                content:$('#move-project'),
-                success:function(layero,index){
-                    form.render(null, 'move-projects'); // 重新渲染弹出框的表单
-                    // 移动文集 - 侦听选择文集 - 获取文集的文档
-                    form.on('select(moveProject)', function(data){
-                        // console.log(data.value); //得到被选中的值
-                        $('#move-parent-id').val(0);
-                        //获取文集的下级文档
-                        $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':data.value},function(r){
-                            if(r.status){
-                                var doc_tree = tree.render({
-                                    elem:"#move-doc-tree",
-                                    id:'moveDocTree',
-                                    onlyIconControl:true,
-                                    data:r.data,
-                                    text: {
-                                        defaultNodeName: '未命名' //节点默认名称
-                                        ,none: '文集暂无文档' //数据为空时的提示文本
-                                        },
-                                    click: function(obj){
-                                        if(obj.data.level != 3){
-                                            $('#move-parent-id').val(obj.data.id);// 设置上级文档
-                                            $("div.layui-tree-set").each(function(i){
-                                                var $me = $(this)
-                                                if($me.data('id') == obj.data.id){
-                                                    // console.log('点击了')
-                                                    layer.msg("选择了上级文档："+obj.data.title)
-                                                    $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                                                }else{
-                                                    $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                                                }
-                                            });
-                                        }else{
-                                            layer.msg("第三级文档不能作为上级文档")
-                                        }
-                                        
-                                    }
-                                });
-                            }else{
-                                layer.msg("获取下级文档失败！")
-                            }
-                        });
-                    });
-                },
-            })
-        };
-        // 提交移动文档
-        submitMoveDoc = function(){
-            var data = {
-                move_type:$("input:radio[name='move-type']:checked").val(),
-                pro_id:$("#moveProject").val(),
-                parent_id:$("#move-parent-id").val(),
-                doc_id:'{{doc.id}}'
-            };
-            if(data.pro_id === ''){
-                layer.msg("必须选择一个文集")
-                return
-            }
-            console.log(data)
-            layer.load(1)
-            $.post("{% url 'move_doc' %}",data,function(r){
-                layer.closeAll('loading')
-                if(r.status){
-                    window.location.href = '/project-'+r.data.pro_id + '/doc-' + r.data.doc_id + '/'
-                }else{
-                    layer.msg(r.data)
-                }
-            });
+    };
+    $("#modify_save_doc").click(function(){
+        modifyDoc(0);
+    })
+    $("#modify_pub_doc").click(function(){
+        modifyDoc(1);
+    })
 
+    //选择文档模板
+    $("#sel-doctemp").click(function(){
+        layer.open({
+            type: 1,
+            id:'temp-div',
+            content: $('#doctemp-list'),
+            area:['530px','400px'],
+        });
+    });
+    //插入模板
+    insertTemp = function(doctemp_id){
+        layer.load();
+        $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
+            if(r.status){
+                editor.insertValue(r.data);
+                layer.closeAll()
+            }else{
+                layer.closeAll("loading");
+                layer.msg(r.data)
+            }
+        });
+    };
+    //插入本地文本文件
+    function insertLocalFile(input) {
+        var file = input.files[0];
+        //filename = file.name.split(".")[0]; // 文件名
+        //支持chrome IE10
+        if (window.FileReader) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                console.log(this.result);
+                editor.insertValue(this.result);
+            }
+            reader.readAsText(file);
+        }
+        //支持IE 7 8 9 10
+        else if (typeof window.ActiveXObject != 'undefined'){
+            var xmlDoc;
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.load(input.value);
+            console.log(xmlDoc.xml);
+            editor.insertValue(xmlDoc.xml);
+        }
+        //支持FF
+        else if (document.implementation && document.implementation.createDocument) {
+            var xmlDoc;
+            xmlDoc = document.implementation.createDocument("", "", null);
+            xmlDoc.async = false;
+            xmlDoc.load(input.value);
+            console.log(xmlDoc.xml);
+            editor.insertValue(xmlDoc.xml);
+        } else {
+            alert('error');
+        }
+    };
+    //选择本地文本文件
+    function selectLocalFile(){
+        $("#insert-local-file").trigger("click");
+    };
+    // 查看历史记录
+    $("#doc-history").click(function(){
+        layer.open({
+            type: 1,
+            title:'查看当前文档的历史版本',
+            id:'history-div',
+            content: $('#history-list'),
+            area:['530px','300px'],
+        });
+    });
+    //清除所选上级文档
+    $("#clearParentDoc").click(function(){
+        $('#parent-doc').val("");
+        $("span.layui-tree-txt").each(function(i){
+            var $me = $(this)
+            $me.removeClass('selected-parent-doc')
+        });
+    });
+    // 插入历史版本
+    insertHistory = function(doc_id,history_id){
+        layer.load(1);
+        var url = "{% url 'diff_doc' 0 1 %}";
+        url = url.replace(0,doc_id).replace(1,history_id)
+        $.post(url,function(r){
+            layer.closeAll("loading");
+            if(r.status){
+                editor.setMarkdown(r.data);
+            }else{
+                layer.msg(r.data)
+            }
+        });
+    };
+    // 删除文档
+    delDoc = function(doc_id){
+        layer.open({
+            type:1,
+            title:'删除文档',
+            area:'300px;',
+            id:'delPro',//配置ID
+            content:'<div style="margin-left:10px;">警告：此操作将删除此文档！</div>',
+            btn:['确定','取消'], //添加按钮
+            btnAlign:'c', //按钮居中
+            yes:function (index,layero) {
+                layer.load(1);
+                data = {
+                    'doc_id':'{{ doc.id }}',
+                };
+                $.post("{% url 'del_doc' %}",data,function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        //修改成功
+                        layer.msg("文档已删除，即将跳转至文集")
+                        // window.location.reload();
+                        window.location.href = "{% url 'pro_index' doc.top_doc %}"
+                        //layer.close(index)
+                    }else{
+                        //修改失败，提示
+                        // console.log(r)
+                        layer.msg(r.data)
+                    }
+                })
+            },
+        });
+    };
+    // 移动文档
+    moveDoc = function(doc_id){
+        layer.open({
+            type:1,
+            title:'复制或移动此文档到指定文集',
+            id:'moveDoc',
+            area:'450px;',
+            content:$('#move-project'),
+            success:function(layero,index){
+                form.render(null, 'move-projects'); // 重新渲染弹出框的表单
+                // 移动文集 - 侦听选择文集 - 获取文集的文档
+                form.on('select(moveProject)', function(data){
+                    // console.log(data.value); //得到被选中的值
+                    $('#move-parent-id').val(0);
+                    //获取文集的下级文档
+                    $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':data.value},function(r){
+                        if(r.status){
+                            var doc_tree = tree.render({
+                                elem:"#move-doc-tree",
+                                id:'moveDocTree',
+                                onlyIconControl:true,
+                                data:r.data,
+                                text: {
+                                    defaultNodeName: '未命名' //节点默认名称
+                                    ,none: '文集暂无文档' //数据为空时的提示文本
+                                    },
+                                click: function(obj){
+                                    if(obj.data.level != 3){
+                                        $('#move-parent-id').val(obj.data.id);// 设置上级文档
+                                        $("div.layui-tree-set").each(function(i){
+                                            var $me = $(this)
+                                            if($me.data('id') == obj.data.id){
+                                                // console.log('点击了')
+                                                layer.msg("选择了上级文档："+obj.data.title)
+                                                $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                                            }else{
+                                                $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                                            }
+                                        });
+                                    }else{
+                                        layer.msg("第三级文档不能作为上级文档")
+                                    }
+                                    
+                                }
+                            });
+                        }else{
+                            layer.msg("获取下级文档失败！")
+                        }
+                    });
+                });
+            },
+        })
+    };
+    // 提交移动文档
+    submitMoveDoc = function(){
+        var data = {
+            move_type:$("input:radio[name='move-type']:checked").val(),
+            pro_id:$("#moveProject").val(),
+            parent_id:$("#move-parent-id").val(),
+            doc_id:'{{doc.id}}'
         };
-    </script>
+        if(data.pro_id === ''){
+            layer.msg("必须选择一个文集")
+            return
+        }
+        console.log(data)
+        layer.load(1)
+        $.post("{% url 'move_doc' %}",data,function(r){
+            layer.closeAll('loading')
+            if(r.status){
+                window.location.href = '/project-'+r.data.pro_id + '/doc-' + r.data.doc_id + '/'
+            }else{
+                layer.msg(r.data)
+            }
+        });
+
+    };
+</script>
 {% endblock %}
 
 {% block custom_div %}

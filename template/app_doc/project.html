@@ -144,7 +144,10 @@
 </style>
 <script src="{% static 'vditor/dist/index.min.js' %}"></script>
 <script>
-    // 生成文集目录大纲
+    // 生成文集简介中的文档大纲
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
     var tree = layui.tree;
     var layer = layui.layer;
     getDocTree = function(){

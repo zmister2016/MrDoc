@@ -146,26 +146,9 @@
     var editor = new Vditor('editor-md',{
         "cdn":"{% static 'vditor' %}",
         "toolbar": [
-            "emoji",
-            "headings",
-            "bold",
-            "italic",
-            "strike",
-            "link",
-            "|",
-            "list",
-            "ordered-list",
-            "check",
-            "outdent",
-            "indent",
-            "|",
-            "quote",
-            "line",
-            "code",
-            "inline-code",
-            "insert-before",
-            "insert-after",
-            "|",
+            "emoji","headings","bold","italic","strike","link","|",
+            "list","ordered-list","check","outdent","indent","|",
+            "quote","line","code","inline-code","insert-before","insert-after","|",
             // "upload",
             {
                 name: 'insert-img',
@@ -237,13 +220,7 @@
                     })
                 },
             },
-            "table",
-            "|",
-            "undo",
-            "redo",
-            "|",
-            "fullscreen",
-            "edit-mode",
+            "table","|","undo","redo","|","fullscreen","edit-mode",
             {
                 name: "more",
                 toolbar: [
@@ -280,6 +257,9 @@
         },
         "after":function(){
             layer.closeAll('loading');
+        },
+        "input":function(){
+            autoCacheDoc();
         },
         "upload":{
             // fieldName:"editormd-image-file[]",
