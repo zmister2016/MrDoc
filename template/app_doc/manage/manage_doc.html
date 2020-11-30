@@ -3,33 +3,19 @@
 {% block title %}文档管理{% endblock %}
 {% block content %}
 <div class="layui-card">
+    <div class="layui-card-header">高级筛选</div>
     <div class="layui-card-body">
-        <div class="layui-row">
-            <form action="{% url 'manage_doc' %}" method="get">
-                <input name="pid" value="{{docs.pid}}" hidden>
-                <div class="layui-form-item">
-                    <span class="doc_status_condition" lay-separator="|">
-                    <a href="{% url 'manage_doc' %}?status=all" class="{% if doc_status == 'all' %}current{% endif %}">全部（{{all_cnt}}）</a>
-                    <a href="{% url 'manage_doc' %}?status=published" class="{% if doc_status == 'published' %}current{% endif %}">已发布（{{published_doc_cnt}}）</a>
-                    <a href="{% url 'manage_doc' %}?status=draft" class="{% if doc_status == 'draft' %}current{% endif %}">草稿（{{draft_doc_cnt}}）</a>
-                    <input name="status" value="{% if doc_status == 'all' %}all{% elif doc_status == 'published' %}published{% elif doc_status == 'draft' %}draft{% endif %}" hidden>
-                    </span>
-                    <div class="layui-input-inline" style="float:inherit;">
-                        <input type="text" name="kw" id="kw" placeholder="输入文档标题或内容" autocomplete="off" class="layui-input">
-                    </div>
-                    <button class="layui-btn layui-btn-normal layui-btn-xs" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
-                    <a href="{% url 'create_doc' %}" target="_blank" class="layui-btn layui-btn-primary layui-btn-xs"><i class="layui-icon layui-icon-addition"></i>新建</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="layui-card">
-    <div class="layui-card-body">
-        <div class="">
-            <div class="layui-form">
-                <div class="layui-input-inline">
+        <div class="layui-form">
+            <div class="layui-form-item">
+              <label class="layui-form-label">关键词</label>
+              <div class="layui-input-inline">
+                <input type="text" name="kw"  placeholder="请输入标题" autocomplete="off" class="layui-input">
+              </div>
+              <button class="layui-btn layui-btn-normal layui-btn-sm" id="search">搜索</button>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">文集</label>
+              <div class="layui-input-inline">
                 <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
                     <option value="">按文集筛选</option>
                     <!-- 自己的文集 -->
@@ -55,7 +41,15 @@
                     </optgroup>
                     {% endif %}
                 </select>
-                </div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">文档状态</label>
+              <div class="layui-input-block">
+                <input type="radio" name="status" title="全部({{all_cnt}})" value="-1" lay-skin="primary" checked lay-filter="doc_status">
+                <input type="radio" name="status" title="草稿({{draft_doc_cnt}})" value="0"  lay-skin="primary" lay-filter="doc_status">
+                <input type="radio" name="status" title="已发布({{published_doc_cnt}})" value="1" lay-skin="primary" lay-filter="doc_status">
+              </div>
             </div>
         </div>
     </div>
@@ -63,82 +57,84 @@
 
 <div class="layui-card">
     <div class="layui-card-body">
-        <div class="layui-row" lay-skin="">
-            <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-even>
-        <thead>
-            <tr>
-                <th>文档名称</th>
-                <th>上级文档</th>
-                <th>展开下级</th>
-                <th>所属文集</th>
-                <th>创建时间</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% load doc_filter %}
-            {% for doc in docs %}
-            <tr>
-                {% if doc.status == 1 %}
-                    <td>
-                        <img src="{% static 'icon_img/manage-doc-icon.svg' %}" height="20px" width="20px" />
-                        <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank" title="查看文档：{{doc.name}}">{{ doc.name }} 
-                        </a>
-                    </td>
-                {% else %}
-                    <td>
-                        <img src="{% static 'icon_img/manage-doc-pre-icon.svg' %}" height="20px" width="20px" />
-                        <a href="{% url 'modify_doc' doc.id %}" target="_blank" title="修改文档：{{doc.name}}">{{ doc.name }} 
-                        </a>
-                        <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="fastPubDoc('{{doc.id}}')">一键发布</button>
-                    </td>
-                {% endif %}
-                <td>{{ doc.parent_doc|get_doc_parent }}</td>
-                <td>{{ doc.open_children }}</td>
-                <td>
-                    {{ doc.top_doc|is_colla_pro:doc.create_user }}{{ doc.top_doc|get_doc_top }}
-                </td>
-                <td>{{ doc.create_time }}</td>
-                <td>
-                    <a href="{% url 'manage_doc_history' doc.id %}" title="查看文档历史" class="layui-btn layui-btn-xs layui-btn-normal">
-                        <i class="layui-icon layui-icon-log"></i>
-                    </a>
-                    <a href="{% url 'modify_doc' doc_id=doc.id %}" title="修改文档" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
-                        <i class="layui-icon layui-icon-edit"></i>
-                    </a>
-                    <a href="javascript:void(0);" title="删除文档" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                        <i class="layui-icon layui-icon-delete"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-            </table>
-        </div>
-        <!-- 分页 -->
-        <div class="layui-row">
-            <div class="layui-box layui-laypage layui-laypage-default">
-                    <!-- 上一页 -->
-                    {% if docs.has_previous %}
-                        <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
-                    {% else %}
-                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
-                    {% endif %}
-                    <!-- 当前页 -->
-                    <span class="layui-laypage-curr">
-                        <em class="layui-laypage-em"></em>
-                        <em>{{ docs.number }}/{{ docs.paginator.num_pages }}</em>
-                    </span>
-                    <!-- 下一页 -->
-                    {% if docs.has_next %}
-                        <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
-                    {% else %}
-                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
-                    {% endif %}
-            </div>
-        </div>
+        <table id="doc-table" lay-filter="doc-table"></table>
     </div>
 </div>
+
+<!-- 表格工具栏 -->
+<script type="text/html" id="doc-toolbar">
+    <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>新增
+    </button>
+    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>删除
+    </button>
+</script>
+
+<!-- 文档名称 -->
+<script type="text/html" id="doc-name">
+    {% verbatim %}
+        {{#if (d.status == 1) { }}
+            <span class="layui-badge-dot layui-bg-blue"></span>
+            <a href="/project-{{d.project_id}}/doc-{{d.id}}" target="_blank">{{d.name}}</a>
+        {{# }else if(d.status == 0){ }}
+            <!-- <i class="layui-icon layui-icon-release" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="草稿状态，点击一键发布"></i>&nbsp; -->
+            <span class="layui-badge-dot layui-bg-orange"></span>
+            <a href="/modify_doc/{{d.id}}/" target="_blank" title="修改文档：{{d.name}}">{{ d.name }} </a>
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 文档状态 -->
+<script type="text/html" id="doc-status">
+    {% verbatim %}
+        {{#if (d.status == 1) { }}
+            <span class="layui-badge-rim">已发布</span>
+        {{# }else if(d.status == 0){ }}
+            <!-- <i class="layui-icon layui-icon-release" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="草稿状态，点击一键发布"></i>&nbsp; -->
+            <span class="layui-badge-rim" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="点击一键发布">草稿</span>
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 修改时间 -->
+<script type="text/html" id="doc-modify-time">
+    {% verbatim %}
+    {{layui.util.toDateString(d.modify_time,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 编辑模式 -->
+<script type="text/html" id="editor-mode">
+    {% verbatim %}
+        {{#if (d.editor_mode == 1) { }}
+            Editor.MD
+        {{# }else if(d.editor_mode == 2){ }}
+            Vditor
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 展开下级 -->
+<script type="text/html" id="open_children">
+    {% verbatim %}
+        {{#if (d.open_children == true) { }}
+            展开
+        {{# }{ }}
+            收起
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 单个文档操作 -->
+<script type="text/html" id="doc-bar">
+    {% verbatim %}
+    <a href="/manage_doc_history/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
+    <a href="/modify_doc/{{d.id}}/" title="修改文档" class="layui-btn layui-btn-primary pear-btn-sm" target="_blank"><i class="layui-icon layui-icon-edit"></i></a>
+    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    {% endverbatim %}
+</script>
+
 {% endblock %}
 {% block custom_script %}
 <script>
@@ -150,6 +146,32 @@
         var layer = layui.layer;
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        let cols = [
+            [
+            {type: 'checkbox',width:20},
+                {title: '文档名称',field: 'name',align: 'left',templet:"#doc-name",minWidth:280},
+                {title: '状态',field: 'status',align: 'left',templet:"#doc-status",width:90},
+                {title: '上级',field: 'parent',align: 'left',},
+                {title: '文集',field: 'project_name',align: 'left',templet:"#project-role"},
+                {title: '编辑模式',field: 'editor_mode',align: 'left',templet:"#editor-mode",width:90},
+                {title: '展开下级',field: 'open_children',align: 'left',width:90, templet:"#open_children"},
+                {title: '最后编辑',field: 'modify_time',align: 'left',templet:"#doc-modify-time"},
+                {title: '操作',toolbar: '#doc-bar',align: 'left',}            ]
+        ]
+        // 渲染表格
+        table.render({
+            elem: '#doc-table',
+            method:'post',
+            where:{
+                'type':1,
+            },
+            url: "{% url 'manage_doc' %}",
+            page: true,
+            cols: cols,
+            skin: 'line',
+            toolbar: '#doc-toolbar',
+            defaultToolbar: ['filter']
         });
         // 删除文档
         delDoc = function(doc_id){
@@ -198,11 +220,92 @@
                 }
             })
         };
-        //筛选文集
+        // 批量删除文档
+        batchRemoveDoc = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中任何文档", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let doc_id = "";
+            for (let i = 0; i < data.length; i++) {
+                doc_id += data[i].id + ",";
+            }
+            doc_id = doc_id.substr(0, doc_id.length - 1);
+            // console.log(pro_id)
+            layer.confirm('确定要删除这些文档？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "{% url 'del_doc' %}",
+                    dataType: 'json',
+                    type: 'post',
+                    data:{'doc_id':doc_id,'range':'multi'},
+                    success: function(r) {
+                        layer.close(loading);
+                        if (r.status) {
+                            layer.msg("删除成功", {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                table.reload('doc-table');
+                            });
+                        } else {
+                            layer.msg(r.data, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+        // 监听文集筛选
         form.on('select(project)', function(data){
             console.log('选择文集：',data.value); //得到被选中的值
-            if(data.value != -1){//
-                window.location.href = '?kw={{docs.kw}}&status={{docs.status}}&pid='+data.value;
+            table.reload('doc-table',{
+                    where:{
+                    'type':1,'project':data.value,
+                },
+            })
+        });
+        // 监听状态筛选
+        form.on('radio(doc_status)', function(data){
+            console.log(data.value); //被点击的radio的value值
+            table.reload('doc-table',{
+                    where:{
+                    'type':1,'status':data.value,
+                },
+            })
+        });
+        // 监听搜索按钮
+        $("#search").click(function(){
+            table.reload('doc-table',{
+                where:{
+                    'type':1,'kw':$("input[name=kw]").val(),
+                },
+            })
+        });
+
+        // 侦听文档删除按钮
+        table.on("tool(doc-table)",function(obj){
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                delDoc(obj.data.id)
+            }
+        });
+        // 侦听表格工具栏
+        table.on("toolbar(doc-table)",function(obj){
+            if (obj.event === 'add') { // 新增文集
+                createProject();
+            }else if(obj.event === 'batchRemove'){ // 批量删除文集
+                batchRemoveDoc(obj)
             }
         });
     })

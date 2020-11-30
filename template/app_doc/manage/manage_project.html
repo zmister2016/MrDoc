@@ -11,7 +11,7 @@
 <!-- 表格工具栏 -->
 <script type="text/html" id="project-toolbar">
     <div class="layui-input-inline">
-        <input type="text" name="project-search-kw" placeholder="" class="layui-input">
+        <input type="text" name="project-search-kw" placeholder="" class="layui-input" >
     </div>
     <button class="layui-btn layui-btn-primary pear-btn-sm" lay-event="search">
         <i class="layui-icon layui-icon-search"></i>搜索
@@ -106,7 +106,9 @@
         table.render({
             elem: '#project-table',
             method:'post',
-            where:{'type':1},
+            where:{
+                'type':1
+            },
             url: "{% url 'manage_project' %}",
             page: true,
             cols: cols,
@@ -120,15 +122,22 @@
                 // console.log(obj)
                 delProject(obj.data.id)
             }
-        })
+        });
         // 侦听表格工具栏
         table.on("toolbar(project-table)",function(obj){
             if (obj.event === 'add') { // 新增文集
                 createProject();
             }else if(obj.event === 'batchRemove'){ // 批量删除文集
                 batchRemove(obj)
+            }else if(obj.event === 'search'){ // 搜索文集
+                console.log('搜索文集')
+                table.reload('project-table',{
+                    where:{
+                    'type':1,'kw':$('input[name="project-search-kw"]').val()
+                },
+                })
             } 
-        })
+        });
         //创建文集
         createProject = function(){
             layer.open({

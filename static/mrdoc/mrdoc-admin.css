@@ -124,6 +124,13 @@
     border-color: #2176ff;
     background-color: #2176ff;
   }
+  /* 多选框样式 */
+  .layui-form-checked[lay-skin=primary] i {
+        border-color: #2176ff!important;
+        background-color: #2176ff;
+        color: #fff;
+    }
+
   /* 选项卡样式 */
   .layui-tab-brief>.layui-tab-title .layui-this{
     color: #2176ff;

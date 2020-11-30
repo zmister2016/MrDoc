@@ -522,38 +522,19 @@ def del_project(request):
 @require_http_methods(['GET','POST'])
 def manage_project(request):
     if request.method == 'GET':
-        try:
-            search_kw = request.GET.get('kw', None)
-            if search_kw:
-                pro_list = Project.objects.filter(create_user=request.user,intro__icontains=search_kw).order_by('-create_time')
-                paginator = Paginator(pro_list, 15)
-                page = request.GET.get('page', 1)
-                try:
-                    pros = paginator.page(page)
-                except PageNotAnInteger:
-                    pros = paginator.page(1)
-                except EmptyPage:
-                    pros = paginator.page(paginator.num_pages)
-                pros.kw = search_kw
-            else:
-                pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
-                paginator = Paginator(pro_list, 15)
-                page = request.GET.get('page', 1)
-                try:
-                    pros = paginator.page(page)
-                except PageNotAnInteger:
-                    pros = paginator.page(1)
-                except EmptyPage:
-                    pros = paginator.page(paginator.num_pages)
-            return render(request,'app_doc/manage/manage_project.html',locals())
-        except Exception as e:
-            logger.exception("管理文集出错")
-            return render(request,'404.html')
+        return render(request,'app_doc/manage/manage_project.html',locals())
     else:
+        kw = request.POST.get('kw','')
         page = request.POST.get('page', 1)
         limit = request.POST.get('limit', 10)
         # 获取文集列表
-        project_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+        if kw == '':
+            project_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
+        else:
+            project_list = Project.objects.filter(
+                Q(intro__icontains=kw) | Q(name__icontains=kw),
+                create_user=request.user,
+                ).order_by('-create_time')
         paginator = Paginator(project_list, limit)
         try:
             pros = paginator.page(page)
@@ -662,7 +643,8 @@ def manage_project_doc_sort(request,pro_id):
         n = 10
         # 第一级文档
         for data in sort_data:
-            Doc.objects.filter(id=data['id']).update(sort=n)
+            print(data)
+            Doc.objects.filter(id=data['id']).update(sort=n,parent_doc=0)
             n += 10
             # 存在第二级文档
             if 'children' in data.keys():
@@ -1123,41 +1105,54 @@ def del_doc(request):
     try:
         # 获取文档ID
         doc_id = request.POST.get('doc_id',None)
+        range = request.POST.get('range', 'single')
         if doc_id:
-            # 查询文档
-            try:
-                doc = Doc.objects.get(id=doc_id)
+            if range == 'single':
+                # 查询文档
                 try:
-                    project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
+                    doc = Doc.objects.get(id=doc_id)
+                    try:
+                        project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
+                    except ObjectDoesNotExist:
+                        logger.error("文档{}的所属文集不存在。".format(doc_id))
+                        project = 0
+                    # 获取文档所属文集的协作信息
+                    pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user)
+                    if pro_colla.exists():
+                        colla_user_role = pro_colla[0].role
+                    else:
+                        colla_user_role = 0
                 except ObjectDoesNotExist:
-                    logger.error("文档{}的所属文集不存在。".format(doc_id))
-                    project = 0
-                # 获取文档所属文集的协作信息
-                pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user)
-                if pro_colla.exists():
-                    colla_user_role = pro_colla[0].role
-                else:
-                    colla_user_role = 0
-            except ObjectDoesNotExist:
-                return JsonResponse({'status': False, 'data': '文档不存在'})
-            # 如果请求用户为站点管理员、文档创建者、高级权限的协作者、文集的创建者，可以删除
-            if (request.user == doc.create_user) \
-                    or (colla_user_role == 1) \
-                    or (request.user == project.create_user)\
-                    or (request.user.is_superuser):
-                # 修改状态为删除
-                doc.status = 3
-                doc.modify_time = datetime.datetime.now()
-                doc.save()
-                # 修改其下级所有文档状态为删除
-                chr_doc = Doc.objects.filter(parent_doc=doc_id) # 获取下级文档
-                chr_doc_ids = chr_doc.values_list('id',flat=True) # 提取下级文档的ID
-                chr_doc.update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的状态为删除
-                Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
+                    return JsonResponse({'status': False, 'data': '文档不存在'})
+                # 如果请求用户为站点管理员、文档创建者、高级权限的协作者、文集的创建者，可以删除
+                if (request.user == doc.create_user) \
+                        or (colla_user_role == 1) \
+                        or (request.user == project.create_user)\
+                        or (request.user.is_superuser):
+                    # 修改状态为删除
+                    doc.status = 3
+                    doc.modify_time = datetime.datetime.now()
+                    doc.save()
+                    # 修改其下级所有文档状态为删除
+                    chr_doc = Doc.objects.filter(parent_doc=doc_id) # 获取下级文档
+                    chr_doc_ids = chr_doc.values_list('id',flat=True) # 提取下级文档的ID
+                    chr_doc.update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的状态为删除
+                    Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
 
-                return JsonResponse({'status': True, 'data': '删除完成'})
+                    return JsonResponse({'status': True, 'data': '删除完成'})
+                else:
+                    return JsonResponse({'status': False, 'data': '非法请求'})
+            elif range == 'multi':
+                docs = doc_id.split(",")
+                try:
+                    Doc.objects.filter(id__in=docs,create_user=request.user).update(status=3,modify_time=datetime.datetime.now())
+                    Doc.objects.filter(parent_doc__in=docs).update(status=3,modify_time=datetime.datetime.now())
+                    return JsonResponse({'status': True, 'data': '删除完成'})
+                except:
+                    return JsonResponse({'status': False, 'data': '非法请求'})
             else:
-                return JsonResponse({'status': False, 'data': '非法请求'})
+                return JsonResponse({'status': False, 'data': '类型错误'})
+
         else:
             return JsonResponse({'status':False,'data':'参数错误'})
     except Exception as e:
@@ -1167,149 +1162,98 @@ def del_doc(request):
 
 # 管理文档
 @login_required()
-@require_http_methods(['GET'])
-# @logger.catch()
+@require_http_methods(['GET','POST'])
 def manage_doc(request):
-    # 文档内容搜索参数
-    search_kw = request.GET.get('kw','')
-    # 文档状态筛选参数
-    doc_status = request.GET.get('status', 'all')
-    # 文档文集筛选参数
-    doc_pro_id = request.GET.get('pid','')
-
-    is_search = True if search_kw != '' else False
-    is_status = doc_status
-    is_project = True if doc_pro_id != '' else False
-
-    # 无搜索 - 无状态 - 无文集
-    if (is_search is False) and (is_status == 'all') and (is_project is False):
-        doc_list = Doc.objects.filter(create_user=request.user,status__in=[0,1]).order_by('-modify_time')
-
-    # 无搜索 - 无状态 - 有文集
-    elif (is_search is False) and (is_status == 'all') and (is_project):
-        doc_list = Doc.objects.filter(
-            create_user=request.user,
-            top_doc=int(doc_pro_id),
-            status__in=[0,1]
-        ).order_by('-modify_time')
-
-    # 无搜索 - 有状态 - 无文集
-    elif (is_search is False) and (is_status != 'all') and (is_project is False):
-        # 返回已发布文档
-        if doc_status == 'published':
-            doc_list = Doc.objects.filter(create_user=request.user, status=1).order_by('-modify_time')
-        # 返回草稿文档
-        elif doc_status == 'draft':
-            doc_list = Doc.objects.filter(create_user=request.user, status=0).order_by('-modify_time')
+    if request.method == 'GET':
+        # 文集列表
+        project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
+        colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
+        # 文档数量
+        # 已发布文档数量
+        published_doc_cnt = Doc.objects.filter(create_user=request.user, status=1).count()
+        # 草稿文档数量
+        draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
+        # 所有文档数量
+        all_cnt = published_doc_cnt + draft_doc_cnt
+        return render(request,'app_doc/manage/manage_doc.html',locals())
+    else:
+        kw = request.POST.get('kw', '')
+        project = request.POST.get('project','')
+        status = request.POST.get('status','')
+        if status == '-1': # 全部文档
+            q_status = [0,1]
+        elif status in ['0','1']:
+            q_status = [int(status)]
         else:
-            doc_list = Doc.objects.filter(create_user=request.user, status__in=[0,1]).order_by('-modify_time')
+            q_status = [0, 1]
 
-    # 无搜索 - 有状态 - 有文集
-    elif (is_search is False) and (is_status != 'all') and (is_project):
-        # 返回已发布文档
-        if doc_status == 'published':
+        if project == '':
+            project_list = Project.objects.filter(create_user=request.user).values_list('id',flat=True)  # 自己创建的文集列表
+            colla_project_list = ProjectCollaborator.objects.filter(user=request.user).values_list('id',flat=True)  # 协作的文集列表
+            q_project = list(project_list) + list(colla_project_list)
+        else:
+            q_project = [project]
+
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 没有搜索
+        if kw == '':
             doc_list = Doc.objects.filter(
                 create_user=request.user,
-                status=1,
-                top_doc=int(doc_pro_id)
+                status__in=q_status,
+                top_doc__in=q_project
             ).order_by('-modify_time')
-        # 返回草稿文档
-        elif doc_status == 'draft':
-            doc_list = Doc.objects.filter(
-                create_user=request.user,
-                status=0,
-                top_doc = int(doc_pro_id)
-            ).order_by('-modify_time')
+        # 有搜索
         else:
             doc_list = Doc.objects.filter(
-                create_user=request.user,
-                top_doc=int(doc_pro_id),
-                status__in=[0,1]
+                Q(content__icontains=kw) | Q(name__icontains=kw),
+                create_user=request.user,status__in=q_status,top_doc__in=q_project
             ).order_by('-modify_time')
 
-    # 有搜索 - 无状态 - 无文集
-    elif (is_search) and (is_status == 'all') and (is_project is False):
-        doc_list = Doc.objects.filter(
-            Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
-            create_user=request.user,
-            status__in=[0,1]
-        ).order_by('-modify_time')
+        # 文集列表
+        project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
+        colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
 
-    # 有搜索 - 无状态 - 有文集
-    elif (is_search) and (is_status == 'all') and (is_project):
-        doc_list = Doc.objects.filter(
-            Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
-            create_user=request.user,top_doc=int(doc_pro_id),status__in=[0,1]
-        ).order_by('-modify_time')
+        # 文档数量
+        # 已发布文档数量
+        published_doc_cnt = Doc.objects.filter(create_user=request.user, status=1).count()
+        # 草稿文档数量
+        draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
+        # 所有文档数量
+        all_cnt = published_doc_cnt + draft_doc_cnt
 
-    # 有搜索 - 有状态 - 无文集
-    elif (is_search) and (is_status != 'all') and (is_project is False):
-        if doc_status == 'published':
-            doc_list = Doc.objects.filter(
-                Q(content__icontains=search_kw) | Q(name__icontains=search_kw),
-                create_user=request.user,
-                status = 1
-            ).order_by('-modify_time')
-        elif doc_status == 'draft':
-            doc_list = Doc.objects.filter(
-                Q(content__icontains=search_kw) | Q(name__icontains=search_kw), # 文本或文档标题包含搜索词
-                create_user=request.user,
-                status = 0
-            ).order_by('-modify_time')
-        else:
-            doc_list = Doc.objects.filter(
-                Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
-                create_user=request.user,status__in=[0,1]
-            ).order_by('-modify_time')
+        # 分页处理
+        paginator = Paginator(doc_list, limit)
+        page = request.GET.get('page', page)
+        try:
+            docs = paginator.page(page)
+        except PageNotAnInteger:
+            docs = paginator.page(1)
+        except EmptyPage:
+            docs = paginator.page(paginator.num_pages)
 
-    # 有搜索 - 有状态 - 有文集
-    elif (is_search) and (is_status != 'all') and (is_project):
-        if doc_status == 'published':
-            doc_list = Doc.objects.filter(
-                Q(content__icontains=search_kw) | Q(name__icontains=search_kw),
-                create_user=request.user,
-                status = 1,
-                top_doc=int(doc_pro_id)
-            ).order_by('-modify_time')
-        elif doc_status == 'draft':
-            doc_list = Doc.objects.filter(
-                Q(content__icontains=search_kw) | Q(name__icontains=search_kw), # 文本或文档标题包含搜索词
-                create_user=request.user,
-                status = 0,
-                top_doc=int(doc_pro_id)
-            ).order_by('-modify_time')
-        else:
-            doc_list = Doc.objects.filter(
-                Q(content__icontains=search_kw) | Q(name__icontains=search_kw),  # 文本或文档标题包含搜索词
-                create_user=request.user,
-                top_doc=int(doc_pro_id),status__in=[0,1]
-            ).order_by('-modify_time')
-
-    # 文集列表
-    project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
-    colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
-
-    # 文档数量
-    # 已发布文档数量
-    published_doc_cnt = Doc.objects.filter(create_user=request.user, status=1).count()
-    # 草稿文档数量
-    draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
-    # 所有文档数量
-    all_cnt = published_doc_cnt + draft_doc_cnt
-
-    # 分页处理
-    paginator = Paginator(doc_list, 15)
-    page = request.GET.get('page', 1)
-    try:
-        docs = paginator.page(page)
-    except PageNotAnInteger:
-        docs = paginator.page(1)
-    except EmptyPage:
-        docs = paginator.page(paginator.num_pages)
-    docs.status = doc_status
-    docs.pid = doc_pro_id
-    docs.kw = search_kw
-    return render(request,'app_doc/manage/manage_doc.html',locals())
+        table_data = []
+        for doc in docs:
+            item = {
+                'id': doc.id,
+                'name': doc.name,
+                'parent':Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else '无',
+                'project_id': Project.objects.get(id=doc.top_doc).id,
+                'project_name':Project.objects.get(id=doc.top_doc).name,
+                'status':doc.status,
+                'editor_mode':doc.editor_mode,
+                'open_children':doc.open_children,
+                'create_time': doc.create_time,
+                'modify_time': doc.modify_time
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": doc_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
 
 
 # 移动文档
