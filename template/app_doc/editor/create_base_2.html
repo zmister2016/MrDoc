@@ -783,4 +783,20 @@
         return false
     });
 </script>
+<!-- 文档本地缓存div模板 -->
+<div class="layui-form" id="doc-cache-div" style="display: none;">
+    <div style="margin: 5px;">
+        <textarea name="desc" id="doc-cache-content" class="layui-textarea" style="height: 350px;" disabled></textarea>
+    </div>
+</div>
+<script>
+    // 文档浏览器缓存
+    function autoCacheDoc(){
+        setInterval(() => {
+            var editor_value = editor.getValue()
+            window.localStorage.setItem('mrdoc_doc_cache',editor_value)
+        }, 10000);
+    };
+    
+</script>
 </html>

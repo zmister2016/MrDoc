@@ -39,13 +39,18 @@
             <strong>*当前文档状态：草稿</strong>
             {% elif doc.status == 1 %}
             <strong>*当前文档状态：已发布 </strong>
+            {% endif %}
+        </div>
+        <div class="doc-form-label" style="margin-bottom: 10px;">
             <a class="layui-btn layui-btn-xs layui-btn-normal" target="_blank" href="{% url 'doc' doc.top_doc doc.id %}" style="background-color: #2176ff;">
                 <i class="fa fa-book"></i> 查看
             </a>
             <button class="layui-btn layui-btn-xs layui-btn-normal" id="doc-history">
                 <i class="fa fa-history"></i> 历史
             </button>
-            {% endif %}
+            <button class="layui-btn layui-btn-xs layui-btn-normal" id="doc-cache-btn">
+                <i class="fa fa-history"></i> 缓存
+            </button>
         </div>
 
         <div class="layui-col-md12" style="margin-bottom: 10px;">
@@ -477,6 +482,42 @@
         });
 
     };
+    // 查看本地文档缓存
+    $("#doc-cache-btn").click(function(){
+        var editor_cache = window.localStorage.getItem('mrdoc_doc_cache') // 获取文档缓存内容
+        if(editor_cache === null){
+            var editor_cache_cnt = 0
+        }else{
+            var editor_cache_cnt = editor_cache.replace(/\s+|[\r\n]/g,"").length
+        }
+        if(editor_cache_cnt > 5){ // 文档缓存去除空格换行后长度大于5
+            console.log("存在文档缓存")
+            $("#doc-cache-content").val(editor_cache)
+            layer.open({
+                title:"浏览器文档缓存",
+                type:1,
+                id:'doc-cache',
+                area:['500px','500px'],
+                content:$('#doc-cache-div'),
+                btn:['使用缓存',"删除缓存"],
+                success : function(index, layero) { // 成功弹出后回调
+                    form.render();
+                },
+                yes:function(index, layero){
+                    editor.setValue(editor_cache)
+                    window.localStorage.removeItem('mrdoc_doc_cache')
+                    layer.closeAll()
+                    autoCacheDoc();
+                },
+                btn2:function(index,layero){
+                    window.localStorage.removeItem('mrdoc_doc_cache')
+                    layer.closeAll()
+                }
+            })
+        }else{
+            layer.msg("暂无本地缓存")
+        }
+    })
 </script>
 {% endblock %}
 
