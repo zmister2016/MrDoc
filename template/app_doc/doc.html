@@ -2,6 +2,7 @@
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
 {% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}

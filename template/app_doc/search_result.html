@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -10,7 +11,7 @@
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ kw }} - 觅道搜索 - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
+    <title>{{ kw }} - {% trans "觅道搜索" %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-search-result.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -57,7 +58,7 @@
                     <dd>
                         <a href="{% url 'pro_list' %}">
                             <i class="layui-icon layui-icon-console layui-hide-md"></i>
-                            <span class="layui-hide-xs">返回首页</span>
+                            <span class="layui-hide-xs">{% trans "返回首页" %}</span>
                         </a>
                     </dd>
                     {% endif %}
@@ -69,19 +70,19 @@
                     <dd>
                         <a href="{% url 'manage_doc' %}">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
-                            <span class="layui-hide-xs">个人中心</span>
+                            <span class="layui-hide-xs">{% trans "个人中心" %}</span>
                         </a>
                     </dd>
                     <dd>
                         <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">
                             <i class="layui-icon layui-icon-password layui-hide-md"></i>
-                            <span class="layui-hide-xs">修改密码</span>
+                            <span class="layui-hide-xs">{% trans "修改密码" %}</span>
                         </a>
                     </dd>
                     <dd>
                         <a href="{% url 'logout' %}">
                             <i class="layui-icon layui-icon-release layui-hide-md"></i>
-                            <span class="layui-hide-xs">退出登录</span>
+                            <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
                     </dd>
                 </dl>
@@ -89,15 +90,15 @@
                 {% else %}
                 <li class="layui-nav-item">
                 <a href="javascript:void(0);">
-                <i class="layui-icon layui-icon-username"></i> 游客
+                <i class="layui-icon layui-icon-username"></i> {% trans "游客" %}
                 </a>
                 <dl class="layui-nav-child">
                 <!-- <dd><a href="">基本资料</a></dd> -->
                     {% if close_register == 'on' %}
-                    <dd><a href="{% url 'login' %}">登录</a></dd>
+                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
                     {% else %}
-                    <dd><a href="{% url 'register' %}">注册</a></dd>
-                    <dd><a href="{% url 'login' %}">登录</a></dd>
+                    <dd><a href="{% url 'register' %}">{% trans "注册" %}</a></dd>
+                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
                     {% endif %}
                 </dl>
             </li>
@@ -139,20 +140,20 @@
                 <div class="layui-inline">
                     <!-- 文档搜索 -->
                     <div class="layui-input-inline" style="width: inherit;">
-                        <a href="{% url 'doc_search' %}?q={{kw}}&d_range={{d_range}}" class="search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>文档</a>
-                        <a href="{% url 'search' %}?kw={{kw}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>文集</a>
-                        <a href="{% url 'search' %}?kw={{kw}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>标签</a>
+                        <a href="{% url 'doc_search' %}?q={{kw}}&d_range={{d_range}}" class="search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>{% trans "文档" %}</a>
+                        <a href="{% url 'search' %}?kw={{kw}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>{% trans "文集" %}</a>
+                        <a href="{% url 'search' %}?kw={{kw}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>{% trans "标签" %}</a>
                     </div>
                 </div>
                 <!-- 筛选结束 -->
                 <div class="layui-input-inline" style="float: right;">
                     <select name="d_range" lay-verify="sel_recent" id="sel_recent">
-                        <option value="">时间筛选</option>
-                        <option value="all">全部时间</option>
-                        <option value="recent1">近1天</option>
-                        <option value="recent7">近7天</option>
-                        <option value="recent30">近30天</option>
-                        <option value="recent365">近1年</option>
+                        <option value="">{% trans "时间筛选" %}</option>
+                        <option value="all">{% trans "全部时间" %}</option>
+                        <option value="recent1">{% trans "近1天" %}</option>
+                        <option value="recent7">{% trans "近7天" %}</option>
+                        <option value="recent30">{% trans "近30天" %}</option>
+                        <option value="recent365">{% trans "近1年" %}</option>
                     </select>
                 </div>
             </div>
@@ -164,19 +165,19 @@
 <!-- 搜索结果提示 -->
 {% if kw != '' %}
     <div style="padding: 0 15px;margin-top: 10px;margin-bottom: 10px;color: #999;">
-        觅道文档在
+        {% trans "觅道文档在" %}
             {% if date_range == 'recent1' %}
-            近1天内
+            {% trans "近1天内" %}
             {% elif date_range == 'recent7' %}
-            近7天内
+            {% trans "近7天内" %}
             {% elif date_range == 'recent30' %}
-            近30天内
+            {% trans "近30天内" %}
             {% elif date_range == 'recent365' %}
-            近一年内
+            {% trans "近一年内" %}
             {% else %}
-            全部时间内
+            {% trans "全部时间内" %}
             {% endif %}
-        搜索到 {{ data_list.count }} 条结果
+        {% trans "搜索到" %} {{ data_list.count }} {% trans "条结果" %}
     </div>
 {% endif %}
 
@@ -242,9 +243,9 @@
     <div class="layui-box layui-laypage layui-laypage-default">
             <!-- 上一页 -->
             {% if datas.has_previous %}
-                <a href="?page={{ datas.previous_page_number }}&kw={{kw}}&type={{search_type}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                <a href="?page={{ datas.previous_page_number }}&kw={{kw}}&type={{search_type}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "上一页" %}</a>
             {% else %}
-                <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "上一页" %}</a>
             {% endif %}
             <!-- 当前页 -->
             <span class="layui-laypage-curr">
@@ -253,9 +254,9 @@
             </span>
             <!-- 下一页 -->
             {% if datas.has_next %}
-                <a href="?page={{ datas.next_page_number }}&kw={{kw}}&type={{search_type}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                <a href="?page={{ datas.next_page_number }}&kw={{kw}}&type={{search_type}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "下一页" %}</a>
             {% else %}
-                <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                <a class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "下一页" %}</a>
             {% endif %}
     </div>
 </div>

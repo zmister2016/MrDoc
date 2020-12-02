@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -30,7 +31,7 @@
 <div class="doc layui-fluid" style="padding-left:0px;">
     <!-- 左侧工具栏 -->
     <div class="doc-summary">
-        <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
+        <div class="project-title"><i class="fa fa-edit"></i> {% trans "MrDoc文档编辑器" %}<br>
             <span style="font-size: 14px;">你正在：{% block editor_type %}{% endblock %}</span>
         </div>
         <hr>
@@ -671,5 +672,23 @@
         event.target.value = markdownRows.join("\n")
         return false
     });
+</script>
+
+<!-- 文档本地缓存div模板 -->
+<div class="layui-form" id="doc-cache-div" style="display: none;">
+    <div style="margin: 5px;">
+        <textarea name="desc" id="doc-cache-content" class="layui-textarea" style="height: 350px;" disabled></textarea>
+    </div>
+</div>
+<script>
+    // 文档浏览器缓存
+    function autoCacheDoc(){
+        setInterval(() => {
+            var editor_value = editor.getValue()
+            window.localStorage.setItem('mrdoc_doc_cache',editor_value)
+        }, 10000);
+    };
+    autoCacheDoc();
+    
 </script>
 </html>

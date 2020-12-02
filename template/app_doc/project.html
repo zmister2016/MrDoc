@@ -2,6 +2,7 @@
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ project.name }}{% endblock %}
 
@@ -9,12 +10,12 @@
     {% if request.user == project.create_user or colla_user > 0 %}
         <span class="btn pull-left">|</span>
         <a class="btn pull-left" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">添加</span>
+            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
     {% endif %}
     {% if request.user == project.create_user %}
         <a class="btn pull-left" href="{% url 'manage_project' %}" target="_blank">
-            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理</span>
+            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% endif %}
 {% endblock %}
@@ -22,8 +23,8 @@
 {% block content_head %}
     <h1>{{ project.name }}</h1><hr>
     <p style="" class="project-doc-content-head">
-        <i class="fa fa-user"></i> 创建人：{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user}}{% endif %}
-    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> 创建于：{{ project.create_time }}
+        <i class="fa fa-user"></i> {% trans "创建人：" %}{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user}}{% endif %}
+    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> {% trans "创建于：" %}{{ project.create_time }}
     </p>
 {% endblock %}
 
@@ -32,11 +33,11 @@
     {% load doc_filter %}
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
         <ul class="layui-tab-title">
-            <li class="layui-this">简介</li>
-            <li>目录大纲</li>
-            <li>最新文档</li>
+            <li class="layui-this">{% trans "简介" %}</li>
+            <li>{% trans "目录大纲" %}</li>
+            <li>{% trans "最新文档" %}</li>
             {% if enable_project_report %}
-            <li>文集下载</li>
+            <li>{% trans "文集下载" %}</li>
             {% endif %}
         </ul>
         <div class="layui-tab-content" style="padding: 0;">
@@ -78,10 +79,10 @@
                                 <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="fa fa-download"></i> <u>PDF电子书</u></a>
                             {% endif %}
                             {% if allow_download.allow_pdf == 0 and allow_download.allow_epub == 0 %}
-                                <a>文集作者未开放此文集的任何格式下载！</a>
+                                <a>{% trans "文集作者未开放此文集的任何格式下载！" %}</a>
                             {% endif %}
                         {% else %}
-                            <a>文集作者未开放此文集的任何格式下载！</a>
+                            <a>{% trans "文集作者未开放此文集的任何格式下载！" %}</a>
                         {% endif %}
                     </span>
                 </p>
@@ -130,7 +131,7 @@
 
 {% block doc_bottom_block %}
 <button id="share" class="doc-bottom-btn" tooltip="分享本文档" style="padding-left: 20px;">
-    <i class="fa fa-share-alt" ></i> 分享
+    <i class="fa fa-share-alt" ></i> {% trans "分享" %}
 </button>
 {% endblock %}
 

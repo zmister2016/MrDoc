@@ -1,8 +1,9 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
-	<title>忘记密码 - {% if site_name != None %}{{site_name}} {% else %}觅道文档MrDoc{% endif %}</title>
+	<title>{% trans "忘记密码" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档MrDoc" %}{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -20,7 +21,6 @@
         }
         .login-form{
             margin-top: 15%;
-            {#width: 400px;#}
             padding: 20px 50px 20px 60px;
             background-color: #fff;
             -webkit-box-shadow: #666 0px 0px 10px;
@@ -40,14 +40,14 @@
             <form class="layui-form" action="{% url 'forget_pwd' %}"  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h2><strong>忘记密码 - MrDoc</strong></h2>
+                    <h2><strong>{% trans "忘记密码" %} - {% trans "觅道文档" %}</strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
                       <input type="text" name="email" id="email" required  lay-verify="required" placeholder="请输入注册邮箱"  class="layui-input">
                     </div>
-                    <button class="layui-btn layui-btn-normal" type="button" id="send_email_vcode" onclick="getCode(this)">发送验证码</button>
+                    <button class="layui-btn layui-btn-normal" type="button" id="send_email_vcode" onclick="getCode(this)">{% trans "发送验证码" %}</button>
                 </div>
                 <div class="layui-form-item">
                   <input type="text" name="vcode" required  lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
@@ -59,9 +59,9 @@
                   <input type="password" name="confirm_password" required  lay-verify="required" placeholder="请确认新密码" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-item">
-                    <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit type="submit">修改密码</button>
+                    <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit type="submit">{% trans "修改密码" %}</button>
                 </div>
-                <a href="{% url 'login' %}" class="register-link">返回登录</a>&nbsp;
+                <a href="{% url 'login' %}" class="register-link">{% trans "返回登录" %}</a>&nbsp;
             </form>
         </div>
     </div>

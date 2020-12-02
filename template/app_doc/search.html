@@ -1,7 +1,7 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -22,7 +22,7 @@
     <!--QQ强制全屏-->
     <meta name="x5-page-mode" content="app">
     <!--QQ应用模式-->
-    <title>觅道搜索{% if site_name != None and site_name != '' %} - {{site_name}}{% endif %}</title>
+    <title>{% trans "觅道搜索" %}{% if site_name != None and site_name != '' %} - {{site_name}}{% endif %}</title>
     <style>
     </style>
 </head>
@@ -39,7 +39,7 @@
                     <button type="submit" style="background-image: url(/static/search/search_btn.svg);"></button>
                 </form>
                 <ul>
-                    <li><a href="/"><i style="background-image: url(/static/search/home_btn.svg);"></i>返回首页</a></li>
+                    <li><a href="/"><i style="background-image: url(/static/search/home_btn.svg);"></i>{% trans "返回首页" %}</a></li>
                 </ul>
             </div>
         </div>

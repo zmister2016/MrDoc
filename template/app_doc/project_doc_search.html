@@ -2,19 +2,20 @@
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
-{% block title %}搜索“{{kw}}”的结果 - {{ project.name }}{% endblock %}
+{% block title %}{% trans "搜索" %} {{kw}} {% trans "的结果" %} - {{ project.name }}{% endblock %}
 
 {% block head_toolbar %}
     {% if request.user == project.create_user %}
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-edit"></i> 添加文档
+            <i class="fa fa-edit"></i> {% trans "添加文档" %}
         </a>
     {% endif %}
 {% endblock %}
 
 {% block content_head %}
-    <h1>搜索“{{kw}}”共有{{ search_result.count }}个结果 - {{project.name}}</h1><hr>
+    <h1>{% trans "搜索" %} {{kw}} {% trans "共有" %}{{ search_result.count }}{% trans "个结果" %} - {{project.name}}</h1><hr>
 {% endblock %}
 
 {% block page_content %}

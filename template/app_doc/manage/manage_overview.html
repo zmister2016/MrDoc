@@ -1,5 +1,6 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
+{% load i18n %}
 {% block title %}仪表盘{% endblock %}
 
 {% block custom_element %}
@@ -89,7 +90,7 @@
                                         src="{% static 'PearAdminLayui/avatar.svg' %}"></a></div>
                             <div>
                                 {% if doc.status == 1 %}
-                                <p>{{doc.create_user.first_name}} 发布了文档 <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></p>
+                                <p>{{doc.create_user.first_name}} 修改了文档 <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></p>
                                 {% elif doc.status == 0 %}
                                 <p>{{doc.create_user.first_name}} 保存了文档 <a href="{% url 'modify_doc' doc.id %}" target="_blank">{{doc.name}}</a></p>
                                 {% else %}

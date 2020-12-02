@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn" style="font-size: 14px;">
 <head>
@@ -11,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
-    <title>{% block title %}标签：{{tag.name}}{% endblock %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% else %}站点标题{% endif %}</title>
+    <title>{% block title %}{% trans "标签：" %}{{tag.name}}{% endblock %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% else %}{% trans "站点标题" %}{% endif %}</title>
 
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
@@ -39,10 +40,6 @@
         /* 三级及以下无序li显示小方块 */
         .doc-content ul ul ul li{
             list-style-type: square;
-        }
-        /* 下拉目录隐藏li样式 */
-        .editormd-toc-menu ul.markdown-toc-list li{
-            /*list-style:none;*/
         }
         /* 弹出框文档目录样式 */
         ul.markdown-toc-list{
@@ -124,7 +121,7 @@
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
-            <i class="fa fa-tag"></i> 标签：<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
+            <i class="fa fa-tag"></i> {% trans "标签：" %}<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
                 {% if project.role == 1 %}
                     <i class="layui-icon layui-icon-password" title="私密文档"></i>
                 {% endif %}
@@ -145,7 +142,7 @@
             </ul>
         </nav>
         <div class="bq">
-            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">本文档使用MrDoc发布</a>
+            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">{% trans "本文档使用MrDoc发布" %}</a>
         </div>
         <!-- 右下角广告块 -->
         <!-- 广告代码开始 -->
@@ -182,7 +179,7 @@
             {% endblock %}
 
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
+                <i class="fa fa-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
         </div>
         <!-- 文档主体 -->
@@ -194,7 +191,7 @@
                     <div class="doc-info">
                         <!-- 页面主体头信息 -->
                         {% block content_head %}
-                        <h1>标签：{{ tag.name }}</h1><hr>
+                        <h1>{% trans "标签：" %}{{ tag.name }}</h1><hr>
                         {% endblock %}
 
                         <!-- 广告代码开始 -->

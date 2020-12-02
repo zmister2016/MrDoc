@@ -1,5 +1,6 @@
 {% extends 'app_doc/editor/create_base_vditor.html' %}
 {% load static %}
+{% load i18n %}
 {% block title %}新建文档 - Vditor编辑模式{% endblock %}
 {% block editor_type %}新建文档{% endblock %}
 
@@ -22,6 +23,10 @@
         <div class="layui-btn-container" style="margin-bottom: 0px;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="插入模板内容">
                     <i class="fa fa-clipboard"></i> 导入模板
+                </button>
+
+                <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="doc-cache-btn" title="查看浏览器缓存">
+                    本地缓存
                 </button>
 
                 <!-- <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
@@ -381,6 +386,39 @@
     function selectLocalFile(){
         $("#insert-local-file").trigger("click");
     };
+
+    // 查看本地文档缓存
+    $("#doc-cache-btn").click(function(){
+        var editor_cache = window.localStorage.getItem('mrdoc_doc_cache') // 获取文档缓存内容
+        var editor_cache_cnt = editor_cache.replace(/\s+|[\r\n]/g,"").length
+        if(editor_cache_cnt > 5){ // 文档缓存去除空格换行后长度大于5
+            console.log("存在文档缓存")
+            $("#doc-cache-content").val(editor_cache)
+            layer.open({
+                title:"浏览器文档缓存",
+                type:1,
+                id:'doc-cache',
+                area:['500px','500px'],
+                content:$('#doc-cache-div'),
+                btn:['使用缓存',"删除缓存"],
+                success : function(index, layero) { // 成功弹出后回调
+                    form.render();
+                },
+                yes:function(index, layero){
+                    editor.setValue(editor_cache)
+                    window.localStorage.removeItem('mrdoc_doc_cache')
+                    layer.closeAll()
+                    autoCacheDoc();
+                },
+                btn2:function(index,layero){
+                    window.localStorage.removeItem('mrdoc_doc_cache')
+                    layer.closeAll()
+                }
+            })
+        }else{
+            layer.msg("暂无本地缓存")
+        }
+    })
 </script>
 {% endblock %}
 

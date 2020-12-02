@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
@@ -8,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>用户登录 - {% if site_name != None %}{{site_name}} {% else %}觅道文档MrDoc{% endif %}</title>
+	<title>{% trans "用户登录" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档MrDoc" %}{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -26,7 +27,6 @@
         }
         .login-form{
             margin-top: 15%;
-            {#width: 400px;#}
             padding: 20px 50px 20px 60px;
             background-color: #fff;
             -webkit-box-shadow: #666 0px 0px 10px;
@@ -59,7 +59,7 @@
             <form class="layui-form" action="{% url 'login' %}"  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h2><strong>登录 - <a href="/">{% if site_name != None %}{{site_name}} {% else %}觅道文档{% endif %}</a></strong></h2>
+                    <h2><strong>{% trans "登录" %} - <a href="/">{% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</a></strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
@@ -74,20 +74,18 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
-                        <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">登录</button>
+                        <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">{% trans "登录" %}</button>
                     </div>
                 </div>
                 {% if close_register == 'on' %}
-                本站暂不开放注册
+                {% trans "本站暂不开放注册" %}
                 {% else %}
-                <a href="{% url 'register' %}" class="register-link">注册账号</a>&nbsp;
+                <a href="{% url 'register' %}" class="register-link">{% trans "注册账号" %}</a>&nbsp;
                 {% endif %}
-
                 {% if enable_email == 'on' %}
-                <a href="{% url 'forget_pwd' %}" class="register-link">忘记密码</a>
+                <a href="{% url 'forget_pwd' %}" class="register-link">{% trans "忘记密码" %}</a>
                 {% endif %}
-
-                <a href="{% url 'pro_list' %}" class="register-link">返回首页</a>
+                <a href="{% url 'pro_list' %}" class="register-link">{% trans "返回首页" %}</a>
             </form>
         </div>
     </div>
