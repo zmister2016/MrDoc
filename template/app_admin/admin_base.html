@@ -15,10 +15,23 @@
 	</head>
 	<body class="pear-container">
 		{% if debug %}
-		<blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="layui-card-header" style="margin-bottom: 10px;">
+					<blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
+				</div>
+			</div>
+		</div>
 		{% endif %}
-		<blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;display: none;">检测到新版本发布，请及时更新！下载地址：<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
-        {% block content %}
+		<div class="layui-card" style="display: none;">
+			<div class="layui-card-body">
+				<div class="layui-card-header" style="margin-bottom: 10px;">
+					<blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;">检测到新版本发布，请及时更新！下载地址：<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
+
+				</div>
+			</div>
+		</div>
+		{% block content %}
         {% endblock %}
 		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
 		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
