@@ -362,32 +362,47 @@ def admin_del_user(request):
 @logger.catch()
 def admin_project(request):
     if request.method == 'GET':
-        search_kw = request.GET.get('kw','')
-        if search_kw == '':
-            project_list = Project.objects.all().order_by('-create_time')
-            paginator = Paginator(project_list,10)
-            page = request.GET.get('page',1)
-            try:
-                projects = paginator.page(page)
-            except PageNotAnInteger:
-                projects = paginator.page(1)
-            except EmptyPage:
-                projects = paginator.page(paginator.num_pages)
-        else:
-            project_list = Project.objects.filter(intro__icontains=search_kw)
-            paginator = Paginator(project_list, 10)
-            page = request.GET.get('page', 1)
-
-            try:
-                projects = paginator.page(page)
-            except PageNotAnInteger:
-                projects = paginator.page(1)
-            except EmptyPage:
-                projects = paginator.page(paginator.num_pages)
-            projects.kw = search_kw
         return render(request,'app_admin/admin_project.html',locals())
-    else:
-        return HttpResponse('方法错误')
+    elif request.method == 'POST':
+        kw = request.POST.get('kw', '')
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 获取文集列表
+        if kw == '':
+            project_list = Project.objects.all().order_by('-create_time')
+        else:
+            project_list = Project.objects.filter(
+                Q(intro__icontains=kw) | Q(name__icontains=kw),
+            ).order_by('-create_time')
+        paginator = Paginator(project_list, limit)
+        try:
+            pros = paginator.page(page)
+        except PageNotAnInteger:
+            pros = paginator.page(1)
+        except EmptyPage:
+            pros = paginator.page(paginator.num_pages)
+        table_data = []
+        for project in pros:
+            item = {
+                'id': project.id,
+                'name': project.name,
+                'intro': project.intro,
+                'doc_total': Doc.objects.filter(top_doc=project.id).count(),
+                'role': project.role,
+                'role_value': project.role_value,
+                'colla_total': ProjectCollaborator.objects.filter(project=project).count(),
+                'create_user':project.create_user.username,
+                'create_time': project.create_time,
+                'modify_time': project.modify_time
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": project_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
 
 # 后台管理 - 修改文集权限
 @superuser_only
@@ -429,29 +444,93 @@ def admin_project_role(request,pro_id):
 @logger.catch()
 def admin_doc(request):
     if request.method == 'GET':
-        kw = request.GET.get('kw','')
-        if kw == '':
-            doc_list = Doc.objects.all().order_by('-modify_time')
-            paginator = Paginator(doc_list, 10)
-            page = request.GET.get('page', 1)
-            try:
-                docs = paginator.page(page)
-            except PageNotAnInteger:
-                docs = paginator.page(1)
-            except EmptyPage:
-                docs = paginator.page(paginator.num_pages)
-        else:
-            doc_list = Doc.objects.filter(Q(content__icontains=kw) | Q(name__icontains=kw)).order_by('-modify_time')
-            paginator = Paginator(doc_list, 10)
-            page = request.GET.get('page', 1)
-            try:
-                docs = paginator.page(page)
-            except PageNotAnInteger:
-                docs = paginator.page(1)
-            except EmptyPage:
-                docs = paginator.page(paginator.num_pages)
-            docs.kw = kw
+        # 文集列表
+        project_list = Project.objects.all()  # 自己创建的文集列表
+        # 文档数量
+        # 已发布文档数量
+        published_doc_cnt = Doc.objects.filter(status=1).count()
+        # 草稿文档数量
+        draft_doc_cnt = Doc.objects.filter(status=0).count()
+        # 所有文档数量
+        all_cnt = published_doc_cnt + draft_doc_cnt
         return render(request,'app_admin/admin_doc.html',locals())
+    elif request.method == 'POST':
+        kw = request.POST.get('kw', '')
+        project = request.POST.get('project', '')
+        status = request.POST.get('status', '')
+        if status == '-1':  # 全部文档
+            q_status = [0, 1]
+        elif status in ['0', '1']:
+            q_status = [int(status)]
+        else:
+            q_status = [0, 1]
+
+        if project == '':
+            project_list = Project.objects.all().values_list('id', flat=True)  # 自己创建的文集列表
+            q_project = list(project_list)
+        else:
+            q_project = [project]
+
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 没有搜索
+        if kw == '':
+            doc_list = Doc.objects.filter(
+                status__in=q_status,
+                top_doc__in=q_project
+            ).order_by('-modify_time')
+        # 有搜索
+        else:
+            doc_list = Doc.objects.filter(
+                Q(content__icontains=kw) | Q(name__icontains=kw),
+                status__in=q_status, top_doc__in=q_project
+            ).order_by('-modify_time')
+
+        # 文集列表
+        project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
+        colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
+
+        # 文档数量
+        # 已发布文档数量
+        published_doc_cnt = Doc.objects.filter(create_user=request.user, status=1).count()
+        # 草稿文档数量
+        draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
+        # 所有文档数量
+        all_cnt = published_doc_cnt + draft_doc_cnt
+
+        # 分页处理
+        paginator = Paginator(doc_list, limit)
+        page = request.GET.get('page', page)
+        try:
+            docs = paginator.page(page)
+        except PageNotAnInteger:
+            docs = paginator.page(1)
+        except EmptyPage:
+            docs = paginator.page(paginator.num_pages)
+
+        table_data = []
+        for doc in docs:
+            item = {
+                'id': doc.id,
+                'name': doc.name,
+                'parent': Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else '无',
+                'project_id': Project.objects.get(id=doc.top_doc).id,
+                'project_name': Project.objects.get(id=doc.top_doc).name,
+                'status': doc.status,
+                'editor_mode': doc.editor_mode,
+                'open_children': doc.open_children,
+                'create_user':doc.create_user.username,
+                'create_time': doc.create_time,
+                'modify_time': doc.modify_time
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": doc_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
 
 
 # 后台管理 - 文档模板管理
