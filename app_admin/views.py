@@ -347,8 +347,15 @@ def admin_change_pwd(request):
 def admin_del_user(request):
     if request.method == 'POST':
         try:
-            user_id = request.POST.get('user_id',None)
-            user = User.objects.get(id=int(user_id))
+            user_id = request.POST.get('user_id',None) # 获取用户ID
+            user = User.objects.get(id=int(user_id)) # 获取用户
+            colloas = ProjectCollaborator.objects.filter(user=user) # 获取参与协作的文集
+            # 遍历用户参与协作的文集
+            for colloa in colloas:
+                # 查询出用户协作创建的文档，修改作者为文集所有者
+                Doc.objects.filter(
+                    top_doc=colloa.project.id,create_user=user
+                ).update(create_user=colloa.project.create_user)
             user.delete()
             return JsonResponse({'status':True,'data':'删除成功'})
         except Exception as e:
@@ -622,6 +629,7 @@ def admin_register_code(request):
             return JsonResponse({'status':False,'data':'类型错误'})
     else:
         return JsonResponse({'status': False,'data':'方法错误'})
+
 
 # 普通用户修改密码
 @login_required()
