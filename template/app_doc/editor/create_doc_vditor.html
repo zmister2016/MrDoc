@@ -311,7 +311,6 @@
           type: 1,
           id:'temp-div',
           content: $('#doctemp-list'),
-          //area:['530px','300px'],
           area:['50%','50%'],
         });
     });
@@ -335,17 +334,6 @@
             }else{
                 layer.msg(r.data)
             }
-        });
-    };
-    //删除模板
-    delTemp = function(doctemp_id){
-        layer.open({
-            title:'删除模板',
-            content:'确认删除此模板？',
-            btn:['确定','取消'],
-            yes:function(index,layero){
-
-            },
         });
     };
     //插入本地文本文件
