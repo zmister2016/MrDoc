@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>个人中心{% if site_name != None and site_name != '' %} - {{site_name}} {% endif %} - 觅道文档MrDoc</title>
+        <title>{% trans "个人中心" %}{% if site_name != None and site_name != '' %} - {{site_name}} {% endif %} - {% trans "觅道文档MrDoc" %}</title>
 		<link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
 		<!-- 依 赖 样 式 -->
 		<link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
@@ -40,10 +40,10 @@
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
 							{% if request.user.is_superuser %}
-							<dd><a href="{% url 'admin_center' %}">后台管理</a></dd>
+							<dd><a href="{% url 'admin_center' %}">{% trans "后台管理" %}</a></dd>
 							{% endif %}
-							<dd><a href="{% url 'pro_list' %}" target="_blank">站点首页</a></dd>
-						  	<dd><a href="{% url 'logout' %}">注销登录</a></dd>
+							<dd><a href="{% url 'pro_list' %}" target="_blank">{% trans "站点首页" %}</a></dd>
+						  	<dd><a href="{% url 'logout' %}">{% trans "注销登录" %}</a></dd>
 						</dl>
 					</li>
 					<li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
@@ -80,7 +80,7 @@
 			layui.use(['admin'], function() {
                 var pear_admin_config = {
                     "logo": {
-                        "title": "个人中心",
+                        "title": "{% trans '个人中心' %}",
                         "image": "{% static 'mrdoc_logo_ridus.png' %}"
                     },
                     "menu": {
@@ -96,7 +96,7 @@
                         "index": {
                             "id": "10",
                             "href": "{% url 'manage_overview' %}",
-                            "title": "首页"
+                            "title": "{% trans '首页' %}"
                         }
                     },
                     "theme": {
@@ -126,27 +126,27 @@
                     ],
                     "links": [{
                             "icon": "layui-icon layui-icon-website",
-                            "title": "官方网站",
+                            "title": "{% trans '官方网站' %}",
                             "href": "http://zmister.com/mrdoc/"
                         },
                         {
                             "icon": "layui-icon layui-icon-read",
-                            "title": "说明文档",
+                            "title": "{% trans '说明文档' %}",
                             "href": "http://mrdoc.zmister.com/project-7/"
                         },
                         {
                             "icon": "layui-icon layui-icon-fonts-code",
-                            "title": "开源地址",
+                            "title": "{% trans '开源地址' %}",
                             "href": "https://gitee.com/zmister/MrDoc"
                         },
                         {
                             "icon": "layui-icon layui-icon-survey",
-                            "title": "QQ群",
+                            "title": "{% trans 'QQ群' %}",
                             "href": "http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"
                         },
 						{
                             "icon": "layui-icon layui-icon-log",
-                            "title": "当前版本：{{mrdoc_version}}",
+                            "title": "{% trans '当前版本：' %}{{mrdoc_version}}",
                             "href": "https://gitee.com/zmister/MrDoc/tree/{{mrdoc_version}}/"
                         }
                     ],

@@ -1,14 +1,14 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文档历史版本管理{% endblock %}
+{% block title %}{% trans "文档历史版本管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-row" style="padding-left:15px;">
             <span class="layui-breadcrumb" lay-separator=">">
-            <a href="{% url 'manage_doc' %}">文档管理</a>
-            <a><cite>历史版本管理</cite></a>
+            <a href="{% url 'manage_doc' %}">{% trans "文档管理" %}</a>
+            <a><cite>{% trans "历史版本管理" %}</cite></a>
             </span>
         </div>
     </div>
@@ -18,7 +18,7 @@
     <div class="layui-card-body">
         <div class="layui-card-header">
         <div class="layui-row">
-            <span style="font-size:18px;">文档：{{doc.name}} 的历史版本管理</span>
+            <span style="font-size:18px;">{% trans "文档：" %}{{doc.name}} {% trans "的历史版本管理" %}</span>
         </div>
         </div>
         <div class="layui-row" >
@@ -30,9 +30,9 @@
         </colgroup>
         <thead>
             <tr>
-            <th>创建时间</th>
-            <th>创建人</th>
-            <th>操作</th>
+            <th>{% trans "创建时间" %}</th>
+            <th>{% trans "创建人" %}</th>
+            <th>{% trans "操作" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -42,10 +42,10 @@
             <td>{{ his.create_user }}</td>
             <td>
                 <a href="{% url 'diff_doc' doc.id his.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
-                    <i class="layui-icon layui-icon-edit"></i>对比
+                    <i class="layui-icon layui-icon-edit"></i>{% trans "对比" %}
                 </a>
                 <a href="javascript:void(0);" onclick="delDocHis('{{his.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                    <i class="layui-icon layui-icon-delete"></i>删除
+                    <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                 </a>
             </td>
             </tr>
@@ -58,9 +58,9 @@
             <div class="layui-box layui-laypage layui-laypage-default">
                     <!-- 上一页 -->
                     {% if historys.has_previous %}
-                        <a href="?page={{ historys.previous_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                        <a href="?page={{ historys.previous_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "上一页" %}</a>
                     {% else %}
-                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "上一页" %}</a>
                     {% endif %}
                     <!-- 当前页 -->
                     <span class="layui-laypage-curr">
@@ -69,9 +69,9 @@
                     </span>
                     <!-- 下一页 -->
                     {% if historys.has_next %}
-                        <a href="?page={{ historys.next_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                        <a href="?page={{ historys.next_page_number }}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "下一页" %}</a>
                     {% else %}
-                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "下一页" %}</a>
                     {% endif %}
             </div>
         </div>

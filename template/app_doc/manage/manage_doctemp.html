@@ -1,13 +1,13 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文档模板管理{% endblock %}
+{% block title %}{% trans "文档模板管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-card-header" style="margin-bottom: 10px;">
             <div class="layui-row">
-                <span style="font-size:18px;">文档模板管理
+                <span style="font-size:18px;">{% trans "文档模板管理" %}
                 </span>
             </div>
         </div>
@@ -17,8 +17,9 @@
             <div class="layui-input-inline">
                 <input type="text" name="kw" id="kw"  placeholder="输入文档模板内容" autocomplete="off" class="layui-input">
             </div>
-            <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
-            <a href="{% url 'create_doctemp' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-addition"></i>新建</a>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>{% trans "搜索" %}</button>
+            <a href="{% url 'create_doctemp' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-sm">
+                <i class="layui-icon layui-icon-addition"></i>{% trans "新建" %}</a>
         </div>
         </form>
     </div>
@@ -31,9 +32,9 @@
       </colgroup>
       <thead>
         <tr>
-          <th>模板名称</th>
-          <th>创建时间</th>
-          <th>操作</th>
+          <th>{% trans "模板名称" %}</th>
+          <th>{% trans "创建时间" %}</th>
+          <th>{% trans "操作" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -43,10 +44,10 @@
           <td>{{ temp.create_time }}</td>
           <td>
               <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
-                  <i class="layui-icon layui-icon-edit"></i>修改
+                  <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
               </a>
               <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                <i class="layui-icon layui-icon-delete"></i>删除
+                <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
             </a>
           </td>
         </tr>
@@ -59,9 +60,9 @@
         <div class="layui-box layui-laypage layui-laypage-default">
                 <!-- 上一页 -->
                 {% if doctemps.has_previous %}
-                    <a href="?page={{ doctemps.previous_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                    <a href="?page={{ doctemps.previous_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "上一页" %}</a>
                 {% else %}
-                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                    <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "上一页" %}</a>
                 {% endif %}
                 <!-- 当前页 -->
                 <span class="layui-laypage-curr">
@@ -70,9 +71,9 @@
                 </span>
                 <!-- 下一页 -->
                 {% if doctemps.has_next %}
-                    <a href="?page={{ doctemps.next_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                    <a href="?page={{ doctemps.next_page_number }}&kw={{doctemps.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "下一页" %}</a>
                 {% else %}
-                    <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                    <a class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "下一页" %}</a>
                 {% endif %}
         </div>
     </div>

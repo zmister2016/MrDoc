@@ -1,7 +1,7 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文档分享管理{% endblock %}
+{% block title %}{% trans "文档分享管理" %}{% endblock %}
 {% block content %}
 
 <div class="layui-card">
@@ -14,7 +14,7 @@
     <script type="text/html" id="share-doc-toolbar">
         <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
             <i class="layui-icon layui-icon-delete"></i>
-            删除
+            {% trans "删除" %}
         </button>
     </script>
 

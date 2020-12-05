@@ -1,7 +1,7 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}仪表盘{% endblock %}
+{% block title %}{% trans "仪表盘" %}{% endblock %}
 
 {% block custom_element %}
     <link rel="stylesheet" href="{% static 'PearAdminLayui/admin/css/other/console1.css' %}" />
@@ -12,7 +12,7 @@
     <div class="layui-row layui-col-space10">
         <div class="layui-col-xs6 layui-col-md3">
             <div class="layui-card top-panel">
-                <div class="layui-card-header">文集总数</div>
+                <div class="layui-card-header">{% trans "文集总数" %}</div>
                 <div class="layui-card-body">
                     <div class="layui-row layui-col-space5">
                         <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="pro_cnt">
@@ -27,7 +27,7 @@
         </div>
         <div class="layui-col-xs6 layui-col-md3">
             <div class="layui-card top-panel">
-                <div class="layui-card-header">文档数量</div>
+                <div class="layui-card-header">{% trans "文档数量" %}</div>
                 <div class="layui-card-body">
                     <div class="layui-row layui-col-space5">
                         <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="doc_cnt">
@@ -42,7 +42,7 @@
         </div>
         <div class="layui-col-xs6 layui-col-md3">
             <div class="layui-card top-panel">
-                <div class="layui-card-header">图片数量</div>
+                <div class="layui-card-header">{% trans "图片数量" %}</div>
                 <div class="layui-card-body">
                     <div class="layui-row layui-col-space5">
                         <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="img_cnt">
@@ -57,7 +57,7 @@
         </div>
         <div class="layui-col-xs6 layui-col-md3">
             <div class="layui-card top-panel">
-                <div class="layui-card-header">附件数量</div>
+                <div class="layui-card-header">{% trans "附件数量" %}</div>
                 <div class="layui-card-body">
                     <div class="layui-row layui-col-space5">
                         <div class="layui-col-xs8 layui-col-md8 top-panel-number" style="color: #28333E;" id="attachment_cnt">
@@ -73,15 +73,8 @@
     </div>
     <div class="layui-row layui-col-space10">
         <div class="layui-col-md6">
-            <!-- <div class="layui-card">
-                <div class="layui-card-body">
-                    <div class="layui-tab custom-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-                        <div id="echarts-records" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
-                    </div>
-                </div>
-            </div> -->
             <div class="layui-card">
-                <div class="layui-card-header">动态</div>
+                <div class="layui-card-header">{% trans "动态" %}</div>
                 <div class="layui-card-body">
                     <dl class="layuiadmin-card-status">
                         {% for doc in doc_active_list %}
@@ -90,11 +83,11 @@
                                         src="{% static 'PearAdminLayui/avatar.svg' %}"></a></div>
                             <div>
                                 {% if doc.status == 1 %}
-                                <p>{{doc.create_user.first_name}} 修改了文档 <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></p>
+                                <p>{{doc.create_user.first_name}} {% trans "修改了文档" %} <a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{doc.name}}</a></p>
                                 {% elif doc.status == 0 %}
-                                <p>{{doc.create_user.first_name}} 保存了文档 <a href="{% url 'modify_doc' doc.id %}" target="_blank">{{doc.name}}</a></p>
+                                <p>{{doc.create_user.first_name}} {% trans "保存了文档" %} <a href="{% url 'modify_doc' doc.id %}" target="_blank">{{doc.name}}</a></p>
                                 {% else %}
-                                <p>{{doc.create_user.first_name}} 删除了文档 <a>{{doc.name}}</a></p>
+                                <p>{{doc.create_user.first_name}} {% trans "删除了文档" %} <a>{{doc.name}}</a></p>
                                 {% endif %}
                                 <span>{{doc.modify_time}}</span>
                             </div>
@@ -106,46 +99,46 @@
         </div>
         <div class="layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">快速草稿</div>
+                <div class="layui-card-header">{% trans "快速草稿" %}</div>
                 <div class="layui-card-body">
                     <div class="layui-form">
                         {% csrf_token %}
                         <input name="status" value="0" hidden>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">标题</label>
+                            <label class="layui-form-label">{% trans "标题" %}</label>
                             <div class="layui-input-block">
                             <input type="text" id="doc_name" name="doc_name" required  lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">文集</label>
+                            <label class="layui-form-label">{% trans "文集" %}</label>
                             <div class="layui-input-block">
                             <select name="project" id="project" lay-verify="required">
                                 <option value=""></option>
                                 {% for pro in pro_list %}
                                     {% if pro.role == 0 %}
-                                    <option value="{{pro.id}}">[公开]{{pro.name}}</option>
+                                    <option value="{{pro.id}}">[{% trans "公开" %}]{{pro.name}}</option>
                                     {% elif pro.role == 1 %}
-                                    <option value="{{pro.id}}">[私密]{{pro.name}}</option>
+                                    <option value="{{pro.id}}">[{% trans "私密" %}]{{pro.name}}</option>
                                     {% elif pro.role == 2 %}
-                                    <option value="{{pro.id}}">[指定用户]{{pro.name}}</option>
+                                    <option value="{{pro.id}}">[{% trans "指定用户" %}]{{pro.name}}</option>
                                     {% elif pro.role == 3 %}
-                                    <option value="{{pro.id}}">[密码]{{pro.name}}</option>
+                                    <option value="{{pro.id}}">[{% trans "密码" %}]{{pro.name}}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
                             </div>
                         </div>
                         <div class="layui-form-item layui-form-text">
-                            <label class="layui-form-label">文本域</label>
+                            <label class="layui-form-label">{% trans "文本域" %}</label>
                             <div class="layui-input-block">
                             <textarea name="pre_content" id="pre_content" placeholder="在想些什么呢？" class="layui-textarea"></textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                            <button class="layui-btn layui-btn-normal" id="save_doc" onclick="manage_overview_save_doc();">保存草稿</button>
-                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            <button class="layui-btn layui-btn-normal" id="save_doc" onclick="manage_overview_save_doc();">{% trans "保存草稿" %}</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">{% trans "重置" %}</button>
                             </div>
                         </div>
                     </div>
@@ -153,23 +146,23 @@
             </div>
             <div class="layui-card">
                 <div class="layui-card-header">
-                    链接
+                    {% trans "链接" %}
                 </div>
                 <div class="layui-card-body">
                     <a target="_blank" href="http://mrdoc.zmister.com/project-7/doc-434/" class="pear-btn pear-btn-primary layui-btn-fluid" style="height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-praise"></i> 支持项目发展
+                        <i class="layui-icon layui-icon-praise"></i> {% trans "支持项目发展" %}
                     </a>
                     <br/>
                     <a target="_blank" href="https://zmister.com/mrdoc/" class="pear-btn pear-btn-success layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-website"></i> 觅 道 文 档 官 网
+                        <i class="layui-icon layui-icon-website"></i> {% trans "觅 道 文 档 官 网" %}
                     </a>
                     <br/>
                     <a target="_blank" href="http://mrdoc.zmister.com" class="pear-btn pear-btn-primary  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-read"></i> 使 用 手 册
+                        <i class="layui-icon layui-icon-read"></i> {% trans "使 用 手 册" %}
                     </a>
                     <br/>
                     <a target="_blank" href="https://gitee.com/zmister/MrDoc" class="pear-btn pear-btn-warming  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-download-circle"></i> 源 码 下 载
+                        <i class="layui-icon layui-icon-download-circle"></i> {% trans "源 码 下 载" %}
                     </a>
                 </div>
             </div>
@@ -191,37 +184,6 @@
             $.ajaxSetup({
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
             });
-            // count.up("pro_cnt", {
-            //     time: 4000,
-            //     num: {{ pro_cnt }},
-            //     bit: 0,
-            //     regulator: 50
-            // });
-
-            // count.up("doc_cnt", {
-            //     time: 4000,
-            //     num: {{ doc_cnt }},
-            //     bit: 0,
-            //     regulator: 50
-            // });
-
-            // count.up("img_cnt", {
-            //     time: 4000,
-            //     num: {{ img_cnt }},
-            //     bit: 0,
-            //     regulator: 50
-            // });
-
-            // count.up("attachment_cnt", {
-            //     time: 4000,
-            //     bit: 0,
-            //     num: {{ attachment_cnt }},
-            //     regulator: 50
-            // });
-
-            // window.onresize = function() {
-            //     echartsRecords.resize();
-            // };
             // 保存文档草稿
             manage_overview_save_doc = function(){
                 $('button.layui-btn').attr("disabled",true);

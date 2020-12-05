@@ -1,24 +1,24 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文档管理{% endblock %}
+{% block title %}{% trans "文档管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
-    <div class="layui-card-header">高级筛选</div>
+    <div class="layui-card-header">{% trans "高级筛选" %}</div>
     <div class="layui-card-body">
         <div class="layui-form">
             <div class="layui-form-item">
-              <label class="layui-form-label">关键词</label>
+              <label class="layui-form-label">{% trans "关键词" %}</label>
               <div class="layui-input-inline">
                 <input type="text" name="kw"  placeholder="请输入标题" autocomplete="off" class="layui-input">
               </div>
-              <button class="layui-btn layui-btn-normal layui-btn-sm" id="search">搜索</button>
+              <button class="layui-btn layui-btn-normal layui-btn-sm" id="search">{% trans "搜索" %}</button>
             </div>
             <div class="layui-form-item">
-              <label class="layui-form-label">文集</label>
+              <label class="layui-form-label">{% trans "文集" %}</label>
               <div class="layui-input-inline">
                 <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
-                    <option value="">按文集筛选</option>
+                    <option value="">{% trans "按文集筛选" %}</option>
                     <!-- 自己的文集 -->
                     <optgroup label="自有文集" id="self-project">
                     {% for p in project_list %}
@@ -45,7 +45,7 @@
               </div>
             </div>
             <div class="layui-form-item">
-              <label class="layui-form-label">文档状态</label>
+              <label class="layui-form-label">{% trans "文档状态" %}</label>
               <div class="layui-input-block">
                 <input type="radio" name="status" title="全部({{all_cnt}})" value="-1" lay-skin="primary" checked lay-filter="doc_status">
                 <input type="radio" name="status" title="草稿({{draft_doc_cnt}})" value="0"  lay-skin="primary" lay-filter="doc_status">

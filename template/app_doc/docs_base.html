@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}{{site_keywords}}"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
+    <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     {% if doc.editor_mode == 2 %}
@@ -38,19 +38,19 @@
         <!-- 文档搜索 -->
         <form action="{% url 'pro_index' pro_id=project.id %}" method="get">
             <div id="doc-search-input">
-                <input type="text" name="kw" placeholder="输入并回车搜索" value="" class="layui-input doc-search-input">
+                <input type="text" name="kw" placeholder="{% trans '输入并回车搜索' %}" value="" class="layui-input doc-search-input">
             </div>
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
             <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}
                 {% if project.role == 1 %}
-                    <i class="layui-icon layui-icon-password" title="私密文档"></i>
+                    <i class="layui-icon layui-icon-password" title="{% trans '私密文档' %}"></i>
                 {% endif %}
             </a>
             <p>
                 {% if colla_user > 0 %}
-                <span style="font-size:12px;color:gray;font-weight:100;">* 此为协作文集</span>
+                <span style="font-size:12px;color:gray;font-weight:100;">{% trans "* 此为协作文集" %}</span>
                 {% endif %}
             </p>
         </div>
@@ -58,7 +58,7 @@
         <!-- 遍历文集大纲 -->
         <!-- 如果文集的文档数量超过999，使用异步加载文集目录 -->
         {% if toc_cnt > 999  %}
-            <div style="text-align: center;" id='loading-project-toc'><i class="fa fa-spinner fa-pulse"></i>文集大纲加载中……</div>
+            <div style="text-align: center;" id='loading-project-toc'><i class="fa fa-spinner fa-pulse"></i>{% trans "文集大纲加载中……" %}</div>
             {% load doc_filter %}
             <nav>
                 <ul class="summary" id="project-toc"></ul>
@@ -123,7 +123,7 @@
         </nav>
         {% endif %}
         <div class="bq">
-            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">本文档使用MrDoc发布</a>
+            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">{% trans "本文档使用MrDoc发布" %}</a>
         </div>
         <!-- 右下角广告块 -->
         <!-- 广告代码开始 -->
@@ -143,16 +143,16 @@
     <div class="doc-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
-            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="{% trans '切换侧边栏' %}">
                 <i class="fa fa-align-justify"></i>
             </a>
-            <a class="btn pull-left font-small"  href="javascript:void(0);" title="缩小字体">
+            <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
                 <i class="fa fa-font">-</i>
             </a>
-            <a class="btn pull-left font-large"  href="javascript:void(0);" title="放大字体">
+            <a class="btn pull-left font-large"  href="javascript:void(0);" title="{% trans '放大字体' %}">
                 <i class="fa fa-font">+</i>
             </a>
-            <a class="btn pull-left font-switch" href="javascript:void(0);" title="切换字体类型">
+            <a class="btn pull-left font-switch" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
                 <i class="fa fa-text-height"></i>
             </a>
             <!-- 顶部工具栏 -->
@@ -160,7 +160,7 @@
             {% endblock %}
 
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
+                <i class="fa fa-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
         </div>
         <!-- 文档主体 -->
@@ -227,17 +227,17 @@
 <div id="share_div" style="display: none;">
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
         <ul class="layui-tab-title">
-            <li class="layui-this">微信扫一扫</li>
-            <li>复制链接</li>
+            <li class="layui-this">{% trans "微信扫一扫" %}</li>
+            <li>{% trans "复制链接" %}</li>
         </ul>
     <div class="layui-tab-content" style="height: 100px;">
         <div class="layui-tab-item layui-show" align='center'>
-            <p style="font-weight: 700;margin-bottom: 10px;">手机扫一扫进行分享</p>
+            <p style="font-weight: 700;margin-bottom: 10px;">{% trans "手机扫一扫进行分享" %}</p>
             <div id="url_qrcode"></div>
         </div>
         <div class="layui-tab-item" align='center'>
             <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
-            <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" id="copy_doc_url"">复制链接</button>
+            <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
         </div>
     </div>
     </div> 
@@ -247,11 +247,11 @@
 <div id="dashang_img" style="display: none;">
     <div class="layui-tab layui-tab-brief">
         <ul class="layui-tab-title">
-          <li class="layui-this">微信</li>
-          <li>支付宝</li>
-          <li>QQ支付</li>
-          <li>PayPal</li>
-          <li>项目源码</li>
+          <li class="layui-this">{% trans "微信" %}</li>
+          <li>{% trans "支付宝" %}</li>
+          <li>{% trans "QQ支付" %}</li>
+          <li>{% trans "PayPal" %}</li>
+          <li>{% trans "项目源码" %}</li>
         </ul>
         <div class="layui-tab-content" style="height: 100px;">
           <div class="layui-tab-item layui-show" align='center'>
@@ -337,9 +337,6 @@
                 },
                 anchor: 1,
                 after () {
-                    // if (window.innerWidth <= 768) {
-                    //     return
-                    // }
                     const outlineElement = document.getElementById('toc-container')
                     var sub_ele = "<div class='markdown-toc editormd-markdown-toc'><ul class='markdown-toc-list'></ul></div>"
                     $("#toc-container").append(sub_ele)

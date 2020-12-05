@@ -1,8 +1,9 @@
+{% load i18n %}
 <div class="layui-footer" style="border-top: 1px #e6e6e6 solid;text-align:center;margin-top:10px;width:100%;">
     <div style="margin-top:10px;">
         © <a href="https://zmister.com/mrdoc/">MrDoc 2019-2020</a>&nbsp;|&nbsp;
         <a href="https://zmister.com" target="_blank">州的先生</a>出品 |
-        <a href="{% url 'sitemap' %}" target="_blank">网站地图</a>
+        <a href="{% url 'sitemap' %}" target="_blank">{% trans "网站地图" %}</a>
     </div>
     {% if beian_code != None %}
     <div style="margin-top:5px;margin-bottom: 5px;">

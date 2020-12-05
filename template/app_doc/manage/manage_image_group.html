@@ -1,14 +1,14 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}图片分组管理{% endblock %}
+{% block title %}{% trans "图片分组管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-row" style="padding-left:15px;">
             <span class="layui-breadcrumb" lay-separator=">">
-            <a href="{% url 'manage_image' %}">图片管理</a>
-            <a><cite>图片分组管理</cite></a>
+            <a href="{% url 'manage_image' %}">{% trans "图片管理" %}</a>
+            <a><cite>{% trans "图片分组管理" %}</cite></a>
             </span>
         </div>
     </div>
@@ -24,9 +24,9 @@
                 </colgroup>
                 <thead>
                     <tr>
-                    <th>分组名称</th>
-                    <th>图片数量</th>
-                    <th>操作</th>
+                    <th>{% trans "分组名称" %}</th>
+                    <th>{% trans "图片数量" %}</th>
+                    <th>{% trans "操作" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,10 +37,10 @@
                     <td>{{ group.id | img_group_cnt }}</td>
                     <td>
                         <a href="javascript:void(0);"  onclick="modifyGroup('{{group.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
-                            <i class="layui-icon layui-icon-edit"></i>修改
+                            <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
                         </a>
                         <a href="javascript:void(0);" onclick="delGroup('{{group.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                            <i class="layui-icon layui-icon-delete"></i>删除
+                            <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                         </a>
                     </td>
                     </tr>

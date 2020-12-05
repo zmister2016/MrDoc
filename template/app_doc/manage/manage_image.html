@@ -1,7 +1,7 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}图片素材管理{% endblock %}
+{% block title %}{% trans "图片素材管理" %}{% endblock %}
 
 {% block custom_element %}
 <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -13,9 +13,11 @@
         <div class="layui-row">
             <form action="" method="get">
                 <div class="layui-form-item">
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" id="upload_img"><i class="layui-icon layui-icon-upload"></i>上传图片</button>
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" onclick="createImgGroup()"><i class="layui-icon layui-icon-addition"></i>新建分组</button>
-                    <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_img_group' %}">分组管理</a>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" id="upload_img">
+                        <i class="layui-icon layui-icon-upload"></i>{% trans "上传图片" %}</button>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" onclick="createImgGroup()">
+                        <i class="layui-icon layui-icon-addition"></i>{% trans "新建分组" %}</button>
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_img_group' %}">{% trans "分组管理" %}</a>
                 </div>
             </form>
 
@@ -23,8 +25,8 @@
         <div class="layui-row" style="padding-top: 10px;">
             <span class="doc_status_condition" >
             {% load project_filter %}
-            <a href="{% url 'manage_image' %}?group=0" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == 0 %}current{% endif %}">全部图片({{all_img_cnt}})</a>
-            <a href="{% url 'manage_image' %}?group=-1" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == -1 %}current{% endif %}">未分组({{no_group_cnt}})</a>
+            <a href="{% url 'manage_image' %}?group=0" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == 0 %}current{% endif %}">{% trans "全部图片" %}({{all_img_cnt}})</a>
+            <a href="{% url 'manage_image' %}?group=-1" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == -1 %}current{% endif %}">{% trans "未分组" %}({{no_group_cnt}})</a>
             {% for group in groups %}
             <a href="{% url 'manage_image' %}?group={{group.id}}" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == group.id %}current{% endif %}">{{group.group_name}}({{group.id | img_group_cnt}})</a>
             {% endfor %}
@@ -54,9 +56,9 @@
             <div class="layui-box layui-laypage layui-laypage-default">
                     <!-- 上一页 -->
                     {% if images.has_previous %}
-                        <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                        <a href="?page={{ images.previous_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "上一页" %}</a>
                     {% else %}
-                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "上一页" %}</a>
                     {% endif %}
                     <!-- 当前页 -->
                     <span class="layui-laypage-curr">
@@ -65,9 +67,9 @@
                     </span>
                     <!-- 下一页 -->
                     {% if images.has_next %}
-                        <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                        <a href="?page={{ images.next_page_number }}&group={{images.group}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "下一页" %}</a>
                     {% else %}
-                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "下一页" %}</a>
                     {% endif %}
             </div>
         </div>

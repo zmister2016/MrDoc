@@ -1,13 +1,15 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文档回收站管理{% endblock %}
+{% block title %}{% trans "文档回收站管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-row">
-            <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="restoreAll()"><i class="layui-icon layui-icon-refresh"></i>还原所有</button>
-            <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="emptyDoc()"><i class="layui-icon layui-icon-delete" ></i>清空回收站</button>
+            <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="restoreAll()">
+                <i class="layui-icon layui-icon-refresh"></i>{% trans "还原所有" %}</button>
+            <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="emptyDoc()">
+                <i class="layui-icon layui-icon-delete" ></i>{% trans "清空回收站" %}</button>
 
         </div>
     </div>
@@ -18,12 +20,12 @@
             <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-even>
         <thead>
             <tr>
-                <th>文档名称</th>
-                <th>上级文档</th>
-                <th>所属文集</th>
-                <th>创建时间</th>
-                <th>删除时间</th>
-                <th>操作</th>
+                <th>{% trans "文档名称" %}</th>
+                <th>{% trans "上级文档" %}</th>
+                <th>{% trans "所属文集" %}</th>
+                <th>{% trans "创建时间" %}</th>
+                <th>{% trans "删除时间" %}</th>
+                <th>{% trans "操作" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -39,10 +41,10 @@
                 <td>{{ doc.modify_time }}</td>
                 <td>
                     <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="restoreDoc('{{doc.id}}')">
-                        <i class="layui-icon layui-icon-refresh"></i>还原
+                        <i class="layui-icon layui-icon-refresh"></i>{% trans "还原" %}
                     </button>
                     <button onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                        <i class="layui-icon layui-icon-delete"></i>删除
+                        <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                     </button>
                 </td>
             </tr>
@@ -55,9 +57,9 @@
             <div class="layui-box layui-laypage layui-laypage-default">
                     <!-- 上一页 -->
                     {% if docs.has_previous %}
-                        <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+                        <a href="?page={{ docs.previous_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "上一页" %}</a>
                     {% else %}
-                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "上一页" %}</a>
                     {% endif %}
                     <!-- 当前页 -->
                     <span class="layui-laypage-curr">
@@ -66,9 +68,9 @@
                     </span>
                     <!-- 下一页 -->
                     {% if docs.has_next %}
-                        <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+                        <a href="?page={{ docs.next_page_number }}&kw={{docs.kw}}&status={{docs.status}}&pid={{docs.pid}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "下一页" %}</a>
                     {% else %}
-                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "下一页" %}</a>
                     {% endif %}
             </div>
         </div>

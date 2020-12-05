@@ -1,7 +1,7 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文集管理{% endblock %}
+{% block title %}{% trans "文集管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
@@ -15,13 +15,13 @@
         <input type="text" name="project-search-kw" placeholder="" class="layui-input" >
     </div>
     <button class="layui-btn layui-btn-primary pear-btn-sm" lay-event="search">
-        <i class="layui-icon layui-icon-search"></i>搜索
+        <i class="layui-icon layui-icon-search"></i>{% trans "搜索" %}
     </button>
     <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
-        <i class="layui-icon layui-icon-add-1"></i>新增
+        <i class="layui-icon layui-icon-add-1"></i>{% trans "新增" %}
     </button>
     <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>删除
+        <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
     </button>
     
 </script>
@@ -33,11 +33,11 @@
         {{d.name}}
         {{#if (d.role == 0) { }}
         {{# }else if(d.role == 1){ }}
-        <span  tooltip="私密" placement="right"><i class="layui-icon layui-icon-password"></i></span>
+        <span  tooltip="{% trans '私密' %}" placement="right"><i class="layui-icon layui-icon-password"></i></span>
         {{# }else if(d.role == 2){ }}
-        <span  tooltip="指定用户" placement="right"><i class="layui-icon layui-icon-user"></i></span>
+        <span  tooltip="{% trans '指定用户' %}" placement="right"><i class="layui-icon layui-icon-user"></i></span>
         {{# }else if(d.role == 3){ }}
-        <span  tooltip="访问码" placement="right"><i class="layui-icon layui-icon-key"></i></span>
+        <span  tooltip="{% trans '访问码' %}" placement="right"><i class="layui-icon layui-icon-key"></i></span>
         {{# } }}
     </a>
     {% endverbatim %}
@@ -47,7 +47,7 @@
 <script type="text/html" id="project-bar">
     {% verbatim %}
     <a href="/manage_pro_doc_sort/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a>
-    <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
+    <a href="/modify_pro/?pro_id={{d.id}}" title="{% trans '修改文集配置' %}" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
     <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
@@ -94,13 +94,13 @@
         let cols = [
             [
                 {type: 'checkbox',width:20},
-                {title: '文集名称',field: 'name',align: 'left',templet:"#project-name",minWidth:200},
+                {title: '{% trans "文集名称" %}',field: 'name',align: 'left',templet:"#project-name",minWidth:200},
                 // {title: '简介',field: 'intro',align: 'left',templet:"#share-type"},
                 // {title: '权限',field: 'role',align: 'left',templet:"#project-role"},
-                {title: '文档数',field: 'doc_total',align: 'left',width:90},
-                {title: '协作人数',field: 'colla_total',align: 'left',templet:"#colla-cnt",width:90},
-                {title: '创建时间',field: 'create_time',align: 'left',templet:"#project-create-time"},
-                {title: '操作',toolbar: '#project-bar',align: 'left',}
+                {title: '{% trans "文档数" %}',field: 'doc_total',align: 'left',width:90},
+                {title: '{% trans "协作人数" %}',field: 'colla_total',align: 'left',templet:"#colla-cnt",width:90},
+                {title: '{% trans "创建时间" %}',field: 'create_time',align: 'left',templet:"#project-create-time"},
+                {title: '{% trans "操作" %}',toolbar: '#project-bar',align: 'left',}
             ]
         ]
         // 渲染表格
@@ -143,11 +143,11 @@
         createProject = function(){
             layer.open({
                 type:1,
-                title:'新建文集',
+                title:'{% trans "新建文集" %}',
                 area:'300px;',
                 id:'createPro',//配置ID
                 content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea"></textarea></div>',
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -174,11 +174,11 @@
         modifyProject = function(pro_id,pro_name,pro_intro){
             layer.open({
                 type:1,
-                title:'修改文集',
+                title:'{% trans "修改文集" %}',
                 area:'300px;',
                 id:'modifyPro',//配置ID
                 content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required" value="'+pro_name+'"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea">'+pro_intro+'</textarea></div>',
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -206,11 +206,11 @@
         delProject = function(pro_id){
             layer.open({
                 type:1,
-                title:'删除文集',
+                title:'{% trans "删除文集" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
                 content:'<div style="margin-left:10px;">警告：此操作将删除文集及文集下所有文档！</div>',
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -236,7 +236,7 @@
         batchRemove = function(obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
-                layer.msg("未选中任何文集", {
+                layer.msg("{% trans '未选中任何文集' %}", {
                     icon: 3,
                     time: 1000
                 });
@@ -248,9 +248,9 @@
             }
             pro_id = pro_id.substr(0, pro_id.length - 1);
             // console.log(pro_id)
-            layer.confirm('确定要删除这些文集？', {
+            layer.confirm('{% trans "确定要删除这些文集？" %}', {
                 icon: 3,
-                title: '提示'
+                title: '{% trans "提示" %}'
             }, function(index) {
                 layer.close(index);
                 let loading = layer.load();
@@ -262,7 +262,7 @@
                     success: function(r) {
                         layer.close(loading);
                         if (r.status) {
-                            layer.msg("删除成功", {
+                            layer.msg("{% trans '删除成功' %}", {
                                 icon: 1,
                                 time: 1000
                             }, function() {

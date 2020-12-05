@@ -1,7 +1,7 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文集设置{% endblock %}
+{% block title %}{% trans "文集设置" %}{% endblock %}
 {% block custom_element %}
 <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
 {% endblock %}
@@ -10,8 +10,8 @@
     <div class="layui-card-body">
     <div class="layui-row" style="padding-left:15px;">
         <span class="layui-breadcrumb" lay-separator=">">
-          <a href="{% url 'manage_project' %}">文集管理</a>
-          <a><cite>文集设置</cite></a>
+          <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
+          <a><cite>{% trans "文集设置" %}</cite></a>
         </span>
     </div>
     </div>
@@ -22,37 +22,37 @@
     <div class="layui-card-header" style="margin-bottom: 10px;">
 
       <div class="layui-row">
-          <span style="font-size:18px;">文集：{{pro.name}}
+          <span style="font-size:18px;">{% trans "文集：" %}{{pro.name}}
           </span>
       </div>
     </div>
 
     <div class="layui-tab">
         <ul class="layui-tab-title">
-            <li class="layui-this">基础信息</li>
-            <li>权限配置</li>
-            <li>下载配置</li>
-            <li>管理控制</li>
+            <li class="layui-this">{% trans "基础信息" %}</li>
+            <li>{% trans "权限配置" %}</li>
+            <li>{% trans "下载配置" %}</li>
+            <li>{% trans "管理控制" %}</li>
         </ul>
         <div class="layui-tab-content">
             <!-- 文集基础信息配置 -->
             <div class="layui-tab-item layui-show">
                 <div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">文集名称</label>
+                        <label class="layui-form-label">{% trans "文集名称" %}</label>
                         <div class="layui-input-block">
-                            <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required" value="{{pro.name}}">
+                            <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="{% trans '输入文集名' %}" required  lay-verify="required" value="{{pro.name}}">
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">文集简介</label>
+                        <label class="layui-form-label">{% trans "文集简介" %}</label>
                         <div class="layui-input-block">
-                            <textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea">{{pro.intro}}</textarea>
+                            <textarea name="desc" id="desc" placeholder="{% trans '输入文集简介' %}" class="layui-textarea">{{pro.intro}}</textarea>
                         </div>
                     </div>
                     <div class="layui-form-item" style="margin-top: 10px;">
                         <div class="layui-input-block">
-                            <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-btn"><i class="layui-icon layui-icon-edit"></i>立即修改</button>
+                            <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-btn"><i class="layui-icon layui-icon-edit"></i>{% trans "立即修改" %}</button>
                         </div>
                     </div>
                 </div>
@@ -61,35 +61,35 @@
             <div class="layui-tab-item">
                 <div class="layui-form">
                     <div class="layui-form-item">
-                        <label class="layui-form-label">浏览权限</label>
+                        <label class="layui-form-label">{% trans "浏览权限" %}</label>
                         <div class="layui-input-block">
-                            <input type="radio" name="role" value="0" title="公开" {% if pro.role == 0 %} checked {%endif%} lay-filter="role">
-                            <input type="radio" name="role" value="1" title="私密" {% if pro.role == 1 %} checked {%endif%} lay-filter="role">
-                            <input type="radio" name="role" value="2" title="指定用户可见" {% if pro.role == 2 %} checked {%endif%} lay-filter="role">
-                            <input type="radio" name="role" value="3" title="访问码可见" {% if pro.role == 3 %} checked {%endif%} lay-filter="role">
+                            <input type="radio" name="role" value="0" title="{% trans '公开' %}" {% if pro.role == 0 %} checked {%endif%} lay-filter="role">
+                            <input type="radio" name="role" value="1" title="{% trans '私密' %}" {% if pro.role == 1 %} checked {%endif%} lay-filter="role">
+                            <input type="radio" name="role" value="2" title="{% trans '指定用户可见' %}" {% if pro.role == 2 %} checked {%endif%} lay-filter="role">
+                            <input type="radio" name="role" value="3" title="{% trans '访问码可见' %}" {% if pro.role == 3 %} checked {%endif%} lay-filter="role">
                         </div>
                     </div>
         
                     <div class="layui-form-item" style="{% if pro.role == 3 %}{% else %}display:none;{% endif %}" id="role-pwd">
-                        <label class="layui-form-label">访问码</label>
+                        <label class="layui-form-label">{% trans "访问码" %}</label>
                         <div class="layui-input-inline">
-                          <input type="text" name="viewcode" id="viewcode" placeholder="请输入访问码" autocomplete="off" class="layui-input" value="{% if pro.role_value != None %}{{pro.role_value}}{% endif %}">
+                          <input type="text" name="viewcode" id="viewcode" placeholder="{% trans '请输入访问码' %}" autocomplete="off" class="layui-input" value="{% if pro.role_value != None %}{{pro.role_value}}{% endif %}">
                         </div>
-                        <div class="layui-form-mid layui-word-aux">不少于4位数</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "不少于4位数" %}</div>
                     </div>
         
                     <div class="layui-form-item" style="{% if pro.role == 2 %}{% else %}display:none;{% endif %}" id="role-user">
-                        <label class="layui-form-label">允许用户</label>
+                        <label class="layui-form-label">{% trans "允许用户" %}</label>
                         <div class="layui-input-block">
                             <div class="tagsinput-primary form-group">
-                                <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{% if pro.role_value != None %}{{pro.role_value}}{% endif %}" placeholder="请输入用户名，回车输入多个用户">
+                                <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{% if pro.role_value != None %}{{pro.role_value}}{% endif %}" placeholder="{% trans '请输入用户名，回车输入多个用户' %}">
                             </div>
                         </div>
                     </div>
         
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                          <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-role">修改权限</button>
+                          <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-role">{% trans "修改权限" %}</button>
                         </div>
                     </div>
                 </div>
@@ -99,51 +99,51 @@
                 <div class="layui-form">
                     {% load project_filter %}
                     <div class="layui-form-item">
-                        <blockquote class="layui-elem-quote">注意：开启某类型文件下载后，请先点击“生成或更新XXX文件”，文集文档中如果包含公式、流程图、时序图、脑图等内容，将会延长生成时间，请耐心等待</blockquote>
+                        <blockquote class="layui-elem-quote">{% trans "注意：开启某类型文件下载后，请先点击“生成或更新XXX文件”，文集文档中如果包含公式、流程图、时序图、脑图等内容，将会延长生成时间，请耐心等待" %}</blockquote>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">EPUB下载</label>
+                        <label class="layui-form-label">{% trans "EPUB下载" %}</label>
                         <div class="layui-input-block">
                             <input type="checkbox" name="download_epub"
                                {% if pro.id|report_status_epub == 1 %} checked {% endif %}
-                               lay-skin="switch" lay-text="允许|禁止">
+                               lay-skin="switch" lay-text="{% trans '允许|禁止' %}">
                                <!-- 判断后台是否开启导出，如果开启，则显示 -->
                                {% if enable_project_report %}
-                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')"><i class="layui-icon layui-icon-refresh"></i><u>生成或更新EPUB文件</u></a>
+                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')"><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新EPUB文件" %}</u></a>
                                     {% if project_files %}
                                         {% for file in project_files %}
                                             {% if file.file_type == 'epub' %}
-                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>下载文集EPUB文件</u></a>
+                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集EPUB文件" %}</u></a>
                                             {% else %}
                                                 
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                    | <span style="color: #ff213b;">未生成文集导出文件</span>
+                                    | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
                                     {% endif %}
                                 {% endif %}
                         </div>
                     </div>
                     <hr>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">PDF下载</label>
+                        <label class="layui-form-label">{% trans "PDF下载" %}</label>
                         <div class="layui-input-block">
                             <input type="checkbox" name="download_pdf"
                                {% if pro.id|report_status_pdf == 1 %} checked {%endif%}
-                               lay-skin="switch" lay-text="允许|禁止">
+                               lay-skin="switch" lay-text="{% trans '允许|禁止' %}">
                                <!-- 判断后台是否开启导出，如果开启，则显示 -->
                                {% if enable_project_report %}
-                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>生成或更新PDF文件</u></a>
+                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新PDF文件" %}</u></a>
                                     {% if project_files %}
                                         {% for file in project_files %}
                                             {% if file.file_type == 'pdf' %}
-                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>下载文集PDF文件</u></a>
+                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集PDF文件" %}</u></a>
                                             {% else %}
                                                 
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                    | <span style="color: #ff213b;">未生成文集导出文件</span>
+                                    | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
                                     {% endif %}
                                 {% endif %}
                         </div>
@@ -151,7 +151,7 @@
                     <hr>
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                          <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-download">保存文集导出配置</button>
+                          <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-download">{% trans "保存文集导出配置" %}</button>
                         </div>
                     </div>
                     
@@ -161,26 +161,26 @@
             <div class="layui-tab-item">
                 <div class="layui-row">
                     <div style="float: left;">
-                        <strong>导出文集</strong>
-                        <p>将文集内的文档以Markdown（.md）的形式导出为zip压缩文件</p>
+                        <strong>{% trans "导出文集" %}</strong>
+                        <p>{% trans "将文集内的文档以Markdown（.md）的形式导出为zip压缩文件</p>
                     </div>
-                    <button class="layui-btn layui-btn-primary" style="float: right;" id="export-project">导出文集</button>
+                    <button class="layui-btn layui-btn-primary" style="float: right;" id="export-project">{% trans "导出文集" %}</button>
                 </div>
                 <hr>
                 <div class="layui-row">
                     <div style="float: left;">
-                        <strong>转让文集</strong>
-                        <p>将文集的管理权限和文集下自己创建的文档转让给站点的其他用户</p>
+                        <strong>{% trans "转让文集" %}</strong>
+                        <p>{% trans "将文集的管理权限和文集下自己创建的文档转让给站点的其他用户" %}</p>
                     </div>
-                    <a class="layui-btn layui-btn-primary" style="float: right;" id="transfer-project" href="{% url 'manage_pro_transfer' pro.id %}">转让文集</a>
+                    <a class="layui-btn layui-btn-primary" style="float: right;" id="transfer-project" href="{% url 'manage_pro_transfer' pro.id %}">{% trans "转让文集" %}</a>
                 </div>
                 <hr>
                 <div class="layui-row">
                     <div style="float: left;">
-                        <strong>删除文集</strong>
-                        <p>删除文集及文集下的所有文档</p>
+                        <strong>{% trans "删除文集" %}</strong>
+                        <p>{% trans "删除文集及文集下的所有文档" %}</p>
                     </div>
-                    <button class="layui-btn layui-btn-warm" style="float: right;" id="delete-project">删除文集</button>
+                    <button class="layui-btn layui-btn-warm" style="float: right;" id="delete-project">{% trans "删除文集" %}</button>
                 </div>
             </div>
             

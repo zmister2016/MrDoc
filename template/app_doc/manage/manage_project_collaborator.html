@@ -1,20 +1,20 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文集协作管理{% endblock %}
+{% block title %}{% trans "文集协作管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
             <span class="layui-breadcrumb" lay-separator=">">
-            <a href="{% url 'manage_project' %}">文集管理</a>
-            <a><cite>协作管理</cite></a>
+            <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
+            <a><cite>{% trans "协作管理" %}</cite></a>
             </span>
         </div>
 
         <div class="layui-card-header" style="margin-bottom: 10px;">
             <div class="layui-row">
-                <span style="font-size:18px;">管理文集<strong style="text-decoration:underline;"><a href="{% url 'pro_index' pro.id %}" target="_blank">《{{pro.name}}》</a></strong>的协作
+                <span style="font-size:18px;">{% trans "管理文集" %}<strong style="text-decoration:underline;"><a href="{% url 'pro_index' pro.id %}" target="_blank">《{{pro.name}}》</a></strong>的协作
                 </span>
             </div>
         </div>
@@ -23,20 +23,20 @@
                 {% csrf_token %}
                 {% load project_filter %}
                 <div class="layui-form-item">
-                    <label class="layui-form-label">文集名称</label>
+                    <label class="layui-form-label">{% trans "文集名称" %}</label>
                     <div class="layui-input-block">
                     <input type="text" name="title" required value="{{pro.name}}"  disabled class="layui-input">
                         <!--<span>{{pro.name}}</span>-->
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">协作人数：</label>
+                    <label class="layui-form-label">{% trans "协作人数：" %}</label>
                     <div class="layui-input-inline">
                         <input type="text" value="{{ pro.id | project_collaborator_cnt }}人" class="layui-input" disabled>
                     </div>
                     <div class="layui-form-mid layui-word-aux">
                         <button class="layui-btn layui-btn-xs layui-btn-normal" type="button" onclick="addProjectColla('{{pro.id}}')">
-                            <i class="layui-icon layui-icon-addition"></i>添加
+                            <i class="layui-icon layui-icon-addition"></i>{% trans "添加" %}
                         </button>
                     </div>
                 </div>
@@ -45,8 +45,8 @@
         {% if collaborator.count != 0 %}
         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
             <ul class="layui-tab-title">
-            <li class="layui-this">协作用户</li>
-            <li>协作文档</li>
+            <li class="layui-this">{% trans "协作用户" %}</li>
+            <li>{% trans "协作文档" %}</li>
             </ul>
             <div class="layui-tab-content">
                 <!-- 协作用户 -->
@@ -55,9 +55,9 @@
                         <table class="layui-table">
                             <thead>
                                 <tr>
-                                    <th>用户名</th>
-                                    <th>协作权限</th>
-                                    <th>操作</th>
+                                    <th>{% trans "用户名" %}</th>
+                                    <th>{% trans "协作权限" %}</th>
+                                    <th>{% trans "操作" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -66,17 +66,17 @@
                                     <td>{{ colla.user }}</td>
                                     <td>
                                         {% if colla.role == 0 %}
-                                        新建文档，修改、删除新建的文档
+                                        {% trans "新建文档，修改、删除新建的文档" %}
                                         {% else %}
-                                        可操作所有文档
+                                        {% trans "可操作所有文档" %}
                                         {% endif %}
                                     </td>
                                     <td>
                                         <a href="javascript:void(0);" onclick="modifyProjectColla('{{colla.user}}')" class="layui-btn layui-btn-xs layui-btn-normal">
-                                            <i class="layui-icon layui-icon-edit"></i>修改
+                                            <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
                                         </a>
                                         <a href="javascript:void(0);" onclick="delProColla('{{colla.user}}')" class="layui-btn layui-btn-xs layui-btn-warm">
-                                            <i class="layui-icon layui-icon-delete"></i>删除
+                                            <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                                         </a>
                                     </td>
                                 </tr>
@@ -91,10 +91,10 @@
                         <table class="layui-table">
                             <thead>
                                 <tr>
-                                    <th>文档名称</th>
-                                    <th>创建用户</th>
-                                    <th>创建时间</th>
-                                    <th>操作</th>
+                                    <th>{% trans "文档名称" %}</th>
+                                    <th>{% trans "创建用户" %}</th>
+                                    <th>{% trans "创建时间" %}</th>
+                                    <th>{% trans "操作" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -105,10 +105,10 @@
                                     <th>{{ doc.create_time }}</th>
                                     <td>
                                         <a href="{% url 'modify_doc' doc.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
-                                            <i class="layui-icon layui-icon-edit"></i>修改
+                                            <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
                                         </a>
                                         <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
-                                            <i class="layui-icon layui-icon-delete"></i>删除
+                                            <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                                         </a>
                                     </td>
                                 </tr>

@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}{{site_keywords}}"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>{{doc.name}} - 文档分享 - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
+    <title>{{doc.name}} - {% trans "文档分享" %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     {% if doc.editor_mode == 2 %}
@@ -127,13 +127,13 @@
             <!-- <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
                 <i class="fa fa-align-justify"></i>
             </a> -->
-            <a class="btn pull-left font-small"  href="javascript:void(0);" title="缩小字体">
+            <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
                 <i class="fa fa-font">-</i>
             </a>
-            <a class="btn pull-left font-large"  href="javascript:void(0);" title="放大字体">
+            <a class="btn pull-left font-large"  href="javascript:void(0);" title="{% trans '放大字体' %}">
                 <i class="fa fa-font">+</i>
             </a>
-            <a class="btn pull-left font-switch" href="javascript:void(0);" title="切换字体类型">
+            <a class="btn pull-left font-switch" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
                 <i class="fa fa-text-height"></i>
             </a>
             <!-- 顶部工具栏 -->
@@ -183,7 +183,7 @@
                         <span>
                             <i class="fa fa-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
                         </span>
-                        <span tooltip="更新于:{{doc.modify_time}}">
+                        <span tooltip="{% trans '更新于:' %}{{doc.modify_time}}">
                             <i class="fa fa-clock-o"></i> {{ doc.modify_time }}
                         </span>
                     </div>

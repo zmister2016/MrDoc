@@ -1,13 +1,13 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}文档标签管理{% endblock %}
+{% block title %}{% trans "文档标签管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
-          <span style="font-size:18px;">文档标签管理
+          <span style="font-size:18px;">{% trans "文档标签管理" %}
           </span>
       </div>
         </div>
@@ -26,9 +26,9 @@
         </colgroup>
         <thead>
             <tr>
-            <th>标签名称</th>
-            <th>标签文档数量</th>
-            <th>操作</th>
+            <th>{% trans "标签名称" %}</th>
+            <th>{% trans "标签文档数量" %}</th>
+            <th>{% trans "操作" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -39,10 +39,10 @@
             <td>{{ tag.id | tag_doc_cnt }}</td>
             <td>
                 <a href="javascript:void(0);"  onclick="modifyTag('{{tag.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
-                    <i class="layui-icon layui-icon-edit"></i>修改
+                    <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
                 </a>
                 <a href="javascript:void(0);" onclick="delTag('{{tag.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
-                    <i class="layui-icon layui-icon-delete"></i>删除
+                    <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                 </a>
             </td>
             </tr>
