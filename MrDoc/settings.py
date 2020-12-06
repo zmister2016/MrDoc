@@ -40,7 +40,7 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug')
 
-VERSIONS = '0.6.1'
+VERSIONS = '0.6.2'
 
 ALLOWED_HOSTS = ['*']
 
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,6 +84,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -165,6 +167,17 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
+
+# 多语言配置
+LANGUAGES = (
+    ('zh-hans',('中文简体')),
+    ('zh-hant',('中文繁體')),
+    ('en',('english')),
+)
+# 翻译文件
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR,'locale'),
+)
 
 
 # Static files (CSS, JavaScript, Images)

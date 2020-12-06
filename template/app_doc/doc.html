@@ -171,8 +171,10 @@
 <script src="{% static 'toc/doctoc.js' %}"></script>
 <script src="{% static 'viewerjs/viewer.min.js' %}"></script>
 <script>
+    // layui.use(['jquery','layer','form'],function(){
     var layer = layui.layer;
     var form = layui.form;
+    // var $ = layui.jquery;
     // Ajax默认配置
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -326,5 +328,6 @@
         share_data['is_enable'] = true
         updateDocShare(share_data);
     })
+// })
 </script>
 {% endblock %}

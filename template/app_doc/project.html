@@ -43,7 +43,9 @@
         <div class="layui-tab-content" style="padding: 0;">
             <!-- 文集简介 -->
             <div class="layui-tab-item layui-show">
-                <div id="project-desc"><textarea style="display: none;">{{project.intro}}</textarea></div>
+                <div id="project-desc">
+                    <textarea style="display: none;">{% if project.intro == '' or project.intro is None %}{% trans "暂无文集简介" %}{% else %}{{project.intro}}{% endif %}
+                </textarea></div>
             </div>
             <!-- 目录大纲 -->
             <div class="layui-tab-item">

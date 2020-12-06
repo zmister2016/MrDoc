@@ -285,12 +285,14 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
+<!-- <script src="{% static 'layui/layui.js' %}"></script> -->
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 
 <script>
-// 如果文集的文档数量大于999，使用异步加载左侧文集大纲
+
 {% if toc_cnt > 999 %}
+    // 如果文集的文档数量大于999，使用异步加载左侧文集大纲
     getProjectToc();
 {% endif %}
 </script>
@@ -308,8 +310,9 @@
 
 <!-- 解析渲染Markdown -->
 <script>
-    // EditorMD模式
+    
     {% if doc.editor_mode == 1 %}
+        // EditorMD模式
         //解析Markdown为HTML
         editormd.markdownToHTML("content", {
             htmlDecode      : "style,script,iframe",
@@ -324,8 +327,9 @@
             tocDropdown   : false,
             atLink    : false,//禁用@链接
         });
-    // Vditor模式
+    
     {% elif doc.editor_mode == 2 %}
+    // Vditor模式
         // 渲染Markdown
         const initRender = () => {
             const md_content = $("#content textarea").val()
@@ -343,9 +347,6 @@
                     var toc_elem = $("#toc-container div ul.markdown-toc-list")
                     Vditor.outlineRender(document.getElementById('content'), toc_elem[0])
                     if (outlineElement.innerText.trim() !== '') {
-                        // 去除vditor默认添加的空格字符
-                        var toc_html = $("#toc-container");
-                        //toc_html.html(toc_html.html().replace('  ',''))
                         var toc_cnt = $(".markdown-toc-list").children().length;
                         //console.log(toc_cnt)
                         if(toc_cnt > 0){
