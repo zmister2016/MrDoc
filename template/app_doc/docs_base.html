@@ -24,6 +24,11 @@
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
+        {% if img_scale %}
+        .markdown-body p img{
+            max-width: 350px;
+        }
+        {% endif %}
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>

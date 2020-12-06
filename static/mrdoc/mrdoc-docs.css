@@ -58,11 +58,6 @@
         .markdown-body h6{
             font-size: .85em;
         }
-        {% if img_scale %}
-        .markdown-body p img{
-            max-width: 350px;
-        }
-        {% endif %}
         #url_qrcode img{
             margin: auto;
         }
