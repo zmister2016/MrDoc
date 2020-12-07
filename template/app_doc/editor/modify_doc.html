@@ -2,7 +2,6 @@
 {% load static %}
 {% load i18n %}
 {% block title %}修改文档{% endblock %}
-{% block editor_type %}修改文档{% endblock %}
 
 {% block custom_style %}
 <style>
@@ -69,95 +68,7 @@
             </label>
         </div>
 
-        <div class="layui-col-md12" style="margin-bottom: 10px;">
-            <div class="layui-input-inblock">
-              <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
-                <option value="{{ project.id }}">{{ project.name }}</option>
-              </select>
-            </div>
-        </div>
-
-        <div class="layui-row">
-            <div class="layui-col-md12" style="margin-bottom: 10px;">
-                <span>点击文档树选择上级（可选）或</span>
-                <button class="layui-btn layui-btn-xs layui-btn-normal" id="clearParentDoc">取消上级</button>
-                <input type="text" id="parent-doc" hidden> 
-            </div>
-            <div class="layui-col-md12">
-                <input type="number" class="layui-input" placeholder="输入文档排序值，默认99" id="sort" value="{{doc.sort}}">
-            </div>
-        </div>
-
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">文档结构树</h2>
-                <div class="layui-colla-content layui-show" style="max-height: 400px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
-                    <div id="doc-tree"></div>
-                </div>
-            </div>
-        </div>
-        <hr>
-
-        <!-- 标签输入框 -->
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">标签</h2>
-                <div class="layui-colla-content layui-show">
-                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{{doc_tags}}" placeholder="输入标签名">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 文档下级目录展开设置 -->
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">下级目录</h2>
-                <div class="layui-colla-content layui-show">
-                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        {%if doc.open_children %}
-                        <input type="radio" name="open-children" value="true" title="展开" checked>
-                        <input type="radio" name="open-children" value="false" title="收起">
-                        {% else %}
-                        <input type="radio" name="open-children" value="true" title="展开">
-                        <input type="radio" name="open-children" value="false" title="收起" checked>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 发布按钮 -->
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">发布</h2>
-                <div class="layui-colla-content layui-show">
-                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        <div class="layui-row" style="margin-top: 5px;">
-                            <button class="layui-btn layui-btn-primary layui-btn-fluid mrdoc-btn-default" id="modify_save_doc" title="保存当前内容为草稿文档">
-                                <i class="fa fa-save"></i> 保存为草稿
-                            </button>
-                        </div>
-                
-                        <div class="layui-row" style="margin-top: 5px;">
-                            <button class="layui-btn layui-btn-normal layui-btn-fluid" id="modify_pub_doc" title="发布当前内容">
-                                <i class="fa fa-save"></i> 发布文档
-                            </button>
-                        </div>
-                
-                        <div class="layui-row" style="margin-top: 5px;">
-                            <button class="layui-btn layui-btn-warm layui-btn-fluid" onclick="moveDoc()" title="复制或移动此文档到其他文集"><i class="fa fa-copy"></i> 复制/移动文档</button>
-                        </div>
-                    
-                        <div class="layui-row" style="margin-top: 5px;">
-                            <button class="layui-btn layui-btn-danger layui-btn-fluid" onclick="delDoc()" title="删除此文档"><i class="fa fa-trash"></i> 删除文档</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        {% include 'app_doc/editor/tpl_left_modify_custom.html' %}
     </div>
     
 
@@ -178,6 +89,10 @@
         <textarea style="display:none;">{{ doc.pre_content }}</textarea>
         <textarea class="editormd-html-textarea" name="$id-html-code"></textarea>
     </div>
+{% endblock %}
+
+{% block custom_div %}
+    {% include 'app_doc/editor/tpl_editor_div_doc.html' %}
 {% endblock %}
 
 {% block custom_script %}
@@ -520,119 +435,4 @@
     })
 
 </script>
-{% endblock %}
-
-{% block custom_div %}
-<!-- 模板div块 -->
-<div class="doctemp-list" id="doctemp-list" style="display: none;width: 500px;">
-    <div style="margin: 10px 0 0 10px;">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">创建新模板</a>
-        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_doctemp' %}" target="_blank">管理文档模板</a>
-    </div>
-    <table class="layui-table" style="margin: 10px;">
-      <colgroup>
-        <col width="150">
-        <col width="200">
-        <col>
-      </colgroup>
-      <thead>
-        <tr>
-          <th>模板名称</th>
-          <th>创建时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for temp in doctemp_list %}
-        <tr>
-          <td>{{ temp.name }}</td>
-          <td>{{ temp.create_time }}</td>
-          <td>
-              <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertTemp('{{temp.id}}');">选择模板</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</div>
-
-<!-- 文档历史div块 -->
-<div class="history-list" id="history-list" style="display: none;width: 500px;">
-    <table class="layui-table" style="margin: 10px;" lay-size='sm'>
-      <thead>
-        <tr>
-          <th>创建时间</th>
-          <th>用户</th>
-          <th>对比</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for history in history_list %}
-        <tr>
-          <td>{{ history.create_time }}</td>
-          <td>{{ history.create_user }}</td>
-          <td>
-              <a href="{% url 'diff_doc' history.doc.id history.id %}" class="layui-btn layui-btn-primary layui-btn-sm" target="_blank">查看版本差异</a>
-          </td>
-          <td>
-              <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertHistory('{{history.doc.id}}','{{history.id}}');">恢复此版本</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</div>
-
-<!-- 移动文档div块 -->
-<div class="layui-form" id="move-project" style="display: none;width: 400px;height: 500px;" lay-filter='move-projects'>
-    <div class="layui-col-md12" style="margin: 10px;">
-        <div class="layui-form-item">
-            <!-- <label class="layui-form-label">操作类型</label> -->
-            <div class="layui-input-block" style="margin-left: 0px;">
-              <input type="radio" name="move-type" value="0" title="复制" checked>
-              <input type="radio" name="move-type" value="1" title="移动">
-              <input type="radio" name="move-type" value="2" title="移动（含下级文档）">
-            </div>
-          </div>
-          
-        <input id="move-parent-id" hidden value="0" />
-        <div class="layui-input-inblock">
-          <select name="move_pro_id"  lay-filter="moveProject" id="moveProject">
-            <option value="">请选择一个文集（必选）</option>
-              <!-- 自己的文集 -->
-              <optgroup label="自有文集" id="self-project">
-              {% for p in project_list %}
-                  {% if p.role == 1 %}
-                  <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
-                  {% elif p.role == 2 %}
-                  <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
-                  {% elif p.role == 3 %}
-                  <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
-                  {% else %}
-                  <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
-                  {% endif %}
-              {% endfor %}
-              </optgroup>
-              <!-- 协作的文集 -->
-              {% if colla_project_list.count > 0 %}
-              <optgroup label="协作文集">
-              {% for p in colla_project_list %}
-                    <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
-              {% endfor %}
-              </optgroup>
-              {% endif %}
-          </select>
-        </div>
-    </div>
-    <div  class="layui-col-md12" style="max-height: 380px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
-        <div id="move-doc-tree"></div>
-    </div>
-    <div class="layui-col-md12" style="margin: 10px;">
-        <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="submitMoveDoc()">确认操作</button>
-    </div>
-    <div class="layui-col-md12" style="margin: 10px;">
-        <span style="font-size: 12px;color:mediumvioletred;">警告：MrDoc仅支持3级目录显示，若移动的下级文档层级在目标文集中超过3层将不会显示在文集目录中</span>
-    </div>
-</div>
 {% endblock %}

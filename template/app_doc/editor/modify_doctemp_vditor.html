@@ -2,7 +2,6 @@
 {% load static %}
 {% load i18n %}
 {% block title %}修改文档模板 - {{doctemp.name}}{% endblock %}
-{% block editor_type %}修改文档模板{% endblock %}
 
 {% block head_toolbar %}
 <a class="btn pull-left" aria-label="" href="{% url 'create_doctemp' %}?pid={{project.id}}" target="_blank">
@@ -17,35 +16,7 @@
 {% endblock %}
 
 {% block left_opera %}
-<div class="layui-form" style="padding: 10px;">
-    <div class="layui-row">
-        <div class="layui-col-md12" style="margin-bottom: 10px;">
-            <label class="doc-form-label">
-                <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="modifyDocTemp()">
-                    <i class="fa fa-save"></i> 保存模板
-                </button>
-            </label>
-        </div>
-    </div>
-    <div class="layui-col-md12" style="margin-bottom: 10px;">
-        <label class="doc-form-label">
-            <button class="layui-btn layui-btn-primary layui-btn-fluid" id="doc-cache-btn">
-                <i class="fa fa-save"></i> 本地缓存
-            </button>
-        </label>
-    </div>
-    <!-- 已有模板 -->
-    <div class="layui-row">
-        <div class="layui-card">
-            <div class="layui-card-header">现有模板</div>
-            <div class="layui-card-body">
-                {% for temp in doctemps %}
-                    <li><a href="{% url 'modify_doctemp' temp.id %}" target="_blank" title="点击查看修改《{{temp.name}}》的内容"><i class="fa fa-file"></i> {{temp.name}}</a></li>
-                {% endfor %}
-            </div>
-          </div>
-    </div>
-</div>
+    {% include 'app_doc/editor/tpl_left_modify_doctemp_custom.html' %}
 {% endblock %}
 
 

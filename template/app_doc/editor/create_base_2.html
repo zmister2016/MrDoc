@@ -30,12 +30,7 @@
 <div class="doc layui-fluid" style="padding-left:0px;">
     <!-- 左侧工具栏 -->
     <div class="doc-summary">
-        <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
-            <span style="font-size: 14px;">你正在：{% block editor_type %}{% endblock %}</span>
-            <span class="layui-badge layui-bg-cyan" id="wordcount">0</span>
-        </div>
-        
-        <hr>
+        {% include 'app_doc/editor/tpl_left_top.html' %}
         {% block left_opera %}
         {% endblock %}
     </div>
@@ -45,7 +40,6 @@
     <div class="doc-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
-
             <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
                 <i class="fa fa-align-justify"></i>
             </a>
@@ -80,13 +74,6 @@
 </script>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<!-- <script src="{% static 'editor.md/lib/marked.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/underscore.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/sequence-diagram.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/flowchart.min.js' %}"></script> -->
-<!-- <script src="{% static 'editor.md/lib/jquery.flowchart.min.js' %}"></script> -->
 <!-- 脑图开始 -->
 <script src="{% static 'mindmap/d3@5.js' %}"></script>
 <script src="{% static 'mindmap/transform.min.js' %}"></script>
@@ -531,127 +518,16 @@
         editor.focus()
     }
 </script>
-{% block custom_script %}
-{% endblock %}
 </body>
+<!-- 自定义DIV模板 -->
 {% block custom_div %}
 {% endblock %}
-<!-- 选择和上传图片div -->
-<div id="upload-img" style="display:none;margin:20px;">
-    <div class="layui-tab" lay-filter="img-tab">
-      <ul class="layui-tab-title">
-        <li class="layui-this">上传图片</li>
-        <li>选择图片</li>
-      </ul>
-      <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
-            <div class="layui-row">
-                <button class="layui-btn layui-btn-primary layui-btn-fluid" id="upload_img"><i class="layui-icon layui-icon-upload"></i> 上传图片</button>
-            </div>
-            <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
-                <legend style="font-size: 12px;">或 插入外链图片链接</legend>
-              </fieldset>
-            <div class="layui-row" style="margin-top: 10px;">
-                <input type="text" class="layui-input" placeholder="输入图片URL" id="img_url_input" style="margin-bottom: 5px;"/>
-                <button type="button" class="layui-btn layui-btn-primary" onclick="insertImgUrl()">插入图片链接</button>
-            </div>
-        </div>
-        <div class="layui-tab-item">
-            <div class="layui-row" id="select-img-group">
-            </div><hr>
-            <div class="layui-row" id="select-img"></div>
-            <div id="select-img-page"></div>
-        </div>
-      </div>
-    </div>
-</div>
 
-<!-- 选择和上传附件div -->
-<div id="upload-attach" style="display:none;margin:20px;">
-    <span>* 仅支持 {% if attachment_suffix and attachment_suffix != '' %}{{attachment_suffix}}{% else %}zip{% endif %} 格式文件，文件大小不超过 {% if attachment_size and attachment_size != '' %}{{attachment_size}}{% else %}50{% endif %}MB</span>
-    <div style="margin: 10px 0 0 10px;">
-        <button class="layui-btn layui-btn-primary layui-btn-sm" id="upload_attachment"><i class="layui-icon layui-icon-upload"></i> 上传附件</button>
-        <a class="layui-btn layui-btn-primary layui-btn-sm" href="{% url 'manage_attachment' %}" target="_blank"><i class="fa fa-cubes"></i> 管理附件</a>
-    </div>
-    <table class="layui-table" id="attach_table" style="margin: 10px;width:90%;">
-        <thead>
-            <th>附件名称</th>
-            <th>附件大小</th>
-            <th>上传时间</th>
-            <th>操作</th>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <div id="select-attach-page"></div>
-</div>
+{% include 'app_doc/editor/tpl_editor_div.html' %}
 
-<!-- 添加表格div -->
-<div id="layer-table" style="display: none;margin: 10px;">
-    <div class="layui-tab" lay-filter="table-tab" id="insert-table-div">
-        <ul class="layui-tab-title">
-          <li class="layui-this" lay-id="generaTable">生成表格</li>
-          <li lay-id="pasteTable">粘贴表格</li>
-        </ul>
-        <div class="layui-tab-content">
-          <div class="layui-tab-item layui-show" >
-            <div class="layui-row" style="margin: 10px;">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <div class="layui-input-inline" style="width: 50px;">
-                            <input type="number"  placeholder="行" id="row" class="layui-input" value="3">
-                        </div>
-                        <div class="layui-form-mid">x</div>
-                        <div class="layui-input-inline" style="width: 50px;">
-                            <input type="number" placeholder="列" id="col"  class="layui-input" value="3">
-                        </div>
-                        <div class="layui-form-mid" style="width: 100px;">
-                            <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="addtable(1)" >生成表格</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="layui-row" style="margin:10px;" id="TableGroup"></div>
-          </div>
-
-          <div class="layui-tab-item" >
-              <textarea placeholder="粘贴Excel或在线电子表格的内容" class="layui-textarea" style="height: 200px;" id="pasteExcel"></textarea>
-          </div>
-        </div>
-    </div>
-</div>
-
-<!-- 添加音视频div -->
-<div id="insertMultimedia" style="display: none;margin:10px;">
-    <div class="layui-row">
-        <fieldset class="layui-elem-field">
-            <legend>插入音频链接</legend>
-            <div class="layui-field-box">
-              <input class="layui-input" type="url" id="audio_input" placeholder="填入音频文件链接，支持文件后缀格式为mp3、wav、flac、m4a" style="margin-bottom: 5px;">
-              <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('audio')"><i class="fa fa-music"></i> 插入音频</button>
-            </div>
-          </fieldset>
-    </div>
-    <div class="layui-row">
-        <fieldset class="layui-elem-field">
-            <legend>插入视频链接</legend>
-            <div class="layui-field-box">
-                <input class="layui-input" type="url" id="video_input" placeholder="填入视频文件链接，支持文件后缀格式为mp4、m4v、ogg、ogv、webm" style="margin-bottom: 5px;">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video')"><i class="fa fa-video-camera"></i> 插入视频</button>
-            </div>
-          </fieldset>
-    </div>
-    <div class="layui-row">
-        <fieldset class="layui-elem-field">
-            <legend>插入视频网站链接</legend>
-            <div class="layui-field-box">
-                <input class="layui-input" type="url" id="video_iframe_input" placeholder="填入视频网站视频播放页链接，支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站" style="margin-bottom: 5px;">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video_iframe')"><i class="fa fa-youtube-play"></i> 插入视频网站视频</button>
-            </div>
-          </fieldset>
-    </div>
-</div>
-
+<!-- 自定义JS脚本 -->
+{% block custom_script %}
+{% endblock %}
 <script>
     //按钮选择上传图片
     var upload = layui.upload;
@@ -681,6 +557,7 @@
         field:'manage_upload',
 
     });
+    
     // 按钮选择上传附件
     var upload_attach = layui.upload;
     upload_attach.render({
@@ -705,10 +582,6 @@
         field:'attachment_upload',
     })
 
-    //修改预览div中a标签链接新窗口打开
-    $('div.editormd-preview').on('click','a',function(e){
-        e.target.target = '_blank';
-    });
     // 粘贴表格文本框侦听paste粘贴事件
     // 列宽的函数
     function columnWidth(rows, columnIndex) {
@@ -783,21 +656,5 @@
         event.target.value = markdownRows.join("\n")
         return false
     });
-</script>
-<!-- 文档本地缓存div模板 -->
-<div class="layui-form" id="doc-cache-div" style="display: none;">
-    <div style="margin: 5px;">
-        <textarea name="desc" id="doc-cache-content" class="layui-textarea" style="height: 350px;" disabled></textarea>
-    </div>
-</div>
-<script>
-    // 文档浏览器缓存
-    function autoCacheDoc(){
-        setInterval(() => {
-            var editor_value = editor.getValue()
-            window.localStorage.setItem('mrdoc_doc_cache',editor_value)
-        }, 10000);
-    };
-    
 </script>
 </html>

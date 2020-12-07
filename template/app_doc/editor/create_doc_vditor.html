@@ -2,7 +2,6 @@
 {% load static %}
 {% load i18n %}
 {% block title %}新建文档 - Vditor编辑模式{% endblock %}
-{% block editor_type %}新建文档{% endblock %}
 
 {% block head_toolbar %}
 <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
@@ -35,105 +34,8 @@
                 </button> -->
 
         </div>
-
-        <div class="layui-col-md12" style="margin-bottom: 10px;">
-            <div class="layui-input-inblock">
-              <select name="pro_id" lay-verify="required"  lay-filter="project" id="project">
-                <option value="">请选择一个文集（必选）</option>
-                <option value="-1">新建文集</option>
-                  <!-- 自己的文集 -->
-                  <optgroup label="自有文集" id="self-project">
-                  {% for p in project_list %}
-                      {% if p.role == 1 %}
-                      <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
-                      {% elif p.role == 2 %}
-                      <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
-                      {% elif p.role == 3 %}
-                      <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
-                      {% else %}
-                      <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
-                      {% endif %}
-                  {% endfor %}
-                  </optgroup>
-                  <!-- 协作的文集 -->
-                  {% if colla_project_list.count > 0 %}
-                  <optgroup label="协作文集">
-                  {% for p in colla_project_list %}
-                        <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
-                  {% endfor %}
-                  </optgroup>
-                  {% endif %}
-              </select>
-            </div>
-        </div>
-
-        <div class="layui-row">
-            <div class="layui-col-md12" style="margin-bottom: 10px;">
-                <span>点击文档树选择上级（可选）或</span>
-                <button class="layui-btn layui-btn-xs layui-btn-primary" id="clearParentDoc">取消上级</button>
-                <input type="text" id="parent-doc" hidden> 
-            </div>
-            <div class="layui-col-md12">
-                <input type="number" class="layui-input" placeholder="输入文档排序值，默认99" id="sort">
-            </div>    
-        </div>
-
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">文档结构树</h2>
-                <div class="layui-colla-content" style="max-height: 400px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
-                    <div id="doc-tree"></div>
-                </div>
-            </div>
-        </div>
-        <hr>
-
-        <!-- 标签输入框 -->
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">标签</h2>
-                <div class="layui-colla-content">
-                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="" placeholder="输入标签名">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 文档下级目录展开设置 -->
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">下级目录</h2>
-                <div class="layui-colla-content layui-show">
-                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        {%if doc.open_children %}
-                        <input type="radio" name="open-children" value="true" title="展开" checked>
-                        <input type="radio" name="open-children" value="false" title="收起">
-                        {% else %}
-                        <input type="radio" name="open-children" value="true" title="展开">
-                        <input type="radio" name="open-children" value="false" title="收起" checked>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 发布按钮 -->
-        <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-            <div class="layui-colla-item">
-                <h2 class="layui-colla-title">发布</h2>
-                <div class="layui-colla-content layui-show">
-                    <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
-                        <button class="layui-btn layui-btn-primary mrdoc-btn-default" id="save_doc" title="保存当前内容为草稿文档">
-                            <i class="fa fa-save"></i> 保存为草稿
-                        </button>
-                        <button class="layui-btn layui-btn-normal" id="pub_doc" title="发布当前内容">
-                            <i class="fa fa-save"></i> 发布文档
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- 选择文集 -->
+        {% include 'app_doc/editor/tpl_left_create_custom.html' %}
         
     </div>
 </div>
@@ -156,6 +58,9 @@
     </div>
 {% endblock %}
 
+{% block custom_div %}
+    {% include 'app_doc/editor/tpl_editor_div_doc.html' %}
+{% endblock %}
 
 {% block custom_script %}
 <script>
@@ -412,58 +317,4 @@
         }
     })
 </script>
-{% endblock %}
-
-{% block custom_div %}
-<!-- 插入文档模板div块 -->
-<div class="doctemp-list " id="doctemp-list" style="display: none;padding:5px;">
-    <div style="margin: 10px 0 0 10px;">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">新建模板</a>
-        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_doctemp' %}" target="_blank">管理模板</a>
-    </div>
-    <table class="layui-table" style="margin: 10px;width:90%;">
-      <colgroup>
-        <col width="">
-        <col width="">
-        <col>
-      </colgroup>
-      <thead>
-        <tr>
-          <th>模板名称</th>
-          <th class="layui-hide-xs">创建时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for temp in doctemp_list %}
-        <tr>
-          <td>{{ temp.name }}</td>
-          <td class="layui-hide-xs">{{ temp.create_time }}</td>
-          <td>
-              <a class="layui-btn layui-btn-normal layui-btn-sm" href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</div>
-<!-- 结束插入文档模板div块 -->
-
-<!-- 新建文集div块 -->
-<div style="padding: 20px;display:none;" id="create-project-div">
-    <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required">
-    <textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea>
-    <div class="layui-form-item" style="margin-top:10px;">
-        <label class="layui-form-label" style="text-align:left;padding:9px 0px;">文集权限</label>
-        <div class="layui-input-block">
-            <select name="project-role" lay-verify="" class="layui-select" id="project-role">
-                <!--<option value="">选择文集权限</option>-->
-                <option value="0">公开</option>
-                <option value="1">私密</option>
-            </select>
-        </div>
-    </div>
-    <div style="color:red;font-size:12px;">*在可个人中心对文集权限进行进一步控制</div>
-</div>
-<!-- 结束新建文集div块 -->
 {% endblock %}

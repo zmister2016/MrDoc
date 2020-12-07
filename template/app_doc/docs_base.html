@@ -18,7 +18,6 @@
     {% if doc.editor_mode == 2 %}
     <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
     {% endif %}
-
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -163,7 +162,6 @@
             <!-- 顶部工具栏 -->
             {% block head_toolbar %}
             {% endblock %}
-
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
                 <i class="fa fa-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
@@ -291,9 +289,9 @@
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 <!-- <script src="{% static 'layui/layui.js' %}"></script> -->
+<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
-
 <script>
 
 {% if toc_cnt > 999 %}
@@ -315,7 +313,6 @@
 
 <!-- 解析渲染Markdown -->
 <script>
-    
     {% if doc.editor_mode == 1 %}
         // EditorMD模式
         //解析Markdown为HTML
@@ -334,7 +331,7 @@
         });
     
     {% elif doc.editor_mode == 2 %}
-    // Vditor模式
+        // Vditor模式
         // 渲染Markdown
         const initRender = () => {
             const md_content = $("#content textarea").val()
@@ -367,6 +364,18 @@
         }
         initRender();
     {% endif %}
+
+    // 图片放大显示
+    var img_options = {
+        url: 'data-original',
+        fullscreen:false,//全屏
+        rotatable:false,//旋转
+        scalable:false,//翻转
+        button:false,//关闭按钮
+        toolbar:false,
+        title:false,
+        };
+    var viewer = new Viewer(document.getElementById('content'), img_options);
 </script>
 
 <!-- 统计代码开始 -->

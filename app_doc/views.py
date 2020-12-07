@@ -893,6 +893,7 @@ def create_doc(request):
         editor_mode = 1
     if request.method == 'GET':
         try:
+            editor_type = "新建文档"
             pid = request.GET.get('pid',-999)
             project_list = Project.objects.filter(create_user=request.user) # 自己创建的文集列表
             colla_project_list = ProjectCollaborator.objects.filter(user=request.user) # 协作的文集列表
@@ -970,6 +971,7 @@ def create_doc(request):
 @login_required()
 @require_http_methods(['GET',"POST"])
 def modify_doc(request,doc_id):
+    editor_type = "修改文档"
     # 获取用户的编辑器模式
     try:
         user_opt = UserOptions.objects.get(user=request.user)
@@ -1681,6 +1683,7 @@ def manage_doc_share(request):
 @require_http_methods(['GET',"POST"])
 def create_doctemp(request):
     if request.method == 'GET':
+        editor_type = "新建文档模板"
         # 获取用户的编辑器模式
         try:
             user_opt = UserOptions.objects.get(user=request.user)
@@ -1719,6 +1722,7 @@ def create_doctemp(request):
 @require_http_methods(['GET',"POST"])
 def modify_doctemp(request,doctemp_id):
     if request.method == 'GET':
+        editor_type = '修改文档模板'
         try:
             doctemp = DocTemp.objects.get(id=doctemp_id)
             if request.user.id == doctemp.create_user.id:
