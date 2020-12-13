@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
-    <meta name="referrer" content="no-referrer">
+    <meta name="referrer" content="strict-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}{{site_keywords}}"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
@@ -170,7 +170,11 @@
                     <!-- 正文开始 -->
                     <div class="markdown-body" id="content" style="padding: 20px;padding-top: 5px;">
                         {% block page_content %}
+                        {% if doc.editor_mode == 3 %}
+                        {{ doc.pre_content | safe }}
+                        {% else %}
                         <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+                        {% endif %}
                         {% endblock %}
                     </div>
                     <!-- 正文结束 -->
