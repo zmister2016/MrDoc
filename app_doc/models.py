@@ -71,7 +71,7 @@ class Doc(models.Model):
     modify_time = models.DateTimeField(auto_now=True)
     # 文档状态说明：0表示草稿状态，1表示发布状态，2表示删除状态
     status = models.IntegerField(choices=((0,0),(1,1)),default=1,verbose_name='文档状态')
-    # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器
+    # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器，3表示iceEditor编辑器
     editor_mode = models.IntegerField(default=1,verbose_name='编辑器模式')
     open_children = models.BooleanField(default=False,verbose_name="展开下级目录")
 

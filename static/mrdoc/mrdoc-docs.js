@@ -75,7 +75,7 @@ function changeSidebar(){
     }else{
         $("body").removeClass("big-page");
     }
-}
+};
 // 监听文档div点击
 document.querySelector('.doc-body').addEventListener('click', function (e) {
     var screen_width = window.matchMedia('(max-width: 768px)');

@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect
 from django.http.response import JsonResponse,Http404,HttpResponseNotAllowed,HttpResponse
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
@@ -885,10 +886,7 @@ def create_doc(request):
     # 获取用户的编辑器模式
     try:
         user_opt = UserOptions.objects.get(user=request.user)
-        if user_opt.editor_mode == 1:
-            editor_mode = 1
-        elif user_opt.editor_mode == 2:
-            editor_mode = 2
+        editor_mode = user_opt.editor_mode
     except ObjectDoesNotExist:
         editor_mode = 1
     if request.method == 'GET':
@@ -898,11 +896,7 @@ def create_doc(request):
             project_list = Project.objects.filter(create_user=request.user) # 自己创建的文集列表
             colla_project_list = ProjectCollaborator.objects.filter(user=request.user) # 协作的文集列表
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
-            # 根据编辑器模式返回不同的模板
-            if editor_mode == 1:
-                return render(request, 'app_doc/editor/create_doc.html', locals())
-            elif editor_mode == 2:
-                return render(request, 'app_doc/editor/create_doc_vditor.html', locals())
+            return render(request, 'app_doc/editor/create_doc.html', locals())
         except Exception as e:
             logger.exception("访问创建文档页面出错")
             return render(request,'404.html')
@@ -975,10 +969,7 @@ def modify_doc(request,doc_id):
     # 获取用户的编辑器模式
     try:
         user_opt = UserOptions.objects.get(user=request.user)
-        if user_opt.editor_mode == 1:
-            editor_mode = 1
-        elif user_opt.editor_mode == 2:
-            editor_mode = 2
+        editor_mode = user_opt.editor_mode
     except ObjectDoesNotExist:
         editor_mode = 1
     if request.method == 'GET':
@@ -1002,11 +993,7 @@ def modify_doc(request,doc_id):
                 doc_list = Doc.objects.filter(top_doc=project.id)
                 doctemp_list = DocTemp.objects.filter(create_user=request.user)
                 history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
-                # 获取用户的编辑器模式
-                if editor_mode == 1:
-                    return render(request, 'app_doc/editor/modify_doc.html', locals())
-                elif editor_mode == 2:
-                    return render(request, 'app_doc/editor/modify_doc_vditor.html', locals())
+                return render(request, 'app_doc/editor/modify_doc.html', locals())
 
             else:
                 return render(request,'403.html')
@@ -1687,17 +1674,11 @@ def create_doctemp(request):
         # 获取用户的编辑器模式
         try:
             user_opt = UserOptions.objects.get(user=request.user)
-            if user_opt.editor_mode == 1:
-                editor_mode = 1
-            elif user_opt.editor_mode == 2:
-                editor_mode = 2
+            editor_mode = user_opt.editor_mode
         except ObjectDoesNotExist:
             editor_mode = 1
         doctemps = DocTemp.objects.filter(create_user=request.user)
-        if editor_mode == 1:
-            return render(request,'app_doc/editor/create_doctemp.html',locals())
-        else:
-            return render(request, 'app_doc/editor/create_doctemp_vditor.html', locals())
+        return render(request,'app_doc/editor/create_doctemp.html',locals())
     elif request.method == 'POST':
         try:
             name = request.POST.get('name','')
@@ -1709,7 +1690,7 @@ def create_doctemp(request):
                     create_user=request.user
                 )
                 doctemp.save()
-                return JsonResponse({'status':True,'data':'创建成功'})
+                return JsonResponse({'status':True,'data':doctemp.id})
             else:
                 return JsonResponse({'status':False,'data':'模板标题不能为空'})
         except Exception as e:
@@ -1729,17 +1710,11 @@ def modify_doctemp(request,doctemp_id):
                 # 获取用户的编辑器模式
                 try:
                     user_opt = UserOptions.objects.get(user=request.user)
-                    if user_opt.editor_mode == 1:
-                        editor_mode = 1
-                    elif user_opt.editor_mode == 2:
-                        editor_mode = 2
+                    editor_mode = user_opt.editor_mode
                 except ObjectDoesNotExist:
                     editor_mode = 1
                 doctemps = DocTemp.objects.filter(create_user=request.user)
-                if editor_mode == 1:
-                    return render(request,'app_doc/editor/modify_doctemp.html',locals())
-                else:
-                    return render(request, 'app_doc/editor/modify_doctemp_vditor.html', locals())
+                return render(request,'app_doc/editor/modify_doctemp.html',locals())
             else:
                 return HttpResponse('非法请求')
         except Exception as e:
@@ -2344,6 +2319,7 @@ def manage_img_group(request):
 
 # 附件管理
 @login_required()
+@csrf_exempt
 @require_http_methods(['GET',"POST"])
 def manage_attachment(request):
     # 文件大小 字节转换
@@ -2459,7 +2435,7 @@ def manage_attachment(request):
             return JsonResponse({'status':True,'data':'删除成功'})
         elif types in [2,'2']:
             attachment_list = []
-            attachments = Attachment.objects.filter(user=request.user)
+            attachments = Attachment.objects.filter(user=request.user).order_by('-create_time')
             for a in attachments:
                 item = {
                     'filename':a.file_name,

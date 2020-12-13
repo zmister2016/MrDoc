@@ -41,7 +41,11 @@
 {% endblock %}
 
 {% block page_content %}
+    {% if doc.editor_mode == 3 %}
+    {{ doc.pre_content | safe }}
+    {% else %}
     <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+    {% endif %}
 {% endblock %}
 
 {% block doc_bottom_block %}

@@ -44,7 +44,10 @@ def upload_img(request):
         result = base_img_upload(base_img,dir_name,request.user)
     # 上传图片URL地址
     elif url_img:
-        result = url_img_upload(url_img,dir_name,request.user)
+        if url_img.startswith("data:image"):# 以URL形式上传的BASE64编码图片
+            result = base_img_upload(url_img, dir_name, request.user)
+        else:
+            result = url_img_upload(url_img,dir_name,request.user)
     else:
         result = {"success": 0, "message": "上传出错"}
     return HttpResponse(json.dumps(result), content_type="application/json")

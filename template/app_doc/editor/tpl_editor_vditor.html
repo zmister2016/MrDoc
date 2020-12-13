@@ -1,0 +1,257 @@
+<!-- Vditor编辑器 -->
+{% load static %}
+<script>    
+    //初始化vditor编辑器
+    layer.load(1)
+    if(screen_width.matches){
+        var vditor_mode = 'ir'
+        var vditor_height = window.innerHeight / 2
+        var vditor_toolbar = [
+            "emoji","headings","bold","strike","link","|",
+            "list","ordered-list","check","|",
+            "quote","line","code","inline-code","|",
+            {
+                name: 'insert-img',
+                tipPosition: 's',
+                tip: '图片',
+                className: 'right',
+                tipPosition:'nw',
+                icon:'<svg t="1599747832593" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4027" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><defs><style type="text/css"></style></defs><path d="M864.05 128.46H129.97c-17.68 0-32 14.33-32 32v639.61c0 17.67 14.32 32 32 32h734.08c17.68 0 32-14.33 32-32V160.46c0-17.67-14.32-32-32-32z m-32 639.61H161.97V192.46h670.08v575.61z" p-id="4028"></path><path d="M795.58 691.57a32.007 32.007 0 0 1-27.33 15.34H225.77c-12.01 0-23-6.72-28.48-17.4a31.988 31.988 0 0 1 2.5-33.28l125.3-174.17c10.17-14.13 29.78-17.54 44.12-7.67l101.77 70.03 129.73-165.51a31.995 31.995 0 0 1 28.21-12.11 31.99 31.99 0 0 1 25.42 17.2L796.7 660.26a32.018 32.018 0 0 1-1.12 31.31z" p-id="4029"></path><path d="M320.03 321.34a64.03 64.83 0 1 0 128.06 0 64.03 64.83 0 1 0-128.06 0Z" p-id="4030"></path></svg>',
+                click () {
+                    layer.ready(function(){
+                        element.init();
+                    });
+                    layer.open({
+                        type:'1',
+                        title:'添加图片',
+                        // area:['800px','600px'],
+                        id:'uploadImg',//配置ID,
+                        content:$('#upload-img'),
+                    })
+                },
+                },
+            {
+                name: 'insert-attachment',
+                tipPosition: 's',
+                tip: '附件',
+                className: 'right',
+                tipPosition:'nw',
+                icon:'<svg t="1599964518089" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4929" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><defs><style type="text/css"></style></defs><path d="M633.553 251.102c15.993-12.795 38.385-12.795 55.978 1.6 15.993 15.993 15.993 38.384 0 54.378L347.264 647.747c-22.39 20.792-22.39 57.577 0 81.568 20.792 22.391 57.578 22.391 81.568 0l401.444-403.042c55.978-55.979 55.978-148.742 0-204.72s-148.742-55.979-204.72 0l-47.982 47.98-12.795 12.796-369.455 369.455c-91.165 91.165-91.165 236.708 0 327.872 91.164 91.165 236.707 91.165 327.872 0L894.25 511.8c6.397-3.199 9.596-7.997 12.795-12.795 15.993-15.994 38.385-15.994 54.378 0s15.994 38.385 0 54.379l-3.198 3.199c-3.2 1.599-6.398 6.397-9.597 9.596L577.574 934.035c-119.953 119.953-316.676 119.953-436.63 0s-119.952-316.676 0-436.63l430.233-431.83c86.366-86.367 227.111-86.367 315.077 0 86.366 86.366 86.366 227.11 0 315.076L483.21 783.694c-52.78 52.78-139.145 52.78-190.325 0-52.78-52.78-52.78-139.146 0-190.326l340.667-342.266z m0 0" fill="#333333" p-id="4930"></path></svg>',
+                click () {
+                    layer.ready(function(){
+                        element.init();
+                    });
+                    layer.open({
+                        type:'1',
+                        title:'添加附件',
+                        // area:['800px','600px'],
+                        id:'uploadAttach',//配置ID,
+                        content:$('#upload-attach'),
+                        success: function(layero, index){
+                            layer.load(1);
+                            $.post('{% url "manage_attachment" %}',{types:2},function(r){
+                                $("#attach_table tbody").empty()
+                                if(r.status){
+                                    //调用分页显示
+                                    laypage.render({
+                                        elem: 'select-attach-page',//分页的div
+                                        count: r.data.length, //数据总数
+                                        limit:10, //单页数
+                                        jump: function(obj){
+                                            //渲染HTML
+                                            $("#attach_table tbody").empty();
+                                            var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                            layui.each(thisData, function(k, v){
+                                                var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                                // arr.push(row);
+                                                $("#attach_table tbody").append(row)
+                                            });
+                                        }
+                                    });
+                                    layer.closeAll("loading");//关闭加载提示
+                                }else{
+                                    layer.closeAll("loading");//关闭加载提示
+                                    layer.msg("获取附件失败，请稍后重试！")
+                                }
+                            })
+
+                        }
+                    })
+                },
+            },
+            "table",
+            "|","undo","redo","|","fullscreen","edit-mode",
+            {
+                name: "more",
+                toolbar: [
+                    "both",
+                    "code-theme",
+                    "content-theme",
+                    "export",
+                    "outline",
+                    "preview",
+                    "devtools",
+                    "info",
+                    "help",
+                ],
+            }
+        ]
+    }else{
+        var vditor_mode = 'sv'
+        var vditor_height = window.innerHeight - 200
+        var vditor_toolbar = [
+            "emoji","headings","bold","italic","strike","link","|",
+            "list","ordered-list","check","outdent","indent","|",
+            "quote","line","code","inline-code","insert-before","insert-after","|",
+            {
+                name: 'insert-img',
+                tipPosition: 's',
+                tip: '图片',
+                className: 'right',
+                tipPosition:'nw',
+                icon:'<svg t="1599747832593" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4027" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><defs><style type="text/css"></style></defs><path d="M864.05 128.46H129.97c-17.68 0-32 14.33-32 32v639.61c0 17.67 14.32 32 32 32h734.08c17.68 0 32-14.33 32-32V160.46c0-17.67-14.32-32-32-32z m-32 639.61H161.97V192.46h670.08v575.61z" p-id="4028"></path><path d="M795.58 691.57a32.007 32.007 0 0 1-27.33 15.34H225.77c-12.01 0-23-6.72-28.48-17.4a31.988 31.988 0 0 1 2.5-33.28l125.3-174.17c10.17-14.13 29.78-17.54 44.12-7.67l101.77 70.03 129.73-165.51a31.995 31.995 0 0 1 28.21-12.11 31.99 31.99 0 0 1 25.42 17.2L796.7 660.26a32.018 32.018 0 0 1-1.12 31.31z" p-id="4029"></path><path d="M320.03 321.34a64.03 64.83 0 1 0 128.06 0 64.03 64.83 0 1 0-128.06 0Z" p-id="4030"></path></svg>',
+                click () {
+                    layer.ready(function(){
+                        element.init();
+                    });
+                    layer.open({
+                        type:'1',
+                        title:'添加图片',
+                        area:['800px','600px'],
+                        id:'uploadImg',//配置ID,
+                        content:$('#upload-img'),
+                    })
+                },
+                },
+            {
+                name: 'insert-attachment',
+                tipPosition: 's',
+                tip: '附件',
+                className: 'right',
+                tipPosition:'nw',
+                icon:'<svg t="1599964518089" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4929" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><defs><style type="text/css"></style></defs><path d="M633.553 251.102c15.993-12.795 38.385-12.795 55.978 1.6 15.993 15.993 15.993 38.384 0 54.378L347.264 647.747c-22.39 20.792-22.39 57.577 0 81.568 20.792 22.391 57.578 22.391 81.568 0l401.444-403.042c55.978-55.979 55.978-148.742 0-204.72s-148.742-55.979-204.72 0l-47.982 47.98-12.795 12.796-369.455 369.455c-91.165 91.165-91.165 236.708 0 327.872 91.164 91.165 236.707 91.165 327.872 0L894.25 511.8c6.397-3.199 9.596-7.997 12.795-12.795 15.993-15.994 38.385-15.994 54.378 0s15.994 38.385 0 54.379l-3.198 3.199c-3.2 1.599-6.398 6.397-9.597 9.596L577.574 934.035c-119.953 119.953-316.676 119.953-436.63 0s-119.952-316.676 0-436.63l430.233-431.83c86.366-86.367 227.111-86.367 315.077 0 86.366 86.366 86.366 227.11 0 315.076L483.21 783.694c-52.78 52.78-139.145 52.78-190.325 0-52.78-52.78-52.78-139.146 0-190.326l340.667-342.266z m0 0" fill="#333333" p-id="4930"></path></svg>',
+                click () {
+                    layer.ready(function(){
+                        element.init();
+                    });
+                    layer.open({
+                        type:'1',
+                        title:'添加附件',
+                        area:['800px','600px'],
+                        id:'uploadAttach',//配置ID,
+                        content:$('#upload-attach'),
+                        success: function(layero, index){
+                            layer.load(1);
+                            $.post('{% url "manage_attachment" %}',{types:2},function(r){
+                                $("#attach_table tbody").empty()
+                                if(r.status){
+                                    //调用分页显示
+                                    laypage.render({
+                                        elem: 'select-attach-page',//分页的div
+                                        count: r.data.length, //数据总数
+                                        limit:10, //单页数
+                                        jump: function(obj){
+                                            //渲染HTML
+                                            $("#attach_table tbody").empty();
+                                            var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                            layui.each(thisData, function(k, v){
+                                                var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                                // arr.push(row);
+                                                $("#attach_table tbody").append(row)
+                                            });
+                                        }
+                                    });
+                                    layer.closeAll("loading");//关闭加载提示
+                                }else{
+                                    layer.closeAll("loading");//关闭加载提示
+                                    layer.msg("获取附件失败，请稍后重试！")
+                                }
+                            })
+
+                        }
+                    })
+                },
+            },
+            "table",
+            "|","undo","redo","|","fullscreen","edit-mode",
+            {
+                name: "more",
+                toolbar: [
+                    "both",
+                    "code-theme",
+                    "content-theme",
+                    "export",
+                    "outline",
+                    "preview",
+                    "devtools",
+                    "info",
+                    "help",
+                ],
+            }
+        ]
+    }
+    var editor = new Vditor('editor-md',{
+        "cdn":"{% static 'vditor' %}",
+        "toolbar": vditor_toolbar,
+        "height":vditor_height,
+        "width":'100%',
+        "mode":vditor_mode, // 编辑器模式
+        "placeholder":"道友，开始吧……",
+        "counter":{
+            enable:true, // 启用计数
+        },
+        "cache": {
+            "enable": false, // 禁用缓存
+        },
+        "preview": {
+            "markdown": {
+                "autoSpace": true,// 自动空格
+                "chinesePunct": true,// 矫正标点
+                "mark": true,//Mark标记
+            },
+            "hljs":{
+                "lineNumber":true,//代码行号
+            }
+        },
+        "after":function(){
+            layer.closeAll('loading');
+        },
+        "input":function(){
+            autoCacheDoc();
+        },
+        "upload":{
+            fieldName:"editormd-image-file[]",
+            url:"{% url 'upload_doc_img' %}",
+            linkToImgUrl:"{% url 'upload_doc_img' %}",
+            linkToImgCallback:function(e){
+                console.log(e)
+            },
+            linkToImgFormat:function(e){
+                console.log(JSON.parse(e))
+                return e
+            },
+            handler(files){//自定义粘贴上传图片
+                console.log(files)
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var base64 = event.target.result;
+                    //ajax上传图片
+                    layer.load(1);
+                    $.post("{% url 'upload_doc_img' %}",{base:base64}, function (ret) {
+                        layer.msg(ret.message);
+                        if (ret.success === 1) {
+                            //新一行的图片显示
+                            layer.closeAll("loading");
+                            editor.insertValue("\n![](" + ret.url + ")");
+                            editor.focus()
+                        }else{
+                            layer.closeAll("loading");
+                            layer.msg("粘贴图片失败！")
+                        }
+                    });
+                }; // data url!
+                var url = reader.readAsDataURL(files[0]);
+            }
+        }
+    });
+</script>

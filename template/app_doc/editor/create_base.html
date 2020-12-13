@@ -1,0 +1,259 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+        <meta http-equiv="Cache-Control" content="no-transform" />
+        <meta http-equiv="Cache-Control" content="no-siteapp" />
+        <meta http-equiv="Cache-Control" content="max-age=7200" />
+        <meta name="referrer" content="no-referrer">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
+        <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'editor.md/css/font-awesome.min.css' %}?version={{mrdoc_version}}" />
+        {% if editor_mode == 1 %}
+        <!-- Editor.MD编辑器样式表 -->
+        <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
+        <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
+        {% elif editor_mode == 2 %}
+        <!-- Vditor编辑器样式表 -->
+        <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+        {% endif %}
+        <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+        <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+        <link href="{% static 'mrdoc/mrdoc-editor.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+        <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+        <style>
+
+        </style>
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    <body class="big-page">
+        <div class="doc layui-fluid" style="padding-left:0px;">
+            <!-- 左侧工具栏 -->
+            <div class="doc-summary">
+                <div class="project-title"><i class="fa fa-edit"></i> {% trans "MrDoc文档编辑器" %}<br>
+                    <span style="font-size: 14px;">你正在：{{editor_type }}</span>
+                </div>
+                <hr>
+                {% block left_opera %}
+                {% endblock %}
+            </div>
+            <!-- 左侧工具栏结束 -->
+
+            <!-- 右侧编辑器栏 -->
+            <div class="doc-body">
+                <!-- 文档导航 -->
+                <div class="doc-header" role="navigation">
+                    <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+                        <i class="fa fa-align-justify"></i>
+                    </a>
+                    <!-- 顶部工具栏 -->
+                    {% block head_toolbar %}
+                    {% endblock %}
+                    <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
+                        <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
+                    </a>
+                </div>
+                <!-- 文档主体 -->
+                <div class="doc-body-content" style="padding-left: 15px;">
+                    <div class="mrdoc-body-content-div">
+                        <!-- 文档内容 -->
+                        <div class="mrdoc-editor-content">
+                            <!-- 正文开始 -->
+                            <div class="markdown-body" id="content">
+                                {% block content %}
+                                {% endblock %}
+                            </div>
+                            <!-- 正文结束 -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- 右侧编辑器结束 -->
+        </div>
+
+        {% block custom_div %}
+        {% endblock %}
+
+        <!-- 选择和上传图片div -->
+        <div id="upload-img" style="display:none;margin:20px;">
+            <div class="layui-tab" lay-filter="img-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">上传图片</li>
+                <li>选择图片</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-row">
+                        <button class="layui-btn layui-btn-primary layui-btn-fluid" id="upload_img"><i class="layui-icon layui-icon-upload"></i> 上传图片</button>
+                    </div>
+                    <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+                        <legend style="font-size: 12px;">或 插入外链图片链接</legend>
+                    </fieldset>
+                    <div class="layui-row" style="margin-top: 10px;">
+                        <input type="text" class="layui-input" placeholder="输入图片URL" id="img_url_input" style="margin-bottom: 5px;"/>
+                        <button type="button" class="layui-btn layui-btn-primary" onclick="insertImgUrl()">插入图片链接</button>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-row" id="select-img-group">
+                    </div><hr>
+                    <div class="layui-row" id="select-img"></div>
+                    <div id="select-img-page"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- 选择和上传附件div -->
+        <div id="upload-attach" style="display:none;margin:20px;">
+            <span>* 仅支持 {% if attachment_suffix and attachment_suffix != '' %}{{attachment_suffix}}{% else %}zip{% endif %} 格式文件，文件大小不超过 {% if attachment_size and attachment_size != '' %}{{attachment_size}}{% else %}50{% endif %}MB</span>
+            <div style="margin: 10px 0 0 10px;">
+                <button class="layui-btn layui-btn-primary layui-btn-sm" id="upload_attachment"><i class="layui-icon layui-icon-upload"></i> 上传附件</button>
+                <a class="layui-btn layui-btn-primary layui-btn-sm" href="{% url 'manage_attachment' %}" target="_blank"><i class="fa fa-cubes"></i> 管理附件</a>
+            </div>
+            <table class="layui-table" id="attach_table" style="margin: 10px;width:90%;">
+                <thead>
+                    <th>附件名称</th>
+                    <th>附件大小</th>
+                    <th>上传时间</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div id="select-attach-page"></div>
+        </div>
+
+        <!-- 添加表格div -->
+        <div id="layer-table" style="display: none;margin: 10px;">
+            <div class="layui-tab" lay-filter="table-tab" id="insert-table-div">
+                <ul class="layui-tab-title">
+                <li class="layui-this" lay-id="generaTable">生成表格</li>
+                <li lay-id="pasteTable">粘贴表格</li>
+                </ul>
+                <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show" >
+                    <div class="layui-row" style="margin: 10px;">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <div class="layui-input-inline" style="width: 50px;">
+                                    <input type="number"  placeholder="行" id="row" class="layui-input" value="3">
+                                </div>
+                                <div class="layui-form-mid">x</div>
+                                <div class="layui-input-inline" style="width: 50px;">
+                                    <input type="number" placeholder="列" id="col"  class="layui-input" value="3">
+                                </div>
+                                <div class="layui-form-mid" style="width: 100px;">
+                                    <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="addtable(1)" >生成表格</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row" style="margin:10px;" id="TableGroup"></div>
+                </div>
+
+                <div class="layui-tab-item" >
+                    <textarea placeholder="粘贴Excel或在线电子表格的内容" class="layui-textarea" style="height: 200px;" id="pasteExcel"></textarea>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加音视频div -->
+        <div id="insertMultimedia" style="display: none;margin:10px;">
+            <div class="layui-row">
+                <fieldset class="layui-elem-field">
+                    <legend>插入音频链接</legend>
+                    <div class="layui-field-box">
+                    <input class="layui-input" type="url" id="audio_input" placeholder="填入音频文件链接，支持文件后缀格式为mp3、wav、flac、m4a" style="margin-bottom: 5px;">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('audio')"><i class="fa fa-music"></i> 插入音频</button>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="layui-row">
+                <fieldset class="layui-elem-field">
+                    <legend>插入视频链接</legend>
+                    <div class="layui-field-box">
+                        <input class="layui-input" type="url" id="video_input" placeholder="填入视频文件链接，支持文件后缀格式为mp4、m4v、ogg、ogv、webm" style="margin-bottom: 5px;">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video')"><i class="fa fa-video-camera"></i> 插入视频</button>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="layui-row">
+                <fieldset class="layui-elem-field">
+                    <legend>插入视频网站链接</legend>
+                    <div class="layui-field-box">
+                        <input class="layui-input" type="url" id="video_iframe_input" placeholder="填入视频网站视频播放页链接，支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站" style="margin-bottom: 5px;">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video_iframe')"><i class="fa fa-youtube-play"></i> 插入视频网站视频</button>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+        <!-- 文档本地缓存div -->
+        <div class="layui-form" id="doc-cache-div" style="display: none;">
+            <div style="margin: 5px;">
+                <textarea name="desc" id="doc-cache-content" class="layui-textarea" style="height: 350px;" disabled></textarea>
+            </div>
+        </div>
+
+        <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+        <script src="{% static 'layui/layui.all.js' %}"></script>
+        <script>
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            var tree = layui.tree;
+            var layer = layui.layer;
+            var form = layui.form;
+            var element = layui.element;
+            var laypage = layui.laypage;
+            var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
+            var screen_width = window.matchMedia('(max-width: 768px)'); // 获取屏幕宽度
+            var editor_mode = {{ editor_mode }};
+        </script>
+        <!-- 标签输入 -->
+        <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
+
+        <!-- 加载编辑器 -->
+        {% if editor_mode == 1 %}
+            <!-- Editor.MD编辑器 -->
+            <script src="{% static 'mindmap/d3@5.js' %}"></script>
+            <script src="{% static 'mindmap/transform.min.js' %}"></script>
+            <script src="{% static 'mindmap/view.min.js' %}"></script>
+            <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+            {% include 'app_doc/editor/tpl_editor_editormd.html' %}
+        {% elif editor_mode == 2 %}
+            <!-- Vditor编辑器 -->
+            <script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
+            {% include 'app_doc/editor/tpl_editor_vditor.html' %}
+        {% elif editor_mode == 3 %}
+            <!-- iceEditor富文本编辑器 -->
+            <script src="{% static 'iceEditor/src/iceEditor.min.js' %}?version={{mrdoc_version}}"></script>
+            {% include 'app_doc/editor/tpl_editor_ice.html' %}
+        {% endif %}
+        <script>    
+            //未保存离开提示
+            window.onbeforeunload =function() {
+            　　 if(md_changed){
+                    return 1;
+                }else{
+                    return null;
+                }
+            };
+        </script>
+        <script src="{% static 'mrdoc/mrdoc.editor.js' %}?version={{mrdoc_version}}"></script>
+        <script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
+        {% block custom_script %}
+        {% endblock %}
+    </body>
+</html>
