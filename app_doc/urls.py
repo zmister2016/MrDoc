@@ -57,6 +57,7 @@ urlpatterns = [
     path('user_center/',views_user.user_center,name="user_center"), # 个人中心
     path('user/center_menu/',views_user.user_center_menu,name="user_center_menu"), # 个人中心菜单数据
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
+    path('upload_ice_img/',util_upload_img.upload_ice_img,name="upload_ice_img"), # iceeditor上传图片
     path('search/',views.search,name="search"), # 搜索功能
     # path('doc_search/', include('haystack.urls')),  # 全文检索框架
     path('doc_search/', views_search.DocSearchView(),name="doc_search"),  # 全文检索框架
