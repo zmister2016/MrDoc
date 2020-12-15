@@ -69,23 +69,23 @@ def ice_save_file(file_obj,user):
     with open(path_file, 'wb') as f:
         for chunk in file_obj.chunks():
             f.write(chunk) # 保存文件
-            if file_suffix.lower()  in is_images:
-                Image.objects.create(
-                    user=user,
-                    file_path=file_url,
-                    file_name=file_name,
-                    remark="iceEditor上传"              
-                )
-            
-            else :
-            #文件上传，暂时不屏蔽，如果需要正常使用此功能，是需要在iceeditor中修改的，mrdoc使用的是自定义脚本上传
-                Attachment.objects.create(
-                    user=user,
-                    file_path=file_url,
-                    file_name=file_name,
-                    file_size=str(round(len(chunk)/1024,2))+"KB"
-                )
-            return  {"error":0, "name": str(file_obj),'url':file_url}
+        if file_suffix.lower()  in is_images:
+            Image.objects.create(
+                user=user,
+                file_path=file_url,
+                file_name=file_name,
+                remark="iceEditor上传"              
+            )
+        
+        else :
+        #文件上传，暂时不屏蔽，如果需要正常使用此功能，是需要在iceeditor中修改的，mrdoc使用的是自定义脚本上传
+            Attachment.objects.create(
+                user=user,
+                file_path=file_url,
+                file_name=file_name,
+                file_size=str(round(len(chunk)/1024,2))+"KB"
+            )
+        return  {"error":0, "name": str(file_obj),'url':file_url}
     return {"error": "文件存储异常"}
 
 
