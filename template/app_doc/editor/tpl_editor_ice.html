@@ -88,9 +88,12 @@
     'music',                     //音乐
     'video',                     //视频
     'removeFormat',              //格式化样式
-    'code',                      //源码
-    'line'                       //菜单分割线
+    'code',                      //源码    
+    'line',                       //菜单分割线
+    'paste'                    //富文本粘贴
+    //'files',                    //ice内置多文件上传,需要配合修改js才能用
     ]
+    editor.uploadUrl="{% url 'upload_ice_img' %}";          //粘贴上传请求路径
     editor.create();
     autoCacheDoc();
 </script>

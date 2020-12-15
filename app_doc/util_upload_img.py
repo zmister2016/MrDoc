@@ -7,6 +7,90 @@ import datetime,time,json,base64,os,uuid
 from app_doc.models import Image,ImageGroup
 from app_admin.models import SysSetting
 import requests
+import random
+
+
+@login_required()
+@csrf_exempt
+def upload_ice_img(request):
+    ##################
+    # 如果需要使用ice自带的多文件上传，请修改ice的js文件中的附件上传部分代码如下：
+    # 
+    # for(var i=0;i<this.files.length;i++){
+    # 	formData.append('file_' + i, this.files[i]);
+    # }
+    # formData.append('upload_num', i);
+    # formData.append('upload_type', "files");
+    ##################
+    try:
+        up_type = request.POST.get('upload_type')
+        up_num = request.POST.get('upload_num')        
+    except:
+        up_num = -1
+    
+    if up_type == "files":
+        # 多文件上传功能，需要修改js文件
+        res_dic = {'length':int(up_num)}
+        for  i in range(0,int(up_num)):
+            file_obj = request.FILES.get('file_' + str(i))
+            result = ice_save_file(file_obj,request.user)
+            res_dic[i] = result
+    else:
+        # 粘贴上传和单文件上传
+        file_obj = request.FILES.get('file[]')
+        result = ice_save_file(file_obj,request.user)           
+        res_dic = {0:result,"length":1}         #一个文件，直接把文件数量固定了
+    return HttpResponse(json.dumps(res_dic), content_type="application/json")
+
+def ice_save_file(file_obj,user):   
+    # 默认保留支持ice单文件上传功能，可以iceEditor中开启
+    file_suffix = str(file_obj).split(".")[-1] # 提取图片格式
+    # 允许上传文件类型，ice粘贴上传为blob
+    allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp","blob"]
+    # 判断附件格式
+    is_images = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
+    if file_suffix.lower() not in allow_suffix:         
+        return {"error": "文件格式不允许"}
+    if file_suffix.lower() == 'blob':
+        # 粘贴上传直接默认为png就行
+        file_suffix = 'png' 
+    # 接下来构造一个文件名，时间和随机10位字符串构成
+    relative_path = upload_generation_dir()
+    name_time = time.strftime("%Y-%m-%d_%H%M%S_")
+    name_join = ""
+    name_rand = name_join.join(random.sample('zyxwvutsrqponmlkjihgfedcba',10) )
+
+    file_name =  name_time +  name_rand + "." + file_suffix
+    path_file = relative_path + file_name
+    path_file = settings.MEDIA_ROOT + path_file
+    #file_Url 是文件的url下发路径
+    file_url = settings.MEDIA_URL + relative_path + file_name      
+    
+    with open(path_file, 'wb') as f:
+        for chunk in file_obj.chunks():
+            f.write(chunk) # 保存文件
+        if file_suffix.lower()  in is_images:
+            Image.objects.create(
+                user=user,
+                file_path=file_url,
+                file_name=file_name,
+                remark="iceEditor上传"              
+            )
+        
+        else :
+        #文件上传，暂时不屏蔽，如果需要正常使用此功能，是需要在iceeditor中修改的，mrdoc使用的是自定义脚本上传
+            Attachment.objects.create(
+                user=user,
+                file_path=file_url,
+                file_name=file_name,
+                file_size=str(round(len(chunk)/1024,2))+"KB"
+            )
+        return  {"error":0, "name": str(file_obj),'url':file_url}
+    return {"error": "文件存储异常"}
+
+
+
+
 
 @login_required()
 @csrf_exempt
