@@ -125,6 +125,24 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 显示下级文档 -->
+            <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">文档内显示下级文档</h2>
+                    <div class="layui-colla-content layui-show">
+                        <div class="layui-row layui-col-space5" style="padding: 5px;background-color: #fff;">
+                            {%if doc.show_children %}
+                            <input type="radio" name="show-children" value="true" title="显示" checked>
+                            <input type="radio" name="show-children" value="false" title="隐藏">
+                            {% else %}
+                            <input type="radio" name="show-children" value="true" title="显示">
+                            <input type="radio" name="show-children" value="false" title="隐藏" checked>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <!-- 发布按钮 -->
             <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
@@ -265,6 +283,7 @@
                 'sort':$("#sort").val(),
                 'status':status,
                 'open_children':$('input:radio[name="open-children"]:checked').val(),
+                'show_children':$('input:radio[name="show-children"]:checked').val(),
             }
             $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
                 layer.closeAll("loading");

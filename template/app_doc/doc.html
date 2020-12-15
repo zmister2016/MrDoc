@@ -46,6 +46,18 @@
     {% else %}
     <textarea style="display: none;">{{ doc.pre_content }}</textarea>
     {% endif %}
+
+    
+{% endblock %}
+
+{% block children_content %}
+    {% if doc.show_children %}
+    {% load doc_filter %}
+    {% for children in doc.id|get_next_doc %}
+        <li style="list-style: disc;font-size: 15px;"><a href="{% url 'doc' pro_id=pro_id doc_id=children.id %}" title="{{children.name}}">{{ children.name }}</a></li>
+    {% endfor %}
+    {% endif %}
+    
 {% endblock %}
 
 {% block doc_bottom_block %}

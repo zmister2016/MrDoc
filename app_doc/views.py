@@ -911,10 +911,15 @@ def create_doc(request):
             sort = request.POST.get('sort','') # 文档排序
             status = request.POST.get('status',1) # 文档状态
             open_children = request.POST.get('open_children', False)  # 展示下级目录
+            show_children = request.POST.get('show_children', False)  # 展示下级目录
             if open_children == 'true':
                 open_children = True
             else:
                 open_children = False
+            if show_children == 'true':
+                show_children = True
+            else:
+                show_children = False
             if project != '' and doc_name != '' and project != '-1':
                 # 验证请求者是否有文集的权限
                 check_project = Project.objects.filter(id=project,create_user=request.user)
@@ -935,7 +940,8 @@ def create_doc(request):
                                 create_user=request.user,
                                 status = status,
                                 editor_mode = editor_mode,
-                                open_children = open_children
+                                open_children = open_children,
+                                show_children = show_children
                             )
                             # 设置文档标签
                             for t in doc_tags.split(","):
@@ -1012,10 +1018,15 @@ def modify_doc(request,doc_id):
             sort = request.POST.get('sort', '') # 文档排序
             status = request.POST.get('status',1) # 文档状态
             open_children = request.POST.get('open_children',False) # 展示下级目录
+            show_children = request.POST.get('show_children', False)  # 展示下级目录
             if open_children == 'true':
                 open_children = True
             else:
                 open_children = False
+            if show_children == 'true':
+                show_children = True
+            else:
+                show_children = False
 
             if doc_id != '' and project_id != '' and doc_name != '' and project_id != '-1':
                 doc = Doc.objects.get(id=doc_id)
@@ -1049,7 +1060,8 @@ def modify_doc(request,doc_id):
                                 modify_time = datetime.datetime.now(),
                                 status = status,
                                 editor_mode = editor_mode,
-                                open_children = open_children
+                                open_children = open_children,
+                                show_children = show_children
                             )
                             # 更新文档标签
                             doc_tag_list = doc_tags.split(",") if doc_tags != "" else []

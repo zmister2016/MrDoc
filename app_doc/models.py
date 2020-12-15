@@ -74,6 +74,7 @@ class Doc(models.Model):
     # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器，3表示iceEditor编辑器
     editor_mode = models.IntegerField(default=1,verbose_name='编辑器模式')
     open_children = models.BooleanField(default=False,verbose_name="展开下级目录")
+    show_children = models.BooleanField(verbose_name="显示下级文档",default=False)
 
     def __str__(self):
         return self.name
