@@ -52,7 +52,7 @@
                 </button>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="padding-left: 0px;">编辑器选择</label>
+                <label class="layui-form-label" style="padding-left: 0px;">编辑器切换</label>
                 <div class="layui-input-block">
                   <select name="select_editor_mode" lay-verify="required" lay-filter="select_editor_mode">                    
                     <option value="1">EditorMD(Markdown)</option>
@@ -217,17 +217,17 @@
 {% block custom_script %}
     <script>
         form.val("left_form",{
-            "select_editor_mode":{{editor_mode}}
+            "select_editor_mode": '{{editor_mode}}'
         })
         form.on('select(select_editor_mode)',function(data){
             //console.log(data.value)
             layer.open({
                     type:0,
-                    title:'更换编辑器',
+                    title:'切换编辑器',
                     area:'300px;',
                     id:'change_editor',//配置ID
                     content: "页面将重载，未提交的修改将丢失！",
-                    btn:['确定更换','取消返回'], //添加按钮
+                    btn:['确定切换','取消返回'], //添加按钮
                     btnAlign:'c', //按钮居中
                     yes:function (index,layero) {
                         eurl = "{% url 'modify_doc' doc_id=doc.id %}"+"?eid=" + data.value.toString();                        

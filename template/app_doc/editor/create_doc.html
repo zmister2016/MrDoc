@@ -32,7 +32,7 @@
                 </button>
             </div>            
             <div class="layui-form-item">
-                <label class="layui-form-label" style="padding-left: 0px;">编辑器选择</label>
+                <label class="layui-form-label" style="padding-left: 0px;">编辑器切换</label>
                 <div class="layui-input-block">
                   <select name="select_editor_mode" lay-verify="required" lay-filter="select_editor_mode">                    
                     <option value="1">EditorMD(Markdown)</option>
@@ -194,25 +194,25 @@
 {% block custom_script %}
     <script> 
         form.val("left_form",{
-            "select_editor_mode":{{editor_mode}}
+            "select_editor_mode":'{{editor_mode}}'
         })
         form.on('select(select_editor_mode)',function(data){
             //console.log(data.value)
             layer.open({
                     type:0,
-                    title:'更换编辑器',
+                    title:'切换编辑器',
                     area:'300px;',
                     id:'change_editor',//配置ID
-                    content: "为保证更换后格式兼容，更换编辑器将导致内容丢失！",
-                    btn:['确定更换','取消返回'], //添加按钮
+                    content: "为确保格式兼容，切换编辑器将导致未保存内容丢失！",
+                    btn:['确定切换','取消'], //添加按钮
                     btnAlign:'c', //按钮居中
                     yes:function (index,layero) {
                         eurl = "{% url 'create_doc' %}?pid={{pid}}&eid=" + data.value.toString();                        
                         $(location).attr('href', eurl);
                     },
                     btn2: function(index, layero){
-                   //暂时不需要返回
-                }
+                        //暂时不需要返回
+                    }
                 });
         })
         var tree = layui.tree;
