@@ -151,8 +151,8 @@
             <div class="layui-form" style="display: {% if is_share and doc_share.is_enable %}block;{% else %}none;{% endif %}" id="share-link">
                 <div class="layui-form-item">
                     <label class="layui-form-label">{% trans "链接" %}</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="share_link" class="layui-input" id="share_link" disabled>
+                    <div class="layui-input-block" id='copy_link'>
+                        <input type="text" name="share_link" class="layui-input" id="share_link" readonly>
                     </div>
                 </div>
             </div>
@@ -243,7 +243,7 @@
             if(r.status){
                 layer.msg("{% trans '设置成功' %}",{offset: 't'})
                 console.log(r.data)
-                $("input[name=share_link]").val(document.domain + '/share_doc/?token=' + r.data.doc)
+                $("input[name=share_link]").val(document.location.protocol + '//' + document.location.host + '/share_doc/?token=' + r.data.doc)
             }else{
                 layer.msg("{% trans '设置出错' %}")
             }
@@ -263,12 +263,26 @@
         })
     })
     {% if is_share %}
-        $("input[name=share_link]").val(window.location.protocol + '//' + document.domain + '/share_doc/?token={{doc_share.token}}')
+        $("input[name=share_link]").val(window.location.protocol + '//' + document.location.host + '/share_doc/?token={{doc_share.token}}')
     {% endif %}
 
     var share_data = {
         'id':'{{doc.id}}',
     }
+
+    //监听链接栏被单击
+    $('#copy_link').click(function(){
+        var target = document.getElementById("share_link");
+        // 选择内容
+        target.focus();
+        target.setSelectionRange(0, target.value.length);
+        document.execCommand("copy");
+        layer.msg('链接地址已复制', {
+            time: 2000, //2s后自动关闭
+            btn: '好的',
+            btnAlign: 'c'
+        });
+    })
 
     //监听分享框分享类型的单选事件
     form.on('radio(share_type)', function(data){
