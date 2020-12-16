@@ -891,6 +891,14 @@ def create_doc(request):
         editor_mode = 1
     if request.method == 'GET':
         try:
+            # 获取url中自定义编辑器模式
+            eid = request.GET.get('eid',0)
+            if eid in [1,2,3,'1','2','3']:
+                editor_mode = int(eid)
+        except Exception as e:
+            # 异常直接跳过使用设置中的mode
+            pass
+        try:
             editor_type = "新建文档"
             pid = request.GET.get('pid',-999)
             project_list = Project.objects.filter(create_user=request.user) # 自己创建的文集列表
@@ -909,6 +917,7 @@ def create_doc(request):
             doc_content = request.POST.get('content','') # 文档内容
             pre_content = request.POST.get('pre_content','') # 文档Markdown内容
             sort = request.POST.get('sort','') # 文档排序
+            editor_mode = request.POST.get('editor_mode','')    #获取文档编辑器
             status = request.POST.get('status',1) # 文档状态
             open_children = request.POST.get('open_children', False)  # 展示下级目录
             show_children = request.POST.get('show_children', False)  # 展示下级目录
@@ -973,14 +982,18 @@ def create_doc(request):
 def modify_doc(request,doc_id):
     editor_type = "修改文档"
     # 获取用户的编辑器模式
-    try:
-        user_opt = UserOptions.objects.get(user=request.user)
-        editor_mode = user_opt.editor_mode
-    except ObjectDoesNotExist:
-        editor_mode = 1
+    # try:
+    #     user_opt = UserOptions.objects.get(user=request.user)
+    #     editor_mode = user_opt.editor_mode
+    # except ObjectDoesNotExist:
+    #     editor_mode = 1
     if request.method == 'GET':
         try:
             doc = Doc.objects.get(id=doc_id) # 查询文档信息
+            editor_mode = doc.editor_mode
+            eid = request.GET.get('eid',0)
+            if eid in [1,2,3,'1','2','3']:
+                editor_mode = int(eid)
             doc_tags = ','.join([i.tag.name for i in DocTag.objects.filter(doc=doc)]) # 查询文档标签信息
             project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集信息
             pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user) # 查询用户的协作文集信息
@@ -1016,6 +1029,7 @@ def modify_doc(request,doc_id):
             doc_content = request.POST.get('content', '') # 文档内容
             pre_content = request.POST.get('pre_content', '') # 文档Markdown格式内容
             sort = request.POST.get('sort', '') # 文档排序
+            editor_mode = request.POST.get('editor_mode','')    #获取文档编辑器
             status = request.POST.get('status',1) # 文档状态
             open_children = request.POST.get('open_children',False) # 展示下级目录
             show_children = request.POST.get('show_children', False)  # 展示下级目录

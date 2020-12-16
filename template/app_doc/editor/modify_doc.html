@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% block left_opera %}
-    <div class="layui-form" style="padding:0 10px 10px 10px;">
+    <div class="layui-form" style="padding:0 10px 10px 10px;" lay-filter="left_form">
         <div class="layui-row">
             <div class="doc-form-label" style="margin-bottom: 10px;">
                 {% if doc.status == 0 %}
@@ -51,6 +51,16 @@
                     <i class="fa fa-history"></i> 缓存
                 </button>
             </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="padding-left: 0px;">编辑器选择</label>
+                <div class="layui-input-block">
+                  <select name="select_editor_mode" lay-verify="required" lay-filter="select_editor_mode">                    
+                    <option value="1">EditorMD(Markdown)</option>
+                    <option value="2">Vditor(Markdown)</option>
+                    <option value="3">iceEditor(富文本)</option>                    
+                  </select>
+                </div>
+            </div> 
 
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <label class="doc-form-label" style="margin-right:0px;">
@@ -206,6 +216,31 @@
 
 {% block custom_script %}
     <script>
+        form.val("left_form",{
+            "select_editor_mode":{{editor_mode}}
+        })
+        form.on('select(select_editor_mode)',function(data){
+            //console.log(data.value)
+            layer.open({
+                    type:0,
+                    title:'更换编辑器',
+                    area:'300px;',
+                    id:'change_editor',//配置ID
+                    content: "页面将重载，未提交的修改将丢失！",
+                    btn:['确定更换','取消返回'], //添加按钮
+                    btnAlign:'c', //按钮居中
+                    yes:function (index,layero) {
+                        eurl = "{% url 'modify_doc' doc_id=doc.id %}"+"?eid=" + data.value.toString();                        
+                        $(location).attr('href', eurl);
+                    },
+                    btn2: function(index, layero){
+                   //暂时不需要返回
+                }
+                });
+        })
+
+
+
         //获取文档数和上级文档信息
         $(function(){
             layer.load(1);
@@ -281,6 +316,7 @@
                 'content':content,
                 'pre_content':pre_content,
                 'sort':$("#sort").val(),
+                'editor_mode':'{{editor_mode}}',
                 'status':status,
                 'open_children':$('input:radio[name="open-children"]:checked').val(),
                 'show_children':$('input:radio[name="show-children"]:checked').val(),

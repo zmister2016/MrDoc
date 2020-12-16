@@ -17,8 +17,8 @@
 
 
 {% block left_opera %}
-    <div class="layui-form" style="padding: 0 10px 10px 10px;">
-        <div class="layui-row">
+    <div class="layui-form" style="padding: 0 10px 10px 10px;" lay-filter="left_form">
+        <div class="layui-row">            
             <div class="layui-btn-container" style="margin-bottom: 0px;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="sel-doctemp" title="导入模板内容">
                     导入模板
@@ -30,7 +30,17 @@
                 <button class="layui-btn layui-btn-primary layui-btn-sm mrdoc-btn-default" id="doc-cache-btn" title="查看浏览器缓存">
                     本地缓存
                 </button>
-            </div>
+            </div>            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="padding-left: 0px;">编辑器选择</label>
+                <div class="layui-input-block">
+                  <select name="select_editor_mode" lay-verify="required" lay-filter="select_editor_mode">                    
+                    <option value="1">EditorMD(Markdown)</option>
+                    <option value="2">Vditor(Markdown)</option>
+                    <option value="3">iceEditor(富文本)</option>                    
+                  </select>
+                </div>
+            </div>          
             <!-- 选择文集 -->
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <div class="layui-input-inblock">
@@ -182,7 +192,29 @@
 {% endblock %}
 
 {% block custom_script %}
-    <script>
+    <script> 
+        form.val("left_form",{
+            "select_editor_mode":{{editor_mode}}
+        })
+        form.on('select(select_editor_mode)',function(data){
+            //console.log(data.value)
+            layer.open({
+                    type:0,
+                    title:'更换编辑器',
+                    area:'300px;',
+                    id:'change_editor',//配置ID
+                    content: "为保证更换后格式兼容，更换编辑器将导致内容丢失！",
+                    btn:['确定更换','取消返回'], //添加按钮
+                    btnAlign:'c', //按钮居中
+                    yes:function (index,layero) {
+                        eurl = "{% url 'create_doc' %}?pid={{pid}}&eid=" + data.value.toString();                        
+                        $(location).attr('href', eurl);
+                    },
+                    btn2: function(index, layero){
+                   //暂时不需要返回
+                }
+                });
+        })
         var tree = layui.tree;
         //选择文集
         form.on('select(project)', function(data){
@@ -287,6 +319,7 @@
                 'content':content,
                 'pre_content':pre_content,
                 'sort':$("#sort").val(),
+                'editor_mode':'{{editor_mode}}',
                 'status':status,
                 'open_children':$('input:radio[name="open-children"]:checked').val(),
                 'show_children':$('input:radio[name="show-children"]:checked').val(),
