@@ -23,11 +23,11 @@ def upload_ice_img(request):
     # formData.append('upload_type', "files");
     ##################
     try:
-        up_type = request.POST.get('upload_type')
-        up_num = request.POST.get('upload_num')        
+        up_type = request.POST.get('upload_type','')
+        up_num = request.POST.get('upload_num','')   
+        iceEditor_img = str(request.POST.get('iceEditor-img',''))
     except:
-        up_num = -1
-    
+       pass    
     if up_type == "files":
         # 多文件上传功能，需要修改js文件
         res_dic = {'length':int(up_num)}
@@ -35,11 +35,13 @@ def upload_ice_img(request):
             file_obj = request.FILES.get('file_' + str(i))
             result = ice_save_file(file_obj,request.user)
             res_dic[i] = result
+    elif iceEditor_img.lower().startswith('http'):
+        res_dic = ice_url_img_upload(iceEditor_img,request.user)       
     else:
         # 粘贴上传和单文件上传
         file_obj = request.FILES.get('file[]')
         result = ice_save_file(file_obj,request.user)           
-        res_dic = {0:result,"length":1}         #一个文件，直接把文件数量固定了
+        res_dic = {0:result,"length":1,'other_msg':iceEditor_img}         #一个文件，直接把文件数量固定了
     return HttpResponse(json.dumps(res_dic), content_type="application/json")
 
 def ice_save_file(file_obj,user):   
@@ -88,7 +90,35 @@ def ice_save_file(file_obj,user):
         return  {"error":0, "name": str(file_obj),'url':file_url}
     return {"error": "文件存储异常"}
 
+# ice_url图片上传
+def ice_url_img_upload(url,user):
 
+    relative_path = upload_generation_dir()
+    name_time = time.strftime("%Y-%m-%d_%H%M%S_")
+    name_join = ""
+    name_rand = name_join.join(random.sample('zyxwvutsrqponmlkjihgfedcba',10) )
+    file_name =  name_time +  name_rand + '.png'  # 日期时间_随机字符串命名
+    path_file = os.path.join(relative_path, file_name)
+    path_file = settings.MEDIA_ROOT + path_file
+    # print('文件路径：', path_file)
+    file_url = settings.MEDIA_URL + relative_path + file_name
+    # print("文件URL：", file_url)
+    header = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
+    }
+    r = requests.get(url, headers=header, stream=True)
+
+    if r.status_code == 200:
+        with open(path_file, 'wb') as f:
+            f.write(r.content)  # 保存文件
+        Image.objects.create(
+            user=user,
+            file_path=file_url,
+            file_name=file_name,
+            remark='iceurl粘贴上传',
+        )
+    resp_data = {"error":0, "name": file_name,'url':file_url}        
+    return resp_data
 
 
 

@@ -203,7 +203,7 @@
         {% if editor_mode == 1 %}
         <textarea style="display:none;">{{ doc.pre_content }}</textarea>
         {% elif editor_mode == 3 %}
-        {{ doc.pre_content | safe }}
+        {{ doc.content | safe }}
         {% else %}
         {{ doc.pre_content }}
         {% endif %}
@@ -305,7 +305,7 @@
                 var pre_content = editor.getValue()
             }else if(editor_mode == 3){
                 var content = editor.getHTML()
-                var pre_content = editor.getHTML()
+                var pre_content = editor.getText()
             }
             var data = {
                 'doc_id':'{{ doc.id }}',

@@ -6,7 +6,7 @@
  * MIT License By www.iceui.net
  + 作者：ice
  + 官方：www.iceui.net
- + 时间：2020-11-20
+ + 时间：2020-12-17
  +------------------------------------------------------------------------------------+
  + 版权声明：该版权完全归iceUI官方所有，可转载使用和学习，但请务必保留版权信息
  +------------------------------------------------------------------------------------+
@@ -27,6 +27,8 @@
 	'subscript','createLink','unlink','line','hr','face','table','files','music','video','insertImage',
 	'removeFormat','paste','line','code'
 	];
+	// 不需要的工具栏菜单
+	this.notMenu=[];
 	// 文字背景颜色
 	this.backColor = [
 	'#ffffff','#000000','#eeece1','#1f497d','#4f81bd','#c0504d','#9bbb59','#8064a2','#4bacc6','#f79646',
@@ -855,7 +857,7 @@ ice.editor.prototype.menuHTML=function(){
 		}
 	});
 	//添加视频
-	this.createMenu({title:'添加视频',name:'video',icon:'video',id:this.videoId,popup:{width:320,height:170,title:'添加视频',content:'<div class="iceEditor-video"><div><label><input name="iceEditor-video" type="radio" checked value="1"/>自定义</label><label><input name="iceEditor-video" type="radio" value="2"/>B站</label><label><input name="iceEditor-video" type="radio" value="3"/>优酷</label></div><div>URL：<input type="text" class="iceEditor-videoUrl" placeholder="网络图片地址" value=""/></div><div><label>宽：</label><input type="text" class="iceEditor-inputWidth" placeholder="px" value=""/><label>高：</label><input type="text" class="iceEditor-inputHeight" placeholder="px" value=""/><a href="javascript:;" class="iceEditor-btn">确定</a></div></div>'},
+	this.createMenu({title:'添加视频',name:'video',icon:'video',id:this.videoId,popup:{width:320,height:170,title:'添加视频',content:'<div class="iceEditor-video"><div><label>默认支持bilibili、优酷</label></div><div>URL：<input type="text" class="iceEditor-videoUrl" placeholder="网络图片地址" value=""/></div><div><label>宽：</label><input type="text" class="iceEditor-inputWidth" placeholder="px" value=""/><label>高：</label><input type="text" class="iceEditor-inputHeight" placeholder="px" value=""/><a href="javascript:;" class="iceEditor-btn">确定</a></div></div>'},
 		success:function(e,z){
 			z.video = z.id(z.videoId);
 			var type;
@@ -866,40 +868,24 @@ ice.editor.prototype.menuHTML=function(){
 			var btn = z.video.getElementsByClassName('iceEditor-btn')[0];
 			btn.onclick=function(){
 				if(!url.value.length) return alert('视频地址不能为空');
-				var obj = z.video.getElementsByTagName('input');
-				//获取单选按钮的值
-				for(var i=0;i<obj.length;i++) {
-					if (obj[i].checked) type = Number(obj[i].value);
-				}
-				if(type === 1){ //自定义
-					var v = z.c('video');
-					v.src=url.value;
-					v.width=width.value.length?width.value:510;
-					v.height=height.value.length?height.value:498;
-					v.controls='controls';
-				}else{
-					var v = z.c('iframe');
-					v.width=width.value.length?width.value:510;
-					v.height=height.value.length?height.value:498;
-					v.setAttribute('frameborder',0);
-					v.setAttribute('allowfullscreen',true);
-					var error = '抱歉，无法处理该链接！';
-					if(type === 2){ //b站
-						//源地址：https://www.bilibili.com/video/BV1xk4y1R7Vd?spm_id_from=333.851.b_7265706f7274466972737431.7
-						//处理地址：https://player.bilibili.com/player.html?bvid=BV1xk4y1R7Vd
-						var id = url.value.split('?');
-						if(id.length>1){
-							id = id[0].split('video/');
-							if(id.length>1 && id[1].length){
-								v.src='https://player.bilibili.com/player.html?bvid='+id[1];
-							}else{
-								return alert('b站'+error);
-							}
-						}else{
-							return alert('b站'+error);
+				var v = z.c('iframe');
+				v.width=width.value.length?width.value:510;
+				v.height=height.value.length?height.value:498;
+				v.setAttribute('frameborder',0);
+				v.setAttribute('allowfullscreen',true);
+				var error = '抱歉，无法处理该链接！';
+				var domain = /^http(s)?:\/\/(.*?)\//.exec(url.value)	// 正则出域名
+				if (domain.length == 3) {
+					if (domain[2] == 'www.bilibili.com' || domain[2] == 'bilibili.com' ) {	// bilibili
+						//源地址：https://www.bilibili.com/video/BV1UZ4y1g7De?spm_id_from=333.851.b_7265706f7274466972737431.11
+						//处理地址：https://player.bilibili.com/player.html?bvid=BV1UZ4y1g7De
+						id = /video\/(.*?)\?/g.exec(url.value)
+						if (!id) {
+							id = /video\/(.*)/g.exec(url.value)
 						}
-					}else if(type === 3){ //优酷
-						//源地址：https://v.youku.com/v_show/id_XMjM0ODA3NjIw.html
+						v.src='https://player.bilibili.com/player.html?bvid='+id[1];
+					} else if (domain[2] == 'v.youku.com') {	// youku
+						//源地址：https://v.youku.com/v_show/id_XNTAwOTI4MzUxNg==.html
 						//处理地址：https://player.youku.com/embed/XMjM0ODA3NjIw
 						var id = url.value.split('.html');
 						if(id.length>1){
@@ -909,10 +895,21 @@ ice.editor.prototype.menuHTML=function(){
 							}else{
 								return alert('优酷：'+error);
 							}
-						}else{
+						} else {
 							return alert('优酷：'+error);
 						}
+					} else if (domain[2] == 'www.ixigua.com') {	//西瓜视频
+						id = /[0-9]{6,}/g.exec(url.value)
+						v.src='https://www.ixigua.com/iframe/'+id[0];
+					} else {
+						v = z.c('video');
+						v.src=url.value;
+						v.width=width.value.length?width.value:510;
+						v.height=height.value.length?height.value:498;
+						v.controls='controls';
 					}
+				} else {
+					return alert('URL地址不合法！');
 				}
 				z.setHTML(v,true);
 				close.style.display='none';
@@ -943,9 +940,11 @@ ice.editor.prototype.menuFormat=function() {
 			ul.appendChild(line);
 			continue;
 		}
-		ul.appendChild(this.menuList[this.menu[i]]);
-		if(this.menuList[this.menu[i]].success){
-			this.menuList[this.menu[i]].success(this.menuList[this.menu[i]],_z);
+		if (this.notMenu.indexOf(this.menu[i]) == -1) {
+			ul.appendChild(this.menuList[this.menu[i]]);
+			if(this.menuList[this.menu[i]].success){
+				this.menuList[this.menu[i]].success(this.menuList[this.menu[i]],_z);
+			}
 		}
 	}
 	if(this.maxWindow){
