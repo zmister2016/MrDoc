@@ -94,6 +94,7 @@
     //'files',                    //ice内置多文件上传,需要配合修改js才能用
     ]
     editor.uploadUrl="{% url 'upload_ice_img' %}";          //粘贴上传请求路径
+    editor.imgAutoUpload=true;
     editor.create();
     autoCacheDoc();
 </script>
