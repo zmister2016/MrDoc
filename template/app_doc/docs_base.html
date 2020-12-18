@@ -332,6 +332,7 @@
             tocContainer : "#toc-container",
             tocDropdown   : false,
             atLink    : false,//禁用@链接
+            htmlDecode     : "link,style,base,script,iframe", //过滤部分HTML标签
         });
     
     {% elif doc.editor_mode == 2 %}

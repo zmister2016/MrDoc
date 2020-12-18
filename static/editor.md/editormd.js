@@ -4167,6 +4167,7 @@
             var tag = filterTags[i];
 
             html = html.replace(new RegExp("\<\s*" + tag + "\s*([^\>]*)\>([^\>]*)\<\s*\/" + tag + "\s*\>", "igm"), "");
+            html = html.replace(new RegExp("\<\s*" + tag + ".*?/?>", "igm"), "") // 过滤单闭合标签
         }
         
         //return html;

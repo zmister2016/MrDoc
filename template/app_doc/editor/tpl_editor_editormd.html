@@ -203,7 +203,7 @@
         sequenceDiagram : true, //开启序列图
         imageUpload    : true, //开启图片上传
         codeFold       :true, //代码折叠
-        htmlDecode     : "link,style,script,iframe|on*", //解析部分HTML标签
+        htmlDecode     : "link,style,base,script,iframe", //过滤部分HTML标签
         imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL : "{% url 'upload_doc_img' %}",
         onchange:function(){
