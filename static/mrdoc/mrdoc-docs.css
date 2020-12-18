@@ -85,3 +85,6 @@
             padding-bottom: 5px;
             color: #333;
         }
+        .vditor-reset pre>code{
+            font-size: 100%;
+        }

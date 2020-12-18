@@ -292,8 +292,7 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<!-- <script src="{% static 'layui/layui.js' %}"></script> -->
-<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
+<script src="{% static 'viewerjs/viewer.js' %}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script>
@@ -338,49 +337,64 @@
     {% elif doc.editor_mode == 2 %}
         // Vditor模式
         // 渲染Markdown
-        const initRender = () => {
-            const md_content = $("#content textarea").val()
-            Vditor.preview(document.getElementById('content'),
-            md_content, {
-                "cdn":"{% static 'vditor' %}",
-                speech: {
-                    enable: true,
-                },
-                anchor: 1,
-                after () {
-                    const outlineElement = document.getElementById('toc-container')
-                    var sub_ele = "<div class='markdown-toc editormd-markdown-toc'><ul class='markdown-toc-list'></ul></div>"
-                    $("#toc-container").append(sub_ele)
-                    var toc_elem = $("#toc-container div ul.markdown-toc-list")
-                    Vditor.outlineRender(document.getElementById('content'), toc_elem[0])
-                    if (outlineElement.innerText.trim() !== '') {
-                        var toc_cnt = $(".markdown-toc-list").children().length;
-                        //console.log(toc_cnt)
-                        if(toc_cnt > 0){
-                            //console.log('显示文档目录')
-                            $(".tocMenu").show();
-                            initSidebar('.sidebar', '.doc-content');
-                        }
-                    }else{
-                        console.log("无目录")
+        // var initRender = () => {
+        var md_content = $("#content textarea").val()
+        Vditor.preview(document.getElementById('content'),md_content, 
+        {
+            "cdn":"{% static 'vditor' %}",
+            speech: {
+                enable: true,
+            },
+            anchor: 1,
+            after () {
+                var outlineElement = document.getElementById('toc-container')
+                var sub_ele = "<div class='markdown-toc editormd-markdown-toc'><ul class='markdown-toc-list'></ul></div>"
+                $("#toc-container").append(sub_ele)
+                var toc_elem = $("#toc-container div ul.markdown-toc-list")
+                Vditor.outlineRender(document.getElementById('content'), toc_elem[0])
+                if (outlineElement.innerText.trim() !== '') {
+                    var toc_cnt = $(".markdown-toc-list").children().length;
+                    //console.log(toc_cnt)
+                    if(toc_cnt > 0){
+                        //console.log('显示文档目录')
+                        $(".tocMenu").show();
+                        initSidebar('.sidebar', '.doc-content');
                     }
-                },
-            })
-        }
-        initRender();
+                }else{
+                    console.log("无目录")
+                };
+                // 图片放大显示
+                var img_options = {
+                    url: 'data-original',
+                    fullscreen:false,//全屏
+                    rotatable:false,//旋转
+                    scalable:false,//翻转
+                    button:false,//关闭按钮
+                    toolbar:false,
+                    title:false,
+                };
+                var img_viewer = new Viewer(document.getElementById('content'), img_options);
+            },
+        })
+        // }
+        // initRender();
     {% endif %}
+</script>
 
-    // 图片放大显示
-    var img_options = {
-        url: 'data-original',
-        fullscreen:false,//全屏
-        rotatable:false,//旋转
-        scalable:false,//翻转
-        button:false,//关闭按钮
-        toolbar:false,
-        title:false,
-        };
-    var viewer = new Viewer(document.getElementById('content'), img_options);
+<script>
+    {% if doc.editor_mode != 2 %}
+        // 图片放大显示
+        var img_options = {
+            url: 'data-original',
+            fullscreen:false,//全屏
+            rotatable:false,//旋转
+            scalable:false,//翻转
+            button:false,//关闭按钮
+            toolbar:false,
+            title:false,
+            };
+        var img_viewer = new Viewer(document.getElementById('content'), img_options);
+    {% endif %}
 </script>
 
 <!-- 统计代码开始 -->
