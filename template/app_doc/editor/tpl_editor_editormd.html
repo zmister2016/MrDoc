@@ -234,19 +234,25 @@
                     var base64 = event.target.result;
                     //ajax上传图片
                     layer.load(1);
-                    $.post("{% url 'upload_doc_img' %}",{base:base64}, function (ret) {
-                        layer.msg(ret.message);
-                        if (ret.success === 1) {
-                            //新一行的图片显示
-                            layer.closeAll("loading");
-                            editor.insertValue("\n![](" + ret.url + ")");
-                            editor.focus()
-                        }else{
-                            layer.closeAll("loading");
-                            layer.msg("粘贴图片失败！")
+                    $.ajax({
+                        url:"{% url 'upload_doc_img' %}",
+                        type:"post",
+                        data:{base:base64},
+                        success:function(ret){
+                            if (ret.success === 1) {
+                                //新一行的图片显示
+                                layer.closeAll("loading");
+                                editor.insertValue("\n![](" + ret.url + ")");
+                                editor.focus()
+                            }else{
+                                layer.closeAll("loading");
+                                layer.msg("粘贴图片失败！")
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading');
                         }
-                    });
-                    layer.closeAll("loading");
+                    })
                 }; // data url!
                 var url = reader.readAsDataURL(blob);
             }
