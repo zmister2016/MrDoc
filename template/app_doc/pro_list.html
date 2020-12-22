@@ -155,9 +155,8 @@
                         {% endif %}
                       </p>
                       {% for new_doc in p.id|get_new_doc %}
-                      <p class="layui-word-aux layui-elip">
-                          <i class="layui-icon layui-icon-form"></i>
-                          <span>{{new_doc.name}}</span>
+                      <p class="layui-word-aux" style="line-height: 18px;">
+                          <span class="layui-elip" style="display: inline-block;;width: 250px;"><i class="layui-icon layui-icon-form"></i> {{new_doc.name}}</span>
                           <span style="float: right;">{{new_doc.modify_time|date:"n-d"}}</span></p>
                       {% endfor %}
                       
