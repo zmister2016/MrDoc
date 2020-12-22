@@ -282,12 +282,14 @@ def create_project(request):
     try:
         name = request.POST.get('pname','')
         name = validateTitle(name)
+        icon = request.POST.get('picon',None)
         desc = request.POST.get('desc','')
         role = request.POST.get('role',0)
         role_list = ['0','1','2','3',0,1,2,3]
         if name != '':
             project = Project.objects.create(
                 name=validateTitle(name),
+                icon = icon,
                 intro=desc[:100],
                 create_user=request.user,
                 role = int(role) if role in role_list else 0
@@ -388,9 +390,11 @@ def modify_project(request):
             # 验证用户有权限修改文集
             if (request.user == project.create_user) or request.user.is_superuser:
                 name = request.POST.get('name',None)
+                icon = request.POST.get('picon', None)
                 content = request.POST.get('desc',None)
                 project.name = validateTitle(name)
                 project.intro = content
+                project.icon = icon
                 project.save()
                 return JsonResponse({'status':True,'data':'修改成功'})
             else:

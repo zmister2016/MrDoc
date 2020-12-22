@@ -45,6 +45,23 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
+                        <label class="layui-form-label">文集图标</label>
+                        <div class="layui-input-block">
+                            <button class="layui-btn layui-btn-primary layui-btn-sm" id="project-icon-select">
+                                {% if pro.icon %}
+                                <svg class="icon" aria-hidden="true"><use xlink:href="#{{pro.icon}}"></use></svg>
+                                {% else %}
+                                <i class="layui-icon layui-icon-addition"></i>
+                                {% endif %}
+                            </button>
+                            <input type="hidden" name="picon" id="picon" value="{{pro.icon}}"/>
+                            <div class="layui-anim layui-anim-upbit layui-iconpicker hide-project-icon-list" id="project-icon-select-box">
+                                <div class="layui-iconpicker-list" id="mrdoc-project-icon-list">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
                         <label class="layui-form-label">{% trans "文集简介" %}</label>
                         <div class="layui-input-block">
                             <textarea name="desc" id="desc" placeholder="{% trans '输入文集简介' %}" class="layui-textarea">{{pro.intro}}</textarea>
@@ -190,7 +207,7 @@
 </div>
 {% endblock %}
 {% block custom_script %}
-
+<script src="{% static 'iconFont/iconfont.js' %}"></script>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
@@ -201,23 +218,41 @@
     var form = layui.form;
     //监听单选事件
     form.on('radio(role)', function(data){
-    console.log(data.elem); //得到radio原始DOM对象
-    console.log(data.value); //被点击的radio的value值
-    if(data.value in [0,1]){
-            $("#role-pwd").css("display","none");
-            $("#role-user").css("display","none");
-    }else if(data.value == 2){
-            $("#role-user").css("display","block");
-            $("#role-pwd").css("display","none");
-    }else if(data.value == 3){
-            $("#role-user").css("display","none");
-            $("#role-pwd").css("display","block");
-    }
+        console.log(data.elem); //得到radio原始DOM对象
+        console.log(data.value); //被点击的radio的value值
+        if(data.value in [0,1]){
+                $("#role-pwd").css("display","none");
+                $("#role-user").css("display","none");
+        }else if(data.value == 2){
+                $("#role-user").css("display","block");
+                $("#role-pwd").css("display","none");
+        }else if(data.value == 3){
+                $("#role-user").css("display","none");
+                $("#role-pwd").css("display","block");
+        }
     });
+    // 动态生成文集图标列表
+    for(var i=1;i<44;i++){
+            var icon_elem = '<div class="layui-iconpicker-icon-item" style="width:20%" data-icon="mrdoc-icon-pro-'+ i +'"><svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-'+ i +'"></use></svg></div>'
+            $("#mrdoc-project-icon-list").append(icon_elem)
+        }
+        // 点击图标选择按钮
+        $("#project-icon-select").click(function(){
+            $("#project-icon-select-box").toggleClass("hide-project-icon-list")
+        });
+        // 选中图标
+        $(".layui-iconpicker-icon-item").click(function(e){
+            var selected_icon = e.currentTarget.dataset.icon;
+            var selected_icon_svg = '<svg class="icon" aria-hidden="true"><use xlink:href="#'+ selected_icon +'"></use></svg>' 
+            console.log(selected_icon)
+            $("#project-icon-select").html(selected_icon_svg)
+            $("#picon").val(selected_icon)
+        })
     //修改文集基础信息
     modifyProject = function(pro_id,pro_name,pro_intro){
         layer.load(1);
         var project_data = {
+            'picon':$("#picon").val(),
             'pro_id':'{{pro.id}}',
             'name':$("#pname").val(),
             'desc':$("#desc").val(),

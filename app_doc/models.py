@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 
 # 文集模型
 class Project(models.Model):
-    name = models.CharField(verbose_name="文档名称",max_length=50)
+    name = models.CharField(verbose_name="文集名称",max_length=50)
+    icon= models.CharField(verbose_name="文集图标",max_length=50,blank=True,null=True,default=None)
     intro = models.TextField(verbose_name="介绍")
     # 文集权限说明：0表示公开，1表示私密,2表示指定用户可见,3表示访问码可见 默认公开
     role = models.IntegerField(choices=((0,0),(1,1),(2,2),(3,3)), default=0,verbose_name="文集权限")

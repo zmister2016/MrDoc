@@ -47,6 +47,9 @@
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
+            {% if project.icon %}
+            <svg class="icon" aria-hidden="true"><use xlink:href="#{{project.icon}}"></use></svg>
+            {% endif %}
             <a href="{% url 'pro_index' pro_id=project.id %}">{{ project.name }}
                 {% if project.role == 1 %}
                     <i class="layui-icon layui-icon-password" title="{% trans '私密文档' %}"></i>
@@ -295,6 +298,7 @@
 <script src="{% static 'viewerjs/viewer.js' %}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'iconFont/iconfont.js' %}"></script>
 <script>
 
 {% if toc_cnt > 999 %}

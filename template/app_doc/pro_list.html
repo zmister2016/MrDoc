@@ -15,6 +15,7 @@
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+    <!-- <link href="//at.alicdn.com/t/font_2281207_xtauo52jlgk.css" rel="stylesheet"> -->
     <style>
         .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree, .layui-nav-itemed:after {
             background-color: #333 !important;
@@ -25,6 +26,12 @@
         /* layui分页组件样式 */
         .layui-laypage .layui-laypage-curr .layui-laypage-em{
             background-color: #333 !important;
+        }
+        .layui-form-label{
+            width: 30px !important;
+        }
+        .layui-input-block{
+            margin-left: 60px !important;
         }
         /* 控制栏表单下拉框样式 */
         .index-control .layui-input-inline{
@@ -127,30 +134,33 @@
     {% for p in projects %}
         <!-- 网格布局 -->
         <div class="layui-col-md3 layui-col-xs12 project-item">
-            <a href="{% url 'pro_index' p.id %}" title="{{p.name}}">
+            <a href="{% url 'pro_index' p.id %}">
                 <div class="layui-card">
                     <div class="layui-card-header" >
-                        {% if p.role == 1 %}
-                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #FF5722;"></i> {{ p.name }}</p>
-                        {% elif p.role == 2 %}
-                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #009688;"></i> {{ p.name }}</p>
-                        {% elif p.role == 3 %}
-                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #1E9FFF;"></i> {{ p.name }}</p>
+                        {% if p.icon %}
+                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}</p>
                         {% else %}
-                        <p class="layui-elip" style="font-weight: 700;"><i class="layui-icon layui-icon-circle-dot" style="color: #5FB878;"></i> {{ p.name }}</p>
+                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg> {{ p.name }}</p>
                         {% endif %}
                     </div>
                   <div class="layui-card-body" style="font-size: 12px;">
-                      <p class="layui-word-aux layui-elip">{% trans "作者：" %}{% if p.create_user.first_name != '' %} {{p.create_user.first_name}} {% else %} {{p.create_user}}{% endif %}</p>
-                      <p class="layui-word-aux layui-elip">{% trans "最新：" %}{{p.id | get_new_doc}}</p>
-                      <p class="tooltip layui-word-aux">{% trans "简介：" %}
-                          {% if p.intro == "" %}
-                          <span class="">{% trans "此文集没有填写简介" %}</span>
-                          {% else %}
-                          <span class="">{{ p.intro | slice:'30' }}…</span>
-                          <span class="tooltip-content clearfix">{{ p.intro }}</span>
-                          {% endif %}
+                      <p class="layui-word-aux layui-elip"><i class="layui-icon layui-icon-user"></i> {% if p.create_user.first_name != '' %} {{p.create_user.first_name}} {% else %} {{p.create_user}}{% endif %}</p>
+                      <p class="tooltip layui-word-aux">
+                        <i class="layui-icon layui-icon-speaker"></i>
+                        {% if p.intro == "" %}
+                        <span class="">{% trans "此文集没有填写简介" %}</span>
+                        {% else %}
+                        <span class="">{{ p.intro | slice:'20' }}…</span>
+                        <span class="tooltip-content clearfix">{{ p.intro }}</span>
+                        {% endif %}
                       </p>
+                      {% for new_doc in p.id|get_new_doc %}
+                      <p class="layui-word-aux layui-elip">
+                          <i class="layui-icon layui-icon-form"></i>
+                          <span>{{new_doc.name}}</span>
+                          <span style="float: right;">{{new_doc.modify_time|date:"n-d"}}</span></p>
+                      {% endfor %}
+                      
                   </div>
                 </div>
             </a>
@@ -231,6 +241,48 @@
 {% include 'app_doc/foot_base.html' %}
 <!-- 页脚结束 -->
 
+<!-- 新建文集div块 -->
+<div style="padding: 20px;display:none;" id="create-project-div">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">图标</label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-primary layui-btn-sm" id="project-icon-select">
+                    <i class="layui-icon layui-icon-addition"></i>
+                </button>
+                <input type="hidden" name="picon" id="picon" />
+                <div class="layui-anim layui-anim-upbit layui-iconpicker hide-project-icon-list" id="project-icon-select-box">
+                    <div class="layui-iconpicker-list" id="mrdoc-project-icon-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block">
+                <textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限</label>
+            <div class="layui-input-block">
+                <input type="radio" name="project-role" value="0" title="公开" checked>
+                <input type="radio" name="project-role" value="1" title="私密">
+            </div>
+        </div>
+        <div style="color:red;font-size:12px;">{% trans "*在可个人中心对文集权限进行进一步控制" %}</div>
+    </div>
+    
+</div>
+<!-- 结束新建文集div块 -->
+
+<script src="{% static 'iconFont/iconfont.js' %}"></script>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
 {% block custom_script %}
@@ -276,35 +328,66 @@
             var filter_data = form.val("filter-project-form");
             console.log(filter_data)
             window.location.href = '/?sort=' + filter_data['sort'] + '&role=' + filter_data['role'] + '&kw={{kw}}' 
-        });  
+        });
+        
+        // 动态生成文集图标列表
+        for(var i=1;i<44;i++){
+            var icon_elem = '<div class="layui-iconpicker-icon-item" style="width:20%" data-icon="mrdoc-icon-pro-'+ i +'"><svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-'+ i +'"></use></svg></div>'
+            $("#mrdoc-project-icon-list").append(icon_elem)
+        }
+        // 点击图标选择按钮
+        $("#project-icon-select").click(function(){
+            $("#project-icon-select-box").toggleClass("hide-project-icon-list")
+        });
+        // 选中图标
+        $(".layui-iconpicker-icon-item").click(function(e){
+            var selected_icon = e.currentTarget.dataset.icon;
+            var selected_icon_svg = '<svg class="icon" aria-hidden="true"><use xlink:href="#'+ selected_icon +'"></use></svg>' 
+            console.log(selected_icon)
+            $("#project-icon-select").html(selected_icon_svg)
+            $("#picon").val(selected_icon)
+        })
+        
     </script>
     <script>
-        
         //创建新文集
         createPro = function () {
             layer.open({
                 type:1,
                 title:'{% trans "新建文集" %}',
-                area:'300px;',
+                area:'400px;',
                 id:'createPro',//配置ID
                 content: $('#create-project-div'),
                 btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
+                sucess:function(){
+                    form.render();
+                },
                 yes:function (index,layero) {
                     layer.load(1)
                     data = {
+                        'picon':$("#picon").val(),
                         'pname':$("#pname").val(),
                         'desc':$("#desc").val(),
-                        'role':$("#project-role").val(),
+                        'role':$("input[name=project-role]:checked").val(),
                     }
-                    $.post("{% url 'create_project' %}",data,function(r){
-                        if(r.status){
-                            window.location.reload();
-                        }else{
-                            //创建失败，提示
-                            console.log(r)
+                    $.ajax({
+                        url:"{% url 'create_project' %}",
+                        type:'post',
+                        data:data,
+                        success:function(r){
+                            if(r.status){
+                                window.location.reload();
+                            }else{
+                                //创建失败，提示
+                                console.log(r)
+                                layer.closeAll('loading')
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
                             layer.closeAll('loading')
-                            layer.msg(r.data)
+                            layer.msg("创建异常")
                         }
                     })
                 },
@@ -391,23 +474,6 @@
         {% endif %}
     <!-- 统计代码结束 -->
 
-    <!-- 新建文集div块 -->
-    <div style="padding: 20px;display:none;" id="create-project-div">
-        <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required">
-        <textarea name="desc" id="desc" placeholder="输入文集简介，不超过100个字，超出将被截断"  maxlength="100" class="layui-textarea"></textarea>
-        <div class="layui-form-item" style="margin-top:10px;">
-            <label class="layui-form-label" style="text-align:left;padding:9px 0px;">{% trans "文集权限" %}</label>
-            <div class="layui-input-block">
-                <select name="project-role" lay-verify="" class="layui-select" id="project-role">
-                    <!--<option value="">选择文集权限</option>-->
-                    <option value="0">{% trans "公开" %}</option>
-                    <option value="1">{% trans "私密" %}</option>
-                </select>
-            </div>
-        </div>
-        <div style="color:red;font-size:12px;">{% trans "*在可个人中心对文集权限进行进一步控制" %}</div>
-    </div>
-    <!-- 结束新建文集div块 -->
 {% endblock %}
 </body>
 </html>

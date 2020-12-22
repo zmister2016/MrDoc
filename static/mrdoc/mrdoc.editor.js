@@ -252,7 +252,7 @@ $("#doc-cache-btn").click(function(){
 $('div.editormd-preview').on('click','a',function(e){
   e.target.target = '_blank';
 });
-$("#editor-md").on('click','a',function(e){
+$("div.editormd-preview").on('click','a',function(e){
   e.target.target = '_blank';
 })
 
