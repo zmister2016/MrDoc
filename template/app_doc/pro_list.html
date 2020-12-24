@@ -114,13 +114,6 @@
                     </div>
                 </div>
                 <!-- 筛选结束 -->
-                <!-- 切换开始 -->
-                <div class="layui-inline">
-                    <div class="layui-input-inline" style="width: 40px;">
-                        <a href="javascript:void(0);" id="switch-grid-list"><i class="layui-icon layui-icon-align-left"></i></a>
-                    </div>
-                </div>
-                <!-- 切换结束 -->
             </div>
         </form>
     </div>
@@ -134,17 +127,17 @@
     {% for p in projects %}
         <!-- 网格布局 -->
         <div class="layui-col-md3 layui-col-xs12 project-item">
-            <a href="{% url 'pro_index' p.id %}">
+            <a href="{% url 'pro_index' p.id %}" target="_blank">
                 <div class="layui-card">
                     <div class="layui-card-header" >
                         {% if p.icon %}
-                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}</p>
+                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span></p>
                         {% else %}
-                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg> {{ p.name }}</p>
+                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span></p>
                         {% endif %}
                     </div>
-                  <div class="layui-card-body" style="font-size: 12px;">
-                      <p class="layui-word-aux layui-elip"><i class="layui-icon layui-icon-user"></i> {% if p.create_user.first_name != '' %} {{p.create_user.first_name}} {% else %} {{p.create_user}}{% endif %}</p>
+                    <div class="layui-card-body" style="font-size: 12px;">
+                      <!-- <p class="layui-word-aux layui-elip"><i class="layui-icon layui-icon-user"></i> {% if p.create_user.first_name != '' %} {{p.create_user.first_name}} {% else %} {{p.create_user}}{% endif %}</p> -->
                       <p class="tooltip layui-word-aux">
                         <i class="layui-icon layui-icon-speaker"></i>
                         {% if p.intro == "" %}
@@ -155,54 +148,17 @@
                         {% endif %}
                       </p>
                       {% for new_doc in p.id|get_new_doc %}
-                      <p class="layui-word-aux" style="line-height: 18px;">
-                          <span class="layui-elip" style="display: inline-block;;width: 250px;"><i class="layui-icon layui-icon-form"></i> {{new_doc.name}}</span>
-                          <span style="float: right;">{{new_doc.modify_time|date:"n-d"}}</span></p>
+                        <p class="layui-word-aux" style="line-height: 18px;">
+                          <a href="{% url 'doc' new_doc.top_doc new_doc.id %}" target="_blank" class="index-doc-link"><span class="layui-elip" style="display: inline-block;;width: 250px;"><i class="layui-icon layui-icon-form"></i> {{new_doc.name}}</span></a>
+                          <span style="float: right;">{{new_doc.modify_time|date:"n-d"}}</span>
+                        </p>
                       {% endfor %}
                       
-                  </div>
+                    </div>
                 </div>
             </a>
         </div>
         <!-- 网格布局结束 -->
-        <!-- 列表布局开始 -->
-        <div class="project-item-list layui-row layui-hide">
-            <a href="{% url 'pro_index' p.id %}" title="{{p.name}}">
-                <div class="layui-col-md1 layui-col-xs2" style="height: 100%;;text-align: center;display: flex;display: -webkit-flex;justify-content: center;align-items:center;">
-                    {% if p.role == 1 %}
-                    <i class="layui-icon layui-icon-menu-fill" style="font-size: 30px;color: #FF5722;"></i>
-                    {% elif p.role == 2 %}
-                    <i class="layui-icon layui-icon-group" style="font-size: 30px;color: #009688;"></i>
-                    {% elif p.role == 3 %}
-                    <i class="layui-icon layui-icon-key" style="font-size: 30px;color: #1E9FFF;"></i> 
-                    {% else %}
-                    <i class="layui-icon layui-icon-read" style="font-size: 30px;color: #5FB878;"></i>
-                    {% endif %}
-                </div>
-                <div class="layui-col-md11 layui-col-xs10">
-                    <div class="layui-card">
-                        <div class="layui-card-header layui-elip" >
-                            <strong class="layui-elip">{{p.name}}</strong>
-                        </div>
-                      <div class="layui-card-body layui-word-aux layui-elip">
-                            <p class="">
-                              <i class="layui-icon layui-icon-user"></i> {{p.create_user}}
-                            </p>
-                            <p class="tooltip layui-word-aux">
-                                {% if p.intro == "" %}
-                                {% trans "此文集没有填写简介" %}
-                                {% else %}
-                                <!-- <span class="">{{ p.intro | slice:'30' }}…</span> -->
-                                {{ p.intro }}
-                                {% endif %}
-                            </p>
-                      </div>
-                    </div>
-                </div>
-                
-            </a>
-        </div>
-        <!-- 列表布局结束 -->
     {% endfor %}
     {% if project_list.count == 0 %}
 <div>
@@ -453,18 +409,7 @@
                 },
             })
         };
-        //切换文集列表和网格
-        $("#switch-grid-list").click(function(){
-            // 切换按钮图标
-            $(this).children("i").toggleClass("layui-icon-align-left layui-icon-app");//切换图标
-            // 切换class
-            $(".project-item").toggleClass("layui-hide")
-            $(".project-item-list").toggleClass("layui-hide")
-            // 重新计算底部
-            var footerHeight = 0;
-            var footerTop = 0;
-            positionFooter();
-        });
+
     </script>
     <!-- 统计代码开始 -->
         {% if debug %}

@@ -14,7 +14,7 @@ def get_doc_count(value):
 # 获取文集下最新的文档及其修改时间
 @register.filter(name='get_new_doc')
 def get_new_doc(value):
-    new_doc = Doc.objects.filter(top_doc=int(value),status=1).order_by('-modify_time')[:2]
+    new_doc = Doc.objects.filter(top_doc=int(value),status=1).order_by('-modify_time')[:3]
     if new_doc is None:
         new_doc = '它还没有文档……'
     return new_doc

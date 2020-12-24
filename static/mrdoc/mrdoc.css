@@ -78,6 +78,10 @@
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,.055);
 }
+.project-item:hover{
+    box-shadow:4px 4px 5px #ddd;
+}
+
 .project-desc{
     overflow:hidden;
     text-overflow:ellipsis; /* 加省略号 */
@@ -111,11 +115,11 @@
 .tooltip-content {
 	position: absolute;
 	z-index: 9999;
-	width: 170px;
+	/* width: 200px; */
 	left: 78%;
 	margin: 0 -60px 20px -150px;
 	padding:10px;
-	top: 100%;
+	/* top: 100%; */
 	text-align: left;
 	box-shadow: -5px -5px 15px rgba(48,54,61,0.2);
 	background: #2a3035;
@@ -155,6 +159,12 @@
 	/*margin-left: 10px;8*/
 }
 
+.index-doc-link{
+    color: #999;
+}
+.index-doc-link:hover{
+    color: #333;
+}
 
 .layui-card{
     box-shadow:0 0 0 0;
@@ -506,8 +516,49 @@ input#doc-name,input#doctemp-name{
     fill: currentColor;
     overflow: hidden;
 }
-.hide-project-icon-list{
+.hide-project-icon-list,.hide-doc-import-list{
     display: none;
+}
+
+.mrdoc-import-doc-list{
+    margin-bottom: 10px;
+}
+.mrdoc-import-doc-item{
+    line-height: 30px !important;
+    background-color:#fff;
+    border-radius:2px;
+    box-shadow:0 2px 4px rgba(0,0,0,.12);
+    box-sizing:border-box;
+    margin-right: 5px;
+    padding-right: 5px;
+}
+.mrdoc-import-doc-item a{
+    padding: 0 12px !important;
+}
+.mrdoc-import-doc-item .layui-nav-more{
+    border-top-color:#333;
+}
+
+.layui-nav .layui-nav-mored{
+    /* border-left:6px solid transparent !important;
+	border-right: 6px solid transparent !important;
+    border-top-color:#333 !important; */
+    border-color: transparent transparent #333;
+
+}
+.mrdoc-import-doc-child{
+    top: 32px !important;
+}
+.mrdoc-import-doc-child a{
+    background-color: #fff !important;
+    color: #333 !important;
+}
+.mrdoc-import-doc-child a:hover{
+    background-color: #f2f2f2 !important;
+    color: #333 !important;
+}
+.layui-nav-bar{
+    height: 0px !important;
 }
 
 /* 文字悬浮提示样式 */
