@@ -11,8 +11,67 @@ import traceback,json
 from django.conf import settings
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload
 from loguru import logger
-
+from django.contrib.auth import authenticate,login,logout # 认证相关方法
+from django.contrib.auth.models import User # Django默认用户模型
+from django.shortcuts import render,redirect
 # MrDoc 基于用户的Token访问API模块
+
+# 用户通过该url获取服务器时间戳，便于接口访问
+def get_timestamp(request):
+    now_time = str(int(time.time()))
+    return JsonResponse({'status':True,'data':now_time})
+
+def oauth0(request):
+    # url范例：http://127.0.0.1:8000/api/oauth0/?username=huyang&timestamp=1608797025&randstr=123adsfadf&hashstr=c171ce95ef3789d922cb6663c678c255&redirecturl=http%3A%2F%2F127.0.0.1%3A8000%2Fproject-1%2Fdoc-10%2F
+    if request.method == 'GET':
+        try:
+            username = request.GET.get("username","")
+            timestamp = request.GET.get("timestamp","")
+            randstr = request.GET.get("randstr","")
+            hashstr = request.GET.get("hashstr","")
+            redirecturl = request.GET.get("redirecturl","/") 
+            if redirecturl == "" :
+                # 必须用判断的方式，否则url里提交redirecturl= 还是为空
+                redirecturl =  "/"                
+            if "" not in [username,timestamp,randstr,hashstr] :
+                # 都不为空，才验证哦
+                # 1 、验证timestamp的时效性
+                nowtime = int (time.time())
+                # 时间戳失效时间，默认为3600，可以改短，如30，严格点5秒，如果使用5秒，请求前，需要通过get_timestamp获取服务器时间戳，否则因为和服务器时间差导致无法验证通过
+                if (nowtime - int(timestamp)) > 3600 :
+                    return JsonResponse({'status':False,'data':nowtime,'errormsg':"out of time"})
+                # 2、获取userid的Token
+                user = User.objects.get(username=username)                                
+                if user is None:
+                    return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  error！'})
+                ID = user.id
+                State = user.is_active
+                if State == 1 and ID is not None:
+                    usertoken = UserToken.objects.get(user_id=ID)
+                    token = usertoken.token
+                else:
+                    return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  deny！'})
+            
+                # 3、 验证hash的正确性
+                final_str  =  str(randstr) + str(timestamp) + str(username) + token
+                md5 = hashlib.md5(final_str.encode("utf-8")).hexdigest()        # 不支持中文
+                if md5 == hashstr:
+                    # 用户验证成功                   
+                    login(request,user)
+                    from urllib.parse import unquote
+                    newurl = unquote(redirecturl)
+                    return redirect(newurl)
+                else:
+                    return JsonResponse({'status':False,'data':nowtime,'errmsg':'hash error!'})      
+            else:
+                return JsonResponse({'status':False,'data':'Some keywords is empty!'})          
+        except :
+            return JsonResponse({'status':False,'data':'Something wrong here!!'})  
+    else:
+        return JsonResponse({'status':False,'data':'Nothing Here'})  
+
+
+
 
 # Token管理页面
 @require_http_methods(['POST','GET'])
