@@ -33,7 +33,7 @@ def oauth0(request):
             if redirecturl == "" :
                 # 必须用判断的方式，否则url里提交redirecturl= 还是为空
                 redirecturl =  "/"                
-            if ("" in [username,timestamp,randstr,hashstr]) == False :
+            if "" not in [username,timestamp,randstr,hashstr] :
                 # 都不为空，才验证哦
                 # 1 、验证timestamp的时效性
                 nowtime = int (time.time())
