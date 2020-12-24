@@ -22,13 +22,14 @@ def get_timestamp(request):
     return JsonResponse({'status':True,'data':now_time})
 
 def oauth0(request):
+    # url范例：http://127.0.0.1:8000/api/oauth0/?username=huyang&timestamp=1608797025&randstr=123adsfadf&hashstr=c171ce95ef3789d922cb6663c678c255&redirecturl=http%3A%2F%2F127.0.0.1%3A8000%2Fproject-1%2Fdoc-10%2F
     if request.method == 'GET':
         try:
             username = request.GET.get("username","")
             timestamp = request.GET.get("timestamp","")
             randstr = request.GET.get("randstr","")
             hashstr = request.GET.get("hashstr","")
-            redirecturl = request.GET.get("redirecturl","") 
+            redirecturl = request.GET.get("redirecturl","/") 
             if ("" in [username,timestamp,randstr,hashstr]) == False :
                 # 都不为空，才验证哦
                 # 1 、验证timestamp的时效性
@@ -37,32 +38,30 @@ def oauth0(request):
                 if (nowtime - int(timestamp)) > 3600 :
                     return JsonResponse({'status':False,'data':nowtime,'errormsg':"out of time"})
                 # 2、获取userid的Token
-                user = User.objects.get(username=username)  
-                print(type(user))
-                print(user.first_name)
+                user = User.objects.get(username=username)                                
+                if user is None:
+                    return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  error！'})
                 ID = user.id
-                State = user.is_active                
-                if ID is not None:
-                    if State == 1:
-                        usertoken = UserToken.objects.get(user_id=ID)
-                        token = usertoken.token
-                    else:
-                        return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  deny！'}) 
+                State = user.is_active
+                if State == 1 and ID is not None:
+                    usertoken = UserToken.objects.get(user_id=ID)
+                    token = usertoken.token
+                else:
+                    return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  deny！'})
+            
                 # 3、 验证hash的正确性
                 final_str  =  str(randstr) + str(timestamp) + str(username) + token
                 md5 = hashlib.md5(final_str.encode("utf-8")).hexdigest()        # 不支持中文
                 if md5 == hashstr:
                     # 用户验证成功                   
                     login(request,user)
-                    #return JsonResponse({'status':True,'data':nowtime,'errmsg':''})    
-                    #return redirect(redirecturl)
                     from urllib.parse import unquote
                     newurl = unquote(redirecturl)
                     return redirect(newurl)
                 else:
                     return JsonResponse({'status':False,'data':nowtime,'errmsg':'hash error!'})      
             else:
-                return JsonResponse({'status':False,'data':'some key words is empty!'})          
+                return JsonResponse({'status':False,'data':'Some keywords is empty!'})          
         except :
             return JsonResponse({'status':False,'data':'Something wrong here!!'})  
     else:
