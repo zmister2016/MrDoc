@@ -30,6 +30,9 @@ def oauth0(request):
             randstr = request.GET.get("randstr","")
             hashstr = request.GET.get("hashstr","")
             redirecturl = request.GET.get("redirecturl","/") 
+            if redirecturl == "" :
+                # 必须用判断的方式，否则url里提交redirecturl= 还是为空
+                redirecturl =  "/"                
             if ("" in [username,timestamp,randstr,hashstr]) == False :
                 # 都不为空，才验证哦
                 # 1 、验证timestamp的时效性
