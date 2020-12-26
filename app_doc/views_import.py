@@ -10,6 +10,7 @@ from django.http.response import JsonResponse,Http404,HttpResponseNotAllowed,Htt
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
 from app_doc.models import Project,Doc,DocTemp
@@ -116,3 +117,45 @@ def project_doc_sort(request):
                         Doc.objects.filter(id=c2['id']).update(sort=n2,parent_doc=c1['id'],status=doc_status)
 
     return JsonResponse({'status':True,'data':'ok'})
+
+
+# 导入docx文档
+@login_required()
+@csrf_exempt
+@require_POST
+def import_doc_docx(request):
+    file_type = request.POST.get('type', None)
+    editor_mode = request.POST.get('editor_mode',1)
+    # 上传Zip压缩文件
+    if file_type == 'docx':
+        import_file = request.FILES.get('import_doc_docx', None)
+        if import_file:
+            file_name = import_file.name
+            # 限制文件大小在50mb以内
+            if import_file.size > 52428800:
+                return JsonResponse({'status': False, 'data': '文件大小超出限制'})
+            # 限制文件格式为.zip
+            if file_name.endswith('.docx'):
+                if os.path.exists(os.path.join(settings.MEDIA_ROOT, 'import_temp')) is False:
+                    os.mkdir(os.path.join(settings.MEDIA_ROOT, 'import_temp'))
+
+                temp_file_name = str(time.time()) + '.docx'
+                temp_file_path = os.path.join(settings.MEDIA_ROOT, 'import_temp/' + temp_file_name)
+                with open(temp_file_path, 'wb+') as docx_file:
+                    for chunk in import_file:
+                        docx_file.write(chunk)
+                if os.path.exists(temp_file_path):
+                    import_file = ImportDocxDoc(
+                        docx_file_path=temp_file_path,
+                        editor_mode=editor_mode,
+                        create_user=request.user
+                    ).run()
+                    return JsonResponse(import_file)
+                else:
+                    return JsonResponse({'status': False, 'data': '上传失败'})
+            else:
+                return JsonResponse({'status': False, 'data': '仅支持.docx格式'})
+        else:
+            return JsonResponse({'status': False, 'data': '无有效文件'})
+    else:
+        return JsonResponse({'status': False, 'data': '参数错误'})

@@ -315,9 +315,14 @@ def project_index(request,pro_id):
         new_docs = Doc.objects.filter(top_doc=pro_id,status=1).order_by('-modify_time')[:5]
         # markdown文本生成摘要（不带markdown标记）
         remove_markdown_tag(new_docs)
+
         # 获取文集的文档目录
         toc_list,toc_cnt = get_pro_toc(pro_id)
         # toc_list,toc_cnt = ([],1000)
+
+        # 获取文集的协作成员
+        colla_user_list = ProjectCollaborator.objects.filter(project=project)
+
         # 获取文集的协作用户信息
         if request.user.is_authenticated: # 对登陆用户查询其协作文档信息
             colla_user = ProjectCollaborator.objects.filter(project=project,user=request.user).count()
@@ -922,11 +927,11 @@ def create_doc(request):
             status = request.POST.get('status',1) # 文档状态
             open_children = request.POST.get('open_children', False)  # 展示下级目录
             show_children = request.POST.get('show_children', False)  # 展示下级目录
-            if open_children == 'true':
+            if open_children == 'on':
                 open_children = True
             else:
                 open_children = False
-            if show_children == 'true':
+            if show_children == 'on':
                 show_children = True
             else:
                 show_children = False
@@ -1028,11 +1033,11 @@ def modify_doc(request,doc_id):
             status = request.POST.get('status',1) # 文档状态
             open_children = request.POST.get('open_children',False) # 展示下级目录
             show_children = request.POST.get('show_children', False)  # 展示下级目录
-            if open_children == 'true':
+            if open_children == 'on':
                 open_children = True
             else:
                 open_children = False
-            if show_children == 'true':
+            if show_children == 'on':
                 show_children = True
             else:
                 show_children = False

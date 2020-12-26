@@ -35,6 +35,7 @@ urlpatterns = [
     path('doc_recycle/', views.doc_recycle,name='doc_recycle'), # 文档回收站
     path('fast_pub_doc/',views.fast_publish_doc,name='fast_pub_doc'), # 一键发布文档
     path('download_doc_md/<int:doc_id>/',views.download_doc_md,name='download_doc_md'), # 下载文档Markdown文件
+    path('import/doc_docx/',views_import.import_doc_docx,name="import_doc_docx"), # 导入docx文档
     #################文档分享相关
     path('share_doc/', views.share_doc, name='share_doc'),  # 私密文档分享
     path('share_doc_check/', views.share_doc_check, name='share_doc_check'),  # 私密文档验证

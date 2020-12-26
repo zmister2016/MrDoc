@@ -203,7 +203,7 @@
             layer.open({
                 type:1,
                 title:'修改'+ user + '的协作权限',
-                area:'300px;',
+                area:'400px;',
                 id:'modifyProColla',//配置ID
                 content:$('#modify-pro-colla-layer'),
                 btn:['确定','取消'], //添加按钮
@@ -273,10 +273,10 @@
             {% endfor %}
         </select>
         <div class="layui-form-item">
-          <div class="layui-input-inline">
-            <input type="radio" name="add-role" value="0" title="初级权限" checked>
-            <input type="radio" name="add-role" value="1" title="高级权限" >
-          </div>
+          <!-- <div class="layui-input-inline"> -->
+            <input type="radio" name="add-role" value="0" title="初级权限 - 可新建文档，修改、删除自己创建的文档" checked>
+            <input type="radio" name="add-role" value="1" title="高级权限 - 可操作所有文档" >
+          <!-- </div> -->
         </div>
     </div>
 </div>
@@ -284,10 +284,10 @@
 <div id="modify-pro-colla-layer" style="display:none;">
     <div style="margin:10px;" class="layui-form">
         <div class="layui-form-item">
-          <div class="layui-input-inline">
-            <input type="radio" name="modify-role" value="0" title="初级权限" checked>
-            <input type="radio" name="modify-role" value="1" title="高级权限" >
-          </div>
+          <!-- <div class="layui-input-inline"> -->
+            <input type="radio" name="modify-role" value="0" title="初级权限 - 可新建文档，修改、删除自己创建的文档" checked>
+            <input type="radio" name="modify-role" value="1" title="高级权限 - 可操作所有文档" >
+          <!-- </div> -->
         </div>
     </div>
 </div>

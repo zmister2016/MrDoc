@@ -10,3 +10,5 @@ whoosh==2.7.4
 django-haystack==3.0
 Markdown==3.3.3
 jieba==0.42.1
+mammoth==1.4.13
+markdownify==0.6.0

@@ -22,10 +22,10 @@
 
 {% block content_head %}
     <h1>{{ project.name }}</h1><hr>
-    <p style="" class="project-doc-content-head">
+    <!-- <p style="" class="project-doc-content-head">
         <i class="fa fa-user"></i> {% trans "创建人：" %}{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user}}{% endif %}
     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> {% trans "创建于：" %}{{ project.create_time }}
-    </p>
+    </p> -->
 {% endblock %}
 
 {% block page_content %}
@@ -132,6 +132,14 @@
 {% endblock %}
 
 {% block doc_bottom_block %}
+<span >
+    <i class="layui-icon layui-icon-user"></i>
+    <span tooltip="文集创建者">{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user.username}}{% endif %}</span>
+    {% for colla in colla_user_list %}
+    ,<span tooltip="文集成员">{% if colla.user.first_name != '' %} {{colla.user.first_name}} {% else %} {{colla.user.username}}{% endif %}</span>
+    {% endfor %}
+</span>
+
 <button id="share" class="doc-bottom-btn" tooltip="分享本文档" style="padding-left: 20px;">
     <i class="fa fa-share-alt" ></i> {% trans "分享" %}
 </button>

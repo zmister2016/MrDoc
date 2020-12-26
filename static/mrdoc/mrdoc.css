@@ -520,6 +520,9 @@ input#doc-name,input#doctemp-name{
     display: none;
 }
 
+.doc-summary .layui-nav{
+    padding: 0;
+}
 .mrdoc-import-doc-list{
     margin-bottom: 10px;
 }
@@ -529,7 +532,7 @@ input#doc-name,input#doctemp-name{
     border-radius:2px;
     box-shadow:0 2px 4px rgba(0,0,0,.12);
     box-sizing:border-box;
-    margin-right: 5px;
+    margin-right: 2px;
     padding-right: 5px;
 }
 .mrdoc-import-doc-item a{
@@ -556,6 +559,21 @@ input#doc-name,input#doctemp-name{
 .mrdoc-import-doc-child a:hover{
     background-color: #f2f2f2 !important;
     color: #333 !important;
+}
+.mrdoc-import-doc-child .layui-form-checkbox[lay-skin=primary]{
+    margin-left: 10px;
+    padding-left: 20px;
+
+}
+.mrdoc-import-doc-child .layui-form-checkbox[lay-skin=primary] i{
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color:  #2176ff!important;
+    background-color:  #2176ff;
+    color: #fff;
 }
 .layui-nav-bar{
     height: 0px !important;
