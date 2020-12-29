@@ -299,8 +299,9 @@
             var selected_icon = e.currentTarget.dataset.icon;
             var selected_icon_svg = '<svg class="icon" aria-hidden="true"><use xlink:href="#'+ selected_icon +'"></use></svg>' 
             console.log(selected_icon)
-            $("#project-icon-select").html(selected_icon_svg)
-            $("#picon").val(selected_icon)
+            $("#project-icon-select").html(selected_icon_svg);
+            $("#picon").val(selected_icon);
+            $("#project-icon-select-box").toggleClass("hide-project-icon-list");
         })
         
     </script>

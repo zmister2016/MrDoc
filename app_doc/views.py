@@ -397,9 +397,17 @@ def modify_project(request):
                 name = request.POST.get('name',None)
                 icon = request.POST.get('picon', None)
                 content = request.POST.get('desc',None)
+                is_watermark = request.POST.get('is_watermark',False)
+                if is_watermark == 'true':
+                    is_watermark = True
+                else:
+                    is_watermark = False
+                watermark_value = request.POST.get('watermark_value','')
                 project.name = validateTitle(name)
                 project.intro = content
                 project.icon = icon
+                project.is_watermark = is_watermark
+                project.watermark_value = watermark_value
                 project.save()
                 return JsonResponse({'status':True,'data':'修改成功'})
             else:

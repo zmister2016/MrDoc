@@ -81,9 +81,9 @@
                         <div style="display:flex;justify-content:space-between;">
                             <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
                             {% if docs.open_children %}
-                                <i class="fa fa-chevron-down switch-toc" style="padding:15px;"></i>
+                                <i class="layui-icon layui-icon-down switch-toc" style="padding:15px;cursor: pointer;"></i>
                             {% else %}
-                                <i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>
+                                <i class="layui-icon layui-icon-left switch-toc" style="padding:15px;cursor: pointer;"></i>
                             {% endif %}
                         </div>
                         {% if docs.open_children %}
@@ -99,9 +99,9 @@
                                     <div style="display:flex;justify-content:space-between;">
                                         <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
                                         {% if node.open_children %}
-                                            <i class="fa fa-chevron-down switch-toc" style="padding:15px;"></i>
+                                            <i class="layui-icon layui-icon-down switch-toc" style="padding:15px;cursor: pointer;"></i>
                                         {% else %}
-                                            <i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>
+                                            <i class="layui-icon layui-icon-eft switch-toc" style="padding:15px;cursor: pointer;"></i>
                                         {% endif %}
                                     </div>
                                     {% if node.open_children %}
@@ -151,7 +151,7 @@
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
             <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="{% trans '切换侧边栏' %}">
-                <i class="fa fa-align-justify"></i>
+                <i class="layui-icon layui-icon-slider"></i>
             </a>
             <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
                 <i class="fa fa-font">-</i>
@@ -166,12 +166,15 @@
             {% block head_toolbar %}
             {% endblock %}
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                <i class="fa fa-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
+                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
         </div>
         <!-- 文档主体 -->
         <div class="doc-body-content">
             <div class="doc-body-content-div">
+                {% if project.is_watermark %}
+                    <div id="wm"></div>
+                {% endif %}
                 <!-- 文档内容 -->
                 <div class="doc-content">
                     <!-- 标题 -->
@@ -179,7 +182,7 @@
                         <!-- 页面主体头信息 -->
                         {% block content_head %}
                         {% endblock %}
-
+                        
                         <!-- 广告代码开始 -->
                         {% if debug %}
                         {% else %}
@@ -228,7 +231,7 @@
     <!-- 右侧文档栏结束 -->
     <!-- 右下角工具按钮 -->
     <div class="fixed-tool-bar">
-        <div class="toTop" ><i class="fa fa-arrow-up"></i></div>
+        <div class="toTop" ><i class="layui-icon layui-icon-up"></i></div>
         {% block right_widget %} {% endblock %}
     </div>
 </div>
@@ -295,7 +298,7 @@
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static 'viewerjs/viewer.js' %}"></script>
+<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}"></script>
@@ -382,6 +385,12 @@
         })
         // }
         // initRender();
+    {% endif %}
+
+    {% if project.is_watermark %}
+    var img_base64 = textBecomeImg('{{project.watermark_value}}','14','#000')
+    console.log(img_base64)
+    document.getElementById("wm").style.background = 'url('+ img_base64 + ')'
     {% endif %}
 </script>
 

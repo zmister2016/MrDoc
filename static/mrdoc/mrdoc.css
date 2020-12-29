@@ -533,6 +533,7 @@ input#doc-name,input#doctemp-name{
     box-shadow:0 2px 4px rgba(0,0,0,.12);
     box-sizing:border-box;
     margin-right: 2px;
+    margin-bottom: 2px;
     padding-right: 5px;
 }
 .mrdoc-import-doc-item a{
