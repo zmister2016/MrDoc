@@ -17,6 +17,7 @@ from django.shortcuts import render,redirect
 # MrDoc 基于用户的Token访问API模块
 
 # 用户通过该url获取服务器时间戳，便于接口访问
+# url范例：http://127.0.0.1:8000/api/get_timestamp/
 def get_timestamp(request):
     now_time = str(int(time.time()))
     return JsonResponse({'status':True,'data':now_time})
@@ -38,19 +39,19 @@ def oauth0(request):
                 # 1 、验证timestamp的时效性
                 nowtime = int (time.time())
                 # 时间戳失效时间，默认为3600，可以改短，如30，严格点5秒，如果使用5秒，请求前，需要通过get_timestamp获取服务器时间戳，否则因为和服务器时间差导致无法验证通过
-                if (nowtime - int(timestamp)) > 3600 :
-                    return JsonResponse({'status':False,'data':nowtime,'errormsg':"out of time"})
+                if (nowtime - int(timestamp)) > 3600 :                    
+                    raise ValueError('链接已失效，请从合法路径访问，或联系管理员！')                    
                 # 2、获取userid的Token
                 user = User.objects.get(username=username)                                
                 if user is None:
-                    return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  error！'})
+                    raise ValueError('请求用户出错！')
                 ID = user.id
                 State = user.is_active
                 if State == 1 and ID is not None:
                     usertoken = UserToken.objects.get(user_id=ID)
                     token = usertoken.token
                 else:
-                    return JsonResponse({'status':False,'data':nowtime,'errormsg':'user  deny！'})
+                    raise ValueError('非法用户！')
             
                 # 3、 验证hash的正确性
                 final_str  =  str(randstr) + str(timestamp) + str(username) + token
@@ -61,14 +62,18 @@ def oauth0(request):
                     from urllib.parse import unquote
                     newurl = unquote(redirecturl)
                     return redirect(newurl)
-                else:
-                    return JsonResponse({'status':False,'data':nowtime,'errmsg':'hash error!'})      
+                else:                    
+                    raise ValueError('验证失败,可能是用户名或Token不正确!详情请联系管理员！')                   
             else:
-                return JsonResponse({'status':False,'data':'Some keywords is empty!'})          
+                raise ValueError('关键字验证失败，请联系管理员！部分关键字为空')          
+        except ValueError as e:
+            errormsg = e
+            return render(request, 'app_api/api404.html', locals())
         except :
-            return JsonResponse({'status':False,'data':'Something wrong here!!'})  
+            errormsg = "API接口运行出错！"
+            return render(request, 'app_api/api404.html', locals())
     else:
-        return JsonResponse({'status':False,'data':'Nothing Here'})  
+        return JsonResponse({'status':False,'data':'Nothing Here'}) 
 
 
 
