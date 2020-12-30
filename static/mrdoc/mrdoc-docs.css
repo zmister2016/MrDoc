@@ -102,3 +102,9 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
     opacity: 0.1;
     pointer-events: none;
 }
+.collected{
+    color: rgb(250, 173, 20);
+}
+.doc-bottom-icon,.doc-bottom-btn{
+    cursor: pointer;
+}

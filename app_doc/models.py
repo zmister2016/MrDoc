@@ -251,3 +251,19 @@ class Attachment(models.Model):
     class Meta:
         verbose_name = '附件管理'
         verbose_name_plural = verbose_name
+
+
+# 我的收藏
+class MyCollect(models.Model):
+    # 收藏类型 1表示文档 2表示文集
+    collect_type = models.IntegerField(verbose_name="收藏类型")
+    collect_id = models.IntegerField(verbose_name="收藏对象ID")
+    create_user = models.ForeignKey(User,on_delete=models.CASCADE)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.collect_type
+
+    class Meta:
+        verbose_name = '我的收藏'
+        verbose_name_plural = verbose_name

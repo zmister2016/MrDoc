@@ -55,6 +55,15 @@
                     <i class="layui-icon layui-icon-password" title="{% trans '私密文档' %}"></i>
                 {% endif %}
             </a>
+            {% if request.user.is_authenticated %}
+                {% if is_collect_pro %}
+                    <i class="layui-icon layui-icon-star-fill collected" style="cursor: pointer;" title="已收藏文集，点击取消" id="collect_pro"></i>
+                {% else %}
+                    <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="收藏文集" id="collect_pro"></i>
+                {% endif %}
+            {% else %}
+                <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="请登录后收藏"></i>
+            {% endif %}
             <p>
                 {% if colla_user > 0 %}
                 <span style="font-size:12px;color:gray;font-weight:100;">{% trans "* 此为协作文集" %}</span>
@@ -389,7 +398,6 @@
 
     {% if project.is_watermark %}
     var img_base64 = textBecomeImg('{{project.watermark_value}}','14','#000')
-    console.log(img_base64)
     document.getElementById("wm").style.background = 'url('+ img_base64 + ')'
     {% endif %}
 </script>
@@ -408,6 +416,41 @@
             };
         var img_viewer = new Viewer(document.getElementById('content'), img_options);
     {% endif %}
+    
+    // 收藏文集
+    var layer = layui.layer;
+    $("#collect_pro").click(function(e){
+        $(this).toggleClass("layui-icon-star-fill layui-icon-star");
+        $(this).toggleClass("collected");
+        $.ajax({
+            url:'/my_collect/',
+            type:'post',
+            data:{'type':2,'id':'{{project.id}}'},
+            success:function(r){
+                layer.msg(r.data)
+            },
+            error:function(){
+                layer.msg("操作异常")
+            }
+        });
+    });
+    // 收藏文档
+    $("#collect_doc").click(function(){
+        $(this).toggleClass("layui-icon-star-fill layui-icon-star")
+        $(this).toggleClass("collected")
+        $.ajax({
+            url:'/my_collect/',
+            type:'post',
+            data:{'type':1,'id':'{{doc.id}}'},
+            success:function(r){
+                layer.msg(r.data)
+            },
+            error:function(){
+                layer.msg("操作异常")
+            }
+        })
+    });
+
 </script>
 
 <!-- 统计代码开始 -->

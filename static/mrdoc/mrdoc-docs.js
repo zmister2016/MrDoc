@@ -307,7 +307,7 @@ doc_qrcode = function(){
 };
 doc_qrcode();
 
-
+// 文集水印
 textBecomeImg = function(text,fontsize,fontcolor){
     var canvas = document.createElement('canvas');
     canvas.height = 180;

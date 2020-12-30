@@ -323,6 +323,13 @@ def project_index(request,pro_id):
         # 获取文集的协作成员
         colla_user_list = ProjectCollaborator.objects.filter(project=project)
 
+        # 获取文集收藏状态
+        if request.user.is_authenticated:
+            is_collect_pro = MyCollect.objects.filter(
+                collect_type=2,collect_id=pro_id,create_user=request.user).exists()
+        else:
+            is_collect_pro = False
+
         # 获取文集的协作用户信息
         if request.user.is_authenticated: # 对登陆用户查询其协作文档信息
             colla_user = ProjectCollaborator.objects.filter(project=project,user=request.user).count()
@@ -848,6 +855,16 @@ def doc(request,pro_id,doc_id):
                     colla_user = colla_user.count()
             else:
                 colla_user = 0
+
+            # 获取文集收藏状态
+            if request.user.is_authenticated:
+                is_collect_pro = MyCollect.objects.filter(collect_type=2, collect_id=pro_id,
+                                                          create_user=request.user).exists()
+                # 获取文档收藏状态
+                is_collect_doc = MyCollect.objects.filter(collect_type=1, collect_id=doc_id,
+                                                          create_user=request.user).exists()
+            else:
+                is_collect_pro,is_collect_doc = False,False
 
             # 私密文集且访问者非创建者、协作者 - 不能访问
             if (project.role == 1) and (request.user != project.create_user) and (colla_user == 0):
@@ -2937,3 +2954,32 @@ def manage_self(request):
             return JsonResponse({'status':True,'data':'ok'})
         else:
             return JsonResponse({'status':False,'data':'参数不正确'})
+
+
+# 文集文档收藏
+@login_required()
+def my_collect(request):
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        collect_type = request.POST.get('type',None) # 收藏类型
+        collect_id = request.POST.get('id',None) # 收藏对象ID
+        if (collect_type is None) or (collect_id is None):
+            return JsonResponse({'status':False,'data':'参数错误'})
+        else:
+            is_collect = MyCollect.objects.filter(collect_type=collect_type,collect_id=collect_id,create_user=request.user)
+            # 存在收藏
+            if is_collect.exists():
+                is_collect.delete()
+                return JsonResponse({'status': True, 'data': '取消收藏成功'})
+            else:
+                MyCollect.objects.create(
+                    collect_type = collect_type,
+                    collect_id = collect_id,
+                    create_user = request.user,
+                    create_time = datetime.datetime.now()
+                )
+                return JsonResponse({'status':True,'data':'收藏成功'})
+
+    elif request.method == 'DELETE':
+        pass

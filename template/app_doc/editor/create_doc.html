@@ -310,10 +310,10 @@
                         layer.closeAll("loading"); //关闭加载层
                         window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
                         if(status === 1){
-                            layer.msg('发布成功，即将跳转到文档页面',function(){
+                            layer.msg('发布成功',{time:1000},function(){
                                 md_changed = false;
-                                //跳转到发布的文档
-                                window.location.href = "/project-" + r.data.pro + "/doc-" + r.data.doc
+                                //跳转到文档修改
+                                window.location.href = "/modify_doc/"+r.data.doc+"/";
                             });
                         }else{
                             layer.msg('保存成功',{time:1000},function(){

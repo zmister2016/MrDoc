@@ -900,43 +900,65 @@ def admin_center_menu(request):
             "id": 2,
             "title": "文集管理",
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-list",
             "href": reverse('project_manage'),
         },
         {
             "id": 3,
             "title": "文档管理",
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-form",
             "href": reverse('doc_manage'),
         },
         {
             "id": 4,
             "title": "文档模板管理",
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-templeate-1",
             "href": reverse('doctemp_manage'),
         },
         {
             "id": 5,
             "title": "注册码管理",
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-component",
             "href": reverse('register_code_manage'),
         },
         {
             "id": 6,
             "title": "用户管理",
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-user",
             "href": reverse('user_manage'),
         },
         {
             "id": 7,
             "title": "站点设置",
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-set",
             "href": reverse('sys_setting'),
         },
+        {
+            "id": "common",
+            "title": "使用帮助",
+            "icon": "layui-icon layui-icon-template-1",
+            "type": 0,
+            "href": "",
+            "children": [{
+                "id": 701,
+                "title": "安装说明",
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "http://mrdoc.zmister.com/project-7/"
+            }, {
+                "id": 702,
+                "title": "使用说明",
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "http://mrdoc.zmister.com/project-54/"
+            }]
+        }
     ]
     return JsonResponse(menu_data,safe=False)

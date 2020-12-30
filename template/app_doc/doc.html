@@ -71,20 +71,32 @@
 </div>
 
 <div class="layui-row layui-col-space20" style="padding-left: 20px;">
-    <span>
+    <span class="doc-bottom-icon">
         <i class="layui-icon layui-icon-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
     </span>
-    <span tooltip="{% trans '更新于:' %}{{doc.modify_time}}">
+    <span tooltip="{% trans '更新于:' %}{{doc.modify_time}}" class="doc-bottom-icon">
         <i class="layui-icon layui-icon-log"></i> {{ doc.modify_time }}
     </span>
 
     <button id="share" class="doc-bottom-btn" tooltip="{% trans '分享本文档' %}">
-        <i class="layui-icon layui-icon-share" ></i> {% trans "分享" %}
+        <i class="layui-icon layui-icon-share" ></i> {% trans "分享文档" %}
     </button>
+
+    <span class="doc-bottom-icon">
+        {% if request.user.is_authenticated %}
+            {% if is_collect_doc %}
+            <i class="layui-icon layui-icon-star-fill collected" id="collect_doc"></i> {% trans "收藏文档" %}
+            {% else %}
+            <i class="layui-icon layui-icon-star" id="collect_doc"></i> {% trans "收藏文档" %}
+            {% endif %}
+        {% else %}
+            <i class="layui-icon layui-icon-star" title="请登录后收藏"></i> {% trans "收藏文档" %}
+        {% endif %}
+    </span>
 
     {% if request.user == doc.create_user or request.user.is_superuser %}
     <button class="doc-bottom-btn" tooltip="{% trans '下载文档' %}" id="download_doc">
-        <i class="fa fa-download"></i> {% trans "下载" %}
+        <i class="fa fa-download"></i> {% trans "下载文档" %}
     </button>
     {% endif %}
 </div>
