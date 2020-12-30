@@ -10,6 +10,9 @@ class Project(models.Model):
     # 文集权限说明：0表示公开，1表示私密,2表示指定用户可见,3表示访问码可见 默认公开
     role = models.IntegerField(choices=((0,0),(1,1),(2,2),(3,3)), default=0,verbose_name="文集权限")
     role_value = models.TextField(verbose_name="文集权限值",blank=True,null=True)
+    is_watermark = models.BooleanField(verbose_name="水印状态",default=False)
+    watermark_type = models.IntegerField(verbose_name="水印类型",default=1) # 1表示文字水印 2表示图片水印
+    watermark_value = models.CharField(verbose_name="水印内容",null=True,blank=True,default='',max_length=250)
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)

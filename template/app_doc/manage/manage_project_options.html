@@ -36,7 +36,7 @@
         </ul>
         <div class="layui-tab-content">
             <!-- 文集基础信息配置 -->
-            <div class="layui-tab-item layui-show">
+            <div class="layui-tab-item layui-show layui-form">
                 <div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">{% trans "文集名称" %}</label>
@@ -59,6 +59,18 @@
                                 <div class="layui-iconpicker-list" id="mrdoc-project-icon-list">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">文集水印</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" name="is_watermark" id="is_watermark" lay-skin="switch" lay-text="开启|关闭" {% if pro.is_watermark %}checked{% endif %}>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">水印文字</label>
+                        <div class="layui-input-inline">
+                            <input type="input" class="layui-input" name="watermark_value" id="watermark_value" value="{{pro.watermark_value}}">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -245,9 +257,10 @@
             var selected_icon = e.currentTarget.dataset.icon;
             var selected_icon_svg = '<svg class="icon" aria-hidden="true"><use xlink:href="#'+ selected_icon +'"></use></svg>' 
             console.log(selected_icon)
-            $("#project-icon-select").html(selected_icon_svg)
-            $("#picon").val(selected_icon)
-        })
+            $("#project-icon-select").html(selected_icon_svg);
+            $("#picon").val(selected_icon);
+            $("#project-icon-select-box").toggleClass("hide-project-icon-list");
+        });
     //修改文集基础信息
     modifyProject = function(pro_id,pro_name,pro_intro){
         layer.load(1);
@@ -256,6 +269,8 @@
             'pro_id':'{{pro.id}}',
             'name':$("#pname").val(),
             'desc':$("#desc").val(),
+            'is_watermark':$("input[name=is_watermark]")[0].checked,
+            'watermark_value':$("#watermark_value").val(),
         }
         $.post("{% url 'modify_project' %}",project_data,function(r){
             layer.closeAll('loading'); //关闭loading
@@ -323,15 +338,33 @@
     reportFile = function(pro_id,types){
         layer.load(1)
         var data = {'pro_id':pro_id,'types':types};
-        $.post("{% url 'genera_project_file' %}",data,function(r){
-            layer.closeAll('loading');
-            if(r.status){
-                layer.msg("生成完成")
-                window.location.reload();
-            }else{
-                layer.msg("生成出错，请稍后重试")
+        $.ajax({
+            url:"{% url 'genera_project_file' %}",
+            type:"post",
+            data:data,
+            success:function(r){
+                layer.closeAll('loading');
+                if(r.status){
+                    layer.msg("生成完成")
+                    window.location.reload();
+                }else{
+                    layer.msg("生成出错，请稍后重试")
+                }
+            },
+            error:function(){
+                layer.closeAll('loading');
+                layer.msg("服务器异常")
             }
         })
+        // $.post("{% url 'genera_project_file' %}",data,function(r){
+        //     layer.closeAll('loading');
+        //     if(r.status){
+        //         layer.msg("生成完成")
+        //         window.location.reload();
+        //     }else{
+        //         layer.msg("生成出错，请稍后重试")
+        //     }
+        // })
     }
     // 删除文集
     delProject = function(pro_id){

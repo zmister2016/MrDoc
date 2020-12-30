@@ -247,7 +247,7 @@ function SwitchToc(i){
     console.log("点击了")
     var $me = $(this);
     $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
-    $(this).toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+    $(this).toggleClass("layui-icon-left layui-icon-down");//切换图标
 };
 
 // 展开文档树
@@ -255,7 +255,7 @@ function openDocTree(){
     $("nav ul.summary ul").each(function(obj){
         console.log(obj,this)
         $(this).removeClass("toc-close")
-        $(this).prev().children('i').toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+        $(this).prev().children('i').toggleClass("layui-icon-left layui-icon-down");//切换图标
     })
     
 };
@@ -264,7 +264,7 @@ function closeDocTree(){
     $("nav ul.summary ul").each(function(obj){
         console.log(obj,this)
         $(this).addClass("toc-close")
-        $(this).prev().children('i').toggleClass("fa-chevron-left fa-chevron-down");//切换图标
+        $(this).prev().children('i').toggleClass("layui-icon-left layui-icon-down");//切换图标
     })
 };
 
@@ -308,6 +308,21 @@ doc_qrcode = function(){
 doc_qrcode();
 
 
+textBecomeImg = function(text,fontsize,fontcolor){
+    var canvas = document.createElement('canvas');
+    canvas.height = 180;
+    canvas.width = 400;
+    var context = canvas.getContext('2d');
+    // 擦除(0,0)位置大小为200x200的矩形，擦除的意思是把该区域变为透明
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = fontcolor;
+    context.font=fontsize+"px Arial";
+    context.rotate(-25 * Math.PI / 180)
+    context.fillText(text,10,160);
+    
+    var dataUrl = canvas.toDataURL('image/png');//注意这里背景透明的话，需要使用png
+    return dataUrl;
+}
 /*
     ########################################################
     ### 文集阅读页面JavaScript函数和变量定义 ###

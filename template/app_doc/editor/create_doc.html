@@ -121,7 +121,7 @@
                     <div class="layui-colla-content layui-show" style="padding: 10px;background-color: #fff;">
                         <div class="layui-btn-container">
                             <button class="layui-btn layui-btn-primary" id="save_doc" title="保存当前内容为草稿文档">
-                                <i class="fa fa-save"></i> 保存文档
+                                <i class="fa fa-save"></i> 存为草稿
                             </button>
                             <button class="layui-btn layui-btn-normal" id="pub_doc" title="发布当前内容">
                                 <i class="layui-icon layui-icon-release"></i> 发布文档
@@ -316,7 +316,7 @@
                                 window.location.href = "/project-" + r.data.pro + "/doc-" + r.data.doc
                             });
                         }else{
-                            layer.msg('保存成功，即将跳转到文档编辑页面',function(){
+                            layer.msg('保存成功',{time:1000},function(){
                                 md_changed = false;
                                 //跳转到文档修改
                                 window.location.href = "/modify_doc/"+r.data.doc+"/";
