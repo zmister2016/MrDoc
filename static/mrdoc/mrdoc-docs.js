@@ -25,7 +25,7 @@ tagCurrentDoc = function(){
             if($me.parent().next("ul.sub-menu").hasClass("toc-close")){
                 // console.log("展开下级目录")
                 $me.parent().next("ul.sub-menu").toggleClass("toc-close");
-                $me.next("i").toggleClass("fa-chevron-left fa-chevron-down");
+                $me.next("i").toggleClass("layui-icon-left layui-icon-down");
             }
             // 展开当前文档的所有上级目录
             if($me.parent("li").parent('ul.sub-menu').hasClass("toc-close")){
@@ -43,8 +43,8 @@ tagCurrentDoc = function(){
             // 切换图标
             $me.parents("ul.sub-menu").prevAll("div").each(function(i){
                 var $link = $(this);
-                if($link.children("i").hasClass("fa-chevron-left")){
-                    $link.children("i").toggleClass("fa-chevron-left fa-chevron-down");
+                if($link.children("i").hasClass("layui-icon-left")){
+                    $link.children("i").toggleClass("layui-icon-left layui-icon-down");
                 }
             })
             // 目录的当前文档滚动于目录顶端

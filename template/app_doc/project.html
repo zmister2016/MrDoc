@@ -204,7 +204,6 @@
     getDocTree();
     // 渲染文集简介Markdown
     const renderDesc = () => {
-        layer.load(1);
         const md_desc = $("#project-desc textarea").val()
         Vditor.preview(document.getElementById('project-desc'),
             md_desc, {
@@ -218,6 +217,7 @@
                 }
             })
     }
+    layer.load(1);
     renderDesc();
 </script>
 {% endblock %}
