@@ -1,6 +1,7 @@
 # coding:utf-8
 from django.shortcuts import render,redirect
 from django.http.response import JsonResponse,Http404,HttpResponseNotAllowed,HttpResponse
+from django.http import QueryDict
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.views.decorators.csrf import csrf_exempt
@@ -2983,3 +2984,117 @@ def my_collect(request):
 
     elif request.method == 'DELETE':
         pass
+
+# 收藏管理
+@login_required()
+@require_http_methods(['GET','POST','DELETE'])
+@csrf_exempt
+def manage_collect(request):
+    if request.method == 'GET':
+        # 收藏文集数量
+        collect_project_cnt = MyCollect.objects.filter(create_user=request.user, collect_type=2).count()
+        # 收藏文档数量
+        collect_doc_cnt = MyCollect.objects.filter(create_user=request.user, collect_type=1).count()
+        # 所有收藏数量
+        all_cnt = collect_project_cnt + collect_doc_cnt
+
+        return render(request,'app_doc/manage/manage_collect.html',locals())
+    elif request.method == 'POST':
+        kw = request.POST.get('kw', '') # 搜索词
+        collect_type = request.POST.get('type', '') # 收藏类型
+        if collect_type in ['1', '2']:
+            q_type = [int(collect_type)]
+        else:
+            q_type = [1, 2]
+
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 没有搜索
+        if kw == '':
+            collect_list = MyCollect.objects.filter(
+                create_user=request.user,
+                collect_type__in=q_type,
+            ).order_by('-create_time')
+        # 有搜索
+        else:
+            collect_list = MyCollect.objects.filter(
+                Q(content__icontains=kw) | Q(name__icontains=kw),
+                create_user=request.user, collect_type__in=q_type
+            ).order_by('-create_time')
+
+        # 分页处理
+        paginator = Paginator(collect_list, limit)
+        page = request.GET.get('page', page)
+        try:
+            collects = paginator.page(page)
+        except PageNotAnInteger:
+            collects = paginator.page(1)
+        except EmptyPage:
+            collects = paginator.page(paginator.num_pages)
+
+        table_data = []
+        for collect in collects:
+            if collect.collect_type == 1:
+                item_doc = Doc.objects.get(id=collect.collect_id)
+                item_id = item_doc.id
+                item_name = item_doc.name
+                item_project = Project.objects.get(id=item_doc.top_doc)
+                item_project_name = item_project.name
+                item_project_id = item_project.id
+            else:
+                item_project = Project.objects.get(id=collect.collect_id)
+                item_id = item_project.id
+                item_name = item_project.name
+                item_project_name = ''
+                item_project_id = ''
+            item = {
+                'id': collect.id,
+                'item_id':item_id,
+                'item_name': item_name,
+                'type': collect.collect_type,
+                'item_project_id':item_project_id,
+                'item_project_name':item_project_name,
+                'create_time': collect.create_time,
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": collect_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
+    elif request.method == 'DELETE':
+        try:
+            # 获取收藏ID
+            DELETE = QueryDict(request.body)
+            collect_id = DELETE.get('collect_id', None)
+            range = DELETE.get('range', 'single')
+            if collect_id:
+                if range == 'single':
+                    # 查询收藏
+                    try:
+                        collect = MyCollect.objects.get(id=collect_id)
+                    except ObjectDoesNotExist:
+                        return JsonResponse({'status': False, 'data': '收藏不存在'})
+                    # 如果请求用户为站点管理员、收藏的创建者，可以删除
+                    if (request.user == collect.create_user) or (request.user.is_superuser):
+                        MyCollect.objects.filter(id=collect_id).delete()
+                        return JsonResponse({'status': True, 'data': '删除完成'})
+                    else:
+                        return JsonResponse({'status': False, 'data': '非法请求'})
+                elif range == 'multi':
+                    collects = collect_id.split(",")
+                    try:
+                        MyCollect.objects.filter(id__in=collects, create_user=request.user).delete()
+                        return JsonResponse({'status': True, 'data': '删除完成'})
+                    except:
+                        return JsonResponse({'status': False, 'data': '非法请求'})
+                else:
+                    return JsonResponse({'status': False, 'data': '类型错误'})
+
+            else:
+                return JsonResponse({'status': False, 'data': '参数错误'})
+        except Exception as e:
+            logger.exception("取消收藏出错")
+            return JsonResponse({'status': False, 'data': '请求出错'})

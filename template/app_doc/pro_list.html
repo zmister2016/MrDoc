@@ -15,7 +15,6 @@
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
-    <!-- <link href="//at.alicdn.com/t/font_2281207_xtauo52jlgk.css" rel="stylesheet"> -->
     <style>
         .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree, .layui-nav-itemed:after {
             background-color: #333 !important;
@@ -129,7 +128,11 @@
         <div class="layui-col-md3 layui-col-xs12 project-item">
             <a href="{% url 'pro_index' p.id %}" target="_blank">
                 <div class="layui-card">
-                    <div class="layui-card-header" >
+                    <div class="layui-card-header" 
+                        {% if p.role == 1 %}
+                        style="background: url({% static 'icon_img/simi.svg' %}) no-repeat right bottom;"
+                        {% endif %}
+                        >
                         {% if p.icon %}
                             <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span></p>
                         {% else %}
@@ -137,7 +140,6 @@
                         {% endif %}
                     </div>
                     <div class="layui-card-body" style="font-size: 12px;">
-                      <!-- <p class="layui-word-aux layui-elip"><i class="layui-icon layui-icon-user"></i> {% if p.create_user.first_name != '' %} {{p.create_user.first_name}} {% else %} {{p.create_user}}{% endif %}</p> -->
                       <p class="tooltip layui-word-aux">
                         <i class="layui-icon layui-icon-speaker"></i>
                         {% if p.intro == "" %}

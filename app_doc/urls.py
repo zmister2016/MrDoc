@@ -65,4 +65,5 @@ urlpatterns = [
     path('manage_overview/',views.manage_overview,name="manage_overview"), # 个人中心概览
     path('manage_self/',views.manage_self,name="manage_self"), # 个人设置
     path('my_collect/',views.my_collect,name="my_collect"), # 我的收藏
+    path('manage_collect/',views.manage_collect,name="manage_collect"), # 收藏管理
 ]

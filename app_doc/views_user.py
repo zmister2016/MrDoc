@@ -153,6 +153,14 @@ def user_center_menu(request):
             ]
         },
         {
+            "id": "my_collect",
+            "title": "我的收藏",
+            "icon": "layui-icon layui-icon-star",
+            "type": 1,
+            "openType": "_iframe",
+            "href": reverse("manage_collect")
+        },
+        {
             "id": "self_settings",
             "title": "个人管理",
             "icon": "layui-icon layui-icon-set-fill",

@@ -291,15 +291,16 @@
                     //修改成功
                     window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
                     if(status === 1){
-                        layer.msg('发布成功，即将跳转',function(){
+                        layer.msg('发布成功',function(){
                             md_changed = false;
-                            window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
+                            // window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
+                            window.location.href = "/modify_doc/{{doc.id}}/";
                         });
                     }else{
                         layer.msg('保存成功',{time:1000},function(){
                             md_changed = false;
                             //跳转到文档修改
-                            window.location.href = "/modify_doc/"+r.data.doc+"/";
+                            window.location.href = "/modify_doc/{{doc.id}}/";
                         });
                     }
                 }else{

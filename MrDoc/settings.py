@@ -40,7 +40,7 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug')
 
-VERSIONS = '0.6.2'
+VERSIONS = '0.6.3'
 
 ALLOWED_HOSTS = ['*']
 
