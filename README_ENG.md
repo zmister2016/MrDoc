@@ -3,7 +3,7 @@
 <p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.6.2-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.6.3-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
