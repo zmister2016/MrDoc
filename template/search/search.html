@@ -53,15 +53,12 @@
                     <span class="layui-hide-xs">{% if request.user.first_name != '' %}{{request.user.first_name}}{% else %}{{request.user.username}}{% endif %}</span>
                 </a>
                 <dl class="layui-nav-child">
-                <!-- <dd><a href="">基本资料</a></dd> -->
-                    {% if request.user.is_superuser %}
                     <dd>
                         <a href="{% url 'pro_list' %}">
                             <i class="layui-icon layui-icon-console layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "返回首页" %}</span>
                         </a>
                     </dd>
-                    {% endif %}
                     <dd class="layui-hide-md">
                         <a href="{% url 'create_doc' %}">
                             <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
@@ -87,7 +84,12 @@
                 <i class="layui-icon layui-icon-username"></i> {% trans "游客" %}
                 </a>
                 <dl class="layui-nav-child">
-                <!-- <dd><a href="">基本资料</a></dd> -->
+                    <dd>
+                        <a href="{% url 'pro_list' %}">
+                            <i class="layui-icon layui-icon-console layui-hide-md"></i>
+                            <span class="layui-hide-xs">{% trans "首页" %}</span>
+                        </a>
+                    </dd>
                     {% if close_register == 'on' %}
                     <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
                     {% else %}
