@@ -146,9 +146,7 @@
         {% if debug %}
         {% else %}
             {% if ad_code_3 %}
-                <div class="ad-code">
-                {{ ad_code_3 | safe }}
-                </div>
+                <div class="ad-code" id="ad-code-3"></div>
             {% endif %}
         {% endif %}
         <!-- 广告代码结束 -->
@@ -196,9 +194,7 @@
                         {% if debug %}
                         {% else %}
                             {% if ad_code %}
-                                <div class="ad-code">
-                                {{ ad_code | safe }}
-                                </div>
+                                <div class="ad-code" id="ad-code-1"></div>
                             {% endif %}
                         {% endif %}
                         <!-- 广告代码结束 -->
@@ -226,9 +222,7 @@
                 {% if debug %}
                 {% else %}
                     {% if ad_code_2 %}
-                        <div class="ad-code">
-                        {{ ad_code_2 | safe }}
-                        </div>
+                        <div class="ad-code" id="aad-code-2"></div>
                     {% endif %}
                 {% endif %}
                 <!-- 广告代码结束 -->
@@ -451,6 +445,22 @@
         })
     });
 
+</script>
+
+<!-- 动态添加广告代码 -->
+<div id="ad-1">
+    {{ad_code|safe}}
+</div>
+<div id="ad-2">
+    {{ad_code_2|safe}}
+</div>
+<div id="ad-3">
+    {{ad_code_3|safe}}
+</div>
+<script>
+    $("#ad-1").appendTo($("#ad-code-1"))
+    $("#ad-2").appendTo($("#ad-code-2"))
+    $("#ad-3").appendTo($("#ad-code-3"))
 </script>
 
 <!-- 统计代码开始 -->
