@@ -306,7 +306,6 @@
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}"></script>
 <script>
-
 {% if toc_cnt > 999 %}
     // 如果文集的文档数量大于999，使用异步加载左侧文集大纲
     getProjectToc();
@@ -314,13 +313,12 @@
 </script>
 
 {% if doc.editor_mode == 2 %}
-<script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
 <script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
 <script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
-<!-- <script src="{% static 'editor.md/editormd.min.js' %}?version={{mrdoc_version}}"></script> -->
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
 
@@ -448,6 +446,8 @@
 </script>
 
 <!-- 动态添加广告代码 -->
+{% if debug %}
+{% else %}
 <div id="ad-1">
     {{ad_code|safe}}
 </div>
@@ -462,6 +462,7 @@
     $("#ad-2").appendTo($("#ad-code-2"));
     $("#ad-3").appendTo($("#ad-code-3"));
 </script>
+{% endif %}
 
 <!-- 统计代码开始 -->
     {% if debug %}
