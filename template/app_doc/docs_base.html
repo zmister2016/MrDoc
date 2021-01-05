@@ -222,7 +222,7 @@
                 {% if debug %}
                 {% else %}
                     {% if ad_code_2 %}
-                        <div class="ad-code" id="aad-code-2"></div>
+                        <div class="ad-code" id="ad-code-2"></div>
                     {% endif %}
                 {% endif %}
                 <!-- 广告代码结束 -->
@@ -458,9 +458,9 @@
     {{ad_code_3|safe}}
 </div>
 <script>
-    $("#ad-1").appendTo($("#ad-code-1"))
-    $("#ad-2").appendTo($("#ad-code-2"))
-    $("#ad-3").appendTo($("#ad-code-3"))
+    $("#ad-1").appendTo($("#ad-code-1"));
+    $("#ad-2").appendTo($("#ad-code-2"));
+    $("#ad-3").appendTo($("#ad-code-3"));
 </script>
 
 <!-- 统计代码开始 -->
