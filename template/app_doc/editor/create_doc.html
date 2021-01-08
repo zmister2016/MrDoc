@@ -312,8 +312,8 @@
                         if(status === 1){
                             layer.msg('发布成功',{time:1000},function(){
                                 md_changed = false;
-                                //跳转到文档修改
-                                window.location.href = "/modify_doc/"+r.data.doc+"/";
+                                //跳转到文档阅读页面
+                                window.location.href = "/project-" + r.data.pro + "/doc-" + r.data.doc
                             });
                         }else{
                             layer.msg('保存成功',{time:1000},function(){

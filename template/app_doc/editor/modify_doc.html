@@ -293,8 +293,7 @@
                     if(status === 1){
                         layer.msg('发布成功',function(){
                             md_changed = false;
-                            // window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
-                            window.location.href = "/modify_doc/{{doc.id}}/";
+                            window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                         });
                     }else{
                         layer.msg('保存成功',{time:1000},function(){
