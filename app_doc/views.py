@@ -731,9 +731,12 @@ def modify_project_download(request,pro_id):
 @require_http_methods(['GET',"POST"])
 @logger.catch()
 def manage_project_collaborator(request,pro_id):
-    project = Project.objects.filter(id=pro_id, create_user=request.user)
+    if request.user.is_superuser:
+        project = Project.objects.filter(id=pro_id)
+    else:
+        project = Project.objects.filter(id=pro_id, create_user=request.user)
     if project.exists() is False:
-        return Http404
+        return render(request, '404.html')
 
     if request.method == 'GET':
         user_list = User.objects.filter(~Q(username=request.user.username)) # 获取用户列表
