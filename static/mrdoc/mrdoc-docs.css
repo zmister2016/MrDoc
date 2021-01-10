@@ -108,3 +108,9 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
 .doc-bottom-icon,.doc-bottom-btn{
     cursor: pointer;
 }
+
+/* 文集大纲图标 */
+i.switch-toc{
+    padding:10px;
+    cursor: pointer;
+}

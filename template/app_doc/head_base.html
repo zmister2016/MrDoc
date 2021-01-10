@@ -63,32 +63,33 @@
                 <dl class="layui-nav-child">
                     {% if request.user.is_superuser %}
                     <dd>
-                        <a href="{% url 'admin_center' %}">
+                        <a href="{% url 'admin_center' %}" title="进入站点后台管理">
                             <i class="layui-icon layui-icon-console layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "进入后台" %}</span>
                         </a>
                     </dd>
                     {% endif %}
-                    <dd class="layui-hide-md">
-                        <a href="{% url 'create_doc' %}">
+                    <dd class="layui-hide-md layui-hide-sm layui-hide-lg">
+                        <a href="{% url 'create_doc' %}" title="新建文档">
                             <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
+                            <span class="layui-hide-xs">{% trans "新建文档" %}</span>
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'user_center' %}">
+                        <a href="{% url 'user_center' %}" title="个人中心">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "个人中心" %}</span>
                         </a>
                     </dd>
                     <dd>
-                        <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )">
+                        <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )" title="修改登录密码">
                             <i class="layui-icon layui-icon-password layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "修改密码" %}</span>
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'logout' %}">
-                            <i class="layui-icon layui-icon-release layui-hide-md"></i>
+                        <a href="{% url 'logout' %}" title="退出登录">
+                            <i class="layui-icon layui-icon-logout layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
                     </dd>

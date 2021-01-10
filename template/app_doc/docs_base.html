@@ -90,9 +90,9 @@
                         <div style="display:flex;justify-content:space-between;">
                             <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
                             {% if docs.open_children %}
-                                <i class="layui-icon layui-icon-down switch-toc" style="padding:15px;cursor: pointer;"></i>
+                                <i class="layui-icon layui-icon-down switch-toc"></i>
                             {% else %}
-                                <i class="layui-icon layui-icon-left switch-toc" style="padding:15px;cursor: pointer;"></i>
+                                <i class="layui-icon layui-icon-left switch-toc"></i>
                             {% endif %}
                         </div>
                         {% if docs.open_children %}
@@ -108,9 +108,9 @@
                                     <div style="display:flex;justify-content:space-between;">
                                         <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
                                         {% if node.open_children %}
-                                            <i class="layui-icon layui-icon-down switch-toc" style="padding:15px;cursor: pointer;"></i>
+                                            <i class="layui-icon layui-icon-down switch-toc"></i>
                                         {% else %}
-                                            <i class="layui-icon layui-icon-left switch-toc" style="padding:15px;cursor: pointer;"></i>
+                                            <i class="layui-icon layui-icon-left switch-toc"></i>
                                         {% endif %}
                                     </div>
                                     {% if node.open_children %}
