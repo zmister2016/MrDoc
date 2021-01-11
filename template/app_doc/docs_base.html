@@ -22,6 +22,7 @@
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
         {% if img_scale %}
         .markdown-body p img{
@@ -88,7 +89,7 @@
                 <li>
                     {% if docs.children %}
                         <div style="display:flex;justify-content:space-between;">
-                            <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
+                            <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}"><i class="iconfont mrdoc-icon-wendang"></i> {{ docs.name }}</a>
                             {% if docs.open_children %}
                                 <i class="layui-icon layui-icon-down switch-toc"></i>
                             {% else %}
@@ -106,7 +107,7 @@
                             <li>
                                 {% if node.id|get_next_doc %}
                                     <div style="display:flex;justify-content:space-between;">
-                                        <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
+                                        <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}"><i class="iconfont mrdoc-icon-wendang"></i> {{ node.name }}</a>
                                         {% if node.open_children %}
                                             <i class="layui-icon layui-icon-down switch-toc"></i>
                                         {% else %}
@@ -121,17 +122,17 @@
 
                                     <!-- 三级目录 -->
                                     {% for doc in node.children %}
-                                        <li><a href="{% url 'doc' pro_id=pro_id doc_id=doc.id %}" title="{{doc.name}}">{{ doc.name }}</a></li>
+                                        <li><a href="{% url 'doc' pro_id=pro_id doc_id=doc.id %}" title="{{doc.name}}"><i class="iconfont mrdoc-icon-wendang"></i> {{ doc.name }}</a></li>
                                     {% endfor %}
                                     </ul>
                                 {% else %}
-                                    <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}">{{ node.name }}</a>
+                                    <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}"><i class="iconfont mrdoc-icon-wendang"></i> {{ node.name }}</a>
                                 {% endif %}
                             </li>
                         {% endfor %}
                         </ul>
                     {% else %}
-                        <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{{ docs.name }}</a>
+                        <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}"><i class="iconfont mrdoc-icon-wendang"></i> {{ docs.name }}</a>
                     {% endif %}
                 </li>
             {% endfor %}

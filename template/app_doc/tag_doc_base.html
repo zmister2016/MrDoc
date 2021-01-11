@@ -62,7 +62,7 @@
             <!-- 一级目录 -->
             {% for doc in docs %}
                 <li tooltip="{{doc.doc.top_doc | get_doc_top}}" placement="bottom">
-                    <a href="{% url 'tag_doc' tag_id=tag.id doc_id=doc.doc.id %}" target="_blank" >{{ doc.doc.name }}</a>
+                    <a href="{% url 'tag_doc' tag_id=tag.id doc_id=doc.doc.id %}" target="_blank" ><i class="iconfont mrdoc-icon-wendang"></i> {{ doc.doc.name }}</a>
                 </li>
             {% endfor %}
             </ul>

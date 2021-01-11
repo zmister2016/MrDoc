@@ -552,7 +552,7 @@
                 // _this.loadedDisplay();
             });
 
-            editormd.loadCSS(loadPath + "codemirror/codemirror.min");
+            editormd.loadCSS(loadPath + "codemirror/lib/codemirror");
             
             if (settings.searchReplace && !settings.readOnly)
             {
@@ -565,7 +565,7 @@
                 editormd.loadCSS(loadPath + "codemirror/addon/fold/foldgutter");            
             }
             
-            editormd.loadScript(loadPath + "codemirror/codemirror.min", function() {
+            editormd.loadScript(loadPath + "codemirror/lib/codemirror", function() {
                 editormd.$CodeMirror = CodeMirror;
                 
                 editormd.loadScript(loadPath + "codemirror/modes.min", function() {
