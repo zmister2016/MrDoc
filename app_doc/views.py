@@ -3101,3 +3101,18 @@ def manage_collect(request):
         except Exception as e:
             logger.exception("取消收藏出错")
             return JsonResponse({'status': False, 'data': '请求出错'})
+
+# 获取当前版本
+def get_version(request):
+    try:
+        version = settings.VERSIONS
+        data = {
+            'status':True,
+            'data':version
+        }
+    except:
+        data = {
+            'status':False,
+            'data':'异常'
+        }
+    return JsonResponse(data)
