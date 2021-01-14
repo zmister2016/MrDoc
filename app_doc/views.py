@@ -1233,7 +1233,7 @@ def manage_doc(request):
 
         if project == '':
             project_list = Project.objects.filter(create_user=request.user).values_list('id',flat=True)  # 自己创建的文集列表
-            colla_project_list = ProjectCollaborator.objects.filter(user=request.user).values_list('id',flat=True)  # 协作的文集列表
+            colla_project_list = ProjectCollaborator.objects.filter(user=request.user).values_list('project__id',flat=True)  # 协作的文集列表
             q_project = list(project_list) + list(colla_project_list)
         else:
             q_project = [project]
