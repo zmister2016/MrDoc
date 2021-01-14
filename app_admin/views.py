@@ -172,7 +172,6 @@ def forget_pwd(request):
         try:
             data = EmaiVerificationCode.objects.get(email_name=email,verification_code=vcode,verification_type='忘记密码')
             expire_time = data.expire_time
-            print(expire_time)
             if expire_time > datetime.datetime.now():
                 user = User.objects.get(email=email)
                 user.set_password(new_pwd)
@@ -182,9 +181,13 @@ def forget_pwd(request):
             else:
                 errormsg = "验证码已过期"
                 return render(request, 'forget_pwd.html', locals())
+        except ObjectDoesNotExist:
+            logger.error("邮箱不存在：{}".format(email))
+            errormsg = "验证码或邮箱错误"
+            return render(request, 'forget_pwd.html', locals())
         except Exception as e:
             logger.exception("修改密码异常")
-            errormsg = "验证码错误"
+            errormsg = "验证码或邮箱错误"
             return render(request,'forget_pwd.html',locals())
 
 
