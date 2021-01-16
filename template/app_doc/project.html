@@ -161,6 +161,7 @@
     });
     var tree = layui.tree;
     var layer = layui.layer;
+    var util = layui.util;
     getDocTree = function(){
         layer.load(1)
         $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
@@ -169,27 +170,27 @@
                 layui.each(r.data,function(index,item){
                     toc_str += "<li>"
                     if(item['children'] != undefined){ // 存在二级文档
-                        li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +'<ul class="sub-menu">'
+                        li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>' +'<ul class="sub-menu">'
                         toc_str += li
                         layui.each(item['children'],function(index,item){// 遍历二级文档
                             toc_str += '<li>'
                             if(item['children'] != undefined){ //存在三级文档
-                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +'<ul class="sub-menu">'
+                                li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>' +'<ul class="sub-menu">'
                                 toc_str += li
                                 layui.each(item['children'],function(index,item){ // 遍历三级文档
-                                    li = '<li><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></li>'
+                                    li = '<li><div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div></li>'
                                     toc_str += li
                                 })
                                 toc_str += '</ul>'
                             }else{// 不存在三级文档
-                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
+                                li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>'
                                 toc_str += li
                             }
                             toc_str += '</li>'
                         })    
                         toc_str += '</ul>'
                     }else{//不存在二级文档
-                       li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
+                       li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>'
                        toc_str += li
                     }
                     toc_str += '</li>'

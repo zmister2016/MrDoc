@@ -598,9 +598,16 @@ def manage_project(request):
 @require_http_methods(['GET','POST'])
 def manage_project_doc_sort(request,pro_id):
     if request.method == 'GET':
-        pro = Project.objects.filter(id=pro_id,create_user=request.user)
-        if pro.count() == 1:
-            pro = pro[0]
+        try:
+            # 获取文集
+            pro = Project.objects.get(id=pro_id)
+        except ObjectDoesNotExist:
+            return render(request, '404.html')
+
+        # 查询文集的协作者
+        pro_colla = ProjectCollaborator.objects.filter(project=pro,user=request.user,role=1)
+        # 文集的创建者和文集高级权限协作者允许操作
+        if (pro.create_user == request.user) or pro_colla.count() > 0:
             # 查询存在上级文档的文档
             parent_id_list = Doc.objects.filter(top_doc=pro_id, status=1).exclude(parent_doc=0).values_list(
                 'parent_doc', flat=True)
@@ -654,6 +661,9 @@ def manage_project_doc_sort(request,pro_id):
                 else:
                     doc_list.append(top_item)
             return render(request,'app_doc/manage/manage_project_doc_sort.html',locals())
+        else:
+            return render(request, '403.html')
+
     else:
         project_id = request.POST.get('pid', None)  # 文集ID
         sort_data = request.POST.get('sort_data', '[]')  # 文档排序列表
@@ -663,30 +673,36 @@ def manage_project_doc_sort(request,pro_id):
             return JsonResponse({'status': False, 'data': '文档参数错误'})
 
         try:
-            Project.objects.get(id=project_id, create_user=request.user)
+            pro = Project.objects.get(id=project_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': False, 'data': '没有匹配的文集'})
 
-        # 文档排序
-        n = 10
-        # 第一级文档
-        for data in sort_data:
-            print(data)
-            Doc.objects.filter(id=data['id']).update(sort=n,parent_doc=0)
-            n += 10
-            # 存在第二级文档
-            if 'children' in data.keys():
-                n1 = 10
-                for c1 in data['children']:
-                    Doc.objects.filter(id=c1['id']).update(sort=n1, parent_doc=data['id'])
-                    n1 += 10
-                    # 存在第三级文档
-                    if 'children' in c1.keys():
-                        n2 = 10
-                        for c2 in c1['children']:
-                            Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'])
+        # 查询文集的协作者
+        pro_colla = ProjectCollaborator.objects.filter(project=pro, user=request.user, role=1)
+        # 文集的创建者和文集高级权限协作者允许操作
+        if (pro.create_user == request.user) or pro_colla.count() > 0:
+            # 文档排序
+            n = 10
+            # 第一级文档
+            for data in sort_data:
+                # print(data)
+                Doc.objects.filter(id=data['id']).update(sort=n,parent_doc=0)
+                n += 10
+                # 存在第二级文档
+                if 'children' in data.keys():
+                    n1 = 10
+                    for c1 in data['children']:
+                        Doc.objects.filter(id=c1['id']).update(sort=n1, parent_doc=data['id'])
+                        n1 += 10
+                        # 存在第三级文档
+                        if 'children' in c1.keys():
+                            n2 = 10
+                            for c2 in c1['children']:
+                                Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'])
 
-        return JsonResponse({'status': True, 'data': 'ok'})
+            return JsonResponse({'status': True, 'data': 'ok'})
+        else:
+            return JsonResponse({'status':False,'data':'无权操作'})
 
 # 修改文集前台下载权限
 @login_required()
@@ -1917,38 +1933,41 @@ def get_pro_doc_tree(request):
         # print(parent_id_list)
         doc_list = []
         # 获取一级文档
-        top_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=0,status=1).values('id','name').order_by('sort')
+        top_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=0,status=1).values('id','name','modify_time').order_by('sort')
         # 遍历一级文档
         for doc in top_docs:
             top_item = {
                 'id':doc['id'],
                 'field':doc['name'],
                 'title':doc['name'],
+                'modify_time':doc['modify_time'],
                 'spread':True,
                 'level':1
             }
             # 如果一级文档存在下级文档，查询其二级文档
             if doc['id'] in parent_id_list:
                 # 获取二级文档
-                sec_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name').order_by('sort')
+                sec_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name','modify_time').order_by('sort')
                 top_item['children'] = []
                 for doc in sec_docs:
                     sec_item = {
                         'id': doc['id'],
                         'field': doc['name'],
                         'title': doc['name'],
+                        'modify_time': doc['modify_time'],
                         'level':2
                     }
                     # 如果二级文档存在下级文档，查询第三级文档
                     if doc['id'] in parent_id_list:
                         # 获取三级文档
-                        thr_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name').order_by('sort')
+                        thr_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name','modify_time').order_by('sort')
                         sec_item['children'] = []
                         for doc in thr_docs:
                             item = {
                                 'id': doc['id'],
                                 'field': doc['name'],
                                 'title': doc['name'],
+                                'modify_time': doc['modify_time'],
                                 'level': 3
                             }
                             sec_item['children'].append(item)

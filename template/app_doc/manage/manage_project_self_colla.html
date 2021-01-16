@@ -36,7 +36,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{% url 'pro_index' colla.project.id %}" target="_blank" class="layui-btn layui-btn-xs">{% trans "查看" %}</a>
+                        <a href="{% url 'pro_index' colla.project.id %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">{% trans "查看" %}</a>
+                        {% if colla.role == 1 %}
+                        <a href="{% url 'manage_pro_doc_sort' colla.project.id %}" class="layui-btn layui-btn-normal layui-btn-xs">{% trans "排序" %}</a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

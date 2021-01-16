@@ -114,3 +114,49 @@ i.switch-toc{
     padding:10px;
     cursor: pointer;
 }
+
+/* 文集大纲样式 */
+ul#doc-tree{
+    padding-left: 0;
+}
+.layui-tab-item #doc-tree li{
+    list-style: none;
+}
+
+.project-toc-right,.project-toc-left,.project-toc-center{
+    display: inline-block;
+}
+.project-toc-left{
+    border-top:1px dashed #d8d8d8;
+    width: 100%;
+    padding-top: 4px;
+}
+.project-toc-right{
+    float: right;
+    position: absolute;
+    right: 90px;
+    z-index: 100;
+    background-color: white;
+    color: #bfbfbf;
+    padding-left: 40px;
+    font-family: Consolas,Menlo,Courier,monospace;
+}
+.project-toc-left a{
+    text-align: left;
+    margin-top: -15px;
+    padding-right: 40px;
+    position: absolute;
+    background: #fff;
+    z-index: 1;
+    min-width: 0;
+    color: #666;
+    /* font-weight: 700; */
+    font-family: Consolas,Menlo,Courier,monospace;
+}
+@media screen and (max-width:768px){
+    .project-toc-left{
+        border-top:1px dashed #d8d8d8;
+        width: 0;
+        padding-top: 4px;
+    }
+}
