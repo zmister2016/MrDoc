@@ -37,9 +37,11 @@ def validateTitle(title):
 
 # markdown文本生成摘要（不带markdown标记）
 def remove_markdown_tag(docs):
-   for doc in docs:        
-      doc.pre_content = strip_tags(markdown.markdown(doc.pre_content)) 
-   return;
+    for doc in docs:
+        try:
+            doc.pre_content = strip_tags(markdown.markdown(doc.pre_content))
+        except Exception as e:
+            doc.pre_content = doc.pre_content
 
 # 获取文集的文档目录
 def get_pro_toc(pro_id):
