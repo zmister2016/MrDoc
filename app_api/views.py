@@ -76,8 +76,6 @@ def oauth0(request):
         return JsonResponse({'status':False,'data':'Nothing Here'}) 
 
 
-
-
 # Token管理页面
 @require_http_methods(['POST','GET'])
 @login_required()
@@ -161,6 +159,7 @@ def get_docs(request):
         logger.exception("token获取文集异常")
         return JsonResponse({'status': False, 'data': '系统异常'})
 
+
 # 获取单篇文档
 def get_doc(request):
     token = request.GET.get('token', '')
@@ -187,6 +186,32 @@ def get_doc(request):
         logger.exception("token获取文集异常")
         return JsonResponse({'status': False, 'data': '系统异常'})
 
+
+# 新建文集
+@require_http_methods(['GET','POST'])
+@csrf_exempt
+def create_project(request):
+    token = request.GET.get('token', '')
+    project_name = request.POST.get('name','')
+    project_desc = request.POST.get('desc','')
+    project_role = request.POST.get('role',1)
+    try:
+        # 验证Token
+        token = UserToken.objects.get(token=token)
+        Project.objects.create(
+            name = project_name, # 文集名称
+            intro = project_desc, # 文集简介
+            role = project_role, # 文集权限
+            create_user = token.user # 创建的用户
+        )
+        return JsonResponse({'status': True, 'data': 'ok'})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': 'token无效'})
+    except:
+        logger.exception("token创建文集异常")
+        return JsonResponse({'status':False,'data':'系统异常'})
+
+
 # 新建文档
 @require_http_methods(['GET','POST'])
 @csrf_exempt
@@ -195,6 +220,7 @@ def create_doc(request):
     project_id = request.POST.get('pid','')
     doc_title = request.POST.get('title','')
     doc_content = request.POST.get('doc','')
+    editor_mode = request.POST.get('editor_mode',1)
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
@@ -206,6 +232,7 @@ def create_doc(request):
                 name = doc_title, # 文档内容
                 pre_content = doc_content, # 文档的编辑内容，意即编辑框输入的内容
                 top_doc = project_id, # 所属文集
+                editor_mode = editor_mode, # 编辑器模式
                 create_user = token.user # 创建的用户
             )
             return JsonResponse({'status': True, 'data': 'ok'})
@@ -216,6 +243,7 @@ def create_doc(request):
     except:
         logger.exception("token创建文档异常")
         return JsonResponse({'status':False,'data':'系统异常'})
+
 
 # 上传图片
 @csrf_exempt
