@@ -122,7 +122,7 @@
         table.on("tool(project-table)",function(obj){
             if (obj.event === 'remove') {
                 // console.log(obj)
-                delProject(obj.data.id)
+                delProject(obj.data.id,obj.data.name)
             }
         });
         // 侦听表格工具栏
@@ -204,32 +204,40 @@
             });
         };
         //删除文集
-        delProject = function(pro_id){
+        delProject = function(pro_id,pro_name){
             layer.open({
                 type:1,
-                title:'删除文集',
+                title:'{% trans "删除文集" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将删除文集及文集下所有文档！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">你正在删除：<span style="font-weight:700;color:red;">【'+pro_name+'】</span><br><br>警告！此操作将<span style="font-weight:700;color:red;">删除此文集及文集下所有文档！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_delete_project" placeholder="DELETE"></div>',
+                btn:['{% trans "删除" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
-                    layer.load(1);
-                    data = {
-                        'pro_id':pro_id,
-                    }
-                    $.post("{% url 'del_project' %}",data,function(r){
-                        layer.closeAll('loading'); //关闭loading
-                        if(r.status){
-                            //修改成功
-                            window.location.reload();
-                            //layer.close(index)
-                        }else{
-                            //修改失败，提示
-                            console.log(r)
-                            layer.msg(r.data)
+                    var confirm_delete = $("#confirm_delete_project").val()
+                    if(confirm_delete === 'DELETE'){
+                        layer.load(1);
+                        data = {
+                            'pro_id':pro_id,
                         }
-                    })
+                        $.post("{% url 'del_project' %}",data,function(r){
+                            layer.closeAll(); //关闭loading
+                            if(r.status){
+                                layer.msg("{% trans '删除成功' %}", {
+                                    icon: 1,
+                                    time: 1000
+                                }, function() {
+                                    table.reload('project-table');
+                                });
+                            }else{
+                                //修改失败，提示
+                                console.log(r)
+                                layer.msg(r.data)
+                            }
+                        })
+                    }else{
+                        layer.msg("输入错误！")
+                    }
                 },
             });
         }
@@ -237,7 +245,7 @@
         batchRemove = function(obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
-                layer.msg("未选中任何文集", {
+                layer.msg("{% trans '未选中任何文集' %}", {
                     icon: 3,
                     time: 1000
                 });
@@ -249,34 +257,44 @@
             }
             pro_id = pro_id.substr(0, pro_id.length - 1);
             // console.log(pro_id)
-            layer.confirm('确定要删除这些文集？', {
-                icon: 3,
-                title: '提示'
-            }, function(index) {
-                layer.close(index);
-                let loading = layer.load();
-                $.ajax({
-                    url: "{% url 'del_project' %}",
-                    dataType: 'json',
-                    type: 'post',
-                    data:{'pro_id':pro_id,'range':'multi'},
-                    success: function(r) {
-                        layer.close(loading);
-                        if (r.status) {
-                            layer.msg("删除成功", {
-                                icon: 1,
-                                time: 1000
-                            }, function() {
-                                table.reload('project-table');
-                            });
-                        } else {
-                            layer.msg(r.data, {
-                                icon: 2,
-                                time: 1000
-                            });
-                        }
+            layer.open({
+                type:1,
+                title:'{% trans "删除文集" %}',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">你正在批量删除文集！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选文集及文集下所有文档！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
+                btn:['{% trans "批量删除" %}','{% trans "取消" %}'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    var confirm_delete = $("#confirm_batch_delete_project").val()
+                    if(confirm_delete === 'DELETE'){
+                        let loading = layer.load();
+                        $.ajax({
+                            url: "{% url 'del_project' %}",
+                            dataType: 'json',
+                            type: 'post',
+                            data:{'pro_id':pro_id,'range':'multi'},
+                            success: function(r) {
+                                layer.closeAll();
+                                if (r.status) {
+                                    layer.msg("{% trans '删除成功' %}", {
+                                        icon: 1,
+                                        time: 1000
+                                    }, function() {
+                                        table.reload('project-table');
+                                    });
+                                } else {
+                                    layer.msg(r.data, {
+                                        icon: 2,
+                                        time: 1000
+                                    });
+                                }
+                            }
+                        })
+                    }else{
+                        layer.msg("输入错误！")
                     }
-                })
+                }
             });
         }
     })
