@@ -201,10 +201,12 @@
                         }
                         $.post("{% url 'create_project' %}",data,function(r){
                             if(r.status){
+                                var role_str = r.data.role == 0 ? '公开':'私密'
                                 //创建成功，更新文集select
-                                $("#self-project").append("<option value="+r.data.id+">《"+r.data.name+"》</option>");
+                                $("#self-project").append("<option value="+r.data.id+">["+role_str+"]《"+r.data.name+"》</option>");
+                                $("#project").val(r.data.id);
                                 form.render();
-                                layer.close(index)
+                                layer.close(index);
                             }else{
                                 //创建失败，提示
                                 console.log(r)

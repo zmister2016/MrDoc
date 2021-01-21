@@ -298,7 +298,7 @@ def create_project(request):
                 role = int(role) if role in role_list else 0
             )
             project.save()
-            return JsonResponse({'status':True,'data':{'id':project.id,'name':project.name}})
+            return JsonResponse({'status':True,'data':{'id':project.id,'name':project.name,'role':project.role}})
         else:
             return JsonResponse({'status':False,'data':'文集名称不能为空！'})
     except Exception as e:
