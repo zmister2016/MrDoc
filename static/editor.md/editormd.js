@@ -63,6 +63,7 @@
     editormd.homePage     = "https://pandao.github.io/editor.md/";
     editormd.classPrefix  = "editormd-";
     
+    // 编辑器工具栏模式
     editormd.toolbarModes = {
         full : [
             "undo", "redo", "|", 
@@ -88,6 +89,7 @@
         ]
     };
     
+    // 编辑器默认配置
     editormd.defaults     = {
         mode                 : "gfm",          //gfm or markdown
         name                 : "",             // Form element name
@@ -129,7 +131,7 @@
         dialogDraggable      : true,
         dialogMaskBgColor    : "#fff",
         dialogMaskOpacity    : 0.1,
-        fontSize             : "13px",
+        fontSize             : "15px",
         saveHTMLToTextarea   : false,
         disabledKeyMaps      : [],
         
@@ -159,9 +161,9 @@
         tocStartLevel        : 1,              // Said from H1 to create ToC
         htmlDecode           : false,          // Open the HTML tag identification 
         pageBreak            : true,           // Enable parse page break [========]
-        atLink               : true,           // for @link
+        atLink               : false,           // for @link
         emailLink            : true,           // for email address auto link
-        taskList             : false,          // Enable Github Flavored Markdown task lists
+        taskList             : true,          // Enable Github Flavored Markdown task lists
         emoji                : false,          // :emoji: , Support Github emoji, Twitter Emoji (Twemoji);
                                                // Support FontAwesome icon emoji :fa-xxx: > Using fontAwesome icon web fonts;
                                                // Support Editor.md logo icon emoji :editormd-logo: :editormd-logo-1x: > 1~8x;
@@ -189,42 +191,42 @@
             "ucwords"        : "<a href=\"javascript:;\" title=\"ucwords\" unselectable=\"on\"><i class=\"fa\" name=\"ucwords\" style=\"font-size:20px;margin-top: -3px;\">Aa</i></a>"
         }, 
         toolbarIconsClass    : {
-            undo             : "fa-undo",
-            redo             : "fa-repeat",
-            bold             : "fa-bold",
-            del              : "fa-strikethrough",
-            italic           : "fa-italic",
-            quote            : "fa-quote-left",
-            uppercase        : "fa-font",
-            h1               : editormd.classPrefix + "bold",
-            h2               : editormd.classPrefix + "bold",
-            h3               : editormd.classPrefix + "bold",
-            h4               : editormd.classPrefix + "bold",
-            h5               : editormd.classPrefix + "bold",
-            h6               : editormd.classPrefix + "bold",
+            "undo"             : "fa-undo",
+            "redo"             : "fa-repeat",
+            "bold"             : "fa-bold",
+            "del"              : "fa-strikethrough",
+            "italic"           : "fa-italic",
+            "quote"            : "fa-quote-left",
+            "uppercase"        : "fa-font",
+            "h1"               : editormd.classPrefix + "bold",
+            "h2"               : editormd.classPrefix + "bold",
+            "h3"               : editormd.classPrefix + "bold",
+            "h4"               : editormd.classPrefix + "bold",
+            "h5"               : editormd.classPrefix + "bold",
+            "h6"               : editormd.classPrefix + "bold",
             "list-ul"        : "fa-list-ul",
             "list-ol"        : "fa-list-ol",
-            hr               : "fa-minus",
-            link             : "fa-link",
+            "hr"               : "fa-minus",
+            "link"             : "fa-link",
             "reference-link" : "fa-anchor",
-            image            : "fa-picture-o",
-            code             : "fa-code",
+            "image"            : "fa-picture-o",
+            "code"             : "fa-code",
             "preformatted-text" : "fa-file-code-o",
             "code-block"     : "fa-file-code-o",
-            table            : "fa-table",
-            datetime         : "fa-clock-o",
-            emoji            : "fa-smile-o",
+            "table"            : "fa-table",
+            "datetime"         : "fa-clock-o",
+            "emoji"            : "fa-smile-o",
             "html-entities"  : "fa-copyright",
-            pagebreak        : "fa-newspaper-o",
+            "pagebreak"        : "fa-newspaper-o",
             "goto-line"      : "fa-terminal", // fa-crosshairs
-            watch            : "fa-eye-slash",
-            unwatch          : "fa-eye",
-            preview          : "fa-desktop",
-            search           : "fa-search",
-            fullscreen       : "fa-arrows-alt",
-            clear            : "fa-eraser",
-            help             : "fa-question-circle",
-            info             : "fa-info-circle"
+            "watch"            : "fa-eye-slash",
+            "unwatch"          : "fa-eye",
+            "preview"          : "fa-desktop",
+            "search"           : "fa-search",
+            "fullscreen"       : "fa-arrows-alt",
+            "clear"            : "fa-eraser",
+            "help"             : "fa-question-circle",
+            "info"             : "fa-info-circle"
         },        
         toolbarIconTexts     : {},
         
@@ -403,11 +405,11 @@
                         
             var markdownTextarea = this.markdownTextarea = editor.children("textarea");
             
-            if (markdownTextarea.length < 1)
-            {
-                editor.append("<textarea></textarea>");
-                markdownTextarea = this.markdownTextarea = editor.children("textarea");
-            }
+            // if (markdownTextarea.length < 1)
+            // {
+            //     editor.append("<textarea></textarea>");
+            //     markdownTextarea = this.markdownTextarea = editor.children("textarea");
+            // }
             
             markdownTextarea.addClass(classNames.textarea.markdown).attr("placeholder", settings.placeholder);
             
@@ -558,6 +560,7 @@
             {
                 editormd.loadCSS(loadPath + "codemirror/addon/dialog/dialog");
                 editormd.loadCSS(loadPath + "codemirror/addon/search/matchesonscrollbar");
+                editormd.loadCSS(loadPath + "codemirror/addon/hint/show-hint");
             }
             
             if (settings.codeFold)
@@ -568,9 +571,11 @@
             editormd.loadScript(loadPath + "codemirror/lib/codemirror", function() {
                 editormd.$CodeMirror = CodeMirror;
                 
-                editormd.loadScript(loadPath + "codemirror/modes.min", function() {
+                editormd.loadScript(loadPath + "codemirror/modes", function() {
+                // editormd.loadScript(loadPath + "codemirror/mode/meta", function() {
                     
-                    editormd.loadScript(loadPath + "codemirror/addons.min", function() {
+                    editormd.loadScript(loadPath + "codemirror/addons", function() {
+                    // editormd.loadScript(loadPath + "codemirror/addon/display/placeholder", function() {
                         
                         _this.setCodeMirror();
                         
@@ -695,6 +700,35 @@
             {
                 editormd.loadCSS(settings.path + "codemirror/theme/" + settings.editorTheme);
             }
+
+            var md_comp = [
+                ["#", "##", "###", "####","#####","######","#######"],
+                ["`", "``", "```", "```\n\n```", "```echart\n\n```", "```mindmap\n\n```"],
+                ["*", "**"],
+                ["[", "[]()"],
+                ["!", "![]()"],
+                ["-", "- [] ", "- [x] "],
+              ]
+            
+            function markdownHint(cm, option) {
+                return new Promise(function(accept) {
+                    setTimeout(function() {
+                    var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
+                    console.log(cursor)
+                    var start = cursor.ch, end = cursor.ch
+                    while (start && /\W/.test(line.charAt(start - 1))) --start
+                    while (end < line.length && /\W/.test(line.charAt(end))) ++end
+                    console.log(line,start,end)
+                    var word = line.slice(start, end).toLowerCase()
+                    console.log(word)
+                    for (var i = 0; i < md_comp.length; i++) if (md_comp[i].indexOf(word) != -1)
+                        return accept({list: md_comp[i],
+                                        from: editormd.$CodeMirror.Pos(cursor.line, start),
+                                        to: editormd.$CodeMirror.Pos(cursor.line, end)})
+                    return accept(null)
+                    }, 100)
+                })
+            }
             
             var codeMirrorConfig = {
                 mode                      : settings.mode,
@@ -708,9 +742,10 @@
                 lineNumbers               : settings.lineNumbers,
                 lineWrapping              : settings.lineWrapping,
                 extraKeys                 : {
-                                                "Ctrl-Q": function(cm) { 
-                                                    cm.foldCode(cm.getCursor()); 
-                                                }
+                                                // "Ctrl-Q": function(cm) { 
+                                                //     cm.foldCode(cm.getCursor()); 
+                                                // },
+                                                "Ctrl-Q":"autocomplete"
                                             },
                 foldGutter                : settings.codeFold,
                 gutters                   : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
@@ -720,6 +755,7 @@
                 styleSelectedText         : settings.styleSelectedText,
                 autoCloseBrackets         : settings.autoCloseBrackets,
                 showTrailingSpace         : settings.showTrailingSpace,
+                hintOptions: {hint: markdownHint},
                 highlightSelectionMatches : ( (!settings.matchWordHighlight) ? false : { showToken: (settings.matchWordHighlight === "onselected") ? false : /\w/ } )
             };
             

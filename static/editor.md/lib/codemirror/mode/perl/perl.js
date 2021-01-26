@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 // CodeMirror2 mode/perl/perl.js (text/x-perl) beta 0.10 (2011-11-08)
 // This is a part of CodeMirror from https://github.com/sabaca/CodeMirror_mode_perl (mail@sabaca.com)
@@ -268,7 +268,7 @@ CodeMirror.defineMode("perl",function(){
                 chmod                           :1,     // - changes the permissions on a list of files
                 chomp                           :1,     // - remove a trailing record separator from a string
                 chop                            :1,     // - remove the last character from a string
-                chown                           :1,     // - change the owership on a list of files
+                chown                           :1,     // - change the ownership on a list of files
                 chr                             :1,     // - get character this number represents
                 chroot                          :1,     // - make directory new root for path lookups
                 close                           :1,     // - close file (or pipe or socket) handle
@@ -516,7 +516,7 @@ CodeMirror.defineMode("perl",function(){
                 if(stream.match(/^\-?[\d\.]/,false))
                         if(stream.match(/^(\-?(\d*\.\d+(e[+-]?\d+)?|\d+\.\d*)|0x[\da-fA-F]+|0b[01]+|\d+(e[+-]?\d+)?)/))
                                 return 'number';
-                if(stream.match(/^<<(?=\w)/)){                  // NOTE: <<SOMETHING\n...\nSOMETHING\n
+                if(stream.match(/^<<(?=[_a-zA-Z])/)){                  // NOTE: <<SOMETHING\n...\nSOMETHING\n
                         stream.eatWhile(/\w/);
                         return tokenSOMETHING(stream,state,stream.current().substr(2));}
                 if(stream.sol()&&stream.match(/^\=item(?!\w)/)){// NOTE: \n=item...\n=cut\n
@@ -697,7 +697,7 @@ CodeMirror.defineMode("perl",function(){
                                         return "variable-2";}
                         stream.pos=p;}
                 if(/[$@%&]/.test(ch)){
-                        if(stream.eatWhile(/[\w$\[\]]/)||stream.eat("{")&&stream.eatWhile(/[\w$\[\]]/)&&stream.eat("}")){
+                        if(stream.eatWhile(/[\w$]/)||stream.eat("{")&&stream.eatWhile(/[\w$]/)&&stream.eat("}")){
                                 var c=stream.current();
                                 if(PERL[c])
                                         return "variable-2";

@@ -136,7 +136,7 @@
 }
 .editormd-menu > li > a {
   outline: 0;
-  color: #666;
+  color: #333;
   display: inline-block;
   min-width: 24px;
   font-size: 16px;
@@ -4048,7 +4048,7 @@ li.L9 {
 
 .editormd-preview-container pre.prettyprint, .editormd-html-preview pre.prettyprint {
   padding: 10px;
-  border: 0px solid #ddd;
+  border: 1px solid #ddd;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
