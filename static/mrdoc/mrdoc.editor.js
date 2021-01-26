@@ -382,9 +382,9 @@ element.on('tab(img-tab)', function(data){
 insertImg = function(e){
   console.log(e);
   if(editor_mode == 3){
-    editor.addValue('<img src="' + e.getAttribute('data-url') + '" />')
+    editor.addValue('<img src="' + e.getAttribute('data-url').replace(" ",'%20') + '" />')
   }else{
-    editor.insertValue("\n![](" + e.getAttribute('data-url') + ")");
+    editor.insertValue("\n![](" + e.getAttribute('data-url').replace(" ",'%20') + ")");
     editor.focus()
   }
   
