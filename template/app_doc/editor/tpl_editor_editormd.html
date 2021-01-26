@@ -4,12 +4,20 @@
     var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
     var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
     //初始化editormd
-    var editor = editormd("editor-md", {
-        width       :   "100%",
-        height      :   "800px",
-        placeholder :   "道友，开始吧……",
-        toolbarIcons : function() {
-            return [
+    if(screen_width.matches){
+        var editormd_watch = false;
+        var editormd_height = window.innerHeight / 2 + 'px';
+        var editormd_toobar = [
+                    "h2","h3", "bold", "del", "italic", "quote","kaiSpan",  
+                    "list-ul", "list-ol", "hr", "link", 
+                    "mindmap","echart","imgUpload", "attachment" ,"multimedia","code", "code-block", "htmltable", 
+                    "emoji", "pagebreak", 
+                    "watch", "preview", 
+            ];
+    }else{
+        var editormd_watch = true;
+        var editormd_height = '800px'
+        var editormd_toobar = [
                 "undo", "redo", "|",
                 "h2","h3","h4","h5", "bold", "del", "italic", "quote","kaiSpan",  
                 "list-ul", "list-ol", "hr", "link", "reference-link", 
@@ -18,6 +26,13 @@
                 "watch", "preview", 
                 "help"
             ]
+    }
+    var editor = editormd("editor-md", {
+        width       :   "100%",
+        height      :   editormd_height,
+        placeholder :   "道友，开始吧……",
+        toolbarIcons : function() {
+            return editormd_toobar
         },
         //自定义工具栏添加楷体按钮
         toolbarIconTexts : {
@@ -189,6 +204,7 @@
             }
         },
         //配置项
+        watch       :editormd_watch,
         pageBreak : true, //分页符
         path        :   "/static/editor.md/lib/",
         saveHTMLToTextarea : true,
