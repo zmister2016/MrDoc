@@ -33,7 +33,7 @@ function initSidebar(sidebarQuery, contentQuery) {
     var scrollFlagTimer
     sidebar.addEventListener('click', function (e) {
         e.preventDefault()
-        console.log(e.target.dataset.id)
+        // console.log(e.target.dataset.id)
         if (e.target.href) {
             scrollFlag = 1
             clearTimeout(scrollFlagTimer)
@@ -44,7 +44,7 @@ function initSidebar(sidebarQuery, contentQuery) {
             // console.log(e.target.getAttribute('href').slice(1))
             target.scrollIntoView({ behavior: 'smooth', block: "start" })
         }else if(e.target.dataset.id){
-            console.log('vditor目录')
+            // console.log('vditor目录')
             var target = document.getElementById(e.target.dataset.id)
             target.scrollIntoView({ behavior: 'smooth', block: "start" })
         }
@@ -162,8 +162,8 @@ function addAllStyle(highlightColor) {
         overflow-x: auto;
         overflow-y: auto;
         padding: 20px 20px 20px 20px;
-        // max-width: 250px;
         width:200px;
+        max-height:400px;
         background-color:white;
         border-left:2px solid #dddddd;
     }`)
