@@ -237,7 +237,8 @@ def admin_overview(request):
         attachment_cnt = Attachment.objects.filter(user=request.user).count()
         # 文档动态
         doc_active_list = Doc.objects.all().order_by('-modify_time')[:5]
-
+        # 个人文集列表
+        pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
         return render(request,'app_admin/admin_overview.html',locals())
     else:
         pass
