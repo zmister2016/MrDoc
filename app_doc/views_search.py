@@ -72,20 +72,16 @@ class DocSearchView(SearchView):
             ).filter(
                 modify_time__gte=start_date,
                 modify_time__lte=end_date).order_by('-modify_time')
-            self.form = self.build_form(form_kwargs={'searchqueryset':sqs})
-            self.query = self.get_query()
-            self.results = self.get_results()
-            return self.create_response()
         else:
             sqs = SearchQuerySet().filter(
                 top_doc__in=None
             ).filter(
                 modify_time__gte=start_date,
                 modify_time__lte=end_date).order_by('-modify_time')
-            self.form = self.build_form(form_kwargs={'searchqueryset': sqs})
-            self.query = self.get_query()
-            self.results = self.get_results()
-            return self.create_response()
+        self.form = self.build_form(form_kwargs={'searchqueryset': sqs})
+        self.query = self.get_query().replace("\n",'').replace("\r",'')
+        self.results = self.get_results()
+        return self.create_response()
 
     def extra_context(self):
         context = {
