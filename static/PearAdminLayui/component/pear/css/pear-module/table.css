@@ -22,7 +22,7 @@
 	line-height: 34px !important;
 }
 
-.layui-laypage .layui-laypage-curr .layui-laypage-em {
+.layui-table .layui-laypage .layui-laypage-curr .layui-laypage-em {
 	border-radius: 50px !important;
 	background-color: #5FB878 !important;
 }

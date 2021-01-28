@@ -3,14 +3,13 @@
 }
 
 .input-new-tag input {
-	height: 100%;
+	height: 100%!important;
 	border: none;
 	padding-left: 0px;
 }
 
 .tag .layui-btn .tag-close:hover {
 	border-radius: 2px;
-	background-color: #FF5722;
 	color: #fff;
 }
 
@@ -20,7 +19,7 @@
 	-webkit-transition: all .2s;
 }
 .tag-item {
-	background-color: #67c23a;
+	background-color: #5FB878;
 	color: white;
 	border: none;
 }
@@ -31,13 +30,13 @@
 
 }
 .tag-item-normal {
-	background-color: #2D8CF0;
+	background-color: #5FB878;
 	color: white;
 	border: none;
 }
 
 .tag-item-warm {
-	background-color: #e6a23c;
+	background-color: #f6ad55;
 	color: white;
 	border: none;
 }

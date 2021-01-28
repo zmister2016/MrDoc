@@ -6,7 +6,6 @@
 	z-index: 9999999;
 	margin-top: -61px;
 }
-
 .loader {
 	width: 50px;
 	height: 50px;
@@ -16,7 +15,6 @@
 	z-index: 999999;
 	background-color: whitesmoke;
 }
-
 .loader:before {
 	content: "";
 	width: 50px;
@@ -29,7 +27,6 @@
 	left: 0;
 	animation: shadow .5s linear infinite;
 }
-
 .loader:after {
 	content: "";
 	width: 50px;
@@ -41,7 +38,6 @@
 	left: 0;
 	animation: loading .5s linear infinite;
 }
-
 @-webkit-keyframes loading {
 	17% {
 		border-bottom-right-radius: 3px;
@@ -64,7 +60,6 @@
 		transform: translateY(0) rotate(90deg);
 	}
 }
-
 @keyframes loading {
 	17% {
 		border-bottom-right-radius: 3px;
@@ -87,7 +82,6 @@
 		transform: translateY(0) rotate(90deg);
 	}
 }
-
 @-webkit-keyframes shadow {
 
 	0%,
@@ -99,7 +93,6 @@
 		transform: scale(1.2, 1);
 	}
 }
-
 @keyframes shadow {
 
 	0%,

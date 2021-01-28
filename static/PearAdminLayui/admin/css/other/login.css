@@ -73,11 +73,15 @@ body {
 }
 
 .code {
+	float: left;
 	margin-right: 13px;
+	margin: 0px !important;
 	border: #e6e6e6 1px solid;
+	display: inline-block!important;
 }
 
 .codeImage {
+	float: right;
 	height: 42px;
 	border: #e6e6e6 1px solid;
 }

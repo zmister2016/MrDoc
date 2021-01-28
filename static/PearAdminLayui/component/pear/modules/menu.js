@@ -27,9 +27,8 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 			change: opt.change ? opt.change : function() {},
 			done: opt.done ? opt.done : function() {}
 		}
-
 		if (option.async) {
-			getData(option.url).then(function(data){
+			getData(option.url).then(function(data) {
 				option.data = data;
 				renderMenu(option);
 			});
@@ -39,34 +38,40 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 				renderMenu(option);
 			}, 500);
 		}
-
 		return new pearMenu(opt);
 	}
 
 	pearMenu.prototype.click = function(clickEvent) {
 		var _this = this;
-		$("body").on("click","#" + _this.option.elem + " .site-demo-active",function(){
-				var dom = $(this);
-				var data = {
-					menuId: dom.attr("menu-id"),
-					menuTitle: dom.attr("menu-title"),
-					menuPath: dom.attr("menu-title"),
-					menuIcon: dom.attr("menu-icon"),
-					menuUrl: dom.attr("menu-url")
-				};
-				var doms = hash(dom);
-				if (doms.text() != '') {
-					data['menuPath'] = doms.find("span").text() + " / " + data['menuPath'];
-				}
-				var domss = hash(doms);
-				if (domss.text() != '') {
-					data['menuPath'] = domss.find("span").text() + " / " + data['menuPath'];
-				}
-				var domsss = hash(domss);
-				if (domsss.text() != '') {
-					data['menuPath'] = domsss.find("span").text() + " / " + data['menuPath'];
-				}
-				clickEvent(dom, data);
+		$("body").on("click", "#" + _this.option.elem + " .site-demo-active", function() {
+			var dom = $(this);
+			var data = {
+				menuId: dom.attr("menu-id"),
+				menuTitle: dom.attr("menu-title"),
+				menuPath: dom.attr("menu-title"),
+				menuIcon: dom.attr("menu-icon"),
+				menuUrl: dom.attr("menu-url")
+			};
+			var doms = hash(dom);
+			if (doms.text() != '') {
+				data['menuPath'] = doms.find("span").text() + " / " + data['menuPath'];
+			}
+			var domss = hash(doms);
+			if (domss.text() != '') {
+				data['menuPath'] = domss.find("span").text() + " / " + data['menuPath'];
+			}
+			var domsss = hash(domss);
+			if (domsss.text() != '') {
+				data['menuPath'] = domsss.find("span").text() + " / " + data['menuPath'];
+			}
+			if ($("#" + _this.option.elem).is(".pear-nav-mini")) {
+					if(_this.option.accordion){
+						activeMenus = $(this).parent().parent().parent().children("a");
+					}else{
+						activeMenus.push($(this).parent().parent().parent().children("a"));
+					}
+			}
+			clickEvent(dom, data);
 		})
 	}
 
@@ -132,16 +137,16 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 			isHoverMenu(true, config);
 		}
 	}
-	
-	function getData(url){
-	    var defer = $.Deferred();
-		$.get(url+"?fresh=" + Math.random(), function(result) {
-			 defer.resolve(result)
+
+	function getData(url) {
+		var defer = $.Deferred();
+		$.get(url + "?fresh=" + Math.random(), function(result) {
+			defer.resolve(result)
 		});
-	    return defer.promise();
+		return defer.promise();
 	}
-	
-	function renderMenu(option){
+
+	function renderMenu(option) {
 		if (option.parseData != false) {
 			option.parseData(option.data);
 		}
@@ -212,17 +217,19 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 					'" class="layui-this layui-nav-item"><a href="#">' + item.title + '</a></li>';
 				menuItem = '<ul  pear-id="' + item.id + '" lay-filter="' + option.elem +
 					'" class="layui-nav arrow layui-nav-tree pear-nav-tree">';
-			    // 兼容移动端
-			    controlPe += '<li class="layui-nav-item"><a class="pe-title" href="javascript:;" >'+ item.title +'</a>';
-				controlItemPe += '<dd  pear-href="' + item.href + '" pear-title="' + item.title + '" pear-id="' + item.id +'"><a href="javascript:void(0);">'+ item.title +'</a></dd>';
+				// 兼容移动端
+				controlPe += '<li class="layui-nav-item"><a class="pe-title" href="javascript:;" >' + item.title + '</a>';
+				controlItemPe += '<dd  pear-href="' + item.href + '" pear-title="' + item.title + '" pear-id="' + item.id +
+					'"><a href="javascript:void(0);">' + item.title + '</a></dd>';
 			} else {
 				controlItem = '<li  pear-href="' + item.href + '" pear-title="' + item.title + '" pear-id="' + item.id +
 					'" class="layui-nav-item"><a href="#">' + item.title + '</a></li>';
 				menuItem = '<ul style="display:none" pear-id="' + item.id + '" lay-filter="' + option.elem +
 					'" class="layui-nav arrow layui-nav-tree pear-nav-tree">';
-					
-				controlItemPe += '<dd pear-href="' + item.href + '" pear-title="' + item.title + '" pear-id="' + item.id +'"><a href="javascript:void(0);">'+ item.title +'</a></dd>';
-					
+
+				controlItemPe += '<dd pear-href="' + item.href + '" pear-title="' + item.title + '" pear-id="' + item.id +
+					'"><a href="javascript:void(0);">' + item.title + '</a></dd>';
+
 			}
 			index++;
 			$.each(item.children, function(i, note) {
@@ -255,7 +262,6 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 			})
 			menu += menuItem + '</ul>';
 			control += controlItem;
-
 		})
 		controlItemPe += "</li></dl></ul>"
 		controlPe += controlItemPe;
@@ -327,7 +333,7 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 				var superEle = $(this).parent();
 				var ele = $(this).next('.layui-nav-child');
 				var heights = ele.children("dd").length * 48;
-				
+
 				if ($(this).parent().is(".layui-nav-itemed")) {
 					if (option.accordion) {
 						$(this).parent().parent().find(".layui-nav-itemed").removeClass("layui-nav-itemed");
@@ -359,43 +365,42 @@ layui.define(['table', 'jquery', 'element'], function(exports) {
 	/** 二 级 悬 浮 菜 单*/
 	function isHoverMenu(b, option) {
 		if (b) {
-			$("#" + option.elem + ".pear-nav-mini .layui-nav-item,#" + option.elem + ".pear-nav-mini dd").hover(function() {
-				$(this).children(".layui-nav-child").addClass("layui-nav-hover");
-				
-				var top = $(this).offset().top + 5;
-				var y = window.document.body.clientHeight;
-				
+			$("#" + option.elem + ".pear-nav-mini .layui-nav-item,#" + option.elem + ".pear-nav-mini dd").hover(function(e) {
+				e.stopPropagation();
+				var _this = $(this);
+				_this.siblings().find(".layui-nav-child")
+					.removeClass("layui-nav-hover").css({
+						left: 0,
+						top: 0
+					});
+				_this.children(".layui-nav-child").addClass("layui-nav-hover");
+				_this.closest('.layui-nav-item').data('time') && clearTimeout(_this.closest('.layui-nav-item').data('time'));
 				var height = $(window).height();
-				
-				var topLength = $(this).offset().top;
-				
-				var thisHeight = $(this).children(".layui-nav-child").height();
-				
-				if((thisHeight+topLength)>height){
-				      topLength = height-thisHeight-10;	
+				var topLength = _this.offset().top;
+				var thisHeight = _this.children(".layui-nav-child").height();
+				if ((thisHeight + topLength) > height) {
+					topLength = height - thisHeight - 10;
 				}
-				if (!$(this).is(".layui-nav-item")) {
-					var left = $(this).offset().left + $(this).width()+2;
-					$(this).children(".layui-nav-child").offset({
-						left: left
-					});
-				} else {
-					var left = $(this).offset().left + 62;
-					$(this).children(".layui-nav-child").offset({
-						left: left
-					});
+				var left = _this.offset().left + 60;
+				if (!_this.hasClass("layui-nav-item")) {
+					left = _this.offset().left + _this.width();
 				}
-				$(this).children(".layui-nav-child").offset({
-					top: topLength
+				_this.children(".layui-nav-child").offset({
+					top: topLength,
+					left: left + 3
 				});
-			}, function() {
-				$(this).children(".layui-nav-child").removeClass("layui-nav-hover");
-				$(this).children(".layui-nav-child").css({
-					left: '0px'
-				});
-				$(this).children(".layui-nav-child").css({
-					top: '0px'
-				});
+			}, function(e) {
+				e.stopPropagation();
+				var _this = $(this);
+				_this.closest('.layui-nav-item').data('time', setTimeout(function() {
+					_this.closest('.layui-nav-item')
+						.find(".layui-nav-child")
+						.removeClass("layui-nav-hover")
+						.css({
+							left: 0,
+							top: 0
+						});
+				}, 50));
 			})
 		} else {
 			$("#" + option.elem + " .layui-nav-item").off('mouseenter').unbind('mouseleave');
