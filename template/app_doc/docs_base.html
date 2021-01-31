@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
-    <meta name="referrer" content="strict-origin">
+    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}{{site_keywords}}"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
@@ -29,6 +29,9 @@
             max-width: 350px;
         }
         {% endif %}
+        /* html{
+        filter: invert(1) hue-rotate(180deg);
+        } */
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -329,7 +332,6 @@
         // EditorMD模式
         //解析Markdown为HTML
         editormd.markdownToHTML("content", {
-            htmlDecode      : "style,script,iframe",
             emoji           : true,  //emoji表情
             taskList        : true,  // 任务列表
             tex             : true,  // 科学公式
