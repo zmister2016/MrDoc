@@ -27,7 +27,7 @@
 
 - Web端，[安装手册](http://mrdoc.zmister.com/project-7/)，[使用手册](http://mrdoc.zmister.com/project-54/)；
 - Chrome扩展：
-    - MrDoc官方插件：[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
+    - [MrDoc官方插件](https://gitee.com/zmister/mrdoc-webclipper)：[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
     - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
 - App端（开发中）
 
@@ -127,6 +127,24 @@ python manage.py runserver
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_213550.png" height=150 />
 
 <p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
+
+## 依赖
+
+觅道文档基于以下项目进行开发，在此表示感谢：
+
+- Python
+- Django
+- Jquery
+- LayUI
+- PearAdminLayui
+- Editor.md
+- Marked
+- CodeMirror
+- Echarts
+- Viewer.js
+- Sortable.js
+- Vditor
+- iceEditor
 
 ## 协议
 

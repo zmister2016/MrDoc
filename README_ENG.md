@@ -123,3 +123,25 @@ Join the mrdoc communication Tencent QQ group ，Group number is **735507293**
 ### 3. Contact author
 
 WeChat Subscription : **zmister2016**
+
+## Dependent
+
+Thanks for the development based on the following projects：
+
+- Python
+- Django
+- Jquery
+- LayUI
+- PearAdminLayui
+- Editor.md
+- Marked
+- CodeMirror
+- Echarts
+- Viewer.js
+- Sortable.js
+- Vditor
+- iceEditor
+
+## License
+
+<a href="./LICENSE">GPL-3.0</a>
