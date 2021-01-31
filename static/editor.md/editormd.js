@@ -3532,6 +3532,34 @@
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg    = regexs.pageBreak;
 
+	// 增加引用样式解析规则
+        markedRenderer.blockquote = function($quote) {
+            var quoteBegin = "";
+
+            var ps = $quote.match(/<p\s*?>/i);
+			
+            if(ps !== null) {
+                quoteBegin = ps[0];
+                $quote = $quote.substr(3);
+            }
+            var $class = "default";
+
+            if($quote.indexOf("i") === 0){
+                $class = "info";
+                $quote = $quote.substr(1);
+            }else if($quote.indexOf("w") === 0){
+                $class = "warning";
+                $quote = $quote.substr(1);
+            }else if($quote.indexOf("s") === 0){
+                $class = "success";
+                $quote = $quote.substr(1);
+            }else if($quote.indexOf("d") === 0){
+                $class = "danger";
+                $quote = $quote.substr(1);
+            }
+
+            return '<blockquote class="'+$class+'">\n' + quoteBegin + $quote + '</blockquote>\n';
+        };    
         // marked 解析图片
         markedRenderer.image = function(href,title,text) {
             var attr = "";
