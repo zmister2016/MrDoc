@@ -169,34 +169,36 @@ def project_list(request):
             Q(role=2,role_value__contains=str(request.user.username)) | \
             Q(create_user=request.user) | \
             Q(id__in=colla_list)
-        ).order_by("{}create_time".format(sort_str))
+        ).order_by('-is_top',"{}create_time".format(sort_str))
 
     # 没有搜索 and 认证用户 and 有筛选
     elif (is_kw is False ) and (is_auth) and (is_role):
         if role in ['0',0]:
-            project_list = Project.objects.filter(role=0).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(role=0).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['1',1]:
-            project_list = Project.objects.filter(create_user=request.user,role=1).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(create_user=request.user,role=1).order_by(
+                '-is_top',"{}create_time".format(sort_str))
         elif role in ['2',2]:
-            project_list = Project.objects.filter(role=2,role_value__contains=str(request.user.username)).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(role=2,role_value__contains=str(request.user.username)).order_by(
+                '-is_top',"{}create_time".format(sort_str))
         elif role in ['3',3]:
-            project_list = Project.objects.filter(role=3).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(role=3).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['99',99]:
             colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集列表
-            project_list = Project.objects.filter(id__in=colla_list).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(id__in=colla_list).order_by('-is_top',"{}create_time".format(sort_str))
         else:
             return render(request,'404.html')
 
     # 没有搜索 and 游客 and 没有筛选
     elif (is_kw is False) and (is_auth is False) and (is_role is False):
-        project_list = Project.objects.filter(role__in=[0,3]).order_by("{}create_time".format(sort_str))
+        project_list = Project.objects.filter(role__in=[0,3]).order_by('-is_top',"{}create_time".format(sort_str))
 
     # 没有搜索 and 游客 and 有筛选
     elif (is_kw is False) and (is_auth is False) and (is_role):
         if role in ['0',0]:
-            project_list = Project.objects.filter(role=0).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(role=0).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['3',3]:
-            project_list = Project.objects.filter(role=3).order_by("{}create_time".format(sort_str))
+            project_list = Project.objects.filter(role=3).order_by('-is_top',"{}create_time".format(sort_str))
         else:
             return render(request,'404.html')
 
@@ -210,7 +212,7 @@ def project_list(request):
             Q(create_user=request.user) | \
             Q(id__in=colla_list),
             Q(name__icontains=kw) | Q(intro__icontains=kw)
-        ).order_by('{}create_time'.format(sort_str))
+        ).order_by('-is_top','{}create_time'.format(sort_str))
 
     # 有搜索 and 认证用户 and 有筛选
     elif (is_kw) and (is_auth) and (is_role):
@@ -218,29 +220,29 @@ def project_list(request):
             project_list = Project.objects.filter(
                 Q(name__icontains=kw)|Q(intro__icontains=kw),
                 role=0
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['1',1]:
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 create_user=request.user
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['2',2]:
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 role=2,
                 role_value__contains=str(request.user.username)
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['3',3]:
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 role=3
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['99',99]:
             colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集列表
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 id__in=colla_list
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         else:
             return render(request,'404.html')
 
@@ -249,7 +251,7 @@ def project_list(request):
         project_list = Project.objects.filter(
             Q(name__icontains=kw) | Q(intro__icontains=kw),
             role__in=[0, 3]
-        ).order_by("{}create_time".format(sort_str))
+        ).order_by('-is_top',"{}create_time".format(sort_str))
 
     # 有搜索 and 游客 and 有筛选
     elif (is_kw) and (is_auth is False) and (is_role):
@@ -257,12 +259,12 @@ def project_list(request):
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 role=0
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['3',3]:
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 role=3
-            ).order_by("{}create_time".format(sort_str))
+            ).order_by('-is_top',"{}create_time".format(sort_str))
         else:
             return render(request,'404.html')
 
@@ -2016,7 +2018,6 @@ def report_md(request):
 def genera_project_file(request):
     report_type = request.POST.get('types',None) # 获取前端传入到导出文件类型参数
     # 导出EPUB文件
-
     pro_id = request.POST.get('pro_id')
     try:
         project = Project.objects.get(id=int(pro_id))
@@ -2136,6 +2137,7 @@ def genera_project_file(request):
                     return JsonResponse({'status': True, 'data': pdf_file})
 
                 except Exception as e:
+                    logger.exception("生成出错")
                     return JsonResponse({'status': False, 'data': '生成出错'})
             else:
                 return JsonResponse({'status': False, 'data': '不支持的类型'})

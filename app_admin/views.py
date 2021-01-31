@@ -4,6 +4,7 @@ from django.http.response import JsonResponse,HttpResponse,Http404
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from app_admin.decorators import superuser_only,open_register
 from django.core.exceptions import ObjectDoesNotExist
@@ -402,6 +403,7 @@ def admin_project(request):
                 'role': project.role,
                 'role_value': project.role_value,
                 'colla_total': ProjectCollaborator.objects.filter(project=project).count(),
+                'is_top':project.is_top,
                 'create_user':project.create_user.username,
                 'create_time': project.create_time,
                 'modify_time': project.modify_time
@@ -448,6 +450,23 @@ def admin_project_role(request,pro_id):
             return render(request, 'app_admin/admin_project_role.html', locals())
         else:
             return Http404
+
+# 后台管理 - 控制文集置顶状态
+@superuser_only
+@require_POST
+def admin_project_istop(request):
+    try:
+        project_id = request.POST.get('id')
+        is_top = request.POST.get('is_top')
+        if is_top == 'true':
+            is_top = True
+        else:
+            is_top = False
+        Project.objects.filter(id=project_id).update(is_top=is_top)
+        return JsonResponse({'status':True})
+    except:
+        logger.exception("置顶文集出错")
+        return JsonResponse({'status':False,'data':'执行出错'})
 
 
 # 后台管理 - 文档管理

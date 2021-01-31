@@ -13,6 +13,7 @@ class Project(models.Model):
     is_watermark = models.BooleanField(verbose_name="水印状态",default=False)
     watermark_type = models.IntegerField(verbose_name="水印类型",default=1) # 1表示文字水印 2表示图片水印
     watermark_value = models.CharField(verbose_name="水印内容",null=True,blank=True,default='',max_length=250)
+    is_top = models.BooleanField(verbose_name="是否置顶",default=False)
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)

@@ -98,7 +98,7 @@
                 // {title: '简介',field: 'intro',align: 'left',templet:"#share-type"},
                 // {title: '权限',field: 'role',align: 'left',templet:"#project-role"},
                 {title: '{% trans "文档数" %}',field: 'doc_total',align: 'left',width:90},
-                {title: '{% trans "协作人数" %}',field: 'colla_total',align: 'left',templet:"#colla-cnt",width:90},
+                {title: '{% trans "文集成员" %}',field: 'colla_total',align: 'left',templet:"#colla-cnt",width:90},
                 {title: '{% trans "创建时间" %}',field: 'create_time',align: 'left',templet:"#project-create-time"},
                 {title: '{% trans "操作" %}',toolbar: '#project-bar',align: 'left',}
             ]
@@ -131,13 +131,13 @@
             }else if(obj.event === 'batchRemove'){ // 批量删除文集
                 batchRemove(obj)
             }else if(obj.event === 'search'){ // 搜索文集
-                console.log('搜索文集')
+                // console.log('搜索文集')
                 table.reload('project-table',{
                     where:{
-                    'type':1,'kw':$('input[name="project-search-kw"]').val()
-                },
+                        'type':1,'kw':$('input[name="project-search-kw"]').val()
+                    },
                 })
-            } 
+            }
         });
         //创建文集
         createProject = function(){
@@ -295,7 +295,7 @@
                     }
                 }
             });
-        }
+        };
     })
 </script>
 {% endblock %}

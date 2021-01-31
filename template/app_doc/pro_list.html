@@ -14,6 +14,7 @@
     <title>{% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %} - {% if site_sub_name != None %}{{site_sub_name}} {% else %}{% trans "又一个MrDoc站点" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <style>
         .layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree, .layui-nav-itemed:after {
@@ -134,9 +135,15 @@
                         {% endif %}
                         >
                         {% if p.icon %}
-                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span></p>
+                            <p class="layui-elip" style="font-weight: 700;">
+                                {% if p.is_top %}<i class="iconfont mrdoc-icon-totop" title="置顶文集" style="color: red;font-size: 12px;"></i>{% endif %}
+                                <svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span>
+                            </p>
                         {% else %}
-                            <p class="layui-elip" style="font-weight: 700;"><svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span></p>
+                            <p class="layui-elip" style="font-weight: 700;">
+                                {% if p.is_top %}<i class="iconfont mrdoc-icon-totop" title="置顶文集" style="color: red;font-size: 12px;"></i>{% endif %}
+                                <svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span>
+                            </p>
                         {% endif %}
                     </div>
                     <div class="layui-card-body" style="font-size: 12px;">
