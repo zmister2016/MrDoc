@@ -3472,7 +3472,7 @@
         atLink        : /@(\w+)/g,
         email         : /(\w+)@(\w+)\.(\w+)\.?(\w+)?/g,
         emailLink     : /(mailto:)?([\w\.\_]+)@(\w+)\.(\w+)\.?(\w+)?/g,
-        mark          : /==([^\s=])==(?!=)|==([^\s=])==(?!=)|==([^\s][\s\S]*?[^\s])==(?!=)|==([^\s][\s\S]*?[^\s])==(?!=)/g,
+        mark          : /[^<code>]==([^\s=])==(?!=)|[^<code>]==([^\s=])==(?!=)|[^<code>]==([^\s][\s\S]*?[^\s])==(?!=)|[^<code>]==([^\s][\s\S]*?[^\s])==(?!=)/g,
         emoji         : /:([A-Za-z\+-]+):/g,
         emojiDatetime : /(\d{2}:\d{2}:\d{2})/g,
         twemoji       : /:(tw-([\w]+)-?(\w+)?):/g,
@@ -3740,11 +3740,11 @@
         // marked 高亮标记解析
         markedRenderer.mark = function(text){
             if(markReg.test(text)){
-                // console.log(text)
+                console.log(text)
                 var mark_replace_reg = /==(.+)==/g
                 text = text.replace(markReg,function(e){
-                    // console.log(e)
-                    return "<mark>" + e.replace(mark_replace_reg,function($1,$2){return $2}) + "</mark>"
+                    console.log(e)
+                    return "<mark>" + e.replace(mark_replace_reg,function($1,$2){console.log($2); return $2}) + "</mark>"
                 })
             }
             return text
