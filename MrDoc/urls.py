@@ -23,7 +23,6 @@ from app_doc.sitemaps import SitemapAll
 sitemaps = SitemapAll()
 
 urlpatterns = [
-    path('admin/', admin.site.urls), # Django自带admin
     path('',include('app_doc.urls')), # doc应用
     path('user/',include('app_admin.urls'),), # admin应用
     path('api/',include('app_api.urls')), # API应用
