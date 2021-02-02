@@ -18,6 +18,9 @@
                     <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" onclick="createImgGroup()">
                         <i class="layui-icon layui-icon-addition"></i>{% trans "新建分组" %}</button>
                     <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_img_group' %}">{% trans "分组管理" %}</a>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="select-all-img" type="button">全选</button>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="batch-del-img" type="button">批量删除</button>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="batch-move-img" type="button">批量移动</button>
                 </div>
             </form>
 
@@ -42,6 +45,7 @@
                 <li class="image-list">
                     <img class="image-list-i" src="{{img.file_path}}"  title="{{img.file_name}}">
                     <div class="opera-img-btn">
+                        <input type="checkbox" class="batch-image-checkbox" name="batch-image" value="{{img.id}}"></input>
                         <a href="javascript:void(0);" class="move-img" title="移动分组" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-transfer"></i></a>
                         <a href="javascript:void(0);" class="del-img" title="删除图片" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-delete"></i></a>
                     </div>
@@ -89,13 +93,6 @@
         });
         // 懒加载图片
         flow.lazyimg({elem:'img.image-list-i'}); 
-        //悬浮显示图片按钮
-        $(".image-list").mouseover(function(){
-            $(this).find(".opera-img-btn").show();
-        });
-        $(".image-list").mouseleave(function(){
-            $(this).find(".opera-img-btn").hide();
-        });
         //删除图片
         $(".del-img").click(function(){
             var img_id = $(this).data("id");
@@ -117,9 +114,12 @@
                     $.post("{% url 'manage_image' %}",data,function(r){
                         layer.closeAll('loading')
                         if(r.status){
-                            //删除成功
-                            window.location.reload();
-                            //layer.close(index)
+                            layer.msg('删除成功', {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                window.location.reload();
+                            });
                         }else{
                             //删除失败，提示
                             // console.log(r)
@@ -154,8 +154,12 @@
                         layer.closeAll('loading')
                         if(r.status){
                             //移动成功
-                            window.location.reload();
-                            //layer.close(index)
+                            layer.msg('移动成功', {
+                                    icon: 1,
+                                    time: 1000
+                                }, function() {
+                                    window.location.reload();
+                                });
                         }else{
                             //移动失败，提示
                             // console.log(r)
@@ -235,7 +239,135 @@
             acceptMime:'image/*',
             field:'manage_upload',
 
-        })
+        });
+        // 全选图片
+        $("#select-all-img").click(function(){
+            if($(this).text() === '全选'){
+                $("input[name='batch-image']").prop("checked","true");
+                $(this).text("取消全选");
+            }else{
+                $("input[name='batch-image']").removeAttr("checked");
+                $(this).text("全选");
+            }
+            
+        });
+        // 批量删除图片
+        $("#batch-del-img").click(function(){
+            let img_list = []
+            $("input[name='batch-image']:checked").each(function(i){
+                // console.log($(this).val())
+                img_list.push($(this).val())
+            })
+            if(img_list.length === 0){
+                layer.msg("未选中任何图片", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let imgs_id = ''
+            for (let i = 0; i < img_list.length; i++) {
+                imgs_id += img_list[i] + ",";
+            }
+            imgs_id = imgs_id.substr(0, imgs_id.length - 1);
+            layer.open({
+                type:1,
+                title:'批量删除图片',
+                area:'300px;',
+                id:'batchDelImg',//配置ID
+                content:'<div style="margin-left:10px;">你正在批量删除图片！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选图片，文档中所引用的图片将不再显示</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_image" placeholder="DELETE"></div>',
+                btn:['确定删除','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    var confirm_delete = $("#confirm_batch_delete_image").val()
+                    if(confirm_delete === 'DELETE'){
+                        layer.load(1);
+                        data = {
+                            'img_id':imgs_id,
+                            'types':0,
+                            'range':'multi'
+                        }
+                        $.post("{% url 'manage_image' %}",data,function(r){
+                            layer.closeAll('loading')
+                            if(r.status){
+                                //删除成功
+                                layer.msg('批量删除成功', {
+                                    icon: 1,
+                                    time: 1000
+                                }, function() {
+                                    window.location.reload();
+                                });
+                            }else{
+                                //删除失败，提示
+                                layer.msg(r.data)
+                            }
+                        })
+
+                    }else{
+                        layer.msg("输入错误！")
+                    }
+                },
+
+            });
+        });
+        // 批量移动图片
+        $("#batch-move-img").click(function(){
+            let img_list = []
+            $("input[name='batch-image']:checked").each(function(i){
+                // console.log($(this).val())
+                img_list.push($(this).val())
+            })
+            if(img_list.length === 0){
+                layer.msg("未选中任何图片", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let imgs_id = ''
+            for (let i = 0; i < img_list.length; i++) {
+                imgs_id += img_list[i] + ",";
+            }
+            imgs_id = imgs_id.substr(0, imgs_id.length - 1);
+            layer.open({
+                type:1,
+                title:'批量移动图片',
+                area:['300px','300px'],
+                id:'moveImg',//配置ID
+                content:$("#move-group-layer"),
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'types':1,
+                        'img_id':imgs_id,
+                        'group_id':$("#group_id").val(),
+                        'range':'multi'
+                    }
+                    // console.log(data)
+                    $.post("{% url 'manage_image' %}",data,function(r){
+                        layer.closeAll('loading')
+                        if(r.status){
+                            //移动成功
+                            layer.msg('批量移动成功', {
+                                    icon: 1,
+                                    time: 1000
+                                }, function() {
+                                    window.location.reload();
+                                });
+                        }else{
+                            //移动失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+                success:function(){
+                    form.render();
+                }
+            })
+        });
     });
 </script>
 

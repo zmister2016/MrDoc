@@ -45,7 +45,7 @@
     right: 0px;
     width: 160px;
     height: 25px;
-    display: none;
+    /* display: none; */
     background:#393D49;
     opacity:0.5;
 }

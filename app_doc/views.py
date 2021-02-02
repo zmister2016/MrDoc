@@ -2282,25 +2282,50 @@ def manage_image(request):
         try:
             img_id = request.POST.get('img_id','')
             types = request.POST.get('types','') # 操作类型：0表示删除，1表示修改，2表示获取
+            range = request.POST.get('range','single') # 操作范围 single 表示单个图片，multi表示多个图片
             # 删除图片
             if int(types) == 0:
-                img = Image.objects.get(id=img_id)
-                if img.user != request.user:
-                    return JsonResponse({'status': False, 'data': '未授权请求'})
-                file_path = settings.BASE_DIR+img.file_path
-                is_exist = os.path.exists(file_path)
-                if is_exist:
-                    os.remove(file_path)
-                img.delete() # 删除记录
+                if range == 'single':
+                    img = Image.objects.get(id=img_id)
+                    if img.user != request.user:
+                        return JsonResponse({'status': False, 'data': '未授权请求'})
+                    file_path = settings.BASE_DIR+img.file_path
+                    is_exist = os.path.exists(file_path)
+                    if is_exist:
+                        os.remove(file_path)
+                    img.delete() # 删除记录
+                elif range == 'multi':
+                    imgs = img_id.split(',')
+                    for i in imgs:
+                        img = Image.objects.get(id=i)
+                        if img.user != request.user:
+                            logger.error("图片{}非法删除".format(i))
+                            break
+                        file_path = settings.BASE_DIR + img.file_path
+                        is_exist = os.path.exists(file_path)
+                        if is_exist:
+                            os.remove(file_path)
+                        img.delete()  # 删除记录
+
                 return JsonResponse({'status':True,'data':'删除完成'})
             # 移动图片分组
             elif int(types) == 1:
-                group_id = request.POST.get('group_id',None)
-                if group_id is None:
-                    Image.objects.filter(id=img_id,user=request.user).update(group_id=None)
-                else:
-                    group = ImageGroup.objects.get(id=group_id,user=request.user)
-                    Image.objects.filter(id=img_id,user=request.user).update(group_id=group)
+                if range == 'single':
+                    group_id = request.POST.get('group_id',None)
+                    if group_id is None:
+                        Image.objects.filter(id=img_id,user=request.user).update(group_id=None)
+                    else:
+                        group = ImageGroup.objects.get(id=group_id,user=request.user)
+                        Image.objects.filter(id=img_id,user=request.user).update(group_id=group)
+                elif range == 'multi':
+                    imgs = img_id.split(',')
+                    group_id = request.POST.get('group_id',None)
+                    if group_id is None:
+                        Image.objects.filter(id__in=imgs,user=request.user).update(group_id=None)
+                    else:
+                        group = ImageGroup.objects.get(id=group_id,user=request.user)
+                        Image.objects.filter(id__in=imgs,user=request.user).update(group_id=group)
+
                 return JsonResponse({'status':True,'data':'移动完成'})
             # 获取图片
             elif int(types) == 2:
