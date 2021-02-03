@@ -362,7 +362,6 @@
          */
         
         init : function (id, options) {
-            
             options              = options || {};
             
             if (typeof id === "object")
@@ -556,6 +555,15 @@
             editormd.loadScript(loadPath + "echarts.min", function() {
                 // _this.loadedDisplay();
             });
+
+            // 加载 mindmap 相关js
+            editormd.loadScript(loadPath + 'mindmap/d3@5',function(){
+                editormd.loadScript(loadPath + 'mindmap/transform.min', function(){
+                    editormd.loadScript(loadPath + 'mindmap/view.min',function(){
+
+                    })
+                })
+            })
 
             editormd.loadCSS(loadPath + "codemirror/lib/codemirror");
             
@@ -4457,7 +4465,13 @@
         if (settings.previewCodeHighlight) 
         {
             div.find("pre").addClass("prettyprint linenums");
-            prettyPrint();
+            editormd.loadScript('/static/editor.md/lib/raphael.min', function(){
+                editormd.loadScript('/static/editor.md/lib/underscore.min', function(){
+                    editormd.loadScript('/static/editor.md/lib/prettify.min',function(){
+                        prettyPrint();
+                    })    
+                })
+            })
         }
         
         if (!editormd.isIE8) 
@@ -4485,8 +4499,10 @@
                     has_sequence_dia = true;
                 })
                 if(has_sequence_dia){
-                    editormd.loadScript('/static/editor.md/lib/sequence-diagram.min',function(){
-                        div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
+                    editormd.loadScript('/static/editor.md/lib/underscore.min', function(){
+                        editormd.loadScript('/static/editor.md/lib/sequence-diagram.min',function(){
+                            div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
+                        })    
                     })
                 }
                 // div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
@@ -4529,9 +4545,9 @@
                     console.log("存在脑图")
                     var mmap  = $(this);
                     var mmap_id = this.id;
-                    editormd.loadScript('/static/mindmap/d3@5',function(){
-                        editormd.loadScript('/static/mindmap/transform.min',function(){
-                            editormd.loadScript('/static/mindmap/view.min',function(){
+                    editormd.loadScript('/static/editor.md/lib/mindmap/d3@5',function(){
+                        editormd.loadScript('/static/editor.md/lib/mindmap/transform.min',function(){
+                            editormd.loadScript('/static/editor.md/lib/mindmap/view.min',function(){
                                 var md_data = window.markmap.transform(mmap.text().trim());
                                 window.markmap.markmap("svg#"+mmap_id,md_data)
                             })
@@ -4713,9 +4729,7 @@
     // 使用国外的CDN，加载速度有时会很慢，或者自定义URL
     // You can custom KaTeX load url.
     editormd.katexURL  = {
-        //css : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min",
         css :   "/static/katex/katex.min",
-        //js  : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min"
         js  :   "/static/katex/katex.min",
     };
     

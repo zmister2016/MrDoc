@@ -320,9 +320,6 @@
 <script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
 <script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
 

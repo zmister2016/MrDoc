@@ -226,9 +226,6 @@
         <!-- 加载编辑器 -->
         {% if editor_mode == 1 %}
             <!-- Editor.MD编辑器 -->
-            <script src="{% static 'mindmap/d3@5.js' %}"></script>
-            <script src="{% static 'mindmap/transform.min.js' %}"></script>
-            <script src="{% static 'mindmap/view.min.js' %}"></script>
             <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
             {% include 'app_doc/editor/tpl_editor_editormd.html' %}
         {% elif editor_mode == 2 %}
