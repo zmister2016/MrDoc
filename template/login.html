@@ -51,7 +51,7 @@
         }
     </style>
 </head>
-<body>
+<body background="{% static 'PearAdminLayui/admin/images/background.svg' %}">
     <div class="container">
         <div></div>
         <div></div>
@@ -64,12 +64,12 @@
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
-                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" >
+                      <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" value="{{username}}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
-                      <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                      <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" value="{{pwd}}">
                     </div>
                 </div>
                 <div class="layui-form-item">
