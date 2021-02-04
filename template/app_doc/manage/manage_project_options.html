@@ -4,6 +4,8 @@
 {% block title %}{% trans "文集设置" %}{% endblock %}
 {% block custom_element %}
 <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
+<link href="{% static 'mrdoc/mrdoc-editor.css' %}?version={{mrdoc_version}}" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="layui-card">
@@ -12,6 +14,7 @@
         <span class="layui-breadcrumb" lay-separator=">">
           <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
           <a><cite>{% trans "文集设置" %}</cite></a>
+          <a><cite>{% trans "文集：" %}{{pro.name}}</cite></a>
         </span>
     </div>
     </div>
@@ -19,14 +22,6 @@
 
 <div class="layui-card">
     <div class="layui-card-body">
-    <div class="layui-card-header" style="margin-bottom: 10px;">
-
-      <div class="layui-row">
-          <span style="font-size:18px;">{% trans "文集：" %}{{pro.name}}
-          </span>
-      </div>
-    </div>
-
     <div class="layui-tab">
         <ul class="layui-tab-title">
             <li class="layui-this">{% trans "基础信息" %}</li>
@@ -40,13 +35,7 @@
                 <div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">{% trans "文集名称" %}</label>
-                        <div class="layui-input-block">
-                            <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="{% trans '输入文集名' %}" required  lay-verify="required" value="{{pro.name}}">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">文集图标</label>
-                        <div class="layui-input-block">
+                        <div class="layui-input-inline" style="width: 30px;">
                             <button class="layui-btn layui-btn-primary layui-btn-sm" id="project-icon-select">
                                 {% if pro.icon %}
                                 <svg class="icon" aria-hidden="true"><use xlink:href="#{{pro.icon}}"></use></svg>
@@ -56,9 +45,11 @@
                             </button>
                             <input type="hidden" name="picon" id="picon" value="{{pro.icon}}"/>
                             <div class="layui-anim layui-anim-upbit layui-iconpicker hide-project-icon-list" id="project-icon-select-box">
-                                <div class="layui-iconpicker-list" id="mrdoc-project-icon-list">
-                                </div>
+                                <div class="layui-iconpicker-list" id="mrdoc-project-icon-list"></div>
                             </div>
+                        </div>
+                        <div class="layui-input-inline" style="min-width: 300px;">
+                            <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="{% trans '输入文集名' %}" required  lay-verify="required" value="{{pro.name}}">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -76,10 +67,12 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">{% trans "文集简介" %}</label>
                         <div class="layui-input-block">
-                            <textarea name="desc" id="desc" placeholder="{% trans '输入文集简介' %}" class="layui-textarea">{{pro.intro}}</textarea>
+                            <div id="editor-md">
+                                <textarea style="display: none;">{{pro.intro}}</textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="layui-form-item" style="margin-top: 10px;">
+                    <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button class="layui-btn layui-btn-primary layui-btn-sm" id="modify-project-btn"><i class="layui-icon layui-icon-edit"></i>{% trans "立即修改" %}</button>
                         </div>
@@ -128,7 +121,7 @@
                 <div class="layui-form">
                     {% load project_filter %}
                     <div class="layui-form-item">
-                        <blockquote class="layui-elem-quote">{% trans "注意：开启某类型文件下载后，请先点击“生成或更新XXX文件”，文集文档中如果包含公式、流程图、时序图、脑图等内容，将会延长生成时间，请耐心等待" %}</blockquote>
+                        <blockquote class="layui-elem-quote">{% trans "注意：开启某类型文件下载后，请先点击“生成或更新XXX文件”，EPUB格式文件不支持思维导图、公式、流程图等图形" %}</blockquote>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">{% trans "EPUB下载" %}</label>
@@ -227,7 +220,12 @@
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
+    var tree = layui.tree;
+    var layer = layui.layer;
     var form = layui.form;
+    var element = layui.element;
+
+    var layer = layui.layer;
     //监听单选事件
     form.on('radio(role)', function(data){
         console.log(data.elem); //得到radio原始DOM对象
@@ -268,7 +266,7 @@
             'picon':$("#picon").val(),
             'pro_id':'{{pro.id}}',
             'name':$("#pname").val(),
-            'desc':$("#desc").val(),
+            'desc':editor.getMarkdown(),
             'is_watermark':$("input[name=is_watermark]")[0].checked,
             'watermark_value':$("#watermark_value").val(),
         }
@@ -356,16 +354,7 @@
                 layer.msg("服务器异常")
             }
         })
-        // $.post("{% url 'genera_project_file' %}",data,function(r){
-        //     layer.closeAll('loading');
-        //     if(r.status){
-        //         layer.msg("生成完成")
-        //         window.location.reload();
-        //     }else{
-        //         layer.msg("生成出错，请稍后重试")
-        //     }
-        // })
-    }
+    };
     // 删除文集
     delProject = function(pro_id){
         layer.open({
@@ -453,5 +442,169 @@
         })
     };
 
+</script>
+<!-- 文集简介的Editor.MD编辑器 -->
+<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+<script>
+    // 视频iframe域名白名单
+    var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
+    var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
+    //初始化editormd
+    var editormd_watch = true;
+    var editormd_height = '500px'
+    var editormd_toobar = [
+            "undo", "redo", "|",
+            "h2","h3","h4", "bold", "del", "italic", "quote","kaiSpan","mark",  
+            "list-ul", "list-ol", "hr", "link", "reference-link", 
+            "mindmap","echart","code", "code-block", 
+            "emoji", "pagebreak", 
+            "watch", "preview", 
+        ]
+    var editor = editormd("editor-md", {
+        width       :   "100%",
+        height      :   editormd_height,
+        placeholder :   "道友，开始吧……",
+        toolbarIcons : function() {
+            return editormd_toobar
+        },
+        //自定义工具栏添加楷体按钮
+        toolbarIconTexts : {
+            kaiSpan : "楷",
+        },
+        //自定义工具栏添加图片按钮
+        toolbarIconsClass : {
+            imgUpload:'fa-image',
+            attachment:'fa-upload',
+            htmltable:'fa-table',
+            mindmap:'fa-sitemap',
+            echart:'fa-bar-chart',
+            multimedia:'fa-youtube-play',
+        },
+        //设置自定义工具栏按钮的事件
+        toolbarHandlers : {
+            /**
+             * @param {Object}      cm         CodeMirror对象
+             * @param {Object}      icon       图标按钮jQuery元素对象
+             * @param {Object}      cursor     CodeMirror的光标对象，可获取光标所在行和位置
+             * @param {String}      selection  编辑器选中的文本
+             */
+             // 点击“楷”字图标的响应函数
+            kaiSpan : function(cm, icon, cursor, selection) {
+                //var cursor    = cm.getCursor();     //获取当前光标对象，同cursor参数
+                //var selection = cm.getSelection();  //获取当前选中的文本，同selection参数
+                // 替换选中文本，如果没有选中文本，则直接插入
+                cm.replaceSelection('<span style="font-family:楷体">' + selection + "</span>");
+                // 如果当前没有选中的文本，将光标移到要输入的位置
+                if(selection === "") {
+                    cm.setCursor(cursor.line, cursor.ch + 29);
+                }
+                // this == 当前editormd实例
+                //console.log("testIcon =>", this, cm, icon, cursor, selection);
+            },
+            // 添加思维导图
+            mindmap:function(cm,icon,cursor,selection){
+                cm.replaceSelection('```mindmap\n' + selection + "\n```");
+                if(selection === "") {
+                    cm.setCursor(cursor.line+1, cursor.ch);
+                }
+            },
+            // 添加echart图
+            echart:function(cm,icon,cursor,selection){
+                cm.replaceSelection('```echart\n' + selection + "\n```");
+                if(selection === "") {
+                    cm.setCursor(cursor.line+1, cursor.ch);
+                }
+            },
+        },
+        //设置语言
+        lang : {
+            toolbar : {
+                kaiSpan : "添加楷体span标签",
+                imgUpload:"添加图片到文档",
+                attachment:"添加附件",
+                htmltable:"添加表格",
+                mindmap:"添加思维导图",
+                echart:"添加Echarts图表",
+                multimedia:"添加音频、视频",
+            }
+        },
+        //配置项
+        watch       :editormd_watch,
+        pageBreak : true, //分页符
+        path        :   "/static/editor.md/lib/",
+        saveHTMLToTextarea : true,
+        atLink      :   false,//禁用@链接
+        tex         :   true,//开启科学公式
+        toc         :   false,// 关闭列表目录
+        tocm        :   false,//关闭下拉目录
+        taskList    :   true,//开启任务列表
+        tocDropdown :   false,
+        emoji       :   true,//开启Emoji
+        flowChart   :   true, //开启流程图
+        sequenceDiagram : true, //开启序列图
+        imageUpload    : true, //开启图片上传
+        codeFold       :true, //代码折叠
+        htmlDecode     : "link,style,base,script,iframe", //过滤部分HTML标签
+        imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+        imageUploadURL : "{% url 'upload_doc_img' %}",
+        onchange:function(){
+            md_changed = true;
+            var wcnt = this.getMarkdown().length;
+            $("#wordcount").text(wcnt);        },
+        onload : function() {
+            // this.insertValue(" ")
+            var wcnt = this.getMarkdown().length;
+            $("#wordcount").text(wcnt);
+        }
+    });
+
+    //粘贴上传图片
+    $("#editor-md").on('paste', function (ev) {
+        var data = ev.clipboardData;
+        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (var index in items) {
+            var item = items[index];
+            if (item.kind === 'file') {
+                var blob = item.getAsFile();
+                console.log(blob)
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var base64 = event.target.result;
+                    //ajax上传图片
+                    layer.load(1);
+                    $.ajax({
+                        url:"{% url 'upload_doc_img' %}",
+                        type:"post",
+                        data:{base:base64},
+                        success:function(ret){
+                            if (ret.success === 1) {
+                                //新一行的图片显示
+                                layer.closeAll("loading");
+                                editor.insertValue("\n![](" + ret.url + ")");
+                                editor.focus()
+                            }else{
+                                layer.closeAll("loading");
+                                layer.msg("粘贴图片失败！")
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading');
+                        }
+                    })
+                }; // data url!
+                var url = reader.readAsDataURL(blob);
+            }
+        }
+    });
+    
+    //未保存离开提示
+    window.onbeforeunload =function() {
+    　　 if(md_changed){
+            //console.log("页面未保存数据")
+            return 1;
+        }else{
+            return null;
+        }
+    };
 </script>
 {% endblock %}
