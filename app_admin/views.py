@@ -49,6 +49,13 @@ def log_in(request):
         try:
             username = request.POST.get('username','')
             pwd = request.POST.get('password','')
+            # 判断是否需要验证码
+            require_login_check_code = SysSetting.objects.filter(types="basic",name="enable_login_check_code")
+            if (len(require_login_check_code) > 0) and (require_login_check_code[0].value == 'on'):
+                checkcode = request.POST.get("check_code", None)
+                if checkcode != request.session['CheckCode'].lower():
+                    errormsg = '验证码错误！'
+                    return render(request, 'login.html', locals())
             if username != '' and pwd != '':
                 user = authenticate(username=username,password=pwd)
                 if user is not None:
@@ -713,6 +720,7 @@ def admin_setting(request):
             img_scale = request.POST.get('img_scale',None) # 图片缩略
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
             enable_project_report = request.POST.get('enable_project_report',None) # 文集导出
+            enable_login_check_code = request.POST.get('enable_login_check_code',None) # 登录验证码
             # 更新首页文集默认排序
             SysSetting.objects.update_or_create(
                 name='index_project_sort',
@@ -793,6 +801,12 @@ def admin_setting(request):
                 name = 'enable_project_report',
                 defaults={'value':enable_project_report,'types':'basic'}
             )
+            # 更新登录验证码状态
+            SysSetting.objects.update_or_create(
+                name = 'enable_login_check_code',
+                defaults={'value':enable_login_check_code,'types':'basic'}
+            )
+
 
             return render(request,'app_admin/admin_setting.html',locals())
         # 邮箱设置

@@ -72,6 +72,20 @@
                       <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" value="{{pwd}}">
                     </div>
                 </div>
+                {% if enable_login_check_code == 'on' %}
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" placeholder="请输入验证码" name="check_code" autocomplete="off">
+                            <img src="{% url 'check_code' %}" onclick="ChangeCode(this);">
+                            <script>
+                                // 点击一次,更改图片内容,
+                                function ChangeCode(ths){
+                                    ths.src = ths.src + '?';
+                                }
+                            </script>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
                         <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">{% trans "登录" %}</button>

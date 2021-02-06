@@ -101,6 +101,15 @@
                     </div>
                     <div class="layui-form-mid layui-word-aux">开启此选项，新用户注册将需要填写注册码</div>
                   </div>
+                  <!-- 登录验证码开关 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">登录验证码</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="enable_login_check_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_login_check_code %}checked{% endif %}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项，登录将需要填写验证码</div>
+                  </div>
+                  
                   <!-- 文集导出开关 -->
                    <div class="layui-form-item">
                     <label class="layui-form-label">文集下载</label>

@@ -80,7 +80,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline">
-                        <input type="text" class="layui-input" placeholder="请输入验证码" name="check_code">
+                        <input type="text" class="layui-input" placeholder="请输入验证码" name="check_code" autocomplete="off">
                             <img src="{% url 'check_code' %}" onclick="ChangeCode(this);">
                             <script>
                                 // 点击一次,更改图片内容,

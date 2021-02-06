@@ -2515,7 +2515,7 @@ def manage_attachment(request):
                     attachment_suffix_list = ['zip']
                 allow_attachment = False
                 for suffix in attachment_suffix_list:
-                    if attachment_name.split('.')[-1] in attachment_suffix_list:
+                    if attachment_name.split('.')[-1].lower() in attachment_suffix_list:
                         allow_attachment = True
                 if allow_attachment:
                     a = Attachment.objects.create(
