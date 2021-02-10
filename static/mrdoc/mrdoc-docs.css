@@ -134,11 +134,12 @@ ul#doc-tree{
 .project-toc-right{
     float: right;
     position: absolute;
-    right: 90px;
+    right: 0px;
     z-index: 100;
     background-color: white;
     color: #bfbfbf;
     padding-left: 40px;
+    padding-right: 90px;
     font-family: Consolas,Menlo,Courier,monospace;
 }
 .project-toc-left a{
