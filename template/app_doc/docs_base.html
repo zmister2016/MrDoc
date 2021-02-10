@@ -445,6 +445,15 @@
             }
         })
     });
+    // 外部链接添加图标
+    document.addEventListener('DOMContentLoaded', function() {
+        Array.prototype.filter.call(document.links, function(link) {
+            return link.hostname && link.hostname !== location.hostname;
+        })
+            .forEach(function(link) {
+                link.classList.add('external');
+            });
+    });
 
 </script>
 

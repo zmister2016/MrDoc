@@ -153,6 +153,11 @@ ul#doc-tree{
     /* font-weight: 700; */
     font-family: Consolas,Menlo,Courier,monospace;
 }
+/* 为外部链接添加图标指示 */
+.external::after {
+  content: '\e7c2';
+  font-family: 'iconfont';
+}
 @media screen and (max-width:768px){
     .project-toc-left{
         border-top:1px dashed #d8d8d8;
