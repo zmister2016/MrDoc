@@ -54,11 +54,71 @@ def import_project(request):
                             zip_file.write(chunk)
                     if os.path.exists(temp_file_path):
                         import_file = ImportZipProject()
-                        project = import_file.read_zip(temp_file_path,request.user)
+                        project = import_file.read_zip(temp_file_path,request.user) # 返回文集id或None
                         if project:
+                            pro = Project.objects.get(id=project)
                             docs = Doc.objects.filter(top_doc=project).values_list('id','name')
-                            doc_list = [doc for doc in docs]
-                            return JsonResponse({'status':True,'data':doc_list,'id':project})
+                            # 查询存在上级文档的文档
+                            parent_id_list = Doc.objects.filter(top_doc=project).exclude(
+                                parent_doc=0).values_list('parent_doc', flat=True)
+                            # 获取存在上级文档的上级文档ID
+                            doc_list = []
+                            # 获取一级文档
+                            top_docs = Doc.objects.filter(
+                                top_doc=project,
+                                parent_doc=0).values('id','name').order_by('sort')
+                            for doc in top_docs:
+                                top_item = {
+                                    'id': doc['id'],
+                                    'field': doc['name'],
+                                    'title': doc['name'],
+                                    'spread': True,
+                                    'level': 1
+                                }
+                                # 如果一级文档存在下级文档，查询其二级文档
+                                if doc['id'] in parent_id_list:
+                                    sec_docs = Doc.objects.filter(
+                                        top_doc=project,
+                                        parent_doc=doc['id']).values('id','name').order_by('sort')
+                                    top_item['children'] = []
+                                    for doc in sec_docs:
+                                        sec_item = {
+                                            'id': doc['id'],
+                                            'field': doc['name'],
+                                            'title': doc['name'],
+                                            'level': 2
+                                        }
+                                        # 如果二级文档存在下级文档，查询第三级文档
+                                        if doc['id'] in parent_id_list:
+                                            thr_docs = Doc.objects.filter(
+                                                top_doc=project,
+                                                parent_doc=doc['id'],).values('id','name').order_by('sort')
+                                            sec_item['children'] = []
+                                            for doc in thr_docs:
+                                                item = {
+                                                    'id': doc['id'],
+                                                    'field': doc['name'],
+                                                    'title': doc['name'],
+                                                    'level': 3
+                                                }
+                                                sec_item['children'].append(item)
+                                            top_item['children'].append(sec_item)
+                                        else:
+                                            top_item['children'].append(sec_item)
+                                    doc_list.append(top_item)
+                                # 如果一级文档没有下级文档，直接保存
+                                else:
+                                    doc_list.append(top_item)
+
+                            return JsonResponse({
+                                'status':True,
+                                'data':doc_list,
+                                'project':{
+                                    'id':project,
+                                    'name':pro.name,
+                                    'desc':pro.intro
+                                }
+                            })
                         else:
                             return JsonResponse({'status':False,'data':'上传失败'})
                     else:
