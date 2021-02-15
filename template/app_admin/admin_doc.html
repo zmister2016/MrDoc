@@ -12,7 +12,7 @@
               <div class="layui-input-inline">
                 <input type="text" name="kw"  placeholder="请输入标题" autocomplete="off" class="layui-input">
               </div>
-              <button class="layui-btn layui-btn-normal layui-btn-sm" id="search">搜索</button>
+              <button class="pear-btn pear-btn-primary pear-btn-sm" id="search">搜索</button>
             </div>
             <div class="layui-form-item">
               <label class="layui-form-label">文集</label>
@@ -53,10 +53,10 @@
 
 <!-- 表格工具栏 -->
 <script type="text/html" id="doc-toolbar">
-    <a class="layui-btn layui-btn-normal pear-btn-sm" href="/create_doc/" target="_blank">
+    <a class="pear-btn pear-btn-primary pear-btn-sm" href="/create_doc/" target="_blank">
         <i class="layui-icon layui-icon-add-1"></i>新增
     </a>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>删除
     </button>
 </script>
@@ -119,9 +119,9 @@
 <!-- 单个文档操作 -->
 <script type="text/html" id="doc-bar">
     {% verbatim %}
-    <a href="/manage_doc_history/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
+    <a href="/manage_doc_history/{{d.id}}/" class="pear-btn pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
     <!-- <a href="/modify_doc/{{d.id}}/" title="修改文档" class="layui-btn layui-btn-primary pear-btn-sm" target="_blank"><i class="layui-icon layui-icon-edit"></i></a> -->
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
 

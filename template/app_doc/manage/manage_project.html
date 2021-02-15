@@ -14,13 +14,13 @@
     <div class="layui-input-inline">
         <input type="text" name="project-search-kw" placeholder="" class="layui-input" >
     </div>
-    <button class="layui-btn layui-btn-primary pear-btn-sm" lay-event="search">
+    <button class="pear-btn pear-btn-sm" lay-event="search">
         <i class="layui-icon layui-icon-search"></i>{% trans "搜索" %}
     </button>
-    <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>{% trans "新增" %}
     </button>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
     </button>
     
@@ -46,9 +46,9 @@
 <!-- 单个文集操作 -->
 <script type="text/html" id="project-bar">
     {% verbatim %}
-    <a href="/manage_pro_doc_sort/{{d.id}}/" title="排序文档" class="layui-btn layui-btn-primary pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a>
-    <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" title="删除文集" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    <a href="/manage_pro_doc_sort/{{d.id}}/" title="排序文档" class="pear-btn pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a>
+    <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="pear-btn pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" title="删除文集" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
 

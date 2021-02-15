@@ -158,8 +158,8 @@
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                            <button class="layui-btn layui-btn-normal" id="save_doc" onclick="manage_overview_save_doc();">保存草稿</button>
-                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            <button class="pear-btn pear-btn-primary" id="save_doc" onclick="manage_overview_save_doc();">保存草稿</button>
+                            <button type="reset" class="pear-btn pear-btn-primary">重置</button>
                             </div>
                         </div>
                     </div>
@@ -178,11 +178,11 @@
                         <i class="layui-icon layui-icon-website"></i> 觅 道 文 档 官 网
                     </a>
                     <br/>
-                    <a target="_blank" href="http://mrdoc.zmister.com" class="pear-btn pear-btn-primary  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
+                    <a target="_blank" href="http://mrdoc.zmister.com" class="pear-btn layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
                         <i class="layui-icon layui-icon-read"></i> 使 用 手 册
                     </a>
                     <br/>
-                    <a target="_blank" href="https://gitee.com/zmister/MrDoc" class="pear-btn pear-btn-warming  layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
+                    <a target="_blank" href="https://gitee.com/zmister/MrDoc" class="pear-btn layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
                         <i class="layui-icon layui-icon-download-circle"></i> 源 码 下 载
                     </a>
                 </div>
@@ -238,8 +238,8 @@
             // };
             // 保存文档草稿
             manage_overview_save_doc = function(){
-                $('button.layui-btn').attr("disabled",true);
-                $('button.layui-btn').addClass('layui-btn-disabled');
+                $('button.pear-btn').attr("disabled",true);
+                $('button.pear-btn').addClass('pear-btn-disabled');
                 var data = {
                     'project':$("#project").val(),
                     'doc_name':$("#doc_name").val(),
@@ -249,13 +249,13 @@
                 console.log(data)
                 if(data.doc_name == ""){
                     layer.msg('请输入文档标题！');
-                    $('button.layui-btn').attr("disabled",false);
-                    $('button.layui-btn').removeClass('layui-btn-disabled');
+                    $('button.pear-btn').attr("disabled",false);
+                    $('button.pear-btn').removeClass('pear-btn-disabled');
                 }
                 else if(data.project == ""){
                     layer.msg('请选择文集！');
-                    $('button.layui-btn').attr("disabled",false);
-                    $('button.layui-btn').removeClass('layui-btn-disabled');
+                    $('button.pear-btn').attr("disabled",false);
+                    $('button.pear-btn').removeClass('pear-btn-disabled');
                 }
                 else{
                     layer.load(1);
@@ -271,8 +271,8 @@
                             //创建失败
                             layer.closeAll("loading");
                             layer.msg('保存草稿失败:'+r.data);
-                            $('button.layui-btn').attr("disabled",false);
-                            $('button.layui-btn').removeClass('layui-btn-disabled');
+                            $('button.pear-btn').attr("disabled",false);
+                            $('button.pear-btn').removeClass('pear-btn-disabled');
                         }
                     });
                 }

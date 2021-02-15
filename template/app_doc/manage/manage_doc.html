@@ -12,7 +12,7 @@
               <div class="layui-input-inline">
                 <input type="text" name="kw"  placeholder="请输入标题" autocomplete="off" class="layui-input">
               </div>
-              <button class="layui-btn layui-btn-normal layui-btn-sm" id="search">{% trans "搜索" %}</button>
+              <button class="pear-btn pear-btn-primary pear-btn-sm" id="search">{% trans "搜索" %}</button>
             </div>
             <div class="layui-form-item">
               <label class="layui-form-label">{% trans "文集" %}</label>
@@ -64,10 +64,10 @@
 
 <!-- 表格工具栏 -->
 <script type="text/html" id="doc-toolbar">
-    <a class="layui-btn layui-btn-normal pear-btn-sm" href="/create_doc/" target="_blank">
+    <a class="pear-btn pear-btn-primary pear-btn-sm" href="/create_doc/" target="_blank">
         <i class="layui-icon layui-icon-add-1"></i>新增
     </a>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>删除
     </button>
 </script>
@@ -79,7 +79,6 @@
             <span class="layui-badge-dot layui-bg-blue"></span>
             <a href="/project-{{d.project_id}}/doc-{{d.id}}" target="_blank">{{d.name}}</a>
         {{# }else if(d.status == 0){ }}
-            <!-- <i class="layui-icon layui-icon-release" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="草稿状态，点击一键发布"></i>&nbsp; -->
             <span class="layui-badge-dot layui-bg-orange"></span>
             <a href="/modify_doc/{{d.id}}/" target="_blank" title="修改文档：{{d.name}}">{{ d.name }} </a>
         {{# } }}
@@ -92,7 +91,6 @@
         {{#if (d.status == 1) { }}
             <span class="layui-badge-rim">已发布</span>
         {{# }else if(d.status == 0){ }}
-            <!-- <i class="layui-icon layui-icon-release" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="草稿状态，点击一键发布"></i>&nbsp; -->
             <span class="layui-badge-rim" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="点击一键发布">草稿</span>
         {{# } }}
     {% endverbatim %}
@@ -130,9 +128,9 @@
 <!-- 单个文档操作 -->
 <script type="text/html" id="doc-bar">
     {% verbatim %}
-    <a href="/manage_doc_history/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
-    <a href="/modify_doc/{{d.id}}/" title="修改文档" class="layui-btn layui-btn-primary pear-btn-sm" target="_blank"><i class="layui-icon layui-icon-edit"></i></a>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    <a href="/manage_doc_history/{{d.id}}/" class="pear-btn pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
+    <a href="/modify_doc/{{d.id}}/" title="修改文档" class="pear-btn pear-btn-sm" target="_blank"><i class="layui-icon layui-icon-edit"></i></a>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
 
