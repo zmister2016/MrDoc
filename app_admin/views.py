@@ -256,34 +256,46 @@ def admin_overview(request):
 @logger.catch()
 def admin_user(request):
     if request.method == 'GET':
-        # user_list = User.objects.all()
         return render(request, 'app_admin/admin_user.html', locals())
     elif request.method == 'POST':
         username = request.POST.get('username','')
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
         if username == '':
-            user_data = User.objects.all().values_list(
+            user_data = User.objects.all().values(
                 'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
             )
         else:
-            user_data = User.objects.filter(username__icontains=username).values_list(
+            user_data = User.objects.filter(username__icontains=username).values(
                 'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
             )
+
+        # 分页处理
+        paginator = Paginator(user_data, limit)
+        page = request.GET.get('page', page)
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+
         table_data = []
-        for i in list(user_data):
+        for i in users:
             item = {
-                'id':i[0],
-                'last_login':i[1],
-                'is_superuser':i[2],
-                'username':i[3],
-                'email':i[4],
-                'date_joined':i[5],
-                'is_active':i[6],
-                'first_name':i[7]
+                'id':i['id'],
+                'last_login':i['last_login'],
+                'is_superuser':i['is_superuser'],
+                'username':i['username'],
+                'email':i['email'],
+                'date_joined':i['date_joined'],
+                'is_active':i['is_active'],
+                'first_name':i['first_name'],
             }
             table_data.append(item)
-        return JsonResponse({'status':True,'data':table_data})
+        return JsonResponse({'code':0,'data':table_data,"count": user_data.count()})
     else:
-        return JsonResponse({'status':False,'data':'方法错误'})
+        return JsonResponse({'code':1,'msg':'方法错误'})
 
 
 # 后台管理 - 创建用户
