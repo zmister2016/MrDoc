@@ -202,21 +202,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-# Chromium路径
-try:
-    CHROMIUM_DIR = CONFIG['chromium']['path']
-    CHROMIUM_PATH = CHROMIUM_DIR
-    # CHROMIUM_PATH = os.path.join(CONFIG_DIR,CHROMIUM_DIR) # Windows便携版本使用config下的路径
-except:
-    CHROMIUM_PATH = None
-
-# Chromium启动参数
-try:
-    CHROMIUM_ARGS = CONFIG['chromium']['args'].split(',')
-except:
-    CHROMIUM_ARGS = []
-
-
 # 全文检索配置
 HAYSTACK_CONNECTIONS = {
     'default': {
