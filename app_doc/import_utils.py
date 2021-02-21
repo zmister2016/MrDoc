@@ -171,16 +171,18 @@ class ImportZipProject():
             for media in media_list:
                 media_filename = media.split("(")[-1].split(")")[0] # 媒体文件的文件名
                 # 存在本地图片路径
-                if media_filename.startswith("./"):
+                if media_filename.startswith("./") or media_filename.startswith("/"):
                     # 获取文件后缀
                     file_suffix = media_filename.split('.')[-1]
                     if file_suffix.lower() not in settings.ALLOWED_IMG:
                         continue
                     # 判断本地图片路径是否存在
-                    temp_media_file_path = os.path.join(self.temp_dir,media_filename[2:])
+                    if media_filename.startswith("./"):
+                        temp_media_file_path = os.path.join(self.temp_dir,media_filename[2:])
+                    else :
+                        temp_media_file_path = os.path.join(self.temp_dir, media_filename[1:])
                     if os.path.exists(temp_media_file_path):
                         # 如果存在，上传本地图片
-                        print(media_filename)
                         dir_name = upload_generation_dir() # 获取当月文件夹名称
 
                         # 复制文件到媒体文件夹
