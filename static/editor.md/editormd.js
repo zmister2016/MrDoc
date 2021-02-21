@@ -4379,7 +4379,8 @@
             mindMap              : true, //脑图
             echart               : true, 
             sequenceDiagram      : false,
-            previewCodeHighlight : true
+            previewCodeHighlight : true,
+            plugin_path          : '/static/editor.md/lib/'
         };
         
         editormd.$marked  = marked; // 定义 editormd 的 marked 属性 为 marked
@@ -4465,9 +4466,9 @@
         if (settings.previewCodeHighlight) 
         {
             div.find("pre").addClass("prettyprint linenums");
-            editormd.loadScript('/static/editor.md/lib/raphael.min', function(){
-                editormd.loadScript('/static/editor.md/lib/underscore.min', function(){
-                    editormd.loadScript('/static/editor.md/lib/prettify.min',function(){
+            editormd.loadScript(settings.plugin_path + 'raphael.min', function(){
+                editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+                    editormd.loadScript(settings.plugin_path + 'prettify.min',function(){
                         prettyPrint();
                     })    
                 })
@@ -4484,8 +4485,8 @@
                     has_flowchart = true;
                 })
                 if(has_flowchart){
-                    editormd.loadScript('/static/editor.md/lib/flowchart.min',function(){
-                        editormd.loadScript('/static/editor.md/lib/jquery.flowchart.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'flowchart.min',function(){
+                        editormd.loadScript(settings.plugin_path + 'jquery.flowchart.min',function(){
                             div.find(".flowchart").flowChart(); 
                         })
                     })
@@ -4499,8 +4500,8 @@
                     has_sequence_dia = true;
                 })
                 if(has_sequence_dia){
-                    editormd.loadScript('/static/editor.md/lib/underscore.min', function(){
-                        editormd.loadScript('/static/editor.md/lib/sequence-diagram.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+                        editormd.loadScript(settings.plugin_path + 'sequence-diagram.min',function(){
                             div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
                         })    
                     })
@@ -4515,12 +4516,22 @@
             var katexHandle = function() {
                 div.find("." + editormd.classNames.tex).each(function(){
                     var tex  = $(this);
-                    editormd.loadKaTeX(function(){
-                        editormd.$katex      = katex;
-                        editormd.kaTeXLoaded = true;
-                        katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
-                        tex.find(".katex").css("font-size", "1.6em");
-                    })                    
+                    // editormd.loadKaTeX(function(){
+                    //     editormd.$katex      = katex;
+                    //     editormd.kaTeXLoaded = true;
+                    //     katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                    //     tex.find(".katex").css("font-size", "1.6em");
+                    // });
+                    editormd.loadCSS(settings.plugin_path + 'katex/katex.min', function(){
+                        editormd.loadScript(settings.plugin_path + 'katex/katex.min', function(){
+                            editormd.$katex      = katex;
+                            editormd.kaTeXLoaded = true;
+                            katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                            tex.find(".katex").css("font-size", "1.6em");
+    
+                        });
+                    });
+                                
                 });
             };
             if (settings.autoLoadKaTeX && !editormd.$katex && !editormd.kaTeXLoaded)
@@ -4545,9 +4556,9 @@
                     console.log("存在脑图")
                     var mmap  = $(this);
                     var mmap_id = this.id;
-                    editormd.loadScript('/static/editor.md/lib/mindmap/d3@5',function(){
-                        editormd.loadScript('/static/editor.md/lib/mindmap/transform.min',function(){
-                            editormd.loadScript('/static/editor.md/lib/mindmap/view.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'mindmap/d3@5',function(){
+                        editormd.loadScript(settings.plugin_path + 'mindmap/transform.min',function(){
+                            editormd.loadScript(settings.plugin_path + 'mindmap/view.min',function(){
                                 var md_data = window.markmap.transform(mmap.text().trim());
                                 window.markmap.markmap("svg#"+mmap_id,md_data)
                             })
@@ -4565,18 +4576,16 @@
                 div.find(".echart").each(function(){
                     // console.log("存在echart")
                     var echart  = $(this);
-                    var echart_id = this.id
-                    editormd.loadEcharts(
-                        function(){
-                            if(echart.text() != ''){
-                                // console.log("渲染echarts")
-                                var echart_data = eval("(" + echart.text() + ")");
-                                echart.empty();
-                                var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
-                                myChart.setOption(echart_data);
-                            }
+                    var echart_id = this.id;
+                    editormd.loadScript(settings.plugin_path + 'echarts.min',function(){
+                        if(echart.text() != ''){
+                            // console.log("渲染echarts")
+                            var echart_data = eval("(" + echart.text() + ")");
+                            echart.empty();
+                            var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
+                            myChart.setOption(echart_data);
                         }
-                    );
+                    });
                     
                 });
             };
@@ -4729,8 +4738,8 @@
     // 使用国外的CDN，加载速度有时会很慢，或者自定义URL
     // You can custom KaTeX load url.
     editormd.katexURL  = {
-        css :   "/static/katex/katex.min",
-        js  :   "/static/katex/katex.min",
+        css :   "/static/editor.md/lib/katex/katex.min",
+        js  :   "/static/editor.md/lib/katex/katex.min",
     };
     
     editormd.kaTeXLoaded = false;
@@ -4746,16 +4755,6 @@
         editormd.loadCSS(editormd.katexURL.css, function(){
             editormd.loadScript(editormd.katexURL.js, callback || function(){});
         });
-    };
-    
-    /**
-     * 加载Echarts文件
-     * 
-     * @param {Function} [callback=function()]  加载成功后执行的回调函数
-     */
-    
-    editormd.loadEcharts = function (callback) {
-        editormd.loadScript("/static/editor.md/lib/echarts.min", callback || function(){});
     };
 
     /**
