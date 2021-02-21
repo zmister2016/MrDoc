@@ -39,10 +39,10 @@
                 <td>{{ doc.create_time }}</td>
                 <td>{{ doc.modify_time }}</td>
                 <td>
-                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="restoreDoc('{{doc.id}}')">
+                    <button class="pear-btn pear-btn-xs pear-btn-primary" onclick="restoreDoc('{{doc.id}}')">
                         <i class="layui-icon layui-icon-refresh"></i>{% trans "还原" %}
                     </button>
-                    <button onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                    <button onclick="delDoc('{{doc.id}}');" class="pear-btn pear-btn-xs pear-btn-danger">
                         <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                     </button>
                 </td>

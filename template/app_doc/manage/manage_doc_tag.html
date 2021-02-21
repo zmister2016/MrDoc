@@ -38,10 +38,10 @@
             <td><a href="{% url 'tag_docs' tag.id %}" target="_blank">{{ tag.name }}</a></td>
             <td>{{ tag.id | tag_doc_cnt }}</td>
             <td>
-                <a href="javascript:void(0);"  onclick="modifyTag('{{tag.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                <a href="javascript:void(0);"  onclick="modifyTag('{{tag.id}}')" class="pear-btn pear-btn-xs pear-btn-primary">
                     <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
                 </a>
-                <a href="javascript:void(0);" onclick="delTag('{{tag.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                <a href="javascript:void(0);" onclick="delTag('{{tag.id}}');" class="pear-btn pear-btn-xs pear-btn-danger">
                     <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                 </a>
             </td>

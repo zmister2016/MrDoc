@@ -41,7 +41,7 @@
 				// 检测版本更新
 				checkUpdate = function(){
 					$.get("{% url 'check_update' %}",function(r){
-						console.log(r)
+						// console.log(r)
 						if(r.status){
 						var new_version = r.data.name.slice(1,5)
 						var current_version = '{{mrdoc_version}}'
