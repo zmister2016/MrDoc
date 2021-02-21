@@ -19,6 +19,7 @@ import time
 import re
 import yaml
 
+
 # 导入Zip文集
 class ImportZipProject():
     # 读取 Zip 压缩包
@@ -58,10 +59,11 @@ class ImportZipProject():
         try:
             with open(os.path.join(self.temp_dir ,'mrdoc.yaml'),'r',encoding='utf-8') as yaml_file:
                 yaml_str = yaml.load(yaml_file.read())
-                project_name = yaml_str['project_name']
-                project_desc = yaml_str['project_desc']
-                project_role = yaml_str['project_role']
-                editor_mode = yaml_str['editor_mode']
+                project_name = yaml_str['project_name'] \
+                    if 'project_name' in yaml_str.keys() else zip_file_path[:-4].split('/')[-1]
+                project_desc = yaml_str['project_desc'] if 'project_desc' in yaml_str.keys() else ''
+                project_role = yaml_str['project_role'] if 'project_role' in yaml_str.keys() else 1
+                editor_mode = yaml_str['editor_mode'] if 'editor_mode' in yaml_str.keys() else 1
                 project_toc = yaml_str['toc']
                 toc_item_list = []
                 for toc in project_toc:
