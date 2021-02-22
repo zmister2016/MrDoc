@@ -15,8 +15,6 @@ RUN  set -x \
     && pip --no-cache-dir install mysqlclient \
     && chmod +x mrdoc.sh \
     && apk del .build-deps \
-    && rm -rf /var/cache/apk/* \
-    && mkdir -p /usr/share/fonts/win \
-    && mv simsunb.ttf /usr/share/fonts/win
+    && rm -rf /var/cache/apk/* 
 
 ENTRYPOINT ["./mrdoc.sh"]
