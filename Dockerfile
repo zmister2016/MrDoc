@@ -17,4 +17,4 @@ RUN  set -x \
     && apk del .build-deps \
     && rm -rf /var/cache/apk/* 
 
-ENTRYPOINT ["./mrdoc.sh"]
+ENTRYPOINT ["./docker_mrdoc.sh"]
