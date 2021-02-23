@@ -3979,7 +3979,7 @@
             else if(/^timeline/i.test(lang)){ // 时间线
                 var time_line = '<ul class="layui-timeline">'
                 // console.log(code)
-                var timeline_code = code.split(/[(\r\n)\r\n]+/);
+                var timeline_code = code.split(/(\r\n\t|\n|\r\t)+/);
                 // console.log(timeline_code)
                 timeline_code.forEach(function(item,index){
                     // console.log(item,index)
