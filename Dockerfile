@@ -13,7 +13,7 @@ RUN  set -x \
     && apk add --no-cache pwgen git tzdata zlib-dev freetype-dev jpeg-dev  mariadb-dev postgresql-dev \
     && pip --no-cache-dir install -r requirements.txt \
     && pip --no-cache-dir install mysqlclient \
-    && chmod +x mrdoc.sh \
+    && chmod +x docker_mrdoc.sh \
     && apk del .build-deps \
     && rm -rf /var/cache/apk/* 
 
