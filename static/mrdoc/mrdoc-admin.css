@@ -182,6 +182,10 @@
     display: none;
 }
 
+#project-icon-select i.layui-icon{
+    margin-right: 0px;
+}
+
 /* 文字悬浮提示样式 */
     /* tooltip样式 */
     [tooltip] {
