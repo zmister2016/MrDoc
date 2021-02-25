@@ -323,7 +323,7 @@
                 area:'400px;',
                 id:'createPro',//配置ID
                 content: $('#create-project-div'),
-                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "创建并添加文档" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 sucess:function(){
                     form.render();
@@ -343,6 +343,34 @@
                         success:function(r){
                             if(r.status){
                                 window.location.reload();
+                            }else{
+                                //创建失败，提示
+                                console.log(r)
+                                layer.closeAll('loading')
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading')
+                            layer.msg("创建异常")
+                        }
+                    })
+                },
+                btn2:function(index,layero) {
+                    layer.load(1)
+                    data = {
+                        'picon':$("#picon").val(),
+                        'pname':$("#pname").val(),
+                        'desc':$("#desc").val(),
+                        'role':$("input[name=project-role]:checked").val(),
+                    }
+                    $.ajax({
+                        url:"{% url 'create_project' %}",
+                        type:'post',
+                        data:data,
+                        success:function(r){
+                            if(r.status){
+                                window.location.href = '/create_doc/?pid=' + r.data.id;
                             }else{
                                 //创建失败，提示
                                 console.log(r)
