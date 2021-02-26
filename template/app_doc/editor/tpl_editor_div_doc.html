@@ -2,7 +2,7 @@
 <!-- 插入文档模板div块 -->
 <div class="doctemp-list " id="doctemp-list" style="display: none;padding:5px;">
     <div style="margin: 10px 0 0 10px;">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">新建模板</a>
+        <a class="layui-btn layui-btn-primary layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">新建模板</a>
         <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_doctemp' %}" target="_blank">管理模板</a>
     </div>
     <table class="layui-table" style="margin: 10px;width:90%;">
@@ -24,7 +24,7 @@
           <td>{{ temp.name }}</td>
           <td class="layui-hide-xs">{{ temp.create_time }}</td>
           <td>
-              <a class="layui-btn layui-btn-normal layui-btn-sm" href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
+              <a class="layui-btn layui-btn-primary layui-btn-sm" href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
           </td>
         </tr>
         {% endfor %}

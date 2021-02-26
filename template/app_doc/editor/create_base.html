@@ -49,16 +49,10 @@
             <!-- 右侧编辑器栏 -->
             <div class="doc-body">
                 <!-- 文档导航 -->
-                <div class="doc-header" role="navigation">
-                    <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
-                        <i class="fa fa-align-justify"></i>
-                    </a>
+                <div class="doc-header" role="navigation" style="z-index: 999;">
                     <!-- 顶部工具栏 -->
                     {% block head_toolbar %}
                     {% endblock %}
-                    <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                        <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
-                    </a>
                 </div>
                 <!-- 文档主体 -->
                 <div class="doc-body-content" style="padding-left: 15px;">
