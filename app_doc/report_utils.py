@@ -770,7 +770,7 @@ class ReportPDF():
 
         # 执行HTML转PDF
         try:
-            convert(temp_file_path,report_file_path)
+            convert('file://'+temp_file_path,report_file_path)
         except:
             logger.exception("生成PDF出错")
             return False
