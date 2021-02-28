@@ -62,17 +62,22 @@ def __get_pdf_from_html(path: str, timeout: int, install_driver: bool, print_opt
 
     webdriver_prefs['profile.default_content_settings'] = {'images': 2}
 
-    if install_driver:
-        driver = webdriver.Chrome(
-            ChromeDriverManager(
-                url='https://npm.taobao.org/mirrors/chromedriver/',
-                latest_release_url='https://npm.taobao.org/mirrors/chromedriver/LATEST_RELEASE',
-                chrome_type=ChromeType.GOOGLE if settings.CHROMIUM_DRIVER == 'Chrome' else ChromeType.CHROMIUM
-            ).install(),
-            options=webdriver_options
-        )
+    # 使用指定的chromedriver
+    if settings.CHROMIUM_DRIVER_PATH is not None:
+        driver = webdriver.Chrome(executable_path=settings.CHROMIUM_DRIVER_PATH,options=webdriver_options)
+    # 使用默认的chromedriver
     else:
-        driver = webdriver.Chrome(options=webdriver_options)
+        if install_driver:
+            driver = webdriver.Chrome(
+                ChromeDriverManager(
+                    url='https://npm.taobao.org/mirrors/chromedriver/',
+                    latest_release_url='https://npm.taobao.org/mirrors/chromedriver/LATEST_RELEASE',
+                    chrome_type=ChromeType.GOOGLE if settings.CHROMIUM_DRIVER == 'Chrome' else ChromeType.CHROMIUM
+                ).install(),
+                options=webdriver_options
+            )
+        else:
+            driver = webdriver.Chrome(options=webdriver_options)
 
     driver.get(path)
 
