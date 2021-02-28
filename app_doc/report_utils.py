@@ -24,8 +24,6 @@ from loguru import logger
 from app_doc.report_html2pdf import convert
 import traceback
 import time
-import json
-import psutil
 import markdown
 import yaml
 # import PyPDF2
