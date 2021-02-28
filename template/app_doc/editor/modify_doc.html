@@ -29,6 +29,9 @@
                 <dd><a href="javascript:void(0);" id="doc-history">文档历史</a></dd>
                 <dd><a href="javascript:void(0);" id="doc-tag-set">文档标签</a></dd>
                 <hr>
+                <dd><input type="checkbox" name="open-children" title="展开下级目录" lay-skin="primary" {%if doc.open_children %}checked{% endif %}></dd>
+                <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary" {%if doc.show_children %}checked{% endif %}></dd>
+                <hr>
                 <dd><a href="javascript:;" onclick="moveDoc()" title="复制或移动此文档到其他文集">复制/移动文档</a></dd>
                 <dd><a href="javascript:;" onclick="delDoc()" title="删除此文档">删除文档</a></dd>
             </dl>  
@@ -59,13 +62,6 @@
               <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
               <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
               <dd><a href="?pid={{pid}}&eid=3">iceEditor{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
-            </dl>
-        </li>
-        <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;">其他配置</a>
-            <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
-                <dd><input type="checkbox" name="open-children" title="展开下级目录" lay-skin="primary" {%if doc.open_children %}checked{% endif %}></dd>
-                <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary" {%if doc.show_children %}checked{% endif %}></dd>
             </dl>
         </li>
         <li class="layui-nav-item mrdoc-import-doc-item">

@@ -9,14 +9,17 @@
             <i class="fa fa-align-justify"></i>
         </a>
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;">文档</a>
+            <a href="javascript:;"><i class="fa fa-file-text layui-hide-md"></i><span class="layui-hide-xs">文档</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child">
                 <dd><a href="javascript:void(0);" id="doc-tag-set">文档标签</a></dd>
+                <hr>
+                <dd><input type="checkbox" name="open-children" title="展开下级目录" lay-skin="primary"></dd>
+                <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary"></dd>
             </dl>
         </li>
 
         <li class="layui-nav-item mrdoc-import-doc-item">
-          <a href="javascript:;">导入</a>
+          <a href="javascript:;"><i class="fa fa-upload layui-hide-md"></i><span class="layui-hide-xs">导入</span></a>
           <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
             <dd><a href="javascript:void(0);" id="sel-doctemp">
                     <svg t="1608814405819" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3399" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M0 0h475.904v335.36H0z" fill="#52adff" p-id="3400"></path><path d="M591.36 667.050667H1024V1024H591.36z" fill="#1892ff" p-id="3401"></path><path d="M0 450.730667h475.904V1024H0z" fill="#83c5fd" p-id="3402"></path><path d="M591.36 0H1024v551.68H591.36z" fill="#52afff" p-id="3403"></path></svg>
@@ -36,7 +39,7 @@
         </li>
 
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;">编辑器</a>
+            <a href="javascript:;"><i class="fa fa-edit layui-hide-md"></i><span class="layui-hide-xs">编辑器</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
               <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
               <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
@@ -45,16 +48,7 @@
         </li>
 
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;">其他配置</a>
-            <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
-              
-              <dd><input type="checkbox" name="open-children" title="展开下级目录" lay-skin="primary"></dd>
-              <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary"></dd>
-            </dl>
-        </li>
-
-        <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="{% url 'user_center' %}" target="_blank">管理</a>
+            <a href="{% url 'user_center' %}" target="_blank"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
         </li>
 
         <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="发布文档" id="pub_doc">发布</button>

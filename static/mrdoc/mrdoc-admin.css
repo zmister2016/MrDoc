@@ -117,7 +117,7 @@
     color: #2176ff;
   }
   .layui-form-select dl dd.layui-this{
-      background-color: #2176ff !important;
+      /* background-color: #2176ff !important; */
   }
   /* 开关样式 */
   .layui-form-onswitch{

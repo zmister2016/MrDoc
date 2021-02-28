@@ -240,15 +240,20 @@ $("#dashang").click(function(r){
 */
 $(function(){
     // $(".switch-toc").click(SwitchToc);
-    $("body").on('click','.switch-toc',SwitchToc)
+    $("body").on('click','.switch-toc',SwitchToc);
 });
 // 切换文档目录
 function SwitchToc(i){
-    console.log("点击了")
+    // console.log("点击了")
     var $me = $(this);
     $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
     $(this).toggleClass("layui-icon-left layui-icon-down");//切换图标
 };
+
+// $(".switch-toc-div").click(function(e){
+//     console.log(e)
+//     $(this).children("i").trigger('click')
+// });
 
 // 展开文档树
 function openDocTree(){
