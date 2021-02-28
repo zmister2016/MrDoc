@@ -216,3 +216,13 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # 自定义高亮
 HAYSTACK_CUSTOM_HIGHLIGHTER = "app_doc.search.highlight.MyHighLighter"
+
+# Selenium 调用的driver类型 默认为Chromium
+try:
+    CHROMIUM_DRIVER = CONFIG['selenium']['driver']
+except:
+    CHROMIUM_DRIVER = 'CHROMIUM'
+if 'driver_path' in CONFIG['selenium'].keys():
+    CHROMIUM_DRIVER_PATH = CONFIG['selenium']['driver_path']
+else:
+    CHROMIUM_DRIVER_PATH = None

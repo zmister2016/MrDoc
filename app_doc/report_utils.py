@@ -21,6 +21,7 @@ django.setup()
 from app_doc.models import *
 from subprocess import Popen
 from loguru import logger
+from app_doc.report_html2pdf import convert
 import traceback
 import time
 import json
@@ -705,7 +706,7 @@ class ReportPDF():
         try:
             project = Project.objects.get(pk=self.pro_id)
         except:
-            return
+            return False
         # 拼接文档的HTML字符串
         data = Doc.objects.filter(top_doc=self.pro_id,parent_doc=0).order_by("sort")
         toc_list = {'1':[],'2':[],'3':[]}
@@ -755,10 +756,6 @@ class ReportPDF():
         temp_file_path = report_pdf_folder + '/{0}.html'.format(temp_file_name)
         # PDF文件路径
         report_file_path = report_pdf_folder + '/{0}.pdf'.format(temp_file_name)
-        # output_pdf_path = report_pdf_folder + '/{}_{}.pdf'.format(
-        #     project.name,
-        #     str(datetime.datetime.today()).replace(' ','-').replace(':','-')
-        # )
         # 写入HTML文件
         with open(temp_file_path, 'w', encoding='utf-8') as htmlfile:
             htmlfile.write(
@@ -772,16 +769,14 @@ class ReportPDF():
             )
 
         # 执行HTML转PDF
-        # html_to_pdf(temp_file_path,report_file_path)
-        # print(os.getcwd())
-        shell_path = os.path.join(os.getcwd(),'app_doc/report_html2pdf.py')
-        html2pdf = Popen(['python',shell_path,temp_file_path,report_file_path])
-        html2pdf.wait()
-        for proc in psutil.process_iter():
-            if proc.name().startswith('QtWebEngineProcess'):
-                proc.kill()
+        try:
+            convert(temp_file_path,report_file_path)
+        except:
+            logger.error("生成PDF出错")
+            return False
         # 处理PDF文件
         if os.path.exists(report_file_path):
+            os.remove(temp_file_path)
             return report_file_path
         else:
             return False
