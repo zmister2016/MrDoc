@@ -343,7 +343,11 @@
             layer.load();
             $.post("{% url 'get_doctemp' %}",{'doctemp_id':doctemp_id},function(r){
                 if(r.status){
-                    editor.insertValue(r.data);
+                    if(editor_mode == 1){
+                        editor.insertValue(r.data);
+                    }else if(editor_mode == 2){
+                        editor.insertValue(r.data);
+                    }
                     layer.closeAll()
                 }else{
                     layer.closeAll("loading");
