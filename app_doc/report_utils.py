@@ -772,7 +772,7 @@ class ReportPDF():
         try:
             convert(temp_file_path,report_file_path)
         except:
-            logger.error("生成PDF出错")
+            logger.exception("生成PDF出错")
             return False
         # 处理PDF文件
         if os.path.exists(report_file_path):
