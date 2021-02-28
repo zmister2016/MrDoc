@@ -34,6 +34,10 @@ ul.editormd-menu{
 .markdown-body ol ol ul,.markdown-body ol ul ul,.markdown-body ul ol ul,.markdown-body ul ul ul li{
     list-style-type: square;
 }
+/* vditor编辑器大纲列表样式 */
+.vditor-outline__content ul > li > ul > li{
+    list-style: none;
+}
 /* 选择上级文档样式 */
 .selected-parent-doc{
     text-decoration-line: underline;
