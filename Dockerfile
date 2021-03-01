@@ -9,6 +9,7 @@ COPY . /app/MrDoc/
 WORKDIR /app/MrDoc
 
 RUN  set -x \
+    && apk add wqy-zenhei --update-cache --repository  http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     && apk add --no-cache --virtual .build-deps build-base g++ gcc libxslt-dev python2-dev linux-headers \
     && apk add --no-cache pwgen git tzdata zlib-dev freetype-dev jpeg-dev  mariadb-dev postgresql-dev \
     && pip --no-cache-dir install -r requirements.txt \
