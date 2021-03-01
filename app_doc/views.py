@@ -13,19 +13,19 @@ from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
+from django.utils.html import strip_tags
 from loguru import logger
+from app_doc.report_utils import *
+from app_admin.models import UserOptions,SysSetting
+from app_admin.decorators import check_headers,allow_report_file
 import datetime
 import traceback
 import re
 import json
 import random
-from app_doc.report_utils import *
-from app_admin.models import UserOptions,SysSetting
-from app_admin.decorators import check_headers,allow_report_file
 import os.path
 import base64
 import hashlib
-from django.utils.html import strip_tags
 import markdown
 
 

@@ -16,14 +16,14 @@ from django.db.models import Q
 from django.db import transaction
 from django.urls import reverse
 from loguru import logger
+from app_doc.report_utils import *
+from app_admin.models import UserOptions,SysSetting
+from app_admin.decorators import check_headers,allow_report_file
 import datetime
 import traceback
 import re
 import json
 import random
-from app_doc.report_utils import *
-from app_admin.models import UserOptions,SysSetting
-from app_admin.decorators import check_headers,allow_report_file
 import os.path
 import base64
 import hashlib

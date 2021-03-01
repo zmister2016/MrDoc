@@ -18,14 +18,15 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
 from loguru import logger
+from app_doc.report_utils import *
+from app_admin.decorators import check_headers,allow_report_file
+from app_doc.import_utils import *
 import datetime
 import traceback
 import re
-from app_doc.report_utils import *
-from app_admin.decorators import check_headers,allow_report_file
 import os.path
 import json
-from app_doc.import_utils import *
+
 
 # 导入文集
 @login_required()
