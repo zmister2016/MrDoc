@@ -17,7 +17,7 @@
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
             <i class="layui-icon layui-icon-add-1"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
-        <a class="btn pull-left" aria-label="" href="{% url 'manage_doc' %}" target="_blank">
+        <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}">
             <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% elif colla_user > 0 %}

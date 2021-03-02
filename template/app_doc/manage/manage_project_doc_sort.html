@@ -30,17 +30,17 @@
             <div id="nested" class="row">
                 <ul id="nestedDemo" class="list-group col nested-sortable">
                     {% for docs in doc_list %}
-                    <li data-sortable-id="{{docs.id}}" class="list-group-item">{{docs.title}}
+                    <li data-sortable-id="{{docs.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{docs.title}}
                         {% if docs.children %}
                         <i class="layui-icon layui-icon-down switch-toc"></i>
                         <ul class="list-group nested-sortable">
                             {% for node in docs.children %}
-                            <li data-sortable-id="{{node.id}}" class="list-group-item">{{node.title}}
+                            <li data-sortable-id="{{node.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{node.title}}
                                 {% if node.children %}
                                 <i class="layui-icon layui-icon-down switch-toc"></i>
                                 <ul class="list-group nested-sortable">
                                     {% for doc in node.children %}
-                                    <li data-sortable-id="{{doc.id}}" class="list-group-item">{{doc.title}}
+                                    <li data-sortable-id="{{doc.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{doc.title}}
                                         <ul class="list-group nested-sortable"></ul>
                                     </li>
                                     {% endfor %}
