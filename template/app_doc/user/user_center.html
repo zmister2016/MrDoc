@@ -42,7 +42,7 @@
 							{% if request.user.is_superuser %}
 							<dd><a href="{% url 'admin_center' %}">{% trans "后台管理" %}</a></dd>
 							{% endif %}
-							<dd><a href="{% url 'pro_list' %}" target="_blank">{% trans "站点首页" %}</a></dd>
+							<dd><a href="{% url 'pro_list' %}">{% trans "站点首页" %}</a></dd>
 						  	<dd><a href="{% url 'logout' %}">{% trans "注销登录" %}</a></dd>
 						</dl>
 					</li>

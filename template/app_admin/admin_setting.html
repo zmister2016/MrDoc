@@ -239,6 +239,7 @@
                         <div class="tagsinput-primary form-group">
                             <input name="iframe_whitelist" id="iframe_whitelist" class="tagsinput" data-role="tagsinput" value="{% if iframe_whitelist != '' %}{{iframe_whitelist}}{% endif %}" placeholder="请输入域名">
                         </div>
+                    </div>
                     <div class="layui-form-mid layui-word-aux">默认支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站，仅用于EditorMD编辑器模式</div>
                 </div>
 
@@ -288,11 +289,16 @@
 {% endblock %}
 {% block custom_script %}
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<!-- <script src="{% static 'layui/layui.all.js' %}"></script> -->
 <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
 <script>
   $.ajaxSetup({
       data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
   });
+  layui.use(['jquery','form','element'],function(){
+    var $ = layui.jquery,
+        form = layui.form,
+        element = layui.element;
+  })
 </script>
 {% endblock %}

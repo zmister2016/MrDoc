@@ -42,7 +42,7 @@
 							{% if request.user.is_superuser %}
 							<dd><a href="{% url 'user_center' %}">个人中心</a></dd>
 							{% endif %}
-							<dd><a href="{% url 'pro_list' %}" target="_blank">站点首页</a></dd>
+							<dd><a href="{% url 'pro_list' %}">站点首页</a></dd>
 						  <dd><a href="{% url 'logout' %}">注销登录</a></dd>
 						</dl>
 					</li>
