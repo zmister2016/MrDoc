@@ -51,31 +51,40 @@ function initSidebar(sidebarQuery, contentQuery) {
     });
     
     //监听窗口的滚动和缩放事件
-    //window.addEventListener('scroll', updateSidebar)
-    //window.addEventListener('resize', throttle(updateSidebar))
+    window.addEventListener('scroll', updateSidebar)
+    // window.addEventListener('resize', throttle(updateSidebar))
     function updateSidebar() {
         if (scrollFlag) return // 如果存在scrollFlag，直接返回
         var doc = document.documentElement // 定义doc变量值为页面文档元素
         var top = doc && doc.scrollTop || document.body.scrollTop // 获取当前页面滚动条纵坐标
         if (!allHeaders.length) return // 如果allHeaders的列表长度为空，直接返回
         var last // 定义一个变量last
+        // console.log(allHeaders)
         // 按照allHeaders的列表长度进行遍历
         for (var i = 0; i < allHeaders.length; i++) { 
             var link = allHeaders[i] // 按索引取出一个目录link
-            console.log("滚动条高度",top,document.body.clientHeight)
+            // console.log("当前元素：",link)
+            // console.log("页面可视区域高度：",document.body.clientHeight)
+            // console.log("元素距离顶部距离：",link.offsetTop)
+            // console.log("当前页面滚动条纵坐标：",top)
+            // console.log("页面元素距离浏览器工作区顶端的距离：", link.offsetTop - document.documentElement.scrollTop)
             // link.offsetTop 表示元素距离上方的距离
             // top 表示当前页面滚动条的纵坐标
             // document.body.clientHeight 表示页面可视区域高度
-            // if (link.offsetTop > (top + document.body.clientHeight / 2 - 73)) {
-            if (link.offsetTop > (top + document.body.clientHeight / 6)) {
+            var link_to_top_offset = link.offsetTop - document.documentElement.scrollTop;
+            // console.log(link_to_top_offset)
+            if(link_to_top_offset > 150){
+                
+            }else if(link_to_top_offset < -150){
+                
+            }else{
                 if (!last) { last = link }
                 break
-            } else {
-                last = link
             }
+
         }
         if (last) {
-            console.log(last.offsetTop)
+            // console.log(last.offsetTop)
             setActive(last.id, sidebar)
         }
     }
@@ -106,27 +115,29 @@ function setActive(id, sidebar) {
     var currentActive = typeof id === 'string'
         ? sidebar.querySelector('a[href="#' + id + '"]')
         : id
-    //console.log(currentActive)
+    // console.log(currentActive)
     
-    // h2标题
-    if (currentActive.classList.contains('h2') != -1) {
-        // 添加 active 和 current
-        currentActive.classList.add('active', 'current')
-    }
-    // h3标题
-    if ([].indexOf.call(currentActive.classList, 'h3') != -1) {
-        console.log("H3标题")
-        // 添加 active 且对其父目录添加 current
-        currentActive.classList.add('active')
-        var parent = currentActive
-        while (parent && parent.tagName != 'UL') {
-            parent = parent.parentNode
-        }
-        parent.parentNode.querySelector('.h2-link').classList.add('current', 'active')
+    if(currentActive !== null){
+        // h2标题
+        if (currentActive.classList.contains('h2') != -1) {
+            // 添加 active 和 current
+            currentActive.classList.add('active', 'current')
+        };
+        // h3标题
+        if ([].indexOf.call(currentActive.classList, 'h3') != -1) {
+            console.log("H3标题")
+            // 添加 active 且对其父目录添加 current
+            currentActive.classList.add('active')
+            var parent = currentActive
+            while (parent && parent.tagName != 'UL') {
+                parent = parent.parentNode
+            }
+            parent.parentNode.querySelector('.h2-link').classList.add('current', 'active')
+        };
+        //左侧目录太长时的效果
+        currentActive.scrollIntoView({ behavior: 'smooth' })
     }
     
-    //左侧目录太长时的效果
-    currentActive.scrollIntoView({ behavior: 'smooth' })
 }
 /**
 >增加 sidebar 需要的全部样式
