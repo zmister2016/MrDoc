@@ -20,7 +20,7 @@ else
         echo "#####Configuration file already exists#####"
 fi
 
-python /app/MrDoc/manage.py makemigrations && python /app/MrDoc/manage.py migrate && echo y |python /app/MrDoc/manage.py rebuild_index
+python /app/MrDoc/manage.py makemigrations && python /app/MrDoc/manage.py migrate && nohup echo y |python /app/MrDoc/manage.py rebuild_index &
 if [ $CREATE_USER -eq 1 ]; then
   if [ ! -e $CREATE_USER ]; then
 	    touch $CREATE_USER
