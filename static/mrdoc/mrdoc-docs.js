@@ -341,3 +341,40 @@ textBecomeImg = function(text,fontsize,fontcolor){
     ### 文档阅读页面JavaScript函数和变量定义 ###
     ########################################################
 */
+
+    // URL参数解析
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    // 搜索词高亮
+    function keyLight(id, key, bgColor){
+        // console.log(id,key,decodeURI(key))
+        key = decodeURI(key);
+        var oDiv = document.getElementById(id),
+        sText = oDiv.innerHTML,
+        bgColor = bgColor || "#c00",    
+        sKey = "<span name='addSpan' style='color: "+bgColor+";background:ff0;'>"+key+"</span>",
+        num = -1,
+        rStr = new RegExp(key, "ig"),
+        rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
+        aHtml = sText.match(rHtml); //存放html元素的数组
+        sText = sText.replace(rHtml, '{~}');  //替换html标签
+        // sText = sText.replace(rStr,sKey); //替换key
+        sText = sText.replace(rStr,function(text){
+            return "<span name='addSpan' style='color:#333;background:#ff0;'>"+text+"</span>"
+        }); //替换key
+        sText = sText.replace(/{~}/g,function(){  //恢复html标签
+                num++;
+                return aHtml[num];
+        });
+        oDiv.innerHTML = sText;
+    };
+    keyLight('doc-content',getQueryVariable("highlight"))

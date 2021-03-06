@@ -187,7 +187,7 @@
                 <div style="margin-bottom: 18px;">
                     <!-- 标题 -->
                     <h3>
-                        <a href="{{ result.object.get_absolute_url }}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
+                        <a href="{{ result.object.get_absolute_url }}?highlight={{query}}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
                     </h3>
                     <!-- 简介 -->
                     {% highlight result.object.pre_content with query %}
