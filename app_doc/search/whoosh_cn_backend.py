@@ -919,7 +919,6 @@ class WhooshSearchQuery(BaseSearchQuery):
                     break
 
             cleaned_words.append(word)
-
         return " ".join(cleaned_words)
 
     def build_query_fragment(self, field, filter_type, value):

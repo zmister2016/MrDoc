@@ -32,11 +32,13 @@ class ChineseTokenizer(Tokenizer):
         """
         self.expression = rcompile(expression)
         self.gaps = gaps
+
     def __eq__(self, other):
         if self.__class__ is other.__class__:
             if self.expression.pattern == other.expression.pattern:
                 return True
         return False
+
     def __call__(self, value, positions=False, chars=False, keeporiginal=False,
                  removestops=True, start_pos=0, start_char=0, tokenize=True,
                  mode='', **kwargs):
@@ -149,7 +151,5 @@ def ChineseAnalyzer(expression=default_pattern, stoplist=None,
     ret = ChineseTokenizer(expression=expression, gaps=gaps)
     chain = ret | LowercaseFilter()
     if stoplist is not None:
-        chain = chain | StopFilter(stoplist=stoplist, minsize=minsize,
-                                   maxsize=maxsize)
-    return chain | StemFilter(stemfn=stemfn, ignore=ignore,
-                              cachesize=cachesize)
+        chain = chain | StopFilter(stoplist=stoplist, minsize=minsize,maxsize=maxsize)
+    return chain | StemFilter(stemfn=stemfn, ignore=ignore,cachesize=cachesize)
