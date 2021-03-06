@@ -311,8 +311,8 @@
                     }else{
                         layer.msg('保存成功',{time:1000},function(){
                             md_changed = false;
-                            //跳转到文档修改
-                            window.location.href = "/modify_doc/{{doc.id}}/";
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
                         });
                     }
                 }else{
