@@ -2,6 +2,11 @@
 import os
 import sys
 
+# for python3 mysql
+import pymysql
+import cryptography
+pymysql.install_as_MySQLdb()
+
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MrDoc.settings')
     try:

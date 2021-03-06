@@ -168,6 +168,8 @@ USE_L10N = True
 
 USE_TZ = False
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 # 多语言配置
 LANGUAGES = (
     ('zh-hans',('中文简体')),
