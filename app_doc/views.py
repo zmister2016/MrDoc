@@ -916,8 +916,13 @@ def doc(request,pro_id,doc_id):
 
             # 获取文档内容
             try:
-                doc = Doc.objects.get(id=int(doc_id),status=1) # 文档信息
+                doc = Doc.objects.get(id=int(doc_id),status__in=[0,1]) # 文档信息
                 doc_tags = DocTag.objects.filter(doc=doc) # 文档标签信息
+                if doc.status == 0 and doc.create_user != request.user:
+                    raise ObjectDoesNotExist
+                else:
+                    doc.name  = '【预览草稿】'+ doc.name
+                    
             except ObjectDoesNotExist:
                 return render(request, '404.html')
             # 获取文档分享信息
