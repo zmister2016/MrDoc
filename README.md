@@ -3,7 +3,7 @@
 <p align="center">个人和小型团队的笔记、文档、知识管理私有化部署方案</p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.6.4-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.6.5-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
@@ -31,7 +31,7 @@
     - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
 - App端（开发中）
 
-## 打赏
+## 打赏支持
 
 <p align="center">给作者打赏一罐红牛，祝他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
