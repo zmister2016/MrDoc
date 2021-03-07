@@ -920,9 +920,9 @@ def doc(request,pro_id,doc_id):
                 doc_tags = DocTag.objects.filter(doc=doc) # 文档标签信息
                 if doc.status == 0 and doc.create_user != request.user:
                     raise ObjectDoesNotExist
-                else:
+                elif doc.status == 0 and doc.create_user == request.user:
                     doc.name  = '【预览草稿】'+ doc.name
-                    
+
             except ObjectDoesNotExist:
                 return render(request, '404.html')
             # 获取文档分享信息
