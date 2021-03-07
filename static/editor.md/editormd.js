@@ -3628,14 +3628,18 @@
                         } else if (tedMatch && tedMatch[1]) {
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
                         }else{
-                            for(var i = 0; i< iframe_whitelist.length; i++){
-                                if(href.match(iframe_whitelist[i])){
-                                    return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                            if(iframe_whitelist.length == 1 && iframe_whitelist[0] == ""){
+                                return href
+                            }else{
+                                for(var i = 0; i< iframe_whitelist.length; i++){
+                                    if(href.match(iframe_whitelist[i])){
+                                        return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                                    }
                                 }
                             }
+
                         }
                         break;
-                        // return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
                 }
             }
 
@@ -4246,7 +4250,7 @@
      */
     
     editormd.filterHTMLTags = function(html, filters) {
-        
+
         if (typeof html !== "string") {
             html = new String(html).toString();
         }
