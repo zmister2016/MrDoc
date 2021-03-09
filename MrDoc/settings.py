@@ -222,7 +222,7 @@ try:
     CHROMIUM_DRIVER = CONFIG['selenium']['driver']
 except:
     CHROMIUM_DRIVER = 'CHROMIUM'
-if 'driver_path' in CONFIG['selenium'].keys():
+try:
     CHROMIUM_DRIVER_PATH = CONFIG['selenium']['driver_path']
-else:
+except:
     CHROMIUM_DRIVER_PATH = None
