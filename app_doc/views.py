@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
 from django.utils.html import strip_tags
+from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from app_doc.report_utils import *
 from app_admin.models import UserOptions,SysSetting
@@ -302,11 +303,11 @@ def create_project(request):
             project.save()
             return JsonResponse({'status':True,'data':{'id':project.id,'name':project.name,'role':project.role}})
         else:
-            return JsonResponse({'status':False,'data':'文集名称不能为空！'})
+            return JsonResponse({'status':False,'data':_('文集名称不能为空！')})
     except Exception as e:
 
-        logger.exception("创建文集出错")
-        return JsonResponse({'status':False,'data':'出现异常,请检查输入值！'})
+        logger.exception(_("创建文集出错"))
+        return JsonResponse({'status':False,'data':_('出现异常,请检查输入值！')})
 
 # 文集页
 @require_http_methods(['GET'])
@@ -383,7 +384,7 @@ def project_index(request,pro_id):
             return render(request,'app_doc/project_doc_search.html',locals())
         return render(request, 'app_doc/project.html', locals())
     except Exception as e:
-        logger.exception("文集页访问异常")
+        logger.exception(_("文集页访问异常"))
         return render(request,'404.html')
 
 
@@ -421,12 +422,12 @@ def modify_project(request):
                 project.is_watermark = is_watermark
                 project.watermark_value = watermark_value
                 project.save()
-                return JsonResponse({'status':True,'data':'修改成功'})
+                return JsonResponse({'status':True,'data':_('修改成功')})
             else:
-                return JsonResponse({'status':False,'data':'非法请求'})
+                return JsonResponse({'status':False,'data':_('非法请求')})
         except Exception as e:
-            logger.exception("修改文集出错")
-            return JsonResponse({'status':False,'data':'请求出错'})
+            logger.exception(_("修改文集出错"))
+            return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 修改文集权限
@@ -470,7 +471,7 @@ def modify_project_role(request,pro_id):
                     # return render(request, 'app_doc/manage/manage_project_role.html', locals())
                     return JsonResponse({'status':True,'data':'ok'})
                 except:
-                    return JsonResponse({'status':False,'data':'出错'})
+                    return JsonResponse({'status':False,'data':_('出错')})
             else:
                 return Http404
 
@@ -492,10 +493,10 @@ def check_viewcode(request):
                 obj.set_cookie('viewcode-{}'.format(project_id),viewcode)
                 return obj
             else:
-                errormsg = "访问码错误"
+                errormsg = _("访问码错误")
                 return render(request, 'app_doc/check_viewcode.html', locals())
     except Exception as e:
-        logger.exception("验证文集访问码出错")
+        logger.exception(_("验证文集访问码出错"))
         return render(request,'404.html')
 
 
@@ -521,7 +522,7 @@ def del_project(request):
                     pro.delete()
                     return JsonResponse({'status':True})
                 else:
-                    return JsonResponse({'status':False,'data':'非法请求'})
+                    return JsonResponse({'status':False,'data':_('非法请求')})
             elif range == 'multi':
                 pros = pro_id.split(",")
                 try:
@@ -536,15 +537,15 @@ def del_project(request):
                     projects.delete()
                     return JsonResponse({'status': True, 'data': 'ok'})
                 except Exception:
-                    logger.exception("异常")
-                    return JsonResponse({'status': False, 'data': '无指定内容'})
+                    logger.exception(_("异常"))
+                    return JsonResponse({'status': False, 'data': _('无指定内容')})
             else:
-                return JsonResponse({'status': False, 'data': '类型错误'})
+                return JsonResponse({'status': False, 'data': _('类型错误')})
         else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
     except Exception as e:
-        logger.exception("删除文集出错")
-        return JsonResponse({'status':False,'data':'请求出错'})
+        logger.exception(_("删除文集出错"))
+        return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 管理文集
@@ -672,12 +673,12 @@ def manage_project_doc_sort(request,pro_id):
         try:
             sort_data = json.loads(sort_data)
         except Exception:
-            return JsonResponse({'status': False, 'data': '文档参数错误'})
+            return JsonResponse({'status': False, 'data': _('文档参数错误')})
 
         try:
             pro = Project.objects.get(id=project_id)
         except ObjectDoesNotExist:
-            return JsonResponse({'status': False, 'data': '没有匹配的文集'})
+            return JsonResponse({'status': False, 'data': _('没有匹配的文集')})
 
         # 查询文集的协作者
         pro_colla = ProjectCollaborator.objects.filter(project=pro, user=request.user, role=1)
@@ -704,7 +705,7 @@ def manage_project_doc_sort(request,pro_id):
 
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
-            return JsonResponse({'status':False,'data':'无权操作'})
+            return JsonResponse({'status':False,'data':_('无权操作')})
 
 # 修改文集前台下载权限
 @login_required()
@@ -772,7 +773,7 @@ def manage_project_collaborator(request,pro_id):
         try:
             types = int(types)
         except:
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
         # 添加文集协作者
         if int(types) == 0:
             colla_user = request.POST.get('username','')
@@ -780,18 +781,18 @@ def manage_project_collaborator(request,pro_id):
             user = User.objects.filter(username=colla_user)
             if user.exists():
                 if user[0] == project[0].create_user: # 用户为文集的创建者
-                    return JsonResponse({'status':False,'data':'文集创建者无需添加'})
+                    return JsonResponse({'status':False,'data':_('文集创建者无需添加')})
                 elif ProjectCollaborator.objects.filter(user=user[0],project=project[0]).exists():
-                    return JsonResponse({'status':False,'data':'用户已存在'})
+                    return JsonResponse({'status':False,'data':_('用户已存在')})
                 else:
                     ProjectCollaborator.objects.create(
                         project = project[0],
                         user = user[0],
                         role = role if role in ['1',1] else 0
                     )
-                    return JsonResponse({'status':True,'data':'添加成功'})
+                    return JsonResponse({'status':True,'data':_('添加成功')})
             else:
-                return JsonResponse({'status':False,'data':'用户不存在'})
+                return JsonResponse({'status':False,'data':_('用户不存在')})
         # 删除文集协作者
         elif int(types) == 1:
             username = request.POST.get('username','')
@@ -799,10 +800,10 @@ def manage_project_collaborator(request,pro_id):
                 user = User.objects.get(username=username)
                 pro_colla = ProjectCollaborator.objects.get(project=project[0],user=user)
                 pro_colla.delete()
-                return JsonResponse({'status':True,'data':'删除成功'})
+                return JsonResponse({'status':True,'data':_('删除成功')})
             except:
-                logger.exception("删除协作者出错")
-                return JsonResponse({'status':False,'data':'删除出错'})
+                logger.exception(_("删除协作者出错"))
+                return JsonResponse({'status':False,'data':_('删除出错')})
         # 修改协作权限
         elif int(types) == 2:
             username = request.POST.get('username', '')
@@ -811,13 +812,13 @@ def manage_project_collaborator(request,pro_id):
                 user = User.objects.get(username=username)
                 pro_colla = ProjectCollaborator.objects.filter(project=project[0], user=user)
                 pro_colla.update(role=role)
-                return JsonResponse({'status':True,'data':'修改成功'})
+                return JsonResponse({'status':True,'data':_('修改成功')})
             except:
-                logger.exception("修改协作权限出错")
-                return JsonResponse({'status':False,'data':'修改失败'})
+                logger.exception(_("修改协作权限出错"))
+                return JsonResponse({'status':False,'data':_('修改失败')})
 
         else:
-            return JsonResponse({'status':False,'data':'无效的类型'})
+            return JsonResponse({'status':False,'data':_('无效的类型')})
 
 
 # 我协作的文集
@@ -857,7 +858,7 @@ def manage_project_transfer(request,pro_id):
                 return JsonResponse({'status':True,'data':'ok'})
 
             except:
-                return JsonResponse({'status':False,'data':'用户不存在'})
+                return JsonResponse({'status':False,'data':_('用户不存在')})
 
 
 # 文档浏览页
@@ -921,7 +922,7 @@ def doc(request,pro_id,doc_id):
                 if doc.status == 0 and doc.create_user != request.user:
                     raise ObjectDoesNotExist
                 elif doc.status == 0 and doc.create_user == request.user:
-                    doc.name  = '【预览草稿】'+ doc.name
+                    doc.name  = _('【预览草稿】')+ doc.name
 
             except ObjectDoesNotExist:
                 return render(request, '404.html')
@@ -935,9 +936,9 @@ def doc(request,pro_id,doc_id):
             # project_docs = Doc.objects.filter(top_doc=doc.top_doc, parent_doc=0, status=1).order_by('sort')
             return render(request,'app_doc/doc.html',locals())
         else:
-            return HttpResponse('参数错误')
+            return HttpResponse(_('参数错误'))
     except Exception as e:
-        logger.exception("文集浏览出错")
+        logger.exception(_("文集浏览出错"))
         return render(request,'404.html')
 
 
@@ -959,14 +960,14 @@ def create_doc(request):
             editor_mode = int(eid)
 
         try:
-            editor_type = "新建文档"
+            editor_type = _("新建文档")
             pid = request.GET.get('pid',-999)
             project_list = Project.objects.filter(create_user=request.user) # 自己创建的文集列表
             colla_project_list = ProjectCollaborator.objects.filter(user=request.user) # 协作的文集列表
             doctemp_list = DocTemp.objects.filter(create_user=request.user).values('id','name','create_time')
             return render(request, 'app_doc/editor/create_doc.html', locals())
         except Exception as e:
-            logger.exception("访问创建文档页面出错")
+            logger.exception(_("访问创建文档页面出错"))
             return render(request,'404.html')
     elif request.method == 'POST':
         try:
@@ -1020,27 +1021,27 @@ def create_doc(request):
 
                             return JsonResponse({'status': True, 'data': {'pro': project, 'doc': doc.id}})
                         except Exception as e:
-                            logger.exception("创建文档异常")
+                            logger.exception(_("创建文档异常"))
                             # 回滚事务
                             transaction.savepoint_rollback(save_id)
                         transaction.savepoint_commit(save_id)
-                        return JsonResponse({'status': False, 'data': '创建失败'})
+                        return JsonResponse({'status': False, 'data': _('创建失败')})
                 else:
-                    return JsonResponse({'status':False,'data':'无权操作此文集'})
+                    return JsonResponse({'status':False,'data':_('无权操作此文集')})
             else:
-                return JsonResponse({'status':False,'data':'请确认文档标题、文集正确'})
+                return JsonResponse({'status':False,'data':_('请确认文档标题、文集正确')})
         except Exception as e:
             logger.exception("创建文档出错")
-            return JsonResponse({'status':False,'data':'请求出错'})
+            return JsonResponse({'status':False,'data':_('请求出错')})
     else:
-        return JsonResponse({'status':False,'data':'方法不允许'})
+        return JsonResponse({'status':False,'data':_('方法不允许')})
 
 
 # 修改文档
 @login_required()
 @require_http_methods(['GET',"POST"])
 def modify_doc(request,doc_id):
-    editor_type = "修改文档"
+    editor_type = _("修改文档")
     if request.method == 'GET':
         try:
             doc = Doc.objects.get(id=doc_id) # 查询文档信息
@@ -1071,7 +1072,7 @@ def modify_doc(request,doc_id):
             else:
                 return render(request,'403.html')
         except Exception as e:
-            logger.exception("修改文档页面访问出错")
+            logger.exception(_("修改文档页面访问出错"))
             return render(request,'404.html')
     elif request.method == 'POST':
         try:
@@ -1150,21 +1151,21 @@ def modify_doc(request,doc_id):
                                         tag = Tag.objects.get_or_create(name=t, create_user=request.user)
                                         DocTag.objects.get_or_create(tag=tag[0], doc=doc)
 
-                            return JsonResponse({'status': True, 'data': '修改成功'})
+                            return JsonResponse({'status': True, 'data': _('修改成功')})
                         except:
-                            logger.exception("修改文档异常")
+                            logger.exception(_("修改文档异常"))
                             # 回滚事务
                             transaction.savepoint_rollback(save_id)
                         transaction.savepoint_commit(save_id)
-                    return JsonResponse({'status': False, 'data': '修改失败'})
+                    return JsonResponse({'status': False, 'data': _('修改失败')})
 
                 else:
-                    return JsonResponse({'status':False,'data':'未授权请求'})
+                    return JsonResponse({'status':False,'data':_('未授权请求')})
             else:
-                return JsonResponse({'status': False,'data':'参数错误'})
+                return JsonResponse({'status': False,'data':_('参数错误')})
         except Exception as e:
-            logger.exception("修改文档出错")
-            return JsonResponse({'status':False,'data':'请求出错'})
+            logger.exception(_("修改文档出错"))
+            return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 删除文档 - 软删除 - 进入回收站
@@ -1183,7 +1184,7 @@ def del_doc(request):
                     try:
                         project = Project.objects.get(id=doc.top_doc) # 查询文档所属的文集
                     except ObjectDoesNotExist:
-                        logger.error("文档{}的所属文集不存在。".format(doc_id))
+                        logger.error(_("文档{}的所属文集不存在。".format(doc_id)))
                         project = 0
                     # 获取文档所属文集的协作信息
                     pro_colla = ProjectCollaborator.objects.filter(project=project,user=request.user)
@@ -1208,25 +1209,25 @@ def del_doc(request):
                     chr_doc.update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的状态为删除
                     Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
 
-                    return JsonResponse({'status': True, 'data': '删除完成'})
+                    return JsonResponse({'status': True, 'data': _('删除完成')})
                 else:
-                    return JsonResponse({'status': False, 'data': '非法请求'})
+                    return JsonResponse({'status': False, 'data': _('非法请求')})
             elif range == 'multi':
                 docs = doc_id.split(",")
                 try:
                     Doc.objects.filter(id__in=docs,create_user=request.user).update(status=3,modify_time=datetime.datetime.now())
                     Doc.objects.filter(parent_doc__in=docs).update(status=3,modify_time=datetime.datetime.now())
-                    return JsonResponse({'status': True, 'data': '删除完成'})
+                    return JsonResponse({'status': True, 'data': _('删除完成')})
                 except:
-                    return JsonResponse({'status': False, 'data': '非法请求'})
+                    return JsonResponse({'status': False, 'data': _('非法请求')})
             else:
-                return JsonResponse({'status': False, 'data': '类型错误'})
+                return JsonResponse({'status': False, 'data': _('类型错误')})
 
         else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
     except Exception as e:
-        logger.exception("删除文档出错")
-        return JsonResponse({'status':False,'data':'请求出错'})
+        logger.exception(_("删除文档出错"))
+        return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 管理文档
@@ -1338,20 +1339,20 @@ def move_doc(request):
         project = Project.objects.get(id=int(pro_id)) # 自己的文集
         colla = ProjectCollaborator.objects.filter(project=project, user=request.user) # 协作文集
         if (project.create_user is not request.user) and (colla.count()): # 请求者不是文集创建者和协作者返回错误
-            return JsonResponse({'status':False,'data':'文集无权限'})
+            return JsonResponse({'status':False,'data':_('文集无权限')})
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'文集不存在'})
+        return JsonResponse({'status':False,'data':_('文集不存在')})
     # 判断文档是否存在
     try:
         doc = Doc.objects.get(id=int(doc_id),create_user=request.user)
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'文档不存在'})
+        return JsonResponse({'status':False,'data':_('文档不存在')})
     # 判断上级文档是否存在
     try:
         if parent_id != '0':
             parent = Doc.objects.get(id=int(parent_id),create_user=request.user)
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'上级文档不存在'})
+        return JsonResponse({'status':False,'data':_('上级文档不存在')})
     # 复制文档
     if move_type == '0':
         copy_doc = Doc.objects.create(
@@ -1376,8 +1377,8 @@ def move_doc(request):
             Doc.objects.filter(parent_doc=doc_id).update(parent_doc=0)
             return JsonResponse({'status':True,'data':{'pro_id':pro_id,'doc_id':doc_id}})
         except:
-            logger.exception("移动文档异常")
-            return JsonResponse({'status':False,'data':'移动文档失败'})
+            logger.exception(_("移动文档异常"))
+            return JsonResponse({'status':False,'data':_('移动文档失败')})
     # 包含下级文档一起移动
     elif move_type == '2':
         try:
@@ -1391,10 +1392,10 @@ def move_doc(request):
                 Doc.objects.filter(parent_doc=child.id).update(top_doc=int(pro_id))
             return JsonResponse({'status': True, 'data':{'pro_id':pro_id,'doc_id':doc_id}})
         except:
-            logger.exception("移动包含下级的文档异常")
-            return JsonResponse({'status': False, 'data': '移动文档失败'})
+            logger.exception(_("移动包含下级的文档异常"))
+            return JsonResponse({'status': False, 'data': _('移动文档失败')})
     else:
-        return JsonResponse({'status':False,'data':'移动类型错误'})
+        return JsonResponse({'status':False,'data':_('移动类型错误')})
 
 
 # 查看对比文档历史版本
@@ -1416,7 +1417,7 @@ def diff_doc(request,doc_id,his_id):
             else:
                 return render(request, '403.html')
         except Exception as e:
-            logger.exception("文档历史版本页面访问出错")
+            logger.exception(_("文档历史版本页面访问出错"))
             return render(request, '404.html')
 
     elif request.method == 'POST':
@@ -1429,12 +1430,12 @@ def diff_doc(request,doc_id,his_id):
                 if history.doc == doc:
                     return JsonResponse({'status':True,'data':history.pre_content})
                 else:
-                    return JsonResponse({'status': False, 'data': '非法请求'})
+                    return JsonResponse({'status': False, 'data': _('非法请求')})
             else:
-                return JsonResponse({'status':False,'data':'非法请求'})
+                return JsonResponse({'status':False,'data':_('非法请求')})
         except Exception as e:
-            logger.exception("文档历史版本获取出错")
-            return JsonResponse({'status':False,'data':'获取异常'})
+            logger.exception(_("文档历史版本获取出错"))
+            return JsonResponse({'status':False,'data':_('获取异常')})
 
 
 # 管理文档历史版本
@@ -1455,16 +1456,16 @@ def manage_doc_history(request,doc_id):
                 historys = paginator.page(paginator.num_pages)
             return render(request, 'app_doc/manage/manage_doc_history.html', locals())
         except Exception as e:
-            logger.exception("管理文档历史版本页面访问出错")
+            logger.exception(_("管理文档历史版本页面访问出错"))
             return render(request, '404.html')
     elif request.method == 'POST':
         try:
             history_id = request.POST.get('history_id','')
             DocHistory.objects.filter(id=history_id,doc=doc_id,create_user=request.user).delete()
-            return JsonResponse({'status':True,'data':'删除成功'})
+            return JsonResponse({'status':True,'data':_('删除成功')})
         except:
-            logger.exception("操作文档历史版本出错")
-            return JsonResponse({'status':False,'data':'出现异常'})
+            logger.exception(_("操作文档历史版本出错"))
+            return JsonResponse({'status':False,'data':_('出现异常')})
 
 
 # 文档回收站
@@ -1501,7 +1502,7 @@ def doc_recycle(request):
                     else:
                         colla_user_role = 0
                 except ObjectDoesNotExist:
-                    return JsonResponse({'status': False, 'data': '文档不存在'})
+                    return JsonResponse({'status': False, 'data': _('文档不存在')})
                 # 如果请求用户为文档创建者、高级权限的协作者、文集的创建者，可以操作
                 if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
                     # 还原文档
@@ -1519,10 +1520,10 @@ def doc_recycle(request):
                         # 删除文档
                         doc.delete()
                     else:
-                        return JsonResponse({'status':False,'data':'无效请求'})
-                    return JsonResponse({'status': True, 'data': '删除完成'})
+                        return JsonResponse({'status':False,'data':_('无效请求')})
+                    return JsonResponse({'status': True, 'data': _('删除完成')})
                 else:
-                    return JsonResponse({'status': False, 'data': '非法请求'})
+                    return JsonResponse({'status': False, 'data': _('非法请求')})
             # 清空回收站
             elif types == 'empty':
                 docs = Doc.objects.filter(status=3,create_user=request.user)
@@ -1532,16 +1533,16 @@ def doc_recycle(request):
                     DocShare.objects.filter(doc=doc).delete()
                     DocTag.objects.filter(doc=doc).delete()
                 docs.delete()
-                return JsonResponse({'status': True, 'data': '清空成功'})
+                return JsonResponse({'status': True, 'data': _('清空成功')})
             # 还原回收站
             elif types == 'restoreAll':
                 Doc.objects.filter(status=3,create_user=request.user).update(status=0)
-                return JsonResponse({'status': True, 'data': '还原成功'})
+                return JsonResponse({'status': True, 'data': _('还原成功')})
             else:
-                return JsonResponse({'status': False, 'data': '参数错误'})
+                return JsonResponse({'status': False, 'data': _('参数错误')})
         except Exception as e:
-            logger.exception("处理文档出错")
-            return JsonResponse({'status': False, 'data': '请求出错'})
+            logger.exception(_("处理文档出错"))
+            return JsonResponse({'status': False, 'data': _('请求出错')})
 
 
 # 一键发布文档
@@ -1560,7 +1561,7 @@ def fast_publish_doc(request):
         else:
             colla_user_role = 0
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': '文档不存在'})
+        return JsonResponse({'status': False, 'data': _('文档不存在')})
     # 判断请求者是否有权限（文档创建者、文集创建者、文集高级协作者）
     # 如果请求用户为文档创建者、高级权限的协作者、文集的创建者，可以删除
     if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
@@ -1568,12 +1569,12 @@ def fast_publish_doc(request):
             doc.status = 1
             doc.modify_time = datetime.datetime.now()
             doc.save()
-            return JsonResponse({'status':True,'data':'发布成功'})
+            return JsonResponse({'status':True,'data':_('发布成功')})
         except:
-            logger.exception("文档一键发布失败")
-            return JsonResponse({'status':False,'data':'发布失败'})
+            logger.exception(_("文档一键发布失败"))
+            return JsonResponse({'status':False,'data':_('发布失败')})
     else:
-        return JsonResponse({'status':False,'data':'非法请求'})
+        return JsonResponse({'status':False,'data':_('非法请求')})
 
 
 # 私密文档分享
@@ -1636,7 +1637,7 @@ def share_doc(request):
                 }
             return JsonResponse({'status':True,'data':data})
         except ObjectDoesNotExist:
-            return JsonResponse({'status':False,'data':'文档不存在'})
+            return JsonResponse({'status':False,'data':_('文档不存在')})
 
 
 # 验证文档分享码
@@ -1662,7 +1663,7 @@ def share_doc_check(request):
             obj.set_cookie('sharedoc-{}'.format(doc_token),share_value)
             return obj
         else:
-            errormsg = "分享码错误"
+            errormsg = _("分享码错误")
             return render(request, 'app_doc/share/share_check.html', locals())
 
 
@@ -1716,7 +1717,7 @@ def manage_doc_share(request):
                     share.delete()
                     return JsonResponse({'status':True,'data':'ok'})
                 except:
-                    return JsonResponse({'status':False,'data':'无指定内容'})
+                    return JsonResponse({'status':False,'data':_('无指定内容')})
             elif range == "multi":
                 tokens = token.split(",")
                 try:
@@ -1724,9 +1725,9 @@ def manage_doc_share(request):
                     share.delete()
                     return JsonResponse({'status':True,'data':'ok'})
                 except:
-                    return JsonResponse({'status':False,'data':'无指定内容'})
+                    return JsonResponse({'status':False,'data':_('无指定内容')})
             else:
-                return JsonResponse({'status':False,'data':'类型错误'})
+                return JsonResponse({'status':False,'data':_('类型错误')})
         # 修改
         elif types == '3':
             token = request.POST.get("token",'')
@@ -1741,7 +1742,7 @@ def manage_doc_share(request):
                 share_type = 0 if value == '0' else 1
                 DocShare.objects.filter(token=token).update(share_type=share_type)
             else:
-                return JsonResponse({'status':False,'data':'参数错误'})
+                return JsonResponse({'status':False,'data':_('参数错误')})
             return JsonResponse({'status':True,'data':'ok'})
 
 
@@ -1750,7 +1751,7 @@ def manage_doc_share(request):
 @require_http_methods(['GET',"POST"])
 def create_doctemp(request):
     if request.method == 'GET':
-        editor_type = "新建文档模板"
+        editor_type = _("新建文档模板")
         # 获取用户的编辑器模式
         try:
             user_opt = UserOptions.objects.get(user=request.user)
@@ -1772,10 +1773,10 @@ def create_doctemp(request):
                 doctemp.save()
                 return JsonResponse({'status':True,'data':doctemp.id})
             else:
-                return JsonResponse({'status':False,'data':'模板标题不能为空'})
+                return JsonResponse({'status':False,'data':_('模板标题不能为空')})
         except Exception as e:
-            logger.exception("创建文档模板出错")
-            return JsonResponse({'status':False,'data':'请求出错'})
+            logger.exception(_("创建文档模板出错"))
+            return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 修改文档模板
@@ -1783,7 +1784,7 @@ def create_doctemp(request):
 @require_http_methods(['GET',"POST"])
 def modify_doctemp(request,doctemp_id):
     if request.method == 'GET':
-        editor_type = '修改文档模板'
+        editor_type = _('修改文档模板')
         try:
             doctemp = DocTemp.objects.get(id=doctemp_id)
             if request.user.id == doctemp.create_user.id:
@@ -1796,9 +1797,9 @@ def modify_doctemp(request,doctemp_id):
                 doctemps = DocTemp.objects.filter(create_user=request.user)
                 return render(request,'app_doc/editor/modify_doctemp.html',locals())
             else:
-                return HttpResponse('非法请求')
+                return HttpResponse(_('非法请求'))
         except Exception as e:
-            logger.exception("访问文档模板修改页面出错")
+            logger.exception(_("访问文档模板修改页面出错"))
             return render(request, '404.html')
     elif request.method == 'POST':
         try:
@@ -1811,14 +1812,14 @@ def modify_doctemp(request,doctemp_id):
                     doctemp.name = name
                     doctemp.content = content
                     doctemp.save()
-                    return JsonResponse({'status':True,'data':'修改成功'})
+                    return JsonResponse({'status':True,'data':_('修改成功')})
                 else:
-                    return JsonResponse({'status':False,'data':'非法操作'})
+                    return JsonResponse({'status':False,'data':_('非法操作')})
             else:
-                return JsonResponse({'status':False,'data':'参数错误'})
+                return JsonResponse({'status':False,'data':_('参数错误')})
         except Exception as e:
-            logger.exception("修改文档模板出错")
-            return JsonResponse({'status':False,'data':'请求出错'})
+            logger.exception(_("修改文档模板出错"))
+            return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 删除文档模板
@@ -1830,14 +1831,14 @@ def del_doctemp(request):
             doctemp = DocTemp.objects.get(id=doctemp_id)
             if request.user.id == doctemp.create_user.id:
                 doctemp.delete()
-                return JsonResponse({'status':True,'data':'删除完成'})
+                return JsonResponse({'status':True,'data':_('删除完成')})
             else:
-                return JsonResponse({'status':False,'data':'非法请求'})
+                return JsonResponse({'status':False,'data':_('非法请求')})
         else:
-            return JsonResponse({'status': False, 'data': '参数错误'})
+            return JsonResponse({'status': False, 'data': _('参数错误')})
     except Exception as e:
-        logger.exception("删除文档模板出错")
-        return JsonResponse({'status':False,'data':'请求出错'})
+        logger.exception(_("删除文档模板出错"))
+        return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 管理文档模板
@@ -1872,7 +1873,7 @@ def manage_doctemp(request):
                 doctemps = paginator.page(paginator.num_pages)
         return render(request, 'app_doc/manage/manage_doctemp.html', locals())
     except Exception as e:
-        logger.exception("管理文档模板页面访问出错")
+        logger.exception(_("管理文档模板页面访问出错"))
         return render(request, '404.html')
 
 
@@ -1886,10 +1887,10 @@ def get_doctemp(request):
             content = DocTemp.objects.get(id=int(doctemp_id)).serializable_value('content')
             return JsonResponse({'status':True,'data':content})
         else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
     except Exception as e:
-        logger.exception("获取指定文档模板出错")
-        return JsonResponse({'status':False,'data':'请求出错'})
+        logger.exception(_("获取指定文档模板出错"))
+        return JsonResponse({'status':False,'data':_('请求出错')})
 
 
 # 获取指定文集的所有文档
@@ -1925,7 +1926,7 @@ def get_pro_doc(request):
                     item_list.append(item)
         return JsonResponse({'status':True,'data':list(item_list)})
     else:
-        return JsonResponse({'status':False,'data':'参数错误'})
+        return JsonResponse({'status':False,'data':_('参数错误')})
 
 
 # 获取指定文集的文档树数据
@@ -1987,7 +1988,7 @@ def get_pro_doc_tree(request):
                 doc_list.append(top_item)
         return JsonResponse({'status':True,'data':doc_list})
     else:
-        return JsonResponse({'status':False,'data':'参数错误'})
+        return JsonResponse({'status':False,'data':_('参数错误')})
 
 
 # 404页面
@@ -2011,10 +2012,10 @@ def report_md(request):
             md_file = "/media/reportmd_temp/"+ md_file_filename # 拼接相对链接
             return JsonResponse({'status':True,'data':md_file})
         else:
-            return JsonResponse({'status':False,'data':'无权限'})
+            return JsonResponse({'status':False,'data':_('无权限')})
     except Exception as e:
-        logger.exception("导出文集MD文件出错")
-        return JsonResponse({'status':False,'data':'文集不存在'})
+        logger.exception(_("导出文集MD文件出错"))
+        return JsonResponse({'status':False,'data':_('文集不存在')})
 
 
 # 生成文集文件 - 个人中心 - 文集管理
@@ -2109,8 +2110,8 @@ def genera_project_file(request):
 
                     return JsonResponse({'status': True, 'data': epub_file})
                 except Exception as e:
-                    logger.exception("生成EPUB出错")
-                    return JsonResponse({'status': False, 'data': '生成出错'})
+                    logger.exception(_("生成EPUB出错"))
+                    return JsonResponse({'status': False, 'data': _('生成出错')})
             # 导出PDF
             elif report_type in ['pdf']:
                 try:
@@ -2118,7 +2119,7 @@ def genera_project_file(request):
                         project_id=project.id
                     ).work()
                     if report_project is False:
-                        return JsonResponse({'status':False,'data':'生成出错'})
+                        return JsonResponse({'status':False,'data':_('生成出错')})
                     report_file_path = report_project.split('media', maxsplit=1)[-1]  # 导出文件的路径
                     pdf_file = '/media' + report_file_path  # 文件相对路径
                     # 查询文集是否存在导出文件
@@ -2142,20 +2143,20 @@ def genera_project_file(request):
                     return JsonResponse({'status': True, 'data': pdf_file})
 
                 except Exception as e:
-                    logger.exception("生成出错")
-                    return JsonResponse({'status': False, 'data': '生成出错'})
+                    logger.exception(_("生成出错"))
+                    return JsonResponse({'status': False, 'data': _('生成出错')})
             else:
-                return JsonResponse({'status': False, 'data': '不支持的类型'})
+                return JsonResponse({'status': False, 'data': _('不支持的类型')})
         # 不允许被导出
         else:
-            return JsonResponse({'status':False,'data':'无权限导出'})
+            return JsonResponse({'status':False,'data':_('无权限导出')})
 
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'文集不存在'})
+        return JsonResponse({'status':False,'data':_('文集不存在')})
 
     except Exception as e:
-        logger.exception("生成文集文件出错")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        logger.exception(_("生成文集文件出错"))
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 
 # 获取文集前台导出文件
@@ -2226,31 +2227,31 @@ def report_file(request):
                     try:
                         report_project = ProjectReportFile.objects.get(project=project,file_type='epub')
                     except ObjectDoesNotExist:
-                        return JsonResponse({'status':False,'data':'无可用文件,请联系文集创建者'})
+                        return JsonResponse({'status':False,'data':_('无可用文件,请联系文集创建者')})
                     # print(report_project)
                     return JsonResponse({'status': True, 'data': report_project.file_path})
                 except Exception as e:
-                    return JsonResponse({'status': False, 'data': '导出出错'})
+                    return JsonResponse({'status': False, 'data': _('导出出错')})
             # 导出PDF
             elif report_type in ['pdf']:
                 try:
                     try:
                         report_project = ProjectReportFile.objects.get(project=project,file_type='pdf')
                     except ObjectDoesNotExist:
-                        return JsonResponse({'status':False,'data':'无可用文件,请联系文集创建者'})
+                        return JsonResponse({'status':False,'data':_('无可用文件,请联系文集创建者')})
                     # print(report_project)
                     return JsonResponse({'status': True, 'data': report_project.file_path})
                 except Exception as e:
-                    return JsonResponse({'status': False, 'data': '导出出错'})
+                    return JsonResponse({'status': False, 'data': _('导出出错')})
             else:
-                return JsonResponse({'status': False, 'data': '不支持的类型'})
+                return JsonResponse({'status': False, 'data': _('不支持的类型')})
         else:
-            return JsonResponse({'status':False,'data':'无权限导出'})
+            return JsonResponse({'status':False,'data':_('无权限导出')})
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'文集不存在'})
+        return JsonResponse({'status':False,'data':_('文集不存在')})
     except Exception as e:
-        logger.exception("获取文集前台导出文件出错")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        logger.exception(_("获取文集前台导出文件出错"))
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 
 # 图片素材管理
@@ -2281,7 +2282,7 @@ def manage_image(request):
             images.group = g_id
             return render(request,'app_doc/manage/manage_image.html',locals())
         except:
-            logger.exception("图片素材管理出错")
+            logger.exception(_("图片素材管理出错"))
             return render(request,'404.html')
     elif request.method == 'POST':
         try:
@@ -2293,7 +2294,7 @@ def manage_image(request):
                 if range == 'single':
                     img = Image.objects.get(id=img_id)
                     if img.user != request.user:
-                        return JsonResponse({'status': False, 'data': '未授权请求'})
+                        return JsonResponse({'status': False, 'data': _('未授权请求')})
                     file_path = settings.BASE_DIR+img.file_path
                     is_exist = os.path.exists(file_path)
                     if is_exist:
@@ -2304,7 +2305,7 @@ def manage_image(request):
                     for i in imgs:
                         img = Image.objects.get(id=i)
                         if img.user != request.user:
-                            logger.error("图片{}非法删除".format(i))
+                            logger.error(_("图片{}非法删除".format(i)))
                             break
                         file_path = settings.BASE_DIR + img.file_path
                         is_exist = os.path.exists(file_path)
@@ -2312,7 +2313,7 @@ def manage_image(request):
                             os.remove(file_path)
                         img.delete()  # 删除记录
 
-                return JsonResponse({'status':True,'data':'删除完成'})
+                return JsonResponse({'status':True,'data':_('删除完成')})
             # 移动图片分组
             elif int(types) == 1:
                 if range == 'single':
@@ -2331,12 +2332,12 @@ def manage_image(request):
                         group = ImageGroup.objects.get(id=group_id,user=request.user)
                         Image.objects.filter(id__in=imgs,user=request.user).update(group_id=group)
 
-                return JsonResponse({'status':True,'data':'移动完成'})
+                return JsonResponse({'status':True,'data':_('移动完成')})
             # 获取图片
             elif int(types) == 2:
                 group_id = request.POST.get('group_id', None) # 接受分组ID参数
                 if group_id is None: #
-                    return JsonResponse({'status':False,'data':'参数错误'})
+                    return JsonResponse({'status':False,'data':_('参数错误')})
                 elif int(group_id) == 0:
                     imgs = Image.objects.filter(user=request.user).order_by('-create_time')
                 elif int(group_id) == -1:
@@ -2352,12 +2353,12 @@ def manage_image(request):
                     img_list.append(item)
                 return JsonResponse({'status':True,'data':img_list})
             else:
-                return JsonResponse({'status':False,'data':'非法参数'})
+                return JsonResponse({'status':False,'data':_('非法参数')})
         except ObjectDoesNotExist:
-            return JsonResponse({'status':False,'data':'图片不存在'})
+            return JsonResponse({'status':False,'data':_('图片不存在')})
         except:
-            logger.exception("操作图片素材出错")
-            return JsonResponse({'status':False,'data':'程序异常'})
+            logger.exception(_("操作图片素材出错"))
+            return JsonResponse({'status':False,'data':_('程序异常')})
 
 # 图片分组管理
 @login_required()
@@ -2373,23 +2374,23 @@ def manage_img_group(request):
         # 创建分组
         if int(types) == 0:
             group_name = request.POST.get('group_name', '')
-            if group_name not in ['','默认分组','未分组']:
+            if group_name not in ['',_('默认分组'),_('未分组')]:
                 ImageGroup.objects.get_or_create(
                     user = request.user,
                     group_name = group_name
                 )
                 return JsonResponse({'status':True,'data':'ok'})
             else:
-                return JsonResponse({'status':False,'data':'名称无效'})
+                return JsonResponse({'status':False,'data':_('名称无效')})
         # 修改分组
         elif int(types) == 1:
             group_name = request.POST.get("group_name",'')
-            if group_name not in ['','默认分组','未分组']:
+            if group_name not in ['',_('默认分组'),_('未分组')]:
                 group_id = request.POST.get('group_id', '')
                 ImageGroup.objects.filter(id=group_id,user=request.user).update(group_name=group_name)
-                return JsonResponse({'status':True,'data':'修改成功'})
+                return JsonResponse({'status':True,'data':_('修改成功')})
             else:
-                return JsonResponse({'status':False,'data':'名称无效'})
+                return JsonResponse({'status':False,'data':_('名称无效')})
 
         # 删除分组
         elif int(types) == 2:
@@ -2398,18 +2399,18 @@ def manage_img_group(request):
                 group = ImageGroup.objects.get(id=group_id,user=request.user) # 查询分组
                 images = Image.objects.filter(group_id=group_id,user=request.user).update(group_id=None) # 移动图片到未分组
                 group.delete() # 删除分组
-                return JsonResponse({'status':True,'data':'删除完成'})
+                return JsonResponse({'status':True,'data':_('删除完成')})
             except:
-                logger.exception("删除图片分组出错")
-                return JsonResponse({'status':False,'data':'删除错误'})
+                logger.exception(_("删除图片分组出错"))
+                return JsonResponse({'status':False,'data':_('删除错误')})
         # 获取分组
         elif int(types) == 3:
             try:
                 group_list = []
                 all_cnt = Image.objects.filter(user=request.user).count()
                 non_group_cnt = Image.objects.filter(group_id=None,user=request.user).count()
-                group_list.append({'group_name':'全部图片','group_cnt':all_cnt,'group_id':0})
-                group_list.append({'group_name':'未分组','group_cnt':non_group_cnt,'group_id':-1})
+                group_list.append({'group_name':_('全部图片'),'group_cnt':all_cnt,'group_id':0})
+                group_list.append({'group_name':_('未分组'),'group_cnt':non_group_cnt,'group_id':-1})
                 groups = ImageGroup.objects.filter(user=request.user) # 查询所有分组
                 for group in groups:
                     group_cnt = Image.objects.filter(group_id=group).count()
@@ -2421,8 +2422,8 @@ def manage_img_group(request):
                     group_list.append(item)
                 return JsonResponse({'status':True,'data':group_list})
             except:
-                logger.exception("获取图片分组出错")
-                return JsonResponse({'status':False,'data':'出现错误'})
+                logger.exception(_("获取图片分组出错"))
+                return JsonResponse({'status':False,'data':_('出现错误')})
 
 
 # 附件管理
@@ -2487,7 +2488,7 @@ def manage_attachment(request):
                     attachments = paginator.page(paginator.num_pages)
             return render(request, 'app_doc/manage/manage_attachment.html', locals())
         except Exception as e:
-            logger.exception("附件管理访问出错")
+            logger.exception(_("附件管理访问出错"))
             return render(request,'404.html')
     elif request.method == 'POST':
         # types参数，0表示上传、1表示删除、2表示获取附件列表
@@ -2507,7 +2508,7 @@ def manage_attachment(request):
                     # print(repr(e))
                     allow_attach_size = 52428800
                 if attachment.size > allow_attach_size:
-                    return JsonResponse({'status':False,'data':'文件大小超出限制'})
+                    return JsonResponse({'status':False,'data':_('文件大小超出限制')})
 
                 # 限制附件格式
                 # 获取系统设置允许的附件格式，如果不存在，默认仅允许zip格式文件
@@ -2531,16 +2532,16 @@ def manage_attachment(request):
                     )
                     return JsonResponse({'status':True,'data':{'name':attachment_name,'url':a.file_path.name}})
                 else:
-                    return JsonResponse({'status':False,'data':'不支持的格式'})
+                    return JsonResponse({'status':False,'data':_('不支持的格式')})
             else:
-                return JsonResponse({'status':False,'data':'无效文件'})
+                return JsonResponse({'status':False,'data':_('无效文件')})
         elif types in ['1',1]:
             attach_id = request.POST.get('attach_id','')
             attachment = Attachment.objects.filter(id=attach_id,user=request.user) # 查询附件
             for a in attachment: # 遍历附件
                 a.file_path.delete() # 删除文件
             attachment.delete() # 删除数据库记录
-            return JsonResponse({'status':True,'data':'删除成功'})
+            return JsonResponse({'status':True,'data':_('删除成功')})
         elif types in [2,'2']:
             attachment_list = []
             attachments = Attachment.objects.filter(user=request.user).order_by('-create_time')
@@ -2554,7 +2555,7 @@ def manage_attachment(request):
                 attachment_list.append(item)
             return JsonResponse({'status':True,'data':attachment_list})
         else:
-            return JsonResponse({'status':False,'data':'无效参数'})
+            return JsonResponse({'status':False,'data':_('无效参数')})
 
 
 # 搜索
@@ -2707,12 +2708,12 @@ def download_doc_md(request,doc_id):
             try:
                 doc = Doc.objects.get(id=doc_id)
             except ObjectDoesNotExist:
-                return JsonResponse({'status':False,'data':'文档不存在'})
+                return JsonResponse({'status':False,'data':_('文档不存在')})
         else:
             try:
                 doc = Doc.objects.get(id=doc_id,create_user = request.user)
             except ObjectDoesNotExist:
-                return JsonResponse({'status':False,'data':'文档不存在'})
+                return JsonResponse({'status':False,'data':_('文档不存在')})
     else:
         return render(request,'404.html')
 
@@ -2763,7 +2764,7 @@ def manage_doc_tag(request):
                 )
                 return JsonResponse({'status': True, 'data': 'ok'})
             else:
-                return JsonResponse({'status': False, 'data': '名称无效'})
+                return JsonResponse({'status': False, 'data': _('名称无效')})
         # 修改标签
         elif int(types) == 1:
             try:
@@ -2773,14 +2774,14 @@ def manage_doc_tag(request):
                     if tag_id != "":
                         print(tag_id,tag_name)
                         Tag.objects.filter(id=tag_id, create_user=request.user).update(name=tag_name)
-                        return JsonResponse({'status': True, 'data': '修改成功'})
+                        return JsonResponse({'status': True, 'data': _('修改成功')})
                     else:
-                        return JsonResponse({'status': False, 'data': '标签ID无效'})
+                        return JsonResponse({'status': False, 'data': _('标签ID无效')})
                 else:
-                    return JsonResponse({'status': False, 'data': '名称无效'})
+                    return JsonResponse({'status': False, 'data': _('名称无效')})
             except Exception as e:
-                logger.exception("修改异常")
-                return JsonResponse({'status': False, 'data': '异常错误'})
+                logger.exception(_("修改异常"))
+                return JsonResponse({'status': False, 'data': _('异常错误')})
 
         # 删除标签
         elif int(types) == 2:
@@ -2788,18 +2789,18 @@ def manage_doc_tag(request):
                 tag_id = request.POST.get('tag_id', '')
                 tag = Tag.objects.get(id=tag_id, create_user=request.user)  # 查询分组
                 tag.delete()  # 删除标签
-                return JsonResponse({'status': True, 'data': '删除完成'})
+                return JsonResponse({'status': True, 'data': _('删除完成')})
             except:
-                logger.exception("删除标签出错")
-                return JsonResponse({'status': False, 'data': '删除错误'})
+                logger.exception(_("删除标签出错"))
+                return JsonResponse({'status': False, 'data': _('删除错误')})
         # 获取标签
         elif int(types) == 3:
             try:
                 tag_list = []
                 return JsonResponse({'status': True, 'data': tag_list})
             except:
-                logger.exception("获取文档标签出错")
-                return JsonResponse({'status': False, 'data': '出现错误'})
+                logger.exception(_("获取文档标签出错"))
+                return JsonResponse({'status': False, 'data': _('出现错误')})
 
 
 # 标签文档关系页
@@ -2914,7 +2915,7 @@ def tag_docs(request,tag_id):
 
         return render(request, 'app_doc/tag_docs.html', locals())
     except Exception as e:
-        logger.exception("标签文档页访问异常")
+        logger.exception(_("标签文档页访问异常"))
         return render(request, '404.html')
 
 
@@ -2973,9 +2974,9 @@ def tag_doc(request,tag_id,doc_id):
                 return render(request, '404.html')
             return render(request,'app_doc/tag_doc_single.html',locals())
         else:
-            return HttpResponse('参数错误')
+            return HttpResponse(_('参数错误'))
     except Exception as e:
-        logger.exception("文集浏览出错")
+        logger.exception(_("文集浏览出错"))
         return render(request,'404.html')
 
 
@@ -2995,11 +2996,11 @@ def manage_self(request):
         editor_mode = request.POST.get('editor_mode',1) # 编辑器
         user = User.objects.get_by_natural_key(request.user)
         if len(first_name) < 2 or len(first_name) > 10:
-            return JsonResponse({'status': False, 'data': '昵称长度不得小于2位大于10位'})
+            return JsonResponse({'status': False, 'data': _('昵称长度不得小于2位大于10位')})
         if User.objects.filter(first_name=first_name).count() > 0 and user.first_name != first_name:
-            return JsonResponse({'status':False,'data':'昵称已被使用'})
+            return JsonResponse({'status':False,'data':_('昵称已被使用')})
         if User.objects.filter(email=email).count() > 0 and user.email != email:
-            return JsonResponse({'status':False,'data':'电子邮箱已被使用'})
+            return JsonResponse({'status':False,'data':_('电子邮箱已被使用')})
         if email != '' and '@' in email:
             user.email = email
             user.first_name = first_name
@@ -3010,7 +3011,7 @@ def manage_self(request):
             )
             return JsonResponse({'status':True,'data':'ok'})
         else:
-            return JsonResponse({'status':False,'data':'参数不正确'})
+            return JsonResponse({'status':False,'data':_('参数不正确')})
 
 
 # 文集文档收藏
@@ -3022,13 +3023,13 @@ def my_collect(request):
         collect_type = request.POST.get('type',None) # 收藏类型
         collect_id = request.POST.get('id',None) # 收藏对象ID
         if (collect_type is None) or (collect_id is None):
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
         else:
             is_collect = MyCollect.objects.filter(collect_type=collect_type,collect_id=collect_id,create_user=request.user)
             # 存在收藏
             if is_collect.exists():
                 is_collect.delete()
-                return JsonResponse({'status': True, 'data': '取消收藏成功'})
+                return JsonResponse({'status': True, 'data': _('取消收藏成功')})
             else:
                 MyCollect.objects.create(
                     collect_type = collect_type,
@@ -3036,7 +3037,7 @@ def my_collect(request):
                     create_user = request.user,
                     create_time = datetime.datetime.now()
                 )
-                return JsonResponse({'status':True,'data':'收藏成功'})
+                return JsonResponse({'status':True,'data':_('收藏成功')})
 
     elif request.method == 'DELETE':
         pass
@@ -3132,28 +3133,28 @@ def manage_collect(request):
                     try:
                         collect = MyCollect.objects.get(id=collect_id)
                     except ObjectDoesNotExist:
-                        return JsonResponse({'status': False, 'data': '收藏不存在'})
+                        return JsonResponse({'status': False, 'data': _('收藏不存在')})
                     # 如果请求用户为站点管理员、收藏的创建者，可以删除
                     if (request.user == collect.create_user) or (request.user.is_superuser):
                         MyCollect.objects.filter(id=collect_id).delete()
-                        return JsonResponse({'status': True, 'data': '删除完成'})
+                        return JsonResponse({'status': True, 'data': _('删除完成')})
                     else:
-                        return JsonResponse({'status': False, 'data': '非法请求'})
+                        return JsonResponse({'status': False, 'data': _('非法请求')})
                 elif range == 'multi':
                     collects = collect_id.split(",")
                     try:
                         MyCollect.objects.filter(id__in=collects, create_user=request.user).delete()
-                        return JsonResponse({'status': True, 'data': '删除完成'})
+                        return JsonResponse({'status': True, 'data': _('删除完成')})
                     except:
-                        return JsonResponse({'status': False, 'data': '非法请求'})
+                        return JsonResponse({'status': False, 'data': _('非法请求')})
                 else:
-                    return JsonResponse({'status': False, 'data': '类型错误'})
+                    return JsonResponse({'status': False, 'data': _('类型错误')})
 
             else:
-                return JsonResponse({'status': False, 'data': '参数错误'})
+                return JsonResponse({'status': False, 'data': _('参数错误')})
         except Exception as e:
-            logger.exception("取消收藏出错")
-            return JsonResponse({'status': False, 'data': '请求出错'})
+            logger.exception(_("取消收藏出错"))
+            return JsonResponse({'status': False, 'data': _('请求出错')})
 
 # 获取当前版本
 def get_version(request):
@@ -3166,6 +3167,6 @@ def get_version(request):
     except:
         data = {
             'status':False,
-            'data':'异常'
+            'data':_('异常')
         }
     return JsonResponse(data)

@@ -5,7 +5,7 @@
 # 博客地址：zmister.com
 # 文集导入相关方法
 
-
+from django.utils.translation import gettext_lazy as _
 from app_doc.models import Doc,Project,Image
 from app_doc.util_upload_img import upload_generation_dir
 from django.db import transaction
@@ -93,7 +93,7 @@ class ImportZipProject():
 
 
         except:
-            logger.error("未发现yaml文件")
+            logger.error(_("未发现yaml文件"))
             project_name = zip_file_path[:-4].split('/')[-1]
             project_desc = ''
             project_role = 1
@@ -147,7 +147,7 @@ class ImportZipProject():
                                 create_user=create_user
                             )
             except:
-                logger.exception("解析导入文件异常")
+                logger.exception(_("解析导入文件异常"))
                 # 回滚事务
                 transaction.savepoint_rollback(save_id)
 
@@ -157,7 +157,7 @@ class ImportZipProject():
             os.remove(zip_file_path)
             return project.id
         except:
-            logger.exception("删除临时文件异常")
+            logger.exception(_("删除临时文件异常"))
             return None
 
     # 处理MD内容中的静态文件
@@ -201,7 +201,7 @@ class ImportZipProject():
                             user=create_user,
                             file_path=new_media_filename,
                             file_name=str(time.time())+'.'+file_suffix,
-                            remark='本地上传',
+                            remark=_('本地上传'),
                         )
                         md_content = md_content.replace(media_filename, new_media_filename)
                 else:
@@ -238,7 +238,7 @@ class ImportDocxDoc():
                 user=self.create_user,
                 file_path=new_media_filename,
                 file_name=file_time_name + '.' + file_suffix,
-                remark='本地上传',
+                remark=_('本地上传'),
             )
             with open(new_media_file_path, 'wb') as f:
                 f.write(image_bytes.read())
@@ -266,7 +266,7 @@ class ImportDocxDoc():
             return {'status':True,'data':result}
         except:
             os.remove(self.docx_file_path)
-            return {'status':False,'data':'读取异常'}
+            return {'status':False,'data':_('读取异常')}
 
 if __name__ == '__main__':
     imp = ImportZipProject()

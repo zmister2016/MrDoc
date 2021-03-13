@@ -5,6 +5,7 @@
 # 博客地址：zmister.com
 # MrDoc文集文档导出相关功能代码
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 import subprocess
 import datetime,time
 import re
@@ -172,6 +173,48 @@ class ReportMD():
             return md_content
 
 
+# 批量导出文集Markdown压缩包
+class ReportMdBetch():
+    def __init__(self,username,project_id_list):
+        self.project_list = project_id_list
+        self.username = username
+        # 判断MD导出临时文件夹是否存在
+        if os.path.exists(settings.MEDIA_ROOT + "/reportmd_temp") is False:
+            os.mkdir(settings.MEDIA_ROOT + "/reportmd_temp")
+
+        # 判断用户名+日期文件夹是否存在
+        self.report_file_path = settings.MEDIA_ROOT + "/reportmd_temp/{}_{}".format(
+            self.username,datetime.datetime.strftime(datetime.datetime.now(),"%y%m%d%H%M%S")
+        )
+        is_fold = os.path.exists(self.report_file_path)
+        if is_fold is False:
+            os.mkdir(self.report_file_path)
+
+    def work(self):
+        # 遍历文集列表，打包每一个文集
+        project_file_list = []
+        for project_id in self.project_list:
+            report_func = ReportMD(project_id=project_id)
+            report_project_zip = report_func.work()
+            project_file_list.append(report_project_zip)
+
+        # 遍历打包好的文集列表，将其移入统一文件夹
+        for file in project_file_list:
+            shutil.move(file,self.report_file_path)
+
+        # 压缩打包文集合集文件夹
+        md_file = shutil.make_archive(
+            base_name=self.report_file_path,
+            format='zip',
+            root_dir=self.report_file_path
+        )
+        # print(md_file)
+        # 删除文件夹
+        shutil.rmtree(self.report_file_path)
+
+        return "{}.zip".format(self.report_file_path)
+
+
 # 导出EPUB
 @logger.catch()
 class ReportEPUB():
@@ -224,7 +267,7 @@ class ReportEPUB():
         for iframe in iframe_tag:
             iframe_src = iframe.get('src')
             iframe.name = 'p'
-            iframe.string = "本格式不支持iframe视频显示，视频地址为：{}".format(iframe_src)
+            iframe.string = _("本格式不支持iframe视频显示，视频地址为：{}".format(iframe_src))
 
         # 替换HTML文本中静态文件的相对链接为绝对链接
         for src in src_tag:
@@ -255,7 +298,7 @@ class ReportEPUB():
                 'id': 0,
                 'link': 'Text/toc_summary.xhtml',
                 'pid': 0,
-                'title': '目录'
+                'title': _('目录')
             }
         ]
         nav_str = '''<navMap>'''
@@ -770,7 +813,7 @@ class ReportPDF():
         try:
             convert('file://'+temp_file_path,report_file_path)
         except:
-            logger.exception("生成PDF出错")
+            logger.exception(_("生成PDF出错"))
             return False
         # 处理PDF文件
         if os.path.exists(report_file_path):

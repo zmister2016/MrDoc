@@ -17,6 +17,7 @@ from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from app_doc.report_utils import *
 from app_admin.decorators import check_headers,allow_report_file
@@ -43,7 +44,7 @@ def import_project(request):
                 file_name = import_file.name
                 # 限制文件大小在50mb以内
                 if import_file.size > 52428800:
-                    return JsonResponse({'status': False, 'data': '文件大小超出限制'})
+                    return JsonResponse({'status': False, 'data': _('文件大小超出限制')})
                 # 限制文件格式为.zip
                 if file_name.endswith('.zip'):
                     if os.path.exists(os.path.join(settings.MEDIA_ROOT,'import_temp')) is False:
@@ -121,15 +122,15 @@ def import_project(request):
                                 }
                             })
                         else:
-                            return JsonResponse({'status':False,'data':'上传失败'})
+                            return JsonResponse({'status':False,'data':_('上传失败')})
                     else:
-                        return JsonResponse({'status':False,'data':'上传失败'})
+                        return JsonResponse({'status':False,'data':_('上传失败')})
                 else:
-                    return JsonResponse({'status':False,'data':'仅支持.zip格式'})
+                    return JsonResponse({'status':False,'data':_('仅支持.zip格式')})
             else:
-                return JsonResponse({'status':False,'data':'无有效文件'})
+                return JsonResponse({'status':False,'data':_('无有效文件')})
         else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
 
 
 # 文集文档排序
@@ -146,12 +147,12 @@ def project_doc_sort(request):
     try:
         sort_data = json.loads(sort_data)
     except Exception:
-        return JsonResponse({'status':False,'data':'文档参数错误'})
+        return JsonResponse({'status':False,'data':_('文档参数错误')})
 
     try:
         Project.objects.get(id=project_id,create_user=request.user)
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'没有匹配的文集'})
+        return JsonResponse({'status':False,'data':_('没有匹配的文集')})
 
     # 修改文集信息
     Project.objects.filter(id=project_id).update(
@@ -194,7 +195,7 @@ def import_doc_docx(request):
             file_name = import_file.name
             # 限制文件大小在50mb以内
             if import_file.size > 52428800:
-                return JsonResponse({'status': False, 'data': '文件大小超出限制'})
+                return JsonResponse({'status': False, 'data': _('文件大小超出限制')})
             # 限制文件格式为.zip
             if file_name.endswith('.docx'):
                 if os.path.exists(os.path.join(settings.MEDIA_ROOT, 'import_temp')) is False:
@@ -213,10 +214,10 @@ def import_doc_docx(request):
                     ).run()
                     return JsonResponse(import_file)
                 else:
-                    return JsonResponse({'status': False, 'data': '上传失败'})
+                    return JsonResponse({'status': False, 'data': _('上传失败')})
             else:
-                return JsonResponse({'status': False, 'data': '仅支持.docx格式'})
+                return JsonResponse({'status': False, 'data': _('仅支持.docx格式')})
         else:
-            return JsonResponse({'status': False, 'data': '无有效文件'})
+            return JsonResponse({'status': False, 'data': _('无有效文件')})
     else:
-        return JsonResponse({'status': False, 'data': '参数错误'})
+        return JsonResponse({'status': False, 'data': _('参数错误')})

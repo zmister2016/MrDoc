@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.utils.translation import gettext_lazy as _
 import datetime,time,json,base64,os,uuid
 from app_doc.models import Image,ImageGroup,Attachment
 from app_admin.models import SysSetting
@@ -53,7 +54,7 @@ def ice_save_file(file_obj,user):
     # 判断附件格式
     is_images = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
     if file_suffix.lower() not in allow_suffix:         
-        return {"error": "文件格式不允许"}
+        return {"error": _("文件格式不允许")}
     if file_suffix.lower() == 'blob':
         # 粘贴上传直接默认为png就行
         file_suffix = 'png' 
@@ -77,7 +78,7 @@ def ice_save_file(file_obj,user):
                 user=user,
                 file_path=file_url,
                 file_name=file_name,
-                remark="iceEditor上传"              
+                remark=_("iceEditor上传")
             )
         
         else :
@@ -90,7 +91,7 @@ def ice_save_file(file_obj,user):
             )
         return  {"error":0, "name": str(file_obj),'url':file_url}
 
-    return {"error": "文件存储异常"}
+    return {"error": _("文件存储异常")}
 
 
 # ice_url图片上传
@@ -118,7 +119,7 @@ def ice_url_img_upload(url,user):
             user=user,
             file_path=file_url,
             file_name=file_name,
-            remark='iceurl粘贴上传',
+            remark=_('iceurl粘贴上传'),
         )
     resp_data = {"error":0, "name": file_name,'url':file_url}        
     return resp_data
@@ -165,7 +166,7 @@ def upload_img(request):
         else:
             result = url_img_upload(url_img,dir_name,request.user)
     else:
-        result = {"success": 0, "message": "上传出错"}
+        result = {"success": 0, "message": _("上传出错")}
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 
@@ -187,7 +188,7 @@ def img_upload(files, dir_name, user, group_id=None):
     file_suffix = files.name.split(".")[-1] # 提取图片格式
     # 判断图片格式
     if file_suffix.lower() not in allow_suffix:
-        return {"success": 0, "message": "图片格式不正确"}
+        return {"success": 0, "message": _("图片格式不正确")}
 
     # 判断图片的大小
     try:
@@ -197,7 +198,7 @@ def img_upload(files, dir_name, user, group_id=None):
         # print(repr(e))
         allow_img_size = 10485760
     if files.size > allow_img_size:
-        return {"success": 0, "message": "图片大小超出{}MB".format(allow_img_size / 1048576)}
+        return {"success": 0, "message": _("图片大小超出{}MB".format(allow_img_size / 1048576))}
 
     relative_path = upload_generation_dir(dir_name)
     file_name = files.name.replace(file_suffix,'').replace('.','') + '_' +str(int(time.time())) + '.' + file_suffix
@@ -213,10 +214,10 @@ def img_upload(files, dir_name, user, group_id=None):
         user=user,
         file_path=file_url,
         file_name=file_name,
-        remark='本地上传',
+        remark=_('本地上传'),
         group = group_id,
     )
-    return {"success": 1, "url": file_url,'message':'上传图片成功'}
+    return {"success": 1, "url": file_url,'message':_('上传图片成功')}
 
 
 # base64编码图片上传
@@ -236,9 +237,9 @@ def base_img_upload(files,dir_name, user):
         user = user,
         file_path = file_url,
         file_name=file_name,
-        remark = '粘贴上传',
+        remark = _('粘贴上传'),
     )
-    return {"success": 1, "url": file_url, 'message': '上传图片成功'}
+    return {"success": 1, "url": file_url, 'message': _('上传图片成功')}
 
 
 # url图片上传
@@ -263,7 +264,7 @@ def url_img_upload(url,dir_name,user):
             user=user,
             file_path=file_url,
             file_name=file_name,
-            remark='粘贴上传',
+            remark=_('粘贴上传'),
         )
     resp_data = {
          'msg': '',

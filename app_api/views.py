@@ -4,16 +4,17 @@ from django.views.decorators.csrf import csrf_exempt # CSRF装饰器
 from django.views.decorators.http import require_http_methods,require_safe,require_GET
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
-from app_api.models import UserToken
-from app_doc.models import Project,Doc,Image
-import time,hashlib
-import traceback,json
 from django.conf import settings
-from app_doc.util_upload_img import upload_generation_dir,base_img_upload
-from loguru import logger
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.shortcuts import render,redirect
+from django.utils.translation import gettext_lazy as _
+from app_doc.util_upload_img import upload_generation_dir,base_img_upload
+from app_api.models import UserToken
+from app_doc.models import Project,Doc,Image
+from loguru import logger
+import time,hashlib
+import traceback,json
 # MrDoc 基于用户的Token访问API模块
 
 # 用户通过该url获取服务器时间戳，便于接口访问
@@ -40,18 +41,18 @@ def oauth0(request):
                 nowtime = int (time.time())
                 # 时间戳失效时间，默认为3600，可以改短，如30，严格点5秒，如果使用5秒，请求前，需要通过get_timestamp获取服务器时间戳，否则因为和服务器时间差导致无法验证通过
                 if (nowtime - int(timestamp)) > 3600 :                    
-                    raise ValueError('链接已失效，请从合法路径访问，或联系管理员！')                    
+                    raise ValueError(_('链接已失效，请从合法路径访问，或联系管理员！'))
                 # 2、获取userid的Token
                 user = User.objects.get(username=username)                                
                 if user is None:
-                    raise ValueError('请求用户出错！')
+                    raise ValueError(_('请求用户出错！'))
                 ID = user.id
                 State = user.is_active
                 if State == 1 and ID is not None:
                     usertoken = UserToken.objects.get(user_id=ID)
                     token = usertoken.token
                 else:
-                    raise ValueError('非法用户！')
+                    raise ValueError(_('非法用户！'))
             
                 # 3、 验证hash的正确性
                 final_str  =  str(randstr) + str(timestamp) + str(username) + token
@@ -63,14 +64,14 @@ def oauth0(request):
                     newurl = unquote(redirecturl)
                     return redirect(newurl)
                 else:                    
-                    raise ValueError('验证失败,可能是用户名或Token不正确!详情请联系管理员！')                   
+                    raise ValueError(_('验证失败,可能是用户名或Token不正确!详情请联系管理员！'))
             else:
-                raise ValueError('关键字验证失败，请联系管理员！部分关键字为空')          
+                raise ValueError(_('关键字验证失败，请联系管理员！部分关键字为空'))
         except ValueError as e:
             errormsg = e
             return render(request, 'app_api/api404.html', locals())
         except :
-            errormsg = "API接口运行出错！"
+            errormsg = _("API接口运行出错！")
             return render(request, 'app_api/api404.html', locals())
     else:
         return JsonResponse({'status':False,'data':'Nothing Here'}) 
@@ -84,11 +85,10 @@ def manage_token(request):
         try:
             token = UserToken.objects.get(user=request.user).token # 查询用户Token
         except ObjectDoesNotExist:
-            token = '你还没有生成过Token！'
+            token = _('你还没有生成过Token！')
         except:
             if settings.DEBUG:
-                print(traceback.print_exc())
-                logger.exception("Token管理页面异常")
+                logger.exception(_("Token管理页面异常"))
         return render(request,'app_api/manage_token.html',locals())
     elif request.method == 'POST':
         try:
@@ -105,8 +105,8 @@ def manage_token(request):
             )
             return JsonResponse({'status':True,'data':token_str})
         except:
-            logger.exception("用户Token生成异常")
-            return JsonResponse({'status':False,'data':'生成出错，请重试！'})
+            logger.exception(_("用户Token生成异常"))
+            return JsonResponse({'status':False,'data':_('生成出错，请重试！')})
 
 
 # 获取文集
@@ -126,10 +126,10 @@ def get_projects(request):
             project_list.append(item)
         return JsonResponse({'status':True,'data':project_list})
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'token无效'})
+        return JsonResponse({'status':False,'data':_('token无效')})
     except:
-        logger.exception("token获取文集异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        logger.exception(_("token获取文集异常"))
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 
 # 获取文集下的文档列表
@@ -154,10 +154,10 @@ def get_docs(request):
             doc_list.append(item)
         return JsonResponse({'status': True, 'data': doc_list})
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': 'token无效'})
+        return JsonResponse({'status': False, 'data': _('token无效')})
     except:
-        logger.exception("token获取文集异常")
-        return JsonResponse({'status': False, 'data': '系统异常'})
+        logger.exception(_("token获取文集异常"))
+        return JsonResponse({'status': False, 'data': _('系统异常')})
 
 
 # 获取单篇文档
@@ -181,10 +181,10 @@ def get_doc(request):
         }
         return JsonResponse({'status': True, 'data': item})
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': 'token无效'})
+        return JsonResponse({'status': False, 'data': _('token无效')})
     except:
         logger.exception("token获取文集异常")
-        return JsonResponse({'status': False, 'data': '系统异常'})
+        return JsonResponse({'status': False, 'data': _('系统异常')})
 
 
 # 新建文集
@@ -206,10 +206,10 @@ def create_project(request):
         )
         return JsonResponse({'status': True, 'data': 'ok'})
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': 'token无效'})
+        return JsonResponse({'status': False, 'data': _('token无效')})
     except:
-        logger.exception("token创建文集异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        logger.exception(_("token创建文集异常"))
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 
 # 新建文档
@@ -237,12 +237,12 @@ def create_doc(request):
             )
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
-            return JsonResponse({'status':False,'data':'非法请求'})
+            return JsonResponse({'status':False,'data':_('非法请求')})
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': 'token无效'})
+        return JsonResponse({'status': False, 'data': _('token无效')})
     except:
-        logger.exception("token创建文档异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        logger.exception(_("token创建文档异常"))
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 
 # 上传图片
@@ -263,7 +263,7 @@ def upload_img(request):
         return JsonResponse(result)
         # return HttpResponse(json.dumps(result), content_type="application/json")
     except ObjectDoesNotExist:
-        return JsonResponse({'success': 0, 'data': 'token无效'})
+        return JsonResponse({'success': 0, 'data': _('token无效')})
     except:
-        logger.exception("token上传图片异常")
-        return JsonResponse({'success':0,'data':'上传出错'})
+        logger.exception(_("token上传图片异常"))
+        return JsonResponse({'success':0,'data':_('上传出错')})

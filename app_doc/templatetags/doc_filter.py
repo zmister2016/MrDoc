@@ -1,7 +1,9 @@
 # coding:utf-8
 # 文档自定义模板过滤器
-from app_doc.models import *
+
 from django import template
+from django.utils.translation import gettext_lazy as _
+from app_doc.models import *
 import re
 
 register = template.Library()
@@ -27,7 +29,7 @@ def is_colla_pro(pro,user):
     if p.exists():
         return ''
     else:
-        return '【协作】'
+        return _('【协作】')
 
 # 获取文档的上级文档名称
 @register.filter(name='get_doc_parent')
@@ -35,7 +37,7 @@ def get_doc_parent(value):
     if int(value) != 0:
         return Doc.objects.get(id=int(value))
     else:
-        return '无上级文档'
+        return _('无上级文档')
 
 # 获取文档的下一篇文档
 @register.filter(name='get_doc_next')
@@ -91,8 +93,7 @@ def get_doc_next(value):
             # print("下一篇：", next_doc.id, next_doc)
             return next_doc.id
     except Exception as e:
-        import traceback
-        print(traceback.print_exc())
+        pass
 
 # 获取文档的上一篇文档
 @register.filter(name='get_doc_previous')

@@ -5,6 +5,7 @@
 # 博客地址：zmister.com
 
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from app_api.models import *
@@ -45,8 +46,8 @@ class AppMustAuth(BaseAuthentication):
                 # token 是有效的，返回一个元组
                 return user_obj.user, token  # request.user, request.auth
             else:
-                raise AuthenticationFailed('无效的token')
+                raise AuthenticationFailed(_('无效的token'))
                 # return None
         else:
-            raise AuthenticationFailed('请求的URL中必须携带token参数')
+            raise AuthenticationFailed(_('请求的URL中必须携带token参数'))
             # return None
