@@ -33,3 +33,10 @@ urlpatterns = [
     path('sitemap-<section>.xml', views.sitemap, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap.xml'},
          name='django.contrib.sitemaps.views.sitemap')  # 站点地图
 ]
+
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        urlpatterns.append(path('__debug__/', include(debug_toolbar.urls)))
+    except ImportError:
+        pass

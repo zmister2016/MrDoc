@@ -226,3 +226,20 @@ try:
     CHROMIUM_DRIVER_PATH = CONFIG['selenium']['driver_path']
 except:
     CHROMIUM_DRIVER_PATH = None
+
+INTERNAL_IPS = ('127.0.0.1', '::1')
+# Django Debug Toolbar 工具，站点开启调试的时候启用
+try:
+    import debug_toolbar.settings  # noqa
+    if DEBUG:
+        INSTALLED_APPS.append('debug_toolbar.apps.DebugToolbarConfig')
+        MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+        DEBUG_TOOLBAR_PATCH_SETTINGS = False
+        DEBUG_TOOLBAR_CONFIG = {
+            'JQUERY_URL': '',
+            'DISABLE_PANELS': debug_toolbar.settings.PANELS_DEFAULTS,
+        }
+
+    pass
+except ImportError:
+    pass
