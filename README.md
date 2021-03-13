@@ -1,6 +1,6 @@
 <h1 align="center">MrDoc觅道文档 - 记录文档、汇聚思想</h1>
 
-<p align="center">个人和小型团队的笔记、文档、知识管理私有化部署方案</p>
+<p align="center">个人和小型团队的云笔记、云文档、知识管理私有化部署方案</p>
 
 <p align="center">
 <img src="https://img.shields.io/badge/MrDoc-v0.6.5-brightgreen.svg" title="Mrdoc" />
@@ -9,11 +9,16 @@
 </p>
 
 <p align="center">
-<a href="http://mrdoc.zmister.com/project-7/">安装手册</a> | 
-<a href="http://mrdoc.zmister.com/project-20/">文档效果</a> |
-<a href="http://mrdoc.zmister.com/">示例站点</a> |
+<a href="https://zmister.com/mrdoc/">官网</a> | 
+<a href="http://mrdoc.zmister.com/">演示站点</a> |
 <a href="./README_ENG.md">English</a> |
-<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a>
+<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a> |
+</p>
+
+<p align="center">
+<a href="http://mrdoc.zmister.com/project-7/">安装手册</a> | 
+<a href="http://mrdoc.zmister.com/project-54/">使用手册</a> |
+<a href="http://mrdoc.zmister.com/project-20/">文档效果</a> |
 </p>
 
 <p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">码云</a> | 
@@ -22,7 +27,7 @@
 
 ## 简介
 
-`MrDoc` 是基于`Python`开发的在线文档系统，适合作为个人和小型团队的文档、知识和笔记管理工具。致力于成为优秀的私有化在线文档部署方案。
+`MrDoc` 是基于`Python`开发的在线文档系统，适合作为个人和小型团队的私有云文档、云笔记和知识管理工具。致力于成为优秀的私有化在线文档部署方案。
 
 目前涵盖：
 
