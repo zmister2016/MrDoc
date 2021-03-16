@@ -565,6 +565,9 @@
                 })
             })
 
+            // 加载DOMPurify过滤HTML
+            editormd.loadScript(loadPath + 'purify.min',function(){});
+
             editormd.loadCSS(loadPath + "codemirror/lib/codemirror");
             
             if (settings.searchReplace && !settings.readOnly)
@@ -2111,12 +2114,14 @@
             marked.setOptions(markedOptions);
                     
             var newMarkdownDoc = editormd.$marked(cmValue, markedOptions);
+            // console.info("cmValue", cmValue, newMarkdownDoc);
             
-            //console.info("cmValue", cmValue, newMarkdownDoc);
+            // newMarkdownDoc = editormd.filterHTMLTags(newMarkdownDoc, settings.htmlDecode);
+            // 加载DOMPurify过滤HTML
+            newMarkdownDoc = DOMPurify.sanitize(newMarkdownDoc,{ADD_TAGS: ['iframe']})
             
-            newMarkdownDoc = editormd.filterHTMLTags(newMarkdownDoc, settings.htmlDecode);
-            
-            //console.error("cmValue", cmValue, newMarkdownDoc);
+            // console.log(newMarkdownDoc)
+            // console.error("cmValue", cmValue, newMarkdownDoc);
             
             this.markdownTextarea.text(cmValue);
             
@@ -3541,7 +3546,7 @@
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg    = regexs.pageBreak;
 
-	// 增加引用样式解析规则
+	    // 增加引用样式解析规则
         markedRenderer.blockquote = function($quote) {
             var quoteBegin = "";
 
@@ -3568,7 +3573,8 @@
             }
 
             return '<blockquote class="'+$class+'">\n' + quoteBegin + $quote + '</blockquote>\n';
-        };    
+        };
+
         // marked 解析图片
         markedRenderer.image = function(href,title,text) {
             var attr = "";
@@ -3612,21 +3618,21 @@
                         const tedMatch = href.match(/(?:www\.|\/\/)ted\.com\/talks\/(\w+)/);
 
                         if (youtubeMatch && youtubeMatch[1].length === 11) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}"></iframe>`
                         } else if (youkuMatch && youkuMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}"></iframe>`
                         } else if (qqMatch && qqMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}"></iframe>`
                         } else if (coubMatch && coubMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true"></iframe>`
                         } else if (facebookMatch && facebookMatch[0]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}"></iframe>`
                         } else if (dailymotionMatch && dailymotionMatch[2]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}"></iframe>`
                         } else if (bilibiliMatch && bilibiliMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}"></iframe>`
                         } else if (tedMatch && tedMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}"></iframe>`
                         }else{
                             if(iframe_whitelist.length == 1 && iframe_whitelist[0] == ""){
                                 return href
@@ -3678,7 +3684,7 @@
                     }
                 }
             }
-            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+">" + end;
+            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+" />" + end;
         };
 
         // marked emoji 解析
@@ -3793,7 +3799,6 @@
 
         // marked 链接解析
         markedRenderer.link = function (href, title, text) {
-
             if (this.options.sanitize) {
                 try {
                     var prot = decodeURIComponent(unescape(href)).replace(/[^\w:]/g,"").toLowerCase();
@@ -3870,7 +3875,7 @@
             headingHTML    += "<span class=\"header-link octicon octicon-link\"></span>";
             headingHTML    += (hasLinkReg) ? this.atLink(this.mark(this.emoji(text))) : this.mark(this.emoji(text));
             headingHTML    += "</h" + level + ">";
-
+            // console.log(headingHTML)
             return headingHTML;
         };
         
@@ -3903,7 +3908,6 @@
             }
             
             var tocHTML = "<div class=\"markdown-toc editormd-markdown-toc\">" + text + "</div>";
-            
             return (isToC) ? ( (isToCMenu) ? "<div class=\"editormd-toc-menu\">" + tocHTML + "</div><br/>" : tocHTML )
                            : ( (pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.mark(this.emoji(text))) + "</p>\n" );
         };
@@ -4250,7 +4254,8 @@
      */
     
     editormd.filterHTMLTags = function(html, filters) {
-
+        console.log(html)
+        console.log(filters)
         if (typeof html !== "string") {
             html = new String(html).toString();
         }
@@ -4264,6 +4269,7 @@
         var expression = filters.split("|");
         var filterTags = expression[0].split(",");
         var attrs      = expression[1];
+        console.log(attrs)
 
         if(!filterTags.includes('allowScript') && !filterTags.includes('script'))
          {
@@ -4278,7 +4284,7 @@
             html = html.replace(new RegExp("\<\s*" + tag + "\s*([^\>]*)\>([^\>]*)\<\s*\/" + tag + "\s*\>", "igm"), "");
             html = html.replace(new RegExp("\<\s*" + tag + ".*?/?>", "igm"), "") // 过滤单闭合标签
         }
-        
+
         //return html;
 
         if (typeof attrs === "undefined")
@@ -4304,12 +4310,16 @@
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
                     return "<" + $2 + ">" + $4 + "</" + $5 + ">";
-                });         
+                });  
             }
             // else if (attrs === "on*")
             else if ((attrs === "on*") || filterOn)
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
+                    console.log($1)
+                    console.log($2)
+                    console.log($4)
+                    console.log($5)
                     var el = $("<" + $2 + ">" + $4 + "</" + $5 + ">");
                     var _attrs = $($1)[0].attributes;
                     var $attrs = {};
@@ -4338,7 +4348,7 @@
                     // var filterAttrs = attrs.split(",");
                     var el = $($1);
                     el.html($4);
-
+                    
                     $.each(filterAttrs, function(i) {
                         el.attr(filterAttrs[i], null);
                     });
@@ -4347,7 +4357,7 @@
                 });
             }
         }
-        
+
         return html;
     };
     
@@ -4435,7 +4445,12 @@
         
         var markdownParsed = marked(markdownDoc, markedOptions);
         
-        markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
+        // markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
+        // 加载DOMPurify过滤HTML
+        editormd.loadScript(settings.plugin_path + 'purify.min',function(){
+            markdownParsed = DOMPurify.sanitize(markdownParsed,{ADD_TAGS: ['iframe']});
+        });
+        // console.log(markdownParsed)
         
         if (settings.markdownSourceCode) {
             saveTo.text(markdownDoc);

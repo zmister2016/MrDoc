@@ -166,3 +166,7 @@ ul#doc-tree{
         padding-top: 4px;
     }
 }
+/* 覆盖vditor文档目录样式 */
+.vditor-outline ul{
+    padding-left: 0px;
+}

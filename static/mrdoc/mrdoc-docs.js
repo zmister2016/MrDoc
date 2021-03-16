@@ -295,10 +295,11 @@ copyUrl = function(){
     window.clipb
     document.execCommand("Copy");
     layer.msg("链接复制成功！")
-}
+};
 $("#copy_doc_url").click(function(){
     copyUrl();
-})
+});
+
 // 生成文档链接二维码
 doc_qrcode = function(){
     new QRCode("url_qrcode", {
@@ -312,7 +313,9 @@ doc_qrcode = function(){
 };
 doc_qrcode();
 
-// 文集水印
+/* 
+    文集水印
+*/
 textBecomeImg = function(text,fontsize,fontcolor){
     var canvas = document.createElement('canvas');
     canvas.height = 180;
@@ -328,6 +331,40 @@ textBecomeImg = function(text,fontsize,fontcolor){
     var dataUrl = canvas.toDataURL('image/png');//注意这里背景透明的话，需要使用png
     return dataUrl;
 }
+
+function initWhterMark(value){
+    var img_base64 = textBecomeImg(value, '14', '#000');
+    document.getElementById("wm").style.background = 'url('+ img_base64 + ')';
+}
+
+// 文集、文档收藏函数
+function collect(id,type){
+    $.ajax({
+        url:'/my_collect/',
+        type:'post',
+        data:{'type':type,'id':id},
+        success:function(r){
+            layer.msg(r.data)
+        },
+        error:function(){
+            layer.msg("操作异常")
+        }
+    });
+
+}
+// 收藏文集
+$("#collect_pro").click(function(e){
+    $(this).toggleClass("layui-icon-star-fill layui-icon-star");
+    $(this).toggleClass("collected");
+    collect(pro_id,2);
+});
+// 收藏文档
+$("#collect_doc").click(function(){
+    $(this).toggleClass("layui-icon-star-fill layui-icon-star");
+    $(this).toggleClass("collected");
+    collect(doc_id,1);
+});
+
 /*
     ########################################################
     ### 文集阅读页面JavaScript函数和变量定义 ###
@@ -342,41 +379,96 @@ textBecomeImg = function(text,fontsize,fontcolor){
     ########################################################
 */
 
-    // URL参数解析
-    function getQueryVariable(variable)
-    {
-        var query = window.location.search.substring(1);
-        var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
-                var pair = vars[i].split("=");
-                if(pair[0] == variable){return pair[1];}
-        }
-        return(false);
+// 初始化文档内容渲染
+function initDocRender(mode){
+    if(mode == 1){
+        editormd.markdownToHTML("content", {
+            emoji           : true,  //emoji表情
+            taskList        : true,  // 任务列表
+            tex             : true,  // 科学公式
+            flowChart       : true,  // 流程图
+            sequenceDiagram : true,  // 时序图
+            tocm            : true, //目录
+            toc             :true,
+            tocContainer : "#toc-container",
+            tocDropdown   : false,
+            atLink    : false,//禁用@链接
+            htmlDecode     : "link,style,base,script", //过滤部分HTML标签
+        });
+    }else if(mode == 2){
+        var md_content = $("#content textarea").val()
+        Vditor.preview(document.getElementById('content'),md_content, 
+        {
+            "cdn":"/static/vditor/",
+            markdown:{mark:true},
+            speech: {enable: true,},
+            anchor: 1,
+            after () {
+                var sub_ele = "<div class='markdown-toc editormd-markdown-toc'></div>"
+                $("#toc-container").append(sub_ele)
+                var outlineElement = $("#toc-container div")
+                Vditor.outlineRender(document.getElementById('content'), outlineElement[0])
+                $('#toc-container div ul').addClass('markdown-toc-list')
+                if (outlineElement[0].innerText.trim() !== '') {
+                    outlineElement[0].style.display = 'block';
+                    var toc_cnt = $(".markdown-toc-list ul").children().length;
+                    if(toc_cnt > 0){
+                        //console.log('显示文档目录')
+                        $(".tocMenu").show();
+                        initSidebar('.sidebar', '.doc-content', 2);
+                    }
+                }
+                // 图片放大显示
+                var img_options = {
+                    url: 'data-original',
+                    fullscreen:false,//全屏
+                    rotatable:false,//旋转
+                    scalable:false,//翻转
+                    button:false,//关闭按钮
+                    toolbar:false,
+                    title:false,
+                };
+                var img_viewer = new Viewer(document.getElementById('content'), img_options);
+            },
+        })
     }
+};
 
-    // 搜索词高亮
-    function keyLight(id, key, bgColor){
-        // console.log(id,key,decodeURI(key))
-        if(key != false){
-            key = decodeURI(key);
-            var oDiv = document.getElementById(id),
-            sText = oDiv.innerHTML,
-            bgColor = bgColor || "#c00",    
-            sKey = "<span name='addSpan' style='color: "+bgColor+";background:ff0;'>"+key+"</span>",
-            num = -1,
-            rStr = new RegExp(key, "ig"),
-            rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
-            aHtml = sText.match(rHtml); //存放html元素的数组
-            sText = sText.replace(rHtml, '{~}');  //替换html标签
-            // sText = sText.replace(rStr,sKey); //替换key
-            sText = sText.replace(rStr,function(text){
-                return "<span name='addSpan' style='color:#333;background:#ff0;'>"+text+"</span>"
-            }); //替换key
-            sText = sText.replace(/{~}/g,function(){  //恢复html标签
-                    num++;
-                    return aHtml[num];
-            });
-            oDiv.innerHTML = sText;
-        }
-    };
-    keyLight('doc-content',getQueryVariable("highlight"))
+// URL参数解析
+function getQueryVariable(variable)
+{
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+
+// 搜索词高亮
+function keyLight(id, key, bgColor){
+    // console.log(id,key,decodeURI(key))
+    if(key != false){
+        key = decodeURI(key);
+        var oDiv = document.getElementById(id),
+        sText = oDiv.innerHTML,
+        bgColor = bgColor || "#c00",    
+        sKey = "<span name='addSpan' style='color: "+bgColor+";background:ff0;'>"+key+"</span>",
+        num = -1,
+        rStr = new RegExp(key, "ig"),
+        rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
+        aHtml = sText.match(rHtml); //存放html元素的数组
+        sText = sText.replace(rHtml, '{~}');  //替换html标签
+        // sText = sText.replace(rStr,sKey); //替换key
+        sText = sText.replace(rStr,function(text){
+            return "<span name='addSpan' style='color:#333;background:#ff0;'>"+text+"</span>"
+        }); //替换key
+        sText = sText.replace(/{~}/g,function(){  //恢复html标签
+                num++;
+                return aHtml[num];
+        });
+        oDiv.innerHTML = sText;
+    }
+};
+keyLight('doc-content',getQueryVariable("highlight"))
