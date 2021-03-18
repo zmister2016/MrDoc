@@ -1,4 +1,4 @@
-<h1 align="center">MrDoc - Writing documents, gathering ideas</h1>
+<h1 align="center">MrDoc - Writing documents, Gathering ideas</h1>
 
 <p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<a href="https://zmister.com/mrdoc/">Home</a> | 
+<a href="https://mrdocapp.com">Home</a> | 
 <a href="http://mrdoc.zmister.com/">Example Site</a> |
 <a href="./README.md">中文</a> |
 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ Group</a>
@@ -19,7 +19,7 @@
 <p align="center">
 <a href="http://mrdoc.zmister.com/project-7/">Installation Manual</a> | 
 <a href="http://mrdoc.zmister.com/project-54/">User Manual</a> |
-<a href="http://mrdoc.zmister.com/project-20/">Document Example</a> |
+<a href="http://mrdoc.zmister.com/project-20/">Document Example</a>
 </p>
 
 

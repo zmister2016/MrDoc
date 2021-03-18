@@ -1,4 +1,4 @@
-<h1 align="center">MrDoc觅道文档 - 记录文档、汇聚思想</h1>
+<h1 align="center">觅道文档 - 记录文档、汇聚思想</h1>
 
 <p align="center">个人和小型团队的云笔记、云文档、知识管理私有化部署方案</p>
 
@@ -12,13 +12,13 @@
 <a href="https://zmister.com/mrdoc/">官网</a> | 
 <a href="http://mrdoc.zmister.com/">演示站点</a> |
 <a href="./README_ENG.md">English</a> |
-<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a> |
+<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a>
 </p>
 
 <p align="center">
 <a href="http://mrdoc.zmister.com/project-7/">安装手册</a> | 
 <a href="http://mrdoc.zmister.com/project-54/">使用手册</a> |
-<a href="http://mrdoc.zmister.com/project-20/">文档效果</a> |
+<a href="http://mrdoc.zmister.com/project-20/">文档效果</a>
 </p>
 
 <p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">码云</a> | 

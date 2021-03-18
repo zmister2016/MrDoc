@@ -8,7 +8,7 @@
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
+        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}?version={{mrdoc_version}}" />
         <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         {% block custom_element %}
         {% endblock %}
@@ -33,8 +33,8 @@
 		</div>
 		{% block content %}
         {% endblock %}
-		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
-		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
+		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}?version={{mrdoc_version}}"></script>
 		<script async>
 			layui.use(['jquery'], function() {
 				let $ = layui.jquery;
