@@ -3,6 +3,11 @@
 <p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
 <p align="center">
+<a href="./README.md">中文介绍</a> |
+<a href="./README_ENG.md">English Description</a> 
+</p>
+
+<p align="center">
 <img src="https://img.shields.io/badge/MrDoc-v0.6.5-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
@@ -11,7 +16,6 @@
 <p align="center">
 <a href="https://mrdocapp.com">Home</a> | 
 <a href="http://mrdoc.zmister.com/">Example Site</a> |
-<a href="./README.md">中文</a> |
 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ Group</a>
 
 </p>
