@@ -324,32 +324,11 @@
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
 
-<!-- 解析渲染Markdown -->
 <script>
-    var editor_mode = {{ doc.editor_mode }};
-    var pro_id = {{doc.top_doc}};
-    var doc_id = {{doc.id}};
-    initDocRender(mode=editor_mode);
     {% if project.is_watermark %}
         initWhterMark('{{project.watermark_value}}')
     {% endif %}
-</script>
-
-<script>
-    {% if doc.editor_mode != 2 %}
-        // 图片放大显示
-        var img_options = {
-            url: 'data-original',
-            fullscreen:false,//全屏
-            rotatable:false,//旋转
-            scalable:false,//翻转
-            button:false,//关闭按钮
-            toolbar:false,
-            title:false,
-            };
-        var img_viewer = new Viewer(document.getElementById('content'), img_options);
-    {% endif %}
-    
+        
     // 外部链接添加图标
     document.addEventListener('DOMContentLoaded', function() {
         Array.prototype.filter.call(document.links, function(link) {

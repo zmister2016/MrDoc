@@ -48,7 +48,11 @@
         </li>
 
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="{% url 'user_center' %}" target="_blank"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
+            <a href="javascript:;"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
+            <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
+                <dd><a href="{% url 'pro_list' %}" target="_blank">首页</a></dd>
+                <dd><a href="{% url 'user_center' %}" target="_blank">个人中心</a></dd>
+            </dl>  
         </li>
 
         <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="发布文档" id="pub_doc">发布</button>
