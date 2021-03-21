@@ -159,7 +159,7 @@ LOGIN_URL = 'login'
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = CONFIG.get('local','language',fallback='zh-hans')
+LANGUAGE_CODE = CONFIG.get('locale','language',fallback='zh-hans')
 
 TIME_ZONE = CONFIG.get('local','timezone', fallback='Asia/Shanghai')
 
