@@ -1,5 +1,5 @@
 # coding:utf-8
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
@@ -167,7 +167,7 @@ def upload_img(request):
             result = url_img_upload(url_img,dir_name,request.user)
     else:
         result = {"success": 0, "message": _("上传出错")}
-    return HttpResponse(json.dumps(result), content_type="application/json")
+    return JsonResponse(result)
 
 
 # 目录创建
