@@ -18,8 +18,8 @@
 	<body class="pear-container">
         {% block content %}
         {% endblock %}
-		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
-        <script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
+        <script src="{% static 'PearAdminLayui/component/pear/pear.js' %}?version={{mrdoc_version}}"></script>
         {% block custom_script %}
         {% endblock %}
 	</body>

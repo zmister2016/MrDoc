@@ -12,7 +12,7 @@
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %} - {% if site_sub_name != None %}{{site_sub_name}} {% else %}{% trans "又一个MrDoc站点" %}{% endif %}</title>
-    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -246,9 +246,9 @@
 </div>
 <!-- 结束新建文集div块 -->
 
-<script src="{% static 'iconFont/iconfont.js' %}"></script>
+<script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
 {% block custom_script %}
     <script>
         $.ajaxSetup({

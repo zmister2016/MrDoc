@@ -22,10 +22,6 @@
 
 {% block content_head %}
     <h1>{{ project.name }}</h1><hr>
-    <!-- <p style="" class="project-doc-content-head">
-        <i class="fa fa-user"></i> {% trans "创建人：" %}{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user}}{% endif %}
-    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> {% trans "创建于：" %}{{ project.create_time }}
-    </p> -->
 {% endblock %}
 
 {% block page_content %}
@@ -146,7 +142,7 @@
 {% endblock %}
 
 {% block custom_script %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 <script>
     // 生成文集简介中的文档大纲

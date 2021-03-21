@@ -23,6 +23,9 @@
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
     </button>
+    <!-- <button class="pear-btn pear-btn-normal pear-btn-sm" lay-event="batchReport">
+        <i class="layui-icon layui-icon-util"></i>{% trans "打包文集" %}
+    </button> -->
     
 </script>
 
@@ -137,6 +140,8 @@
                         'type':1,'kw':$('input[name="project-search-kw"]').val()
                     },
                 })
+            }else if(obj.event === 'batchReport'){ // 批量导出文集
+                batchReport(obj)
             }
         });
         //创建文集
@@ -296,6 +301,22 @@
                 }
             });
         };
+        //批量导出文集
+        batchReport = function(obj){
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("{% trans '未选中任何文集' %}", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let pro_id = "";
+            for (let i = 0; i < data.length; i++) {
+                pro_id += data[i].id + ",";
+            }
+            pro_id = pro_id.substr(0, pro_id.length - 1);
+        }
     })
 </script>
 {% endblock %}

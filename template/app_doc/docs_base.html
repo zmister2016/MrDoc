@@ -304,15 +304,13 @@
 </div>
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
 <script>
     var layer = layui.layer;
-</script>
-<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
-<script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
-<script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'iconFont/iconfont.js' %}"></script>
-<script>
     {% if toc_cnt > 999 %}
         // 如果文集的文档数量大于999，使用异步加载左侧文集大纲
         getProjectToc();
@@ -322,7 +320,7 @@
 {% if doc.editor_mode == 2 %}
 <script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
 

@@ -200,7 +200,7 @@
         </div>
 
         <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-        <script src="{% static 'layui/layui.all.js' %}"></script>
+        <script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
         <script>
             $.ajaxSetup({
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -215,7 +215,7 @@
             var editor_mode = {{ editor_mode }};
         </script>
         <!-- 标签输入 -->
-        <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
+        <script src="{% static '/tagsInput/tagsinput.js' %}?version={{mrdoc_version}}" type="text/javascript" charset="utf-8"></script>
 
         <!-- 加载编辑器 -->
         {% if editor_mode == 1 %}

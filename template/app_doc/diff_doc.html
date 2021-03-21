@@ -11,13 +11,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>{% trans "文档历史版本对比：" %}{{ doc.name }} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "觅道文档MrDoc" %}{% endif %}</title>
+    <title>{% trans "文档历史版本对比：" %}{{ doc.name }} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
 
-    <link rel=stylesheet href="{% static '/docdiff/codemirror.css' %}">
-    <link rel=stylesheet href="{% static '/docdiff/merge.css' %}">
+    <link rel=stylesheet href="{% static '/docdiff/codemirror.css' %}?version={{mrdoc_version}}">
+    <link rel=stylesheet href="{% static '/docdiff/merge.css' %}?version={{mrdoc_version}}">
     <style>
         .CodeMirror-merge, .CodeMirror-merge .CodeMirror{
             height: 600px;
@@ -105,12 +105,12 @@
 </div>
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
 
-<script src="{% static '/docdiff/codemirror.js' %}"></script>
-<script src="{% static '/docdiff/markdown.js' %}"></script>
-<script src="{% static '/docdiff/diff_match_patch.js' %}"></script>
-<script src="{% static '/docdiff/merge.js' %}"></script>
+<script src="{% static '/docdiff/codemirror.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/docdiff/markdown.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/docdiff/diff_match_patch.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/docdiff/merge.js' %}?version={{mrdoc_version}}"></script>
 
 <script>
     $.ajaxSetup({
