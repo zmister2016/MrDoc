@@ -125,7 +125,8 @@ function initSidebar(sidebarQuery, contentQuery, mode=1) {
                 };
             };
         });
-    }
+    };
+    $("#toc-container").prepend("<strong>文档目录</strong><hr>")
 }
 
 
