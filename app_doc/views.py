@@ -381,6 +381,7 @@ def project_index(request,pro_id):
         # ).values('id','name','top_doc').order_by('sort')
         if kw != '':
             search_result = Doc.objects.filter(top_doc=int(pro_id),pre_content__icontains=kw)
+            remove_markdown_tag(search_result)
             return render(request,'app_doc/project_doc_search.html',locals())
         return render(request, 'app_doc/project.html', locals())
     except Exception as e:

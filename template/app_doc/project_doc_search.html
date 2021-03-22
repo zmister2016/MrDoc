@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content_head %}
-    <h1>{% trans "搜索" %} {{kw}} {% trans "共有" %}{{ search_result.count }}{% trans "个结果" %} - {{project.name}}</h1><hr>
+    <h1>{% trans "搜索" %} {{kw}} {% trans "共有" %}{{ search_result.count }}{% trans "个结果" %}</h1><hr>
 {% endblock %}
 
 {% block page_content %}
@@ -24,5 +24,12 @@
             <p><a href="{% url 'doc' pro_id=project.id doc_id=result.id %}" target="_blank">{{ result.name }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
             <p>{{ result.pre_content|truncatechars:300 }}</p>
         </div>
+        <hr>
     {% endfor %}
+{% endblock %}
+
+{% block custom_script %}
+<script>
+    keyLight('doc-content','{{kw}}')
+</script>
 {% endblock %}
