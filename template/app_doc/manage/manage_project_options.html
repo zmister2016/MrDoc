@@ -26,7 +26,9 @@
         <ul class="layui-tab-title">
             <li class="layui-this">{% trans "基础信息" %}</li>
             <li>{% trans "权限配置" %}</li>
+            {% if enable_project_report %}
             <li>{% trans "下载配置" %}</li>
+            {% endif %}
             <li>{% trans "管理控制" %}</li>
         </ul>
         <div class="layui-tab-content">
@@ -130,19 +132,17 @@
                                {% if pro.id|report_status_epub == 1 %} checked {% endif %}
                                lay-skin="switch" lay-text="{% trans '允许|禁止' %}">
                                <!-- 判断后台是否开启导出，如果开启，则显示 -->
-                               {% if enable_project_report %}
-                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')"><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新EPUB文件" %}</u></a>
-                                    {% if project_files %}
-                                        {% for file in project_files %}
-                                            {% if file.file_type == 'epub' %}
-                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集EPUB文件" %}</u></a>
-                                            {% else %}
-                                                
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                    | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
-                                    {% endif %}
+                                <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')"><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新EPUB文件" %}</u></a>
+                                {% if project_files %}
+                                    {% for file in project_files %}
+                                        {% if file.file_type == 'epub' %}
+                                            | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集EPUB文件" %}</u></a>
+                                        {% else %}
+                                            
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
                                 {% endif %}
                         </div>
                     </div>
