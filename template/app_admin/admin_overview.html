@@ -10,7 +10,7 @@
 {% block content %}
 <div>
     <div class="layui-row layui-col-space10">
-        <div class="layui-col-xs6 layui-col-md9 layui-col-space5">
+        <div class="layui-col-xs6 layui-col-md8 layui-col-space5">
             <div class="layui-col-xs6 layui-col-md3">
                 <div class="layui-card top-panel">
                     <div class="layui-card-header">用户总数</div>
@@ -88,33 +88,28 @@
     
         </div>
         <!-- 觅道文档版本信息 -->
-        <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-col-xs6 layui-col-md4">
             <div class="layui-card">
                 <div class="layui-card-header">觅道文档 {{mrdoc_version}}</div>
                 <div class="layui-card-body">
                     <div style="margin-bottom: 5px;">
-                        <a href="https://gitee.com/zmister/MrDoc" class="pear-btn layui-btn-fluid" target="_blank">Gitee</a>
+                        <a href="https://gitee.com/zmister/MrDoc" class="pear-btn layui-btn-fluid" target="_blank">访问 Gitee</a>
                     </div>
                     <div style="margin-bottom: 5px;">
-                        <a href="https://github.com/zmister2016/MrDoc" class="pear-btn layui-btn-fluid" target="_blank">GitHub</a>
+                        <a href="https://github.com/zmister2016/MrDoc" class="pear-btn layui-btn-fluid" target="_blank">访问 GitHub</a>
                     </div>
                     <div style="margin-bottom: 5px;">
-                        <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba" class="pear-btn layui-btn-fluid" target="_blank">QQ群</a>
+                        <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba" class="pear-btn layui-btn-fluid" target="_blank">加入 QQ群</a>
                     </div>
-
+                    <div style="margin-bottom: 5px;">
+                        <button class="pear-btn layui-btn-fluid" onclick="checkUpdate()">检查版本更新</button>
+                    </div>
                 </div>
               </div>
         </div>
     </div>
     <div class="layui-row layui-col-space10">
         <div class="layui-col-md6">
-            <!-- <div class="layui-card">
-                <div class="layui-card-body">
-                    <div class="layui-tab custom-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-                        <div id="echarts-records" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
-                    </div>
-                </div>
-            </div> -->
             <div class="layui-card">
                 <div class="layui-card-header">动态</div>
                 <div class="layui-card-body">
@@ -187,25 +182,12 @@
                 </div>
             </div>
             <div class="layui-card">
-                <div class="layui-card-header">
-                    链接
-                </div>
+                <div class="layui-card-header">捐赠 - 请作者喝杯奶茶吧</div>
                 <div class="layui-card-body">
-                    <a target="_blank" href="http://mrdoc.zmister.com/project-7/doc-434/" class="pear-btn pear-btn-primary layui-btn-fluid" style="height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-praise"></i> 支持项目发展
-                    </a>
-                    <br/>
-                    <a target="_blank" href="https://zmister.com/mrdoc/" class="pear-btn pear-btn-success layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-website"></i> 觅 道 文 档 官 网
-                    </a>
-                    <br/>
-                    <a target="_blank" href="http://mrdoc.zmister.com" class="pear-btn layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-read"></i> 使 用 手 册
-                    </a>
-                    <br/>
-                    <a target="_blank" href="https://gitee.com/zmister/MrDoc" class="pear-btn layui-btn-fluid" style="margin-top: 8px;height: 50px;line-height: 50px;">
-                        <i class="layui-icon layui-icon-download-circle"></i> 源 码 下 载
-                    </a>
+                    <p align="center">
+                        <img src="{% static 'dashang/dashang_wx.webp' %}" height=200>
+                        <img src="{% static 'dashang/dashang_alipay.webp' %}" height=200>
+                    </p>
                 </div>
             </div>
         </div>
@@ -226,37 +208,6 @@
             $.ajaxSetup({
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
             });
-            // count.up("pro_cnt", {
-            //     time: 4000,
-            //     num: {{ pro_cnt }},
-            //     bit: 0,
-            //     regulator: 50
-            // });
-
-            // count.up("doc_cnt", {
-            //     time: 4000,
-            //     num: {{ doc_cnt }},
-            //     bit: 0,
-            //     regulator: 50
-            // });
-
-            // count.up("img_cnt", {
-            //     time: 4000,
-            //     num: {{ img_cnt }},
-            //     bit: 0,
-            //     regulator: 50
-            // });
-
-            // count.up("attachment_cnt", {
-            //     time: 4000,
-            //     bit: 0,
-            //     num: {{ attachment_cnt }},
-            //     regulator: 50
-            // });
-
-            // window.onresize = function() {
-            //     echartsRecords.resize();
-            // };
             // 保存文档草稿
             manage_overview_save_doc = function(){
                 $('button.pear-btn').attr("disabled",true);
