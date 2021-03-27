@@ -46,15 +46,10 @@ Current Platform：
 
 ## Donate
 
-<p align="center">Donate a can of Coffee to the author to speed up the development</p>
+<p align="center">Donate a can of Coffee to the author to speed up the development.</p>
 <p>    
 <a href="https://ko-fi.com/zmister">Ko-Fi</a> |
-<a href="https://paypal.me/zmister">PayPal</a> |
-</p>
-<p align="center">
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212410.png" height=300>
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212511.png" height=300>
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212543.png" height=300>
+<a href="https://paypal.me/zmister">PayPal</a>
 </p>
 
 ## Feature
