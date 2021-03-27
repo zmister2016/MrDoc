@@ -3,8 +3,8 @@
 <p align="center">个人和小型团队的云笔记、云文档、知识管理私有化部署方案</p>
 
 <p align="center">
-<a href="./README.md">中文介绍</a> |
-<a href="./README_ENG.md">English Description</a> 
+<a href="./README-zh.md">中文介绍</a> |
+<a href="./README.md">English Description</a> 
 </p>
 
 

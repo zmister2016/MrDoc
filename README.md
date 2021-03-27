@@ -3,8 +3,8 @@
 <p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
 <p align="center">
-<a href="./README.md">中文介绍</a> |
-<a href="./README_ENG.md">English Description</a> 
+<a href="./README-zh.md">中文介绍</a> |
+<a href="./README.md">English Description</a> 
 </p>
 
 <p align="center">
