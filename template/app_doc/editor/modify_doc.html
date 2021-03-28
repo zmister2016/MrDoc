@@ -371,7 +371,8 @@
         insertHistory = function(doc_id,history_id){
             layer.load(1);
             var url = "{% url 'diff_doc' 0 1 %}";
-            url = url.replace(0,doc_id).replace(1,history_id)
+            url = url.replace(0,'{0}').replace(1,'{1}');
+            url = url.replace('{0}',doc_id).replace('{1}',history_id)
             $.post(url,function(r){
                 layer.closeAll("loading");
                 if(r.status){
