@@ -11,10 +11,12 @@ from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload
 from app_api.models import UserToken
-from app_doc.models import Project,Doc,Image
+from app_doc.models import Project,Doc,DocHistory,Image
 from loguru import logger
 import time,hashlib
 import traceback,json
+import datetime
+
 # MrDoc 基于用户的Token访问API模块
 
 # 用户通过该url获取服务器时间戳，便于接口访问
