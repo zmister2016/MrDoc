@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -10,7 +11,7 @@
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ query }} - 觅道搜索 - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
+    <title>{{ query }} - {% trans "觅道搜索" %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-search-result.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -52,30 +53,27 @@
                     <span class="layui-hide-xs">{% if request.user.first_name != '' %}{{request.user.first_name}}{% else %}{{request.user.username}}{% endif %}</span>
                 </a>
                 <dl class="layui-nav-child">
-                <!-- <dd><a href="">基本资料</a></dd> -->
-                    {% if request.user.is_superuser %}
                     <dd>
                         <a href="{% url 'pro_list' %}">
                             <i class="layui-icon layui-icon-console layui-hide-md"></i>
-                            <span class="layui-hide-xs">返回首页</span>
+                            <span class="layui-hide-xs">{% trans "返回首页" %}</span>
                         </a>
                     </dd>
-                    {% endif %}
                     <dd class="layui-hide-md">
                         <a href="{% url 'create_doc' %}">
                             <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'manage_doc' %}">
+                        <a href="{% url 'user_center' %}">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
-                            <span class="layui-hide-xs">个人中心</span>
+                            <span class="layui-hide-xs">{% trans "个人中心" %}</span>
                         </a>
                     </dd>
                     <dd>
                         <a href="{% url 'logout' %}">
                             <i class="layui-icon layui-icon-release layui-hide-md"></i>
-                            <span class="layui-hide-xs">退出登录</span>
+                            <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
                     </dd>
                 </dl>
@@ -83,15 +81,20 @@
                 {% else %}
                 <li class="layui-nav-item">
                 <a href="javascript:void(0);">
-                <i class="layui-icon layui-icon-username"></i> 游客
+                <i class="layui-icon layui-icon-username"></i> {% trans "游客" %}
                 </a>
                 <dl class="layui-nav-child">
-                <!-- <dd><a href="">基本资料</a></dd> -->
+                    <dd>
+                        <a href="{% url 'pro_list' %}">
+                            <i class="layui-icon layui-icon-console layui-hide-md"></i>
+                            <span class="layui-hide-xs">{% trans "首页" %}</span>
+                        </a>
+                    </dd>
                     {% if close_register == 'on' %}
-                    <dd><a href="{% url 'login' %}">登录</a></dd>
+                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
                     {% else %}
-                    <dd><a href="{% url 'register' %}">注册</a></dd>
-                    <dd><a href="{% url 'login' %}">登录</a></dd>
+                    <dd><a href="{% url 'register' %}">{% trans "注册" %}</a></dd>
+                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
                     {% endif %}
                 </dl>
             </li>
@@ -133,20 +136,20 @@
                 <div class="layui-inline">
                     <!-- 文档搜索 -->
                     <div class="layui-input-inline" style="width: inherit;">
-                        <a href="?q={{query}}&type=doc&d_range={{d_range}}" class="search_type current_search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>文档</a>
-                        <a href="{% url 'search' %}?kw={{query}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>文集</a>
-                        <a href="{% url 'search' %}?kw={{query}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>标签</a>
+                        <a href="?q={{query}}&type=doc&d_range={{d_range}}" class="search_type current_search_type" id="search_doc"><i class="layui-icon layui-icon-search"></i>{% trans "文档" %}</a>
+                        <a href="{% url 'search' %}?kw={{query}}&type=pro&d_range={{d_range}}" class="search_type" id="search_project"><i class="layui-icon layui-icon-list"></i>{% trans "文集" %}</a>
+                        <a href="{% url 'search' %}?kw={{query}}&type=tag&d_range={{d_range}}" class="search_type" id="search_tag"><i class="layui-icon layui-icon-note"></i>{% trans "标签" %}</a>
                     </div>
                 </div>
                 <!-- 筛选结束 -->
                 <div class="layui-input-inline" style="float: right;">
                     <select name="d_range" lay-verify="sel_recent" id="sel_recent">
-                        <option value="">时间筛选</option>
-                        <option value="all">全部时间</option>
-                        <option value="recent1">近1天</option>
-                        <option value="recent7">近7天</option>
-                        <option value="recent30">近30天</option>
-                        <option value="recent365">近1年</option>
+                        <option value="">{% trans "时间筛选" %}</option>
+                        <option value="all">{% trans "全部时间" %}</option>
+                        <option value="recent1">{% trans "近1天" %}</option>
+                        <option value="recent7">{% trans "近7天" %}</option>
+                        <option value="recent30">{% trans "近30天" %}</option>
+                        <option value="recent365">{% trans "近1年" %}</option>
                     </select>
                 </div>
             </div>
@@ -158,19 +161,19 @@
 <!-- 搜索结果提示 -->
 {% if query != '' %}
     <div style="padding: 0 15px;margin-top: 10px;margin-bottom: 10px;color: #999;">
-        觅道文档在
+        {% trans "觅道文档在" %}
             {% if date_range == 'recent1' %}
-            近1天内
+            {% trans "近1天内" %}
             {% elif date_range == 'recent7' %}
-            近7天内
+            {% trans "近7天内" %}
             {% elif date_range == 'recent30' %}
-            近30天内
+            {% trans "近30天内" %}
             {% elif date_range == 'recent365' %}
-            近一年内
+            {% trans "近一年内" %}
             {% else %}
-            全部时间内
+            {% trans "全部时间内" %}
             {% endif %}
-        搜索到 {{ page.paginator.count }} 条结果
+        {% trans "搜索到" %} {{ page.paginator.count }} {% trans "条结果" %}
     </div>
 {% endif %}
 
@@ -184,7 +187,7 @@
                 <div style="margin-bottom: 18px;">
                     <!-- 标题 -->
                     <h3>
-                        <a href="{{ result.object.get_absolute_url }}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
+                        <a href="{{ result.object.get_absolute_url }}?highlight={{query}}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
                     </h3>
                     <!-- 简介 -->
                     {% highlight result.object.pre_content with query %}
@@ -193,7 +196,7 @@
                         <a href="{% url 'pro_index' pro_id=result.object.top_doc %}" target="_blank">{{ result.object.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.object.modify_time}}</span></p>
                 </div>
             {% empty %}
-                <p>没有搜索结果。</p>
+                <p>{% trans "没有搜索结果。" %}</p>
             {% endfor %}
         {% else %}
             {# Show some example queries to run, maybe query syntax, something else? #}
@@ -207,9 +210,9 @@
     <div class="layui-box layui-laypage layui-laypage-default">            
         <!-- 上一页 -->
         {% if page.has_previous %}
-            <a href="?page={{ page.previous_page_number }}&q={{query}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
+            <a href="?page={{ page.previous_page_number }}&q={{query}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "上一页" %}</a>
          {% else %}
-             <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
+             <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "上一页" %}</a>
          {% endif %}
          <!-- 当前页 -->
          <span class="layui-laypage-curr">
@@ -218,9 +221,9 @@
          </span>
          <!-- 下一页 -->
          {% if page.has_next %}
-             <a href="?page={{ page.next_page_number }}&q={{query}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
+             <a href="?page={{ page.next_page_number }}&q={{query}}&d_range={{date_range}}" class="layui-btn layui-btn-xs layui-btn-normal">{% trans "下一页" %}</a>
          {% else %}
-             <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
+             <a class="layui-btn layui-btn-xs layui-btn-disabled">{% trans "下一页" %}</a>
          {% endif %}
     </div>
 </div>
@@ -266,29 +269,6 @@
             $("#sel-sort").val(url.search.sort);
             layui.form.render('select');
         });
-
-        // 搜索词高亮
-        function keyLight(id, key, bgColor){
-            var oDiv = document.getElementById(id),
-            sText = oDiv.innerHTML,
-            bgColor = bgColor || "#c00",    
-            sKey = "<span name='addSpan' style='color: "+bgColor+";'>"+key+"</span>",
-            num = -1,
-            rStr = new RegExp(key, "ig"),
-            rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
-            aHtml = sText.match(rHtml); //存放html元素的数组
-            sText = sText.replace(rHtml, '{~}');  //替换html标签
-            // sText = sText.replace(rStr,sKey); //替换key
-            sText = sText.replace(rStr,function(text){
-                return "<span name='addSpan' style='color: "+bgColor+";'>"+text+"</span>"
-            }); //替换key
-            sText = sText.replace(/{~}/g,function(){  //恢复html标签
-                    num++;
-                    return aHtml[num];
-            });
-            oDiv.innerHTML = sText;
-        };
-        // keyLight('search_result',"{{query}}")
 
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){

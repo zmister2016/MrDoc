@@ -1,0 +1,29 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name=renderer  content=webkit>
+    <title>{% trans "页面未找到" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</title>
+    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+</head>
+<body class="layui-container">
+<!-- 页头 -->
+{% include 'app_doc/head_base.html' %}
+<!-- 页头结束 -->
+<div class="layui-main">
+    <div style="text-align: center;margin-top: 40px;">
+        <br/><br/><br/><h2>
+            <strong>{{ errormsg }}</strong>
+        </h2><br/><br/><br/><br/>
+        <p><a href="{% url 'pro_list' %}" >{% trans "返回首页" %}</a></p>
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+</body>
+</html>

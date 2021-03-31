@@ -2,12 +2,18 @@
 .pear-admin .layui-body,
 .pear-admin .layui-logo,
 .pear-admin .layui-side,
-.pear-admin .layui-header .layui-layout-left{
+.pear-admin .layui-header .layui-layout-left {
 	transition: all .3s;
 }
 
 .pear-admin .layui-logo .title {
 	font-size: 20px;
+}
+
+.pear-admin .layui-layout-right .layui-nav-child{
+	border: 1px solid whitesmoke;
+	border-radius: 6px;
+	width: 150px;
 }
 
 .pear-admin .layui-header {
@@ -67,7 +73,7 @@
 }
 
 .pear-admin .layui-side-scroll {
-	height: calc(100% - 60px)!important;
+	height: calc(100% - 60px) !important;
 	background-color: #28333E;
 	width: 247px;
 
@@ -92,28 +98,36 @@
 .pear-mini .layui-logo .title {
 	display: none;
 }
+
 .pear-mini .layui-logo .logo {
 	display: inline-block;
 }
+
 .pear-mini .layui-side {
 	width: 60px;
 }
+
 .pear-mini .layui-header {
 	left: 60px;
 	width: calc(100% - 60px);
 }
+
 .pear-mini .layui-body {
 	left: 60px;
 }
+
 .pear-mini .layui-logo {
 	width: 60px;
 }
+
 .pear-mini .layui-nav-tree .layui-nav-item span {
 	display: none;
 }
+
 .pear-mini .bottom-nav li {
 	width: 100% !important;
 }
+
 .pear-mini .layui-side-scroll {
 	height: calc(100% - 60px);
 }
@@ -123,38 +137,98 @@
 	height: 2px !important;
 	background-color: #5FB878;
 }
+
 .pear-admin .layui-header .layui-nav .layui-this:after {
 	display: none;
 }
+
+.pear-admin .layui-header .layui-nav-more{
+	display: none;
+}
+
+.pear-collasped-pe {
+	display: none;
+	width: 50px;
+	position: absolute;
+	z-index: 400000;
+	bottom: 30px;
+	right: 30px;
+	background-color: #5FB878 !important;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	border-radius: 50px;
+	box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
+}
+
+.pear-collasped-pe a {
+	color: white !important;
+}
+
+@media screen and (min-width: 768px){
+	.layui-hide-sm {
+		display: inline-block!important;
+	}
+}
+
+@media screen and (min-width: 769px){
+	.layui-hide-sm {
+		display: none!important;
+	}
+}
+
 /** 新增兼容 */
 @media screen and (max-width:768px) {
+	.collaspe {
+		display: none !important;
+	}
+	.pear-collasped-pe {
+		display: inline-block !important;
+	}
+	
+	.layui-layout-control{
+		left: 45px!important;
+	}
+	.layui-layout-left{
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+	
 	.pear-mini .bottom-nav {
 		display: none;
 	}
+
 	.pear-mini .layui-side-scroll {
 		height: calc(100% - 62px);
 	}
+
 	/** 隐 藏 布 局 样 式 */
 	.pear-mini .layui-side {
 		width: 0px;
 	}
+
 	.pear-mini .layui-header {
 		left: 0px;
 		width: 100%;
 	}
+
 	.pear-mini .layui-body {
 		left: 0px;
 	}
+
 	.pear-mini .layui-logo {
 		width: 0px;
 	}
+
 	.pear-admin .layui-body {
 		left: 0px;
 	}
+
 	.pear-admin .layui-header {
 		left: 0px;
 		width: 100%;
 	}
+
 	.pear-admin .pear-cover {
 		width: 100%;
 		height: 100%;
@@ -165,10 +239,12 @@
 		opacity: 0;
 		margin-top: -60px;
 	}
+
 	.pear-mini .pear-cover {
 		display: none;
 	}
 }
+
 @-webkit-keyframes am-horizontal-roll_show {
 	0% {
 		opacity: 1;
@@ -182,6 +258,7 @@
 		transform: translateX(0)
 	}
 }
+
 @keyframes am-horizontal-roll_show {
 	0% {
 		opacity: 1;
@@ -197,32 +274,43 @@
 		transform: translateX(0)
 	}
 }
+
 .layer-anim-right {
 	-webkit-animation: am-horizontal-roll_show .6s ease-out;
 	animation: am-horizontal-roll_show .6s ease-out;
 
 }
+
 /** 亮色侧边风格 */
 .light-theme .layui-logo {
 	background-color: white !important;
 	color: black !important;
 }
+
 .light-theme .layui-side-scroll {
 	background-color: white !important;
 	color: black !important;
 }
-.light-theme .layui-side{
-	box-shadow: 2px 0 8px 0 rgba(29,35,41,.05)!important;
+
+.light-theme .layui-side {
+	box-shadow: 2px 0 8px 0 rgba(29, 35, 41, .05) !important;
 }
+
 /** 主 题 选 择 界 面 样 式 */
-.pearone-color .color-title {padding: 15px 0 0px 20px;margin-bottom: 4px;}
+.pearone-color .color-title {
+	padding: 15px 0 0px 20px;
+	margin-bottom: 4px;
+}
+
 .pearone-color .color-content {
 	padding: 15px 10px 0 20px;
 }
+
 .pearone-color .color-content ul {
 	list-style: none;
 	padding: 0px;
 }
+
 .pearone-color .color-content ul li {
 	position: relative;
 	display: inline-block;
@@ -236,6 +324,7 @@
 	font-size: 12px;
 	color: #666;
 }
+
 .pearone-color .color-content li.layui-this:after,
 .pearone-color .color-content li:hover:after {
 	width: 100%;
@@ -247,6 +336,7 @@
 	opacity: 1;
 	border-radius: 4px;
 }
+
 .pearone-color .color-content li:after {
 	content: '';
 	position: absolute;
@@ -255,22 +345,26 @@
 	left: 50%;
 	width: 1px;
 	height: 0;
-	border: 1px solid #F2F2F2;
+	border: 2px solid #F2F2F2;
 	transition: all .3s;
 	-webkit-transition: all .3s;
 	opacity: 0;
 }
+
 .select-color {
 	margin-bottom: 30px;
 }
+
 .select-color .select-color-title {
 	padding: 15px 0 0px 20px;
 	margin-bottom: 4px;
 }
+
 .select-color .select-color-content {
 	padding: 20px 0 0px 0px;
 	margin-bottom: 4px;
 }
+
 .select-color .select-color-content .select-color-item {
 	background-color: gray;
 	width: 30px;
@@ -286,14 +380,56 @@
 }
 
 /** 友情链接 */
-.more-setting {margin-top: 45px;}
-.more-setting form {margin-top: 30px;}
-.more-setting-title {padding: 15px 0 0px 20px;margin-bottom: 4px;}
-.more-setting .layui-form-label {width: 60px;}
-.more-menu-list {width: 100%;margin-top: 80px;}
-.more-menu-item:first-child {border-top: 1px solid #e8e8e8;}
-.more-menu-item .layui-icon {font-size: 18px;padding-right: 10px;}
-.more-menu-item {color: #595959;height: 50px;line-height: 50px;font-size: 16px;padding: 0 25px;border-bottom: 1px solid #e8e8e8;font-style: normal;display: block;}
-.more-menu-item:hover {background-color: whitesmoke;}
-.more-menu-item:after {color: #8c8c8c;right: 16px;content: "\e602";position: absolute;font-family: layui-icon !important;}
+.more-setting {
+	margin-top: 45px;
+}
 
+.more-setting form {
+	margin-top: 30px;
+}
+
+.more-setting-title {
+	padding: 15px 0 0px 20px;
+	margin-bottom: 4px;
+}
+
+.more-setting .layui-form-label {
+	width: 60px;
+}
+
+.more-menu-list {
+	width: 100%;
+	margin-top: 80px;
+}
+
+.more-menu-item:first-child {
+	border-top: 1px solid #e8e8e8;
+}
+
+.more-menu-item .layui-icon {
+	font-size: 18px;
+	padding-right: 10px;
+}
+
+.more-menu-item {
+	color: #595959;
+	height: 50px;
+	line-height: 50px;
+	font-size: 16px;
+	padding: 0 25px;
+	border-bottom: 1px solid #e8e8e8;
+	font-style: normal;
+	display: block;
+}
+
+.more-menu-item:hover {
+	background-color: whitesmoke;
+}
+
+.more-menu-item:after {
+	color: #8c8c8c;
+	right: 16px;
+	content: "\e602";
+	position: absolute;
+	font-family: layui-icon !important;
+}

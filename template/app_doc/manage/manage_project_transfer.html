@@ -1,0 +1,79 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "文集设置" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-row" style="padding-left:15px;">
+            <span class="layui-breadcrumb" lay-separator=">">
+            <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
+            <a href="{% url 'modify_project' %}?pro_id={{pro.id}}">{% trans "文集设置" %}</a>
+            <a><cite>{% trans "转让文集" %}</cite></a>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <div class="layui-row">
+                <span style="font-size:18px;">{% trans "转让文集：" %}{{pro.name}}
+                </span>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-form">
+                <select name="user-select" id="user-select" lay-verify="" lay-search>
+                    <option value="">{% trans "选择用户，可搜索" %}</option>
+                    {% for user in user_list %}
+                    <option value="{{user.username}}">{{user.first_name}}({{user.username}})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-row" style="margin-top: 5px;">
+            <button class="layui-btn layui-btn-normal" id="transfer-project"><i class="layui-icon layui-icon-transfer"></i> {% trans "转让文集的管理权限及文档" %}</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block custom_script %}
+<script>
+    layui.use(['table','jquery','form','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        // 转让文集
+        transferProject = function(){
+            layer.load(1);
+            data = {
+                'username':$("#user-select").val(),
+            }
+            $.post("{% url 'manage_pro_transfer' pro.id %}",data,function(r){
+                layer.closeAll('loading'); //关闭loading
+                if(r.status){
+                    //转让成功
+                    layer.msg('{% trans "转让成功，即将返回文集列表……" %}',function(){
+                        window.location.href = "{% url 'manage_project' %}"
+                    })
+                    //layer.close(index)
+                }else{
+                    //转让失败，提示
+                    console.log(r)
+                    layer.msg(r.data)
+                }
+            })
+        }
+        $("#transfer-project").click(function(){
+            transferProject();
+        })
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+[{
+		"id": 1,
+		"title": "工作空间",
+		"type": 0,
+		"icon": "layui-icon layui-icon-console",
+		"href": "",
+		"children": [{
+			"id": 10,
+			"title": "控制后台",
+			"icon": "layui-icon layui-icon-console",
+			"type": 1,
+			"openType": "_iframe",
+			"href": "view/console/console1.html"
+		}]
+}]
+		

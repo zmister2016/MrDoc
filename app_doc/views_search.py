@@ -5,12 +5,25 @@
 # 博客地址：zmister.com
 
 
-# from haystack.generic_views import SearchView
+from haystack.generic_views import SearchView as BaseSearchView
 from django.db.models import Q
 from haystack.views import SearchView
 from haystack.query import SearchQuerySet
 from app_doc.models import *
 import datetime
+
+
+class DocSearchView2(BaseSearchView):
+
+    def get_queryset(self):
+        queryset = super(DocSearchView, self).get_queryset()
+        # further filter queryset based on some set of criteria
+        return queryset.filter(pub_date__gte=date(2015, 1, 1))
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(DocSearchView, self).get_context_data(*args, **kwargs)
+        # do something
+        return context
 
 # 文档搜索 - 基于Haystack全文搜索
 class DocSearchView(SearchView):
@@ -67,13 +80,20 @@ class DocSearchView(SearchView):
         else:
             view_list = [i.id for i in Project.objects.filter(role=0)] # 公开文集
 
-        sqs = SearchQuerySet().filter(
-            top_doc__in=view_list
-        ).filter(
-            modify_time__gte=start_date,
-            modify_time__lte=end_date).order_by('-modify_time')
-        self.form = self.build_form(form_kwargs={'searchqueryset':sqs})
-        self.query = self.get_query()
+        if len(view_list) > 0:
+            sqs = SearchQuerySet().filter(
+                top_doc__in=view_list
+            ).filter(
+                modify_time__gte=start_date,
+                modify_time__lte=end_date)
+        else:
+            sqs = SearchQuerySet().filter(
+                top_doc__in=None
+            ).filter(
+                modify_time__gte=start_date,
+                modify_time__lte=end_date)
+        self.form = self.build_form(form_kwargs={'searchqueryset': sqs})
+        self.query = self.get_query().replace("\n",'').replace("\r",'')
         self.results = self.get_results()
         return self.create_response()
 

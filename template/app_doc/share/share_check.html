@@ -1,15 +1,17 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
     <meta charset="UTF-8">
+    <meta name=renderer  content=webkit>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>请输入分享码 - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
+	<title>{% trans "请输入分享码" %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -54,18 +56,18 @@
             <form class="layui-form" action=""  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h4>你正在访问私密文档：</h4><br>
+                    <h4>{% trans "你正在访问私密文档：" %}</h4><br>
                     <strong><u>{{ doc_share.doc.name }}</u></strong>
                     <br><span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
-                      <input type="text" name="share_value" required  lay-verify="required" placeholder="请输入文档分享码" autocomplete="off" class="layui-input" >
+                      <input type="text" name="share_value" required  lay-verify="required" placeholder="{% trans '请输入文档分享码' %}" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
-                        <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">确认</button>
+                        <button class="layui-btn layui-btn-fluid layui-btn-radius  layui-btn-normal" lay-submit lay-filter="formDemo" type="submit">{% trans "确认" %}</button>
                     </div>
                 </div>
             </form>

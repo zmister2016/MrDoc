@@ -1,0 +1,139 @@
+{% load i18n %}
+<!-- 插入文档模板div块 -->
+<div class="doctemp-list " id="doctemp-list" style="display: none;padding:5px;">
+    <div style="margin: 10px 0 0 10px;">
+        <a class="layui-btn layui-btn-primary layui-btn-sm" href="{% url 'create_doctemp' %}" target="_blank">新建模板</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_doctemp' %}" target="_blank">管理模板</a>
+    </div>
+    <table class="layui-table" style="margin: 10px;width:90%;">
+      <colgroup>
+        <col width="">
+        <col width="">
+        <col>
+      </colgroup>
+      <thead>
+        <tr>
+          <th>模板名称</th>
+          <th class="layui-hide-xs">创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for temp in doctemp_list %}
+        <tr>
+          <td>{{ temp.name }}</td>
+          <td class="layui-hide-xs">{{ temp.create_time }}</td>
+          <td>
+              <a class="layui-btn layui-btn-primary layui-btn-sm" href="javascript:void(0);" onclick="insertTemp('{{temp.id}}');">选择模板</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<!-- 结束插入文档模板div块 -->
+
+<!-- 新建文集div块 -->
+<div style="padding: 20px;display:none;" id="create-project-div">
+    <input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required">
+    <textarea name="desc" id="desc" placeholder="输入文集简介"  maxlength="100" class="layui-textarea"></textarea>
+    <div class="layui-form-item" style="margin-top:10px;">
+        <label class="layui-form-label" style="text-align:left;padding:9px 0px;">文集权限</label>
+        <div class="layui-input-block">
+            <select name="project-role" lay-verify="" class="layui-select" id="project-role">
+                <!--<option value="">选择文集权限</option>-->
+                <option value="0">公开</option>
+                <option value="1">私密</option>
+            </select>
+        </div>
+    </div>
+    <div style="color:red;font-size:12px;">*在可个人中心对文集权限进行进一步控制</div>
+</div>
+<!-- 结束新建文集div块 -->
+
+<!-- 文档历史div块 -->
+<div class="history-list" id="history-list" style="display: none;width: 500px;">
+    <table class="layui-table" style="margin: 10px;" lay-size='sm'>
+      <thead>
+        <tr>
+          <th>创建时间</th>
+          <th>用户</th>
+          <th>对比</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for history in history_list %}
+        <tr>
+          <td>{{ history.create_time }}</td>
+          <td>{{ history.create_user }}</td>
+          <td>
+              <a href="{% url 'diff_doc' history.doc.id history.id %}" class="layui-btn layui-btn-primary layui-btn-sm" target="_blank">查看版本差异</a>
+          </td>
+          <td>
+              <a href="javascript:void(0);" class="layui-btn layui-btn-normal layui-btn-sm" onclick="insertHistory('{{history.doc.id}}','{{history.id}}');">恢复此版本</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+<!-- 移动文档div块 -->
+<div class="layui-form" id="move-project" style="display: none;width: 400px;height: 500px;" lay-filter='move-projects'>
+    <div class="layui-col-md12" style="margin: 10px;">
+        <div class="layui-form-item">
+            <!-- <label class="layui-form-label">操作类型</label> -->
+            <div class="layui-input-block" style="margin-left: 0px;">
+              <input type="radio" name="move-type" value="0" title="复制" checked>
+              <input type="radio" name="move-type" value="1" title="移动">
+              <input type="radio" name="move-type" value="2" title="移动（含下级文档）">
+            </div>
+          </div>
+          
+        <input id="move-parent-id" hidden value="0" />
+        <div class="layui-input-inblock">
+          <select name="move_pro_id"  lay-filter="moveProject" id="moveProject">
+            <option value="">请选择一个文集（必选）</option>
+              <!-- 自己的文集 -->
+              <optgroup label="自有文集" id="self-project">
+              {% for p in project_list %}
+                  {% if p.role == 1 %}
+                  <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
+                  {% elif p.role == 2 %}
+                  <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
+                  {% elif p.role == 3 %}
+                  <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
+                  {% else %}
+                  <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
+                  {% endif %}
+              {% endfor %}
+              </optgroup>
+              <!-- 协作的文集 -->
+              {% if colla_project_list.count > 0 %}
+              <optgroup label="协作文集">
+              {% for p in colla_project_list %}
+                    <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
+              {% endfor %}
+              </optgroup>
+              {% endif %}
+          </select>
+        </div>
+    </div>
+    <div  class="layui-col-md12" style="max-height: 380px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
+        <div id="move-doc-tree"></div>
+    </div>
+    <div class="layui-col-md12" style="margin: 10px;">
+        <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="submitMoveDoc()">确认操作</button>
+    </div>
+    <div class="layui-col-md12" style="margin: 10px;">
+        <span style="font-size: 12px;color:mediumvioletred;">警告：MrDoc仅支持3级目录显示，若移动的下级文档层级在目标文集中超过3层将不会显示在文集目录中</span>
+    </div>
+</div>
+
+<!-- 文档标签DIV -->
+<div id="doc-tag-div" style="display: none;">
+  <div class="layui-row layui-col-space5" style="padding: 10px;background-color: #fff;">
+    <input name="tagsinput" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="{{doc_tags}}" placeholder="输入标签名">
+  </div>
+</div>

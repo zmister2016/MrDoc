@@ -1,5 +1,5 @@
 from django.urls import path,re_path,include
-from app_doc import views,views_user,views_search,util_upload_img,import_views
+from app_doc import views,views_user,views_search,util_upload_img,views_import
 
 urlpatterns = [
     path('',views.project_list,name='pro_list'),# 文档首页
@@ -19,8 +19,8 @@ urlpatterns = [
     path('check_viewcode/',views.check_viewcode,name='check_viewcode'),# 文集访问码验证
     path('manage_project_colla/<int:pro_id>/',views.manage_project_collaborator,name="manage_pro_colla"), # 管理文集协作
     path('manage_pro_colla_self/',views.manage_pro_colla_self,name="manage_pro_colla_self"), # 我协作的文集
-    path('manage_project_import/',import_views.import_project,name="import_project"), # 导入文集
-    path('manage_project_doc_sort/',import_views.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
+    path('manage_project_import/',views_import.import_project,name="import_project"), # 导入文集
+    path('manage_project_doc_sort/',views_import.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
     path('manage_project_transfer/<int:pro_id>/',views.manage_project_transfer,name='manage_pro_transfer'), # 文集转让
     path('manage_pro_doc_sort/<int:pro_id>/',views.manage_project_doc_sort,name='manage_pro_doc_sort'), # 文集排序
     #################文档相关
@@ -35,6 +35,7 @@ urlpatterns = [
     path('doc_recycle/', views.doc_recycle,name='doc_recycle'), # 文档回收站
     path('fast_pub_doc/',views.fast_publish_doc,name='fast_pub_doc'), # 一键发布文档
     path('download_doc_md/<int:doc_id>/',views.download_doc_md,name='download_doc_md'), # 下载文档Markdown文件
+    path('import/doc_docx/',views_import.import_doc_docx,name="import_doc_docx"), # 导入docx文档
     #################文档分享相关
     path('share_doc/', views.share_doc, name='share_doc'),  # 私密文档分享
     path('share_doc_check/', views.share_doc_check, name='share_doc_check'),  # 私密文档验证
@@ -57,9 +58,13 @@ urlpatterns = [
     path('user_center/',views_user.user_center,name="user_center"), # 个人中心
     path('user/center_menu/',views_user.user_center_menu,name="user_center_menu"), # 个人中心菜单数据
     path('upload_doc_img/',util_upload_img.upload_img,name="upload_doc_img"), # 上传图片
+    path('upload_ice_img/',util_upload_img.upload_ice_img,name="upload_ice_img"), # iceeditor上传图片
     path('search/',views.search,name="search"), # 搜索功能
     # path('doc_search/', include('haystack.urls')),  # 全文检索框架
     path('doc_search/', views_search.DocSearchView(),name="doc_search"),  # 全文检索框架
     path('manage_overview/',views.manage_overview,name="manage_overview"), # 个人中心概览
     path('manage_self/',views.manage_self,name="manage_self"), # 个人设置
+    path('my_collect/',views.my_collect,name="my_collect"), # 我的收藏
+    path('manage_collect/',views.manage_collect,name="manage_collect"), # 收藏管理
+    path('get_version/',views.get_version,name="get_version"), # 获取当前版本
 ]

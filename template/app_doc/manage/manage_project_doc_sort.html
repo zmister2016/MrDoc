@@ -1,0 +1,225 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "文集文档排序" %}{% endblock %}
+{% block custom_element %}
+<link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+    <div class="layui-row" style="padding-left:15px;">
+        <span class="layui-breadcrumb" lay-separator=">">
+          <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
+          <a><cite>{% trans "文集文档排序" %}</cite></a>
+        </span>
+    </div>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <div class="layui-row">
+                <span style="font-size:18px;">{% trans "文集：" %}{{pro.name}}</span>
+                <button class="pear-btn pear-btn-primary pear-btn-sm" style="float: right;" id="save-sort-btn">{% trans "保存排序" %}</button>
+            </div>
+        </div>
+
+        <div class="layui-row">
+            <div id="nested" class="row">
+                <ul id="nestedDemo" class="list-group col nested-sortable">
+                    {% for docs in doc_list %}
+                    <li data-sortable-id="{{docs.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{docs.title}}
+                        {% if docs.children %}
+                        <i class="layui-icon layui-icon-down switch-toc"></i>
+                        <ul class="list-group nested-sortable">
+                            {% for node in docs.children %}
+                            <li data-sortable-id="{{node.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{node.title}}
+                                {% if node.children %}
+                                <i class="layui-icon layui-icon-down switch-toc"></i>
+                                <ul class="list-group nested-sortable">
+                                    {% for doc in node.children %}
+                                    <li data-sortable-id="{{doc.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{doc.title}}
+                                        <ul class="list-group nested-sortable"></ul>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <ul class="list-group nested-sortable"></ul>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <ul class="list-group nested-sortable"></ul>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block custom_script %}
+<!-- 文集文档排序样式 -->
+<style>
+    .row {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        }
+
+    .list-group {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+    .col {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 100%;
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .list-group-item:first-child {
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+    }
+    .list-group-item {
+        position: relative;
+        display: block;
+        padding: .75rem 1.25rem;
+        margin-bottom: -1px;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,.125);
+    }
+    .list-group-item:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    }
+    
+    .list-group-item:last-child {
+      margin-bottom: 0;
+      border-bottom-right-radius: 0.25rem;
+      border-bottom-left-radius: 0.25rem;
+    }
+    
+    .list-group-item:hover, .list-group-item:focus {
+      z-index: 1;
+      text-decoration: none;
+    }
+    .list-group-item.disabled, .list-group-item:disabled {
+      color: #6c757d;
+      pointer-events: none;
+      background-color: #fff;
+    }
+    
+    .list-group-item.active {
+      z-index: 2;
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .toc-close {
+        display: none;
+    }
+</style>
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+<!-- 文档拖拽排序 -->
+<script src="{% static 'sortablejs/Sortable.js' %}"></script>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    // 文档动态排序
+    function docSort(){
+        // Nested demo
+        var nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
+        // Loop through each nested sortable element
+        for (var i = 0; i < nestedSortables.length; i++) {
+            new Sortable(nestedSortables[i], {
+                group: {
+                    name:'docsort',
+                    pull: function(event) {
+                        var deep = event.el.parentNode.parentNode.parentNode.parentNode.className
+                        if(deep == 'list-group nested-sortable') return false;
+                        return true;
+                    },
+                },
+                animation: 150,//定义排序动画的时间
+                fallbackOnBody: true, // 将cloned DOM 元素挂到body元素上
+                invertSwap:true,
+                swapThreshold: 0.65,
+                onAdd:function(evt){
+                    console.log(evt)
+                    // console.log(evt.to)
+                    let current_ele = $(evt.item)
+                    console.log(current_ele[0])
+                }
+            });
+        }
+    };
+    // 获取排序值
+    const nestedQuery = '.nested-sortable';
+    const identifier = 'sortableId';
+    const root = document.getElementById('nestedDemo');
+    function serialize(sortable) {
+      var serialized = [];
+      var children = [].slice.call(sortable.children);
+      for (var i in children) {
+        var nested = children[i].querySelector(nestedQuery);
+        serialized.push({
+          id: children[i].dataset[identifier],
+          children: nested ? serialize(nested) : []
+        });
+      }
+      return serialized
+    }
+    function getLevel(){
+        console.log(serialize(root))
+    };
+    // 展开收起左边目录
+    $(function(){
+        $("body").on('click','.switch-toc',SwitchToc)
+    });
+    function SwitchToc(i){
+        console.log("点击了")
+        var $me = $(this);
+        $(this).next("ul").toggleClass("toc-close"); //切换展开收起样式
+        $(this).toggleClass("layui-icon-left layui-icon-down");//切换图标
+    };
+    // 保存排序
+    $("#save-sort-btn").on('click',function(){
+        layer.load(1)
+        var sort_data = {
+            'pid':'{{pro.id}}',
+            'sort_data':JSON.stringify(serialize(root)),
+        }
+        // console.log(sort_data)
+        $.post('{% url "manage_pro_doc_sort" pro.id %}',sort_data,function(r){
+            if(r.status){
+                layer.closeAll('loading')
+                layer.msg("完成文集排序",function(){
+                    layer.close()
+                })
+                
+            }else{
+                layer.closeAll('loading')
+                layer.msg("修改导入文集出错")
+            }
+        });
+    })
+    docSort();
+</script>
+{% endblock %}

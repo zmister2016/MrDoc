@@ -24,7 +24,6 @@
 .layui-nav-tree .layui-this,
 .layui-nav-tree .layui-this>a,
 .layui-nav-tree .layui-this>a:hover {
-
 	background-color: #5FB878;
 }
 
@@ -84,16 +83,28 @@
 	font-size: 14px;
 }
 
+.pear-nav-control.pc li{
+	display: inline-block;
+}
+
 .pear-nav-control.pc .layui-nav-bar {
 	top: 0px !important;
 }
 
 .pear-nav-control.pc .layui-this * {
-	color: #5FB878!important;
-	font-weight: 600;
+	background-color: whitesmoke;
+}
+.pear-nav-control.pc *{
+	color: darkslategray!important;
 }
 .pear-nav-control.pc .layui-nav-bar{
 	display: none!important;
+}
+
+.pear-nav-control .layui-nav-child{
+	border: 1px solid whitesmoke;
+	border-radius: 6px;
+	width: 150px;
 }
 
 /** 隐 藏 后 子 级 悬 浮 菜 单 */

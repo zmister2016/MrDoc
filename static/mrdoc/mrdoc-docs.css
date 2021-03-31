@@ -1,92 +1,172 @@
-        /*一级无序li显示实心圆点*/
-        .doc-content ul li{
-            list-style:disc;
-        }
-        /*二级无序li显示空心圆点*/
-        .doc-content ul > li > ul > li{
-            list-style-type: circle;
-        }
-        /*有序li显示数字*/
-        .doc-content ol li{
-            list-style-type: decimal;
-        }
-        .doc-content ol ol ul,.doc-content ol ul ul,.doc-content ul ol ul,.doc-content ul ul ul {
-            list-style-type: square;
-        }
-        /* 三级及以下无序li显示小方块 */
-        .doc-content ul ul ul li{
-            list-style-type: square;
-        }
-        /* 下拉目录隐藏li样式 */
-        .editormd-toc-menu ul.markdown-toc-list li{
-            /*list-style:none;*/
-        }
-        /* 弹出框文档目录样式 */
-        ul.markdown-toc-list{
-            list-style-position:inside;
-        }
-        ul.markdown-toc-list li{
-            list-style: none!important;
-            line-height: 24px;
-        }
-        ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
-            padding-left:15px;
-        }
-        ul.markdown-toc-list a{
-            /* text-decoration: underline!important; */
-        }
-        /* 块级代码和行内代码去除边框 */
-        .markdown-body p code{
-            border:none;
-        }
-        /* HTML预览样式 */
-        .markdown-body h1{ 
-            font-size: 1.7em;
-        }
-        .markdown-body h2{
-            font-size: 1.5em;
-        }
-        .markdown-body h3{
-            font-size: 1.25em;
-        }
-        .markdown-body h4{
-            font-size: 1em;
-        }
-        .markdown-body h5{
-            font-size: .875em;
-        }
-        .markdown-body h6{
-            font-size: .85em;
-        }
-        {% if img_scale %}
-        .markdown-body p img{
-            max-width: 350px;
-        }
-        {% endif %}
-        #url_qrcode img{
-            margin: auto;
-        }
-        /* 文档代码块样式 */
-        ol.linenums li{ 
-            width: max-content;
-        }
-        pre.linenums{
-            max-height: 500px;
-        }
-        li.L1, li.L3, li.L5, li.L7, li.L9 {
-            background: none !important;
-        }
+/*一级无序li显示实心圆点*/
+.doc-content ul li{
+    list-style:disc;
+}
+/*二级无序li显示空心圆点*/
+.doc-content ul > li > ul > li{
+    list-style-type: circle;
+}
+/*有序li显示数字*/
+.doc-content ol li{
+    list-style-type: decimal;
+}
+.doc-content ol ol ul,.doc-content ol ul ul,.doc-content ul ol ul,.doc-content ul ul ul {
+    list-style-type: square;
+}
+/* 三级及以下无序li显示小方块 */
+.doc-content ul ul ul li{
+    list-style-type: square;
+}
+/* 下拉目录隐藏li样式 */
+.editormd-toc-menu ul.markdown-toc-list li{
+    /*list-style:none;*/
+}
+/* 弹出框文档目录样式 */
+ul.markdown-toc-list{
+    list-style-position:inside;
+}
+ul.markdown-toc-list li{
+    list-style: none!important;
+    line-height: 24px;
+}
+ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
+    padding-left:15px;
+}
+ul.markdown-toc-list a{
+    /* text-decoration: underline!important; */
+}
+/* 块级代码和行内代码去除边框 */
+.markdown-body p code{
+    border:none;
+}
+/* HTML预览样式 */
+.markdown-body h1{ 
+    font-size: 1.7em;
+}
+.markdown-body h2{
+    font-size: 1.5em;
+}
+.markdown-body h3{
+    font-size: 1.25em;
+}
+.markdown-body h4{
+    font-size: 1em;
+}
+.markdown-body h5{
+    font-size: .875em;
+}
+.markdown-body h6{
+    font-size: .85em;
+}
+#url_qrcode img{
+    margin: auto;
+}
+/* 文档代码块样式 */
+ol.linenums li{ 
+    width: max-content;
+}
+pre.linenums{
+    max-height: 500px;
+}
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+    background: none !important;
+}
 
-        /* layui弹出框颜色 */
-        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
-            border-bottom: 2px solid #333;
-        }
-        .layui-tab-brief>.layui-tab-title .layui-this{
-            color: #333;
-        }
-        /* 覆盖vditor样式 */
-        .vditor-outline__item{
-            padding: 0;
-            padding-bottom: 5px;
-            color: #333;
-        }
+/* layui弹出框颜色 */
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
+    border-bottom: 2px solid #333;
+}
+.layui-tab-brief>.layui-tab-title .layui-this{
+    color: #333;
+}
+/* 覆盖vditor样式 */
+.vditor-outline__item{
+    padding: 0;
+    padding-bottom: 5px;
+    color: #333;
+}
+.vditor-reset pre>code{
+    font-size: 100%;
+}
+/* 文档图片悬浮鼠标样式 */
+#content img:hover{
+    cursor: -moz-zoom-in;
+    cursor: -webkit-zoom-in;
+    cursor: zoom-in;
+}
+#wm{
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    pointer-events: none;
+}
+.collected{
+    color: rgb(250, 173, 20);
+}
+.doc-bottom-icon,.doc-bottom-btn{
+    cursor: pointer;
+}
+
+/* 文集大纲图标 */
+i.switch-toc{
+    padding:10px;
+    cursor: pointer;
+}
+
+/* 文集大纲样式 */
+ul#doc-tree{
+    padding-left: 0;
+}
+.layui-tab-item #doc-tree li{
+    list-style: none;
+}
+
+.project-toc-right,.project-toc-left,.project-toc-center{
+    display: inline-block;
+}
+.project-toc-left{
+    border-top:1px dashed #d8d8d8;
+    width: 100%;
+    padding-top: 4px;
+}
+.project-toc-right{
+    float: right;
+    position: absolute;
+    right: 0px;
+    z-index: 100;
+    background-color: white;
+    color: #bfbfbf;
+    padding-left: 40px;
+    padding-right: 90px;
+    font-family: Consolas,Menlo,Courier,monospace;
+}
+.project-toc-left a{
+    text-align: left;
+    margin-top: -15px;
+    padding-right: 40px;
+    position: absolute;
+    background: #fff;
+    z-index: 1;
+    min-width: 0;
+    color: #666;
+    /* font-weight: 700; */
+    font-family: Consolas,Menlo,Courier,monospace;
+}
+/* 为外部链接添加图标指示 */
+.external::after {
+  content: '\e7c2';
+  font-family: 'iconfont';
+}
+@media screen and (max-width:768px){
+    .project-toc-left{
+        border-top:1px dashed #d8d8d8;
+        width: 0;
+        padding-top: 4px;
+    }
+}
+/* 覆盖vditor文档目录样式 */
+.vditor-outline ul{
+    padding-left: 0px;
+}

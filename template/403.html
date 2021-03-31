@@ -1,9 +1,10 @@
-{% load staticfiles %}
+{% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>拒绝访问 - {% if site_name != None %}{{site_name}} {% else %}觅道文档MrDoc{% endif %}</title>
+    <title>{% trans "拒绝访问" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -16,10 +17,9 @@
 <div class="layui-main">
     <div style="text-align: center;margin-top: 40px;">
         <h1>
-            <strong>你无权访问当前页面……</strong>
+            <strong>{% trans "你无权访问当前页面……" %}</strong>
         </h1>
-        <!--<img src="{% static '404.png' %}">-->
-        <p><a href="{% url 'pro_list' %}" >返回首页</a></p>
+        <p><a href="{% url 'pro_list' %}" >{% trans "返回首页" %}</a></p>
     </div>
 </div>
 

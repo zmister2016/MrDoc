@@ -63,6 +63,7 @@
     editormd.homePage     = "https://pandao.github.io/editor.md/";
     editormd.classPrefix  = "editormd-";
     
+    // 编辑器工具栏模式
     editormd.toolbarModes = {
         full : [
             "undo", "redo", "|", 
@@ -88,6 +89,7 @@
         ]
     };
     
+    // 编辑器默认配置
     editormd.defaults     = {
         mode                 : "gfm",          //gfm or markdown
         name                 : "",             // Form element name
@@ -129,7 +131,7 @@
         dialogDraggable      : true,
         dialogMaskBgColor    : "#fff",
         dialogMaskOpacity    : 0.1,
-        fontSize             : "13px",
+        fontSize             : "15px",
         saveHTMLToTextarea   : false,
         disabledKeyMaps      : [],
         
@@ -159,9 +161,9 @@
         tocStartLevel        : 1,              // Said from H1 to create ToC
         htmlDecode           : false,          // Open the HTML tag identification 
         pageBreak            : true,           // Enable parse page break [========]
-        atLink               : true,           // for @link
+        atLink               : false,           // for @link
         emailLink            : true,           // for email address auto link
-        taskList             : false,          // Enable Github Flavored Markdown task lists
+        taskList             : true,          // Enable Github Flavored Markdown task lists
         emoji                : false,          // :emoji: , Support Github emoji, Twitter Emoji (Twemoji);
                                                // Support FontAwesome icon emoji :fa-xxx: > Using fontAwesome icon web fonts;
                                                // Support Editor.md logo icon emoji :editormd-logo: :editormd-logo-1x: > 1~8x;
@@ -189,44 +191,46 @@
             "ucwords"        : "<a href=\"javascript:;\" title=\"ucwords\" unselectable=\"on\"><i class=\"fa\" name=\"ucwords\" style=\"font-size:20px;margin-top: -3px;\">Aa</i></a>"
         }, 
         toolbarIconsClass    : {
-            undo             : "fa-undo",
-            redo             : "fa-repeat",
-            bold             : "fa-bold",
-            del              : "fa-strikethrough",
-            italic           : "fa-italic",
-            quote            : "fa-quote-left",
-            uppercase        : "fa-font",
-            h1               : editormd.classPrefix + "bold",
-            h2               : editormd.classPrefix + "bold",
-            h3               : editormd.classPrefix + "bold",
-            h4               : editormd.classPrefix + "bold",
-            h5               : editormd.classPrefix + "bold",
-            h6               : editormd.classPrefix + "bold",
-            "list-ul"        : "fa-list-ul",
-            "list-ol"        : "fa-list-ol",
-            hr               : "fa-minus",
-            link             : "fa-link",
+            "undo"             : "fa-undo",
+            "redo"             : "fa-repeat",
+            "bold"             : "fa-bold",
+            "mark"             : "fa-paint-brush",
+            "del"              : "fa-strikethrough",
+            "italic"           : "fa-italic",
+            "quote"            : "fa-quote-left",
+            "uppercase"        : "fa-font",
+            "h1"               : editormd.classPrefix + "bold",
+            "h2"               : editormd.classPrefix + "bold",
+            "h3"               : editormd.classPrefix + "bold",
+            "h4"               : editormd.classPrefix + "bold",
+            "h5"               : editormd.classPrefix + "bold",
+            "h6"               : editormd.classPrefix + "bold",
+            "list-ul"          : "fa-list-ul",
+            "list-ol"          : "fa-list-ol",
+            "hr"               : "fa-minus",
+            "link"             : "fa-link",
             "reference-link" : "fa-anchor",
-            image            : "fa-picture-o",
-            code             : "fa-code",
+            "image"            : "fa-picture-o",
+            "code"             : "fa-code",
             "preformatted-text" : "fa-file-code-o",
             "code-block"     : "fa-file-code-o",
-            table            : "fa-table",
-            datetime         : "fa-clock-o",
-            emoji            : "fa-smile-o",
+            "table"            : "fa-table",
+            "datetime"         : "fa-clock-o",
+            "emoji"            : "fa-smile-o",
             "html-entities"  : "fa-copyright",
-            pagebreak        : "fa-newspaper-o",
+            "pagebreak"        : "fa-newspaper-o",
             "goto-line"      : "fa-terminal", // fa-crosshairs
-            watch            : "fa-eye-slash",
-            unwatch          : "fa-eye",
-            preview          : "fa-desktop",
-            search           : "fa-search",
-            fullscreen       : "fa-arrows-alt",
-            clear            : "fa-eraser",
-            help             : "fa-question-circle",
-            info             : "fa-info-circle"
+            "watch"            : "fa-eye-slash",
+            "unwatch"          : "fa-eye",
+            "preview"          : "fa-desktop",
+            "search"           : "fa-search",
+            "fullscreen"       : "fa-arrows-alt",
+            "clear"            : "fa-eraser",
+            "help"             : "fa-question-circle",
+            "info"             : "fa-info-circle"
         },        
         toolbarIconTexts     : {},
+        toolbarIconSvgs      : {},
         
         lang : {
             name        : "zh-cn",
@@ -236,6 +240,7 @@
                 undo             : "撤销（Ctrl+Z）",
                 redo             : "重做（Ctrl+Y）",
                 bold             : "粗体",
+                mark             : "文本高亮",
                 del              : "删除线",
                 italic           : "斜体",
                 quote            : "引用",
@@ -357,7 +362,6 @@
          */
         
         init : function (id, options) {
-            
             options              = options || {};
             
             if (typeof id === "object")
@@ -403,11 +407,11 @@
                         
             var markdownTextarea = this.markdownTextarea = editor.children("textarea");
             
-            if (markdownTextarea.length < 1)
-            {
-                editor.append("<textarea></textarea>");
-                markdownTextarea = this.markdownTextarea = editor.children("textarea");
-            }
+            // if (markdownTextarea.length < 1)
+            // {
+            //     editor.append("<textarea></textarea>");
+            //     markdownTextarea = this.markdownTextarea = editor.children("textarea");
+            // }
             
             markdownTextarea.addClass(classNames.textarea.markdown).attr("placeholder", settings.placeholder);
             
@@ -552,12 +556,25 @@
                 // _this.loadedDisplay();
             });
 
-            editormd.loadCSS(loadPath + "codemirror/codemirror.min");
+            // 加载 mindmap 相关js
+            editormd.loadScript(loadPath + 'mindmap/d3@5',function(){
+                editormd.loadScript(loadPath + 'mindmap/transform.min', function(){
+                    editormd.loadScript(loadPath + 'mindmap/view.min',function(){
+
+                    })
+                })
+            })
+
+            // 加载DOMPurify过滤HTML
+            editormd.loadScript(loadPath + 'purify.min',function(){});
+
+            editormd.loadCSS(loadPath + "codemirror/lib/codemirror");
             
             if (settings.searchReplace && !settings.readOnly)
             {
                 editormd.loadCSS(loadPath + "codemirror/addon/dialog/dialog");
                 editormd.loadCSS(loadPath + "codemirror/addon/search/matchesonscrollbar");
+                editormd.loadCSS(loadPath + "codemirror/addon/hint/show-hint");
             }
             
             if (settings.codeFold)
@@ -565,12 +582,14 @@
                 editormd.loadCSS(loadPath + "codemirror/addon/fold/foldgutter");            
             }
             
-            editormd.loadScript(loadPath + "codemirror/codemirror.min", function() {
+            editormd.loadScript(loadPath + "codemirror/lib/codemirror", function() {
                 editormd.$CodeMirror = CodeMirror;
                 
-                editormd.loadScript(loadPath + "codemirror/modes.min", function() {
+                editormd.loadScript(loadPath + "codemirror/modes", function() {
+                // editormd.loadScript(loadPath + "codemirror/mode/meta", function() {
                     
-                    editormd.loadScript(loadPath + "codemirror/addons.min", function() {
+                    editormd.loadScript(loadPath + "codemirror/addons", function() {
+                    // editormd.loadScript(loadPath + "codemirror/addon/display/placeholder", function() {
                         
                         _this.setCodeMirror();
                         
@@ -695,6 +714,35 @@
             {
                 editormd.loadCSS(settings.path + "codemirror/theme/" + settings.editorTheme);
             }
+
+            var md_comp = [
+                ["#", "##", "###", "####","#####","######","#######"],
+                ["`", "``", "```", "```\n\n```", "```echart\n\n```", "```mindmap\n\n```"],
+                ["*", "**"],
+                ["[", "[]()"],
+                ["!", "![]()"],
+                ["-", "- [] ", "- [x] "],
+              ]
+            
+            function markdownHint(cm, option) {
+                return new Promise(function(accept) {
+                    setTimeout(function() {
+                    var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
+                    console.log(cursor)
+                    var start = cursor.ch, end = cursor.ch
+                    while (start && /\W/.test(line.charAt(start - 1))) --start
+                    while (end < line.length && /\W/.test(line.charAt(end))) ++end
+                    console.log(line,start,end)
+                    var word = line.slice(start, end).toLowerCase()
+                    console.log(word)
+                    for (var i = 0; i < md_comp.length; i++) if (md_comp[i].indexOf(word) != -1)
+                        return accept({list: md_comp[i],
+                                        from: editormd.$CodeMirror.Pos(cursor.line, start),
+                                        to: editormd.$CodeMirror.Pos(cursor.line, end)})
+                    return accept(null)
+                    }, 100)
+                })
+            }
             
             var codeMirrorConfig = {
                 mode                      : settings.mode,
@@ -708,9 +756,10 @@
                 lineNumbers               : settings.lineNumbers,
                 lineWrapping              : settings.lineWrapping,
                 extraKeys                 : {
-                                                "Ctrl-Q": function(cm) { 
-                                                    cm.foldCode(cm.getCursor()); 
-                                                }
+                                                // "Ctrl-Q": function(cm) { 
+                                                //     cm.foldCode(cm.getCursor()); 
+                                                // },
+                                                "Ctrl-Q":"autocomplete"
                                             },
                 foldGutter                : settings.codeFold,
                 gutters                   : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
@@ -720,6 +769,7 @@
                 styleSelectedText         : settings.styleSelectedText,
                 autoCloseBrackets         : settings.autoCloseBrackets,
                 showTrailingSpace         : settings.showTrailingSpace,
+                hintOptions: {hint: markdownHint},
                 highlightSelectionMatches : ( (!settings.matchWordHighlight) ? false : { showToken: (settings.matchWordHighlight === "onselected") ? false : /\w/ } )
             };
             
@@ -1171,10 +1221,12 @@
                     
                     var title     = settings.lang.toolbar[index];
                     var iconTexts = settings.toolbarIconTexts[index];
+                    var iconSvgs  = settings.toolbarIconSvgs[index];
                     var iconClass = settings.toolbarIconsClass[index];
                     
                     title     = (typeof title     === "undefined") ? "" : title;
                     iconTexts = (typeof iconTexts === "undefined") ? "" : iconTexts;
+                    iconSvgs = (typeof iconSvgs === "undefined") ? "" : iconSvgs;
                     iconClass = (typeof iconClass === "undefined") ? "" : iconClass;
 
                     var menuItem = pullRight ? "<li class=\"pull-right\">" : "<li>";
@@ -2062,12 +2114,14 @@
             marked.setOptions(markedOptions);
                     
             var newMarkdownDoc = editormd.$marked(cmValue, markedOptions);
+            // console.info("cmValue", cmValue, newMarkdownDoc);
             
-            //console.info("cmValue", cmValue, newMarkdownDoc);
+            // newMarkdownDoc = editormd.filterHTMLTags(newMarkdownDoc, settings.htmlDecode);
+            // 加载DOMPurify过滤HTML
+            newMarkdownDoc = DOMPurify.sanitize(newMarkdownDoc,{ADD_TAGS: ['iframe']})
             
-            newMarkdownDoc = editormd.filterHTMLTags(newMarkdownDoc, settings.htmlDecode);
-            
-            //console.error("cmValue", cmValue, newMarkdownDoc);
+            // console.log(newMarkdownDoc)
+            // console.error("cmValue", cmValue, newMarkdownDoc);
             
             this.markdownTextarea.text(cmValue);
             
@@ -2892,6 +2946,19 @@
                 cm.setCursor(cursor.line, cursor.ch + 2);
             }
         },
+
+        mark : function(){
+            var cm        = this.cm;
+            var cursor    = cm.getCursor();
+            var selection = cm.getSelection();
+
+            cm.replaceSelection("==" + selection + "==");
+
+            if(selection === "") {
+                cm.setCursor(cursor.line, cursor.ch + 2);
+            }
+
+        },
         
         del : function() {
             var cm        = this.cm;
@@ -3418,7 +3485,8 @@
         atLink        : /@(\w+)/g,
         email         : /(\w+)@(\w+)\.(\w+)\.?(\w+)?/g,
         emailLink     : /(mailto:)?([\w\.\_]+)@(\w+)\.(\w+)\.?(\w+)?/g,
-        //emoji         : /:([\w\+-]+):/g,
+        // mark          : /==([^\s][^\<\/code\>][\s\S]*?[^\s])==(?!=)/g,
+        mark          : /(={2})([^\<\/code\>].+?)\1/g,
         emoji         : /:([A-Za-z\+-]+):/g,
         emojiDatetime : /(\d{2}:\d{2}:\d{2})/g,
         twemoji       : /:(tw-([\w]+)-?(\w+)?):/g,
@@ -3429,7 +3497,6 @@
 
     // Emoji graphics files url path
     editormd.emoji     = {
-        //path  : "http://www.emoji-cheat-sheet.com/graphics/emojis/",
         path  : "/static/editor.md/plugins/emoji-dialog/emoji/",
         ext   : ".png"
     };
@@ -3470,6 +3537,7 @@
             
         var regexs          = editormd.regexs;
         var atLinkReg       = regexs.atLink;
+        var markReg         = regexs.mark;
         var emojiReg        = regexs.emoji;
         var emailReg        = regexs.email;
         var emailLinkReg    = regexs.emailLink;
@@ -3477,6 +3545,35 @@
         var faIconReg       = regexs.fontAwesome;
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg    = regexs.pageBreak;
+
+	    // 增加引用样式解析规则
+        markedRenderer.blockquote = function($quote) {
+            var quoteBegin = "";
+
+            var ps = $quote.match(/<p\s*?>/i);
+			
+            if(ps !== null) {
+                quoteBegin = ps[0];
+                $quote = $quote.substr(3);
+            }
+            var $class = "default";
+
+            if($quote.indexOf("i") === 0){
+                $class = "info";
+                $quote = $quote.substr(1);
+            }else if($quote.indexOf("w") === 0){
+                $class = "warning";
+                $quote = $quote.substr(1);
+            }else if($quote.indexOf("s") === 0){
+                $class = "success";
+                $quote = $quote.substr(1);
+            }else if($quote.indexOf("d") === 0){
+                $class = "danger";
+                $quote = $quote.substr(1);
+            }
+
+            return '<blockquote class="'+$class+'">\n' + quoteBegin + $quote + '</blockquote>\n';
+        };
 
         // marked 解析图片
         markedRenderer.image = function(href,title,text) {
@@ -3521,30 +3618,34 @@
                         const tedMatch = href.match(/(?:www\.|\/\/)ted\.com\/talks\/(\w+)/);
 
                         if (youtubeMatch && youtubeMatch[1].length === 11) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}"></iframe>`
                         } else if (youkuMatch && youkuMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}"></iframe>`
                         } else if (qqMatch && qqMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}"></iframe>`
                         } else if (coubMatch && coubMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true"></iframe>`
                         } else if (facebookMatch && facebookMatch[0]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}"></iframe>`
                         } else if (dailymotionMatch && dailymotionMatch[2]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}"></iframe>`
                         } else if (bilibiliMatch && bilibiliMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}"></iframe>`
                         } else if (tedMatch && tedMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}"></iframe>`
                         }else{
-                            for(var i = 0; i< iframe_whitelist.length; i++){
-                                if(href.match(iframe_whitelist[i])){
-                                    return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                            if(iframe_whitelist.length == 1 && iframe_whitelist[0] == ""){
+                                return href
+                            }else{
+                                for(var i = 0; i< iframe_whitelist.length; i++){
+                                    if(href.match(iframe_whitelist[i])){
+                                        return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                                    }
                                 }
                             }
+
                         }
                         break;
-                        // return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
                 }
             }
 
@@ -3583,7 +3684,7 @@
                     }
                 }
             }
-            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+">" + end;
+            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+" />" + end;
         };
 
         // marked emoji 解析
@@ -3682,9 +3783,22 @@
 
             return text;
         };
+
+        // marked 高亮标记解析
+        markedRenderer.mark = function(text){
+            if(markReg.test(text)){
+                // console.log(1,text)
+                var mark_replace_reg = /==(.+)==/g
+                text = text.replace(markReg,function(e){
+                    // console.log(2,e)
+                    return "<mark>" + e.replace(mark_replace_reg,function($1,$2){return $2}) + "</mark>"
+                })
+            }
+            return text
+        };
+
         // marked 链接解析
         markedRenderer.link = function (href, title, text) {
-
             if (this.options.sanitize) {
                 try {
                     var prot = decodeURIComponent(unescape(href)).replace(/[^\w:]/g,"").toLowerCase();
@@ -3759,9 +3873,9 @@
             // headingHTML    += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
             headingHTML    += "<a name=\"" + text.replace(/<[^>]*>\s?/g,'') + "\" class=\"reference-link\"></a>";
             headingHTML    += "<span class=\"header-link octicon octicon-link\"></span>";
-            headingHTML    += (hasLinkReg) ? this.atLink(this.emoji(linkText)) : this.atLink(this.emoji(text));
+            headingHTML    += (hasLinkReg) ? this.atLink(this.mark(this.emoji(text))) : this.mark(this.emoji(text));
             headingHTML    += "</h" + level + ">";
-
+            // console.log(headingHTML)
             return headingHTML;
         };
         
@@ -3794,9 +3908,8 @@
             }
             
             var tocHTML = "<div class=\"markdown-toc editormd-markdown-toc\">" + text + "</div>";
-            
             return (isToC) ? ( (isToCMenu) ? "<div class=\"editormd-toc-menu\">" + tocHTML + "</div><br/>" : tocHTML )
-                           : ( (pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.emoji(text)) + "</p>\n" );
+                           : ( (pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.mark(this.emoji(text))) + "</p>\n" );
         };
         // marked 解析代码块
         markedRenderer.code = function (code, lang, escaped) {
@@ -3851,7 +3964,7 @@
 
                 return "<svg class='mindmap' style='width:100%;min-height:150px;height:"+ custom_height +"px;' id='mindmap-"+ map_id +"'>"+code+"</svg>";
             }
-            else if(/^echart/i.test(lang)){ // echart 图表
+            else if(/^echart/i.test(lang)||/^echarts/i.test(lang)){ // echart 图表
                 var len = 9 || 32;
             　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 
             　　var maxPos = $chars.length;
@@ -3874,7 +3987,7 @@
             else if(/^timeline/i.test(lang)){ // 时间线
                 var time_line = '<ul class="layui-timeline">'
                 // console.log(code)
-                var timeline_code = code.split(/[(\r\n)\r\n]+/);
+                var timeline_code = code.split(/(\r\n\t|\n|\r\t)+/);
                 // console.log(timeline_code)
                 timeline_code.forEach(function(item,index){
                     // console.log(item,index)
@@ -4141,7 +4254,8 @@
      */
     
     editormd.filterHTMLTags = function(html, filters) {
-        
+        console.log(html)
+        console.log(filters)
         if (typeof html !== "string") {
             html = new String(html).toString();
         }
@@ -4155,6 +4269,7 @@
         var expression = filters.split("|");
         var filterTags = expression[0].split(",");
         var attrs      = expression[1];
+        console.log(attrs)
 
         if(!filterTags.includes('allowScript') && !filterTags.includes('script'))
          {
@@ -4167,8 +4282,9 @@
             var tag = filterTags[i];
 
             html = html.replace(new RegExp("\<\s*" + tag + "\s*([^\>]*)\>([^\>]*)\<\s*\/" + tag + "\s*\>", "igm"), "");
+            html = html.replace(new RegExp("\<\s*" + tag + ".*?/?>", "igm"), "") // 过滤单闭合标签
         }
-        
+
         //return html;
 
         if (typeof attrs === "undefined")
@@ -4194,12 +4310,16 @@
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
                     return "<" + $2 + ">" + $4 + "</" + $5 + ">";
-                });         
+                });  
             }
             // else if (attrs === "on*")
             else if ((attrs === "on*") || filterOn)
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
+                    console.log($1)
+                    console.log($2)
+                    console.log($4)
+                    console.log($5)
                     var el = $("<" + $2 + ">" + $4 + "</" + $5 + ">");
                     var _attrs = $($1)[0].attributes;
                     var $attrs = {};
@@ -4228,7 +4348,7 @@
                     // var filterAttrs = attrs.split(",");
                     var el = $($1);
                     el.html($4);
-
+                    
                     $.each(filterAttrs, function(i) {
                         el.attr(filterAttrs[i], null);
                     });
@@ -4237,7 +4357,7 @@
                 });
             }
         }
-        
+
         return html;
     };
     
@@ -4273,7 +4393,8 @@
             mindMap              : true, //脑图
             echart               : true, 
             sequenceDiagram      : false,
-            previewCodeHighlight : true
+            previewCodeHighlight : true,
+            plugin_path          : '/static/editor.md/lib/'
         };
         
         editormd.$marked  = marked; // 定义 editormd 的 marked 属性 为 marked
@@ -4324,7 +4445,12 @@
         
         var markdownParsed = marked(markdownDoc, markedOptions);
         
-        markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
+        // markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
+        // 加载DOMPurify过滤HTML
+        editormd.loadScript(settings.plugin_path + 'purify.min',function(){
+            markdownParsed = DOMPurify.sanitize(markdownParsed,{ADD_TAGS: ['iframe']});
+        });
+        // console.log(markdownParsed)
         
         if (settings.markdownSourceCode) {
             saveTo.text(markdownDoc);
@@ -4359,7 +4485,13 @@
         if (settings.previewCodeHighlight) 
         {
             div.find("pre").addClass("prettyprint linenums");
-            prettyPrint();
+            editormd.loadScript(settings.plugin_path + 'raphael.min', function(){
+                editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+                    editormd.loadScript(settings.plugin_path + 'prettify.min',function(){
+                        prettyPrint();
+                    })    
+                })
+            })
         }
         
         if (!editormd.isIE8) 
@@ -4372,8 +4504,8 @@
                     has_flowchart = true;
                 })
                 if(has_flowchart){
-                    editormd.loadScript('/static/editor.md/lib/flowchart.min',function(){
-                        editormd.loadScript('/static/editor.md/lib/jquery.flowchart.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'flowchart.min',function(){
+                        editormd.loadScript(settings.plugin_path + 'jquery.flowchart.min',function(){
                             div.find(".flowchart").flowChart(); 
                         })
                     })
@@ -4387,8 +4519,10 @@
                     has_sequence_dia = true;
                 })
                 if(has_sequence_dia){
-                    editormd.loadScript('/static/editor.md/lib/sequence-diagram.min',function(){
-                        div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
+                    editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+                        editormd.loadScript(settings.plugin_path + 'sequence-diagram.min',function(){
+                            div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
+                        })    
                     })
                 }
                 // div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
@@ -4401,12 +4535,22 @@
             var katexHandle = function() {
                 div.find("." + editormd.classNames.tex).each(function(){
                     var tex  = $(this);
-                    editormd.loadKaTeX(function(){
-                        editormd.$katex      = katex;
-                        editormd.kaTeXLoaded = true;
-                        katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
-                        tex.find(".katex").css("font-size", "1.6em");
-                    })                    
+                    // editormd.loadKaTeX(function(){
+                    //     editormd.$katex      = katex;
+                    //     editormd.kaTeXLoaded = true;
+                    //     katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                    //     tex.find(".katex").css("font-size", "1.6em");
+                    // });
+                    editormd.loadCSS(settings.plugin_path + 'katex/katex.min', function(){
+                        editormd.loadScript(settings.plugin_path + 'katex/katex.min', function(){
+                            editormd.$katex      = katex;
+                            editormd.kaTeXLoaded = true;
+                            katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                            tex.find(".katex").css("font-size", "1.6em");
+    
+                        });
+                    });
+                                
                 });
             };
             if (settings.autoLoadKaTeX && !editormd.$katex && !editormd.kaTeXLoaded)
@@ -4431,9 +4575,9 @@
                     console.log("存在脑图")
                     var mmap  = $(this);
                     var mmap_id = this.id;
-                    editormd.loadScript('/static/mindmap/d3@5',function(){
-                        editormd.loadScript('/static/mindmap/transform.min',function(){
-                            editormd.loadScript('/static/mindmap/view.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'mindmap/d3@5',function(){
+                        editormd.loadScript(settings.plugin_path + 'mindmap/transform.min',function(){
+                            editormd.loadScript(settings.plugin_path + 'mindmap/view.min',function(){
                                 var md_data = window.markmap.transform(mmap.text().trim());
                                 window.markmap.markmap("svg#"+mmap_id,md_data)
                             })
@@ -4451,18 +4595,16 @@
                 div.find(".echart").each(function(){
                     // console.log("存在echart")
                     var echart  = $(this);
-                    var echart_id = this.id
-                    editormd.loadEcharts(
-                        function(){
-                            if(echart.text() != ''){
-                                // console.log("渲染echarts")
-                                var echart_data = eval("(" + echart.text() + ")");
-                                echart.empty();
-                                var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
-                                myChart.setOption(echart_data);
-                            }
+                    var echart_id = this.id;
+                    editormd.loadScript(settings.plugin_path + 'echarts.min',function(){
+                        if(echart.text() != ''){
+                            // console.log("渲染echarts")
+                            var echart_data = eval("(" + echart.text() + ")");
+                            echart.empty();
+                            var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
+                            myChart.setOption(echart_data);
                         }
-                    );
+                    });
                     
                 });
             };
@@ -4615,10 +4757,8 @@
     // 使用国外的CDN，加载速度有时会很慢，或者自定义URL
     // You can custom KaTeX load url.
     editormd.katexURL  = {
-        //css : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min",
-        css :   "/static/katex/katex.min",
-        //js  : "//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min"
-        js  :   "/static/katex/katex.min",
+        css :   "/static/editor.md/lib/katex/katex.min",
+        js  :   "/static/editor.md/lib/katex/katex.min",
     };
     
     editormd.kaTeXLoaded = false;
@@ -4634,16 +4774,6 @@
         editormd.loadCSS(editormd.katexURL.css, function(){
             editormd.loadScript(editormd.katexURL.js, callback || function(){});
         });
-    };
-    
-    /**
-     * 加载Echarts文件
-     * 
-     * @param {Function} [callback=function()]  加载成功后执行的回调函数
-     */
-    
-    editormd.loadEcharts = function (callback) {
-        editormd.loadScript("/static/editor.md/lib/echarts.min", callback || function(){});
     };
 
     /**

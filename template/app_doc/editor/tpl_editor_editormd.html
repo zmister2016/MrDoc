@@ -1,0 +1,287 @@
+{% load static %}
+<script>
+    // 视频iframe域名白名单
+    var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
+    var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
+    //初始化editormd
+    if(screen_width.matches){
+        var editormd_watch = false;
+        var editormd_height = window.innerHeight / 2 + 'px';
+        var editormd_toobar = [
+                    "h2","h3", "bold", "del", "italic", "quote","kaiSpan",  
+                    "list-ul", "list-ol", "hr", "link", 
+                    "mindmap","echart","imgUpload", "attachment" ,"multimedia","code", "code-block", "htmltable", 
+                    "emoji", "pagebreak", 
+                    "watch", "preview", 
+            ];
+    }else{
+        var editormd_watch = true;
+        var editormd_height = '800px'
+        var editormd_toobar = [
+                "undo", "redo", "|",
+                "h2","h3","h4","h5", "bold", "del", "italic", "quote","kaiSpan","mark",  
+                "list-ul", "list-ol", "hr", "link", "reference-link", 
+                "mindmap","echart","imgUpload", "attachment" ,"multimedia","code", "code-block", "htmltable", 
+                "emoji", "html-entities", "pagebreak", 
+                "watch", "preview", 
+                "help"
+            ]
+    }
+    var editor = editormd("editor-md", {
+        width       :   "100%",
+        height      :   editormd_height,
+        placeholder :   "道友，开始吧……",
+        toolbarIcons : function() {
+            return editormd_toobar
+        },
+        //自定义工具栏添加楷体按钮
+        toolbarIconTexts : {
+            kaiSpan : "楷",
+        },
+        //自定义工具栏添加图片按钮
+        toolbarIconsClass : {
+            imgUpload:'fa-image',
+            attachment:'fa-upload',
+            htmltable:'fa-table',
+            mindmap:'fa-sitemap',
+            echart:'fa-bar-chart',
+            multimedia:'fa-youtube-play',
+        },
+        //设置自定义工具栏按钮的事件
+        toolbarHandlers : {
+            /**
+             * @param {Object}      cm         CodeMirror对象
+             * @param {Object}      icon       图标按钮jQuery元素对象
+             * @param {Object}      cursor     CodeMirror的光标对象，可获取光标所在行和位置
+             * @param {String}      selection  编辑器选中的文本
+             */
+             // 点击“楷”字图标的响应函数
+            kaiSpan : function(cm, icon, cursor, selection) {
+                //var cursor    = cm.getCursor();     //获取当前光标对象，同cursor参数
+                //var selection = cm.getSelection();  //获取当前选中的文本，同selection参数
+                // 替换选中文本，如果没有选中文本，则直接插入
+                cm.replaceSelection('<span style="font-family:楷体">' + selection + "</span>");
+                // 如果当前没有选中的文本，将光标移到要输入的位置
+                if(selection === "") {
+                    cm.setCursor(cursor.line, cursor.ch + 29);
+                }
+                // this == 当前editormd实例
+                //console.log("testIcon =>", this, cm, icon, cursor, selection);
+            },
+            // 上传图片和选择图片
+            imgUpload : function(cm,icon,cursor,selection){
+                layer.ready(function(){
+                  element.init();
+                });
+                layer.open({
+                    type:'1',
+                    title:'添加图片',
+                    area:['800px','600px'],
+                    id:'uploadImg',//配置ID,
+                    content:$('#upload-img'),
+                })
+            },
+            // 上传和选择附件
+            attachment : function(cm,icon,cursor,selection){
+                layer.ready(function(){
+                  element.init();
+                });
+                layer.open({
+                    type:'1',
+                    title:'添加附件',
+                    area:['800px','600px'],
+                    id:'uploadAttach',//配置ID,
+                    content:$('#upload-attach'),
+                    success: function(layero, index){
+                        layer.load(1);
+                        $.post('{% url "manage_attachment" %}',{types:2},function(r){
+                            $("#attach_table tbody").empty()
+                            if(r.status){
+                                //调用分页显示
+                                laypage.render({
+                                    elem: 'select-attach-page',//分页的div
+                                    count: r.data.length, //数据总数
+                                    limit:10, //单页数
+                                    jump: function(obj){
+                                        //渲染HTML
+                                        $("#attach_table tbody").empty();
+                                        var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                        layui.each(thisData, function(k, v){
+                                            var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                            // arr.push(row);
+                                            $("#attach_table tbody").append(row)
+                                        });
+                                    }
+                                });
+                                layer.closeAll("loading");//关闭加载提示
+                            }else{
+                                layer.closeAll("loading");//关闭加载提示
+                                layer.msg("获取附件失败，请稍后重试！")
+                            }
+                        })
+
+                    }
+                })
+            },
+            // 添加表格
+            htmltable:function(cm,icon,cursor,selection){
+                layer.ready(function(){
+                  element.init();
+                });
+                layer.open({
+                    type:1,
+                    id:'addTable',
+                    title:'添加表格',
+                    area:['600px','400px'],
+                    content:$("#layer-table"),
+                    btn:['确定','取消'], //添加按钮
+                    yes:function(index,layero){
+                        var current_tab_id = $("#insert-table-div .layui-tab-title .layui-this").attr("lay-id");
+                        console.log(current_tab_id)
+                        //粘贴的表格
+                        if(current_tab_id == 'pasteTable'){
+                            // console.log("插入粘贴的表格")
+                            editor.insertValue("\n" + $("#pasteExcel").val())
+                            layer.close(index)
+                        }else{//创建编辑的表格
+                            try {
+                                var table_md = convertTable("DataTable1")
+                                // console.log(table_md)
+                                editor.insertValue("\n" + table_md);
+                                layer.close(index)
+                            } catch (error) {
+                                layer.msg("请生成表格")
+                            }
+                        }
+                        
+                        $("#TableGroup").empty();//清空表格
+                        $("#pasteExcel").val('');
+                        editor.focus();
+                        
+                    },
+                    btn2:function(index,layero){
+                        $("#TableGroup").empty();//清空表格
+                        $("#pasteExcel").val('');
+                        layer.close(index) // 关闭弹出框
+                    }
+                });
+            },
+            // 添加思维导图
+            mindmap:function(cm,icon,cursor,selection){
+                cm.replaceSelection('```mindmap\n' + selection + "\n```");
+                if(selection === "") {
+                    cm.setCursor(cursor.line+1, cursor.ch);
+                }
+            },
+            // 添加echart图
+            echart:function(cm,icon,cursor,selection){
+                cm.replaceSelection('```echart\n' + selection + "\n```");
+                if(selection === "") {
+                    cm.setCursor(cursor.line+1, cursor.ch);
+                }
+            },
+            // 添加音视频
+            multimedia:function(cm,icon,cursor,selection){
+                layer.open({
+                    type:'1',
+                    title:'添加音视频外链',
+                    area:['800px','600px'],
+                    id:'insertMultiMedia',//配置ID,
+                    content:$('#insertMultimedia'),
+                })
+            }
+        },
+        //设置语言
+        lang : {
+            toolbar : {
+                kaiSpan : "添加楷体span标签",
+                imgUpload:"添加图片到文档",
+                attachment:"添加附件",
+                htmltable:"添加表格",
+                mindmap:"添加思维导图",
+                echart:"添加Echarts图表",
+                multimedia:"添加音频、视频",
+            }
+        },
+        //配置项
+        watch       :editormd_watch,
+        pageBreak : true, //分页符
+        path        :   "/static/editor.md/lib/",
+        saveHTMLToTextarea : true,
+        atLink      :   false,//禁用@链接
+        tex         :   true,//开启科学公式
+        toc         :   false,// 关闭列表目录
+        tocm        :   false,//关闭下拉目录
+        taskList    :   true,//开启任务列表
+        tocDropdown :   false,
+        emoji       :   true,//开启Emoji
+        flowChart   :   true, //开启流程图
+        sequenceDiagram : true, //开启序列图
+        imageUpload    : true, //开启图片上传
+        codeFold       :true, //代码折叠
+        htmlDecode     : "link,style,base,script|on*", //过滤部分HTML标签
+        imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+        imageUploadURL : "{% url 'upload_doc_img' %}",
+        onchange:function(){
+            md_changed = true;
+            // console.log("字符数：",this.getMarkdown().length)
+            var wcnt = this.getMarkdown().length;
+            $("#wordcount").text(wcnt);
+            autoCacheDoc();
+        },
+        onload : function() {
+            // this.insertValue(" ")
+            var wcnt = this.getMarkdown().length;
+            $("#wordcount").text(wcnt);
+        }
+    });
+
+    //粘贴上传图片
+    $("#editor-md").on('paste', function (ev) {
+        var data = ev.clipboardData;
+        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (var index in items) {
+            var item = items[index];
+            if (item.kind === 'file') {
+                var blob = item.getAsFile();
+                console.log(blob)
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var base64 = event.target.result;
+                    //ajax上传图片
+                    layer.load(1);
+                    $.ajax({
+                        url:"{% url 'upload_doc_img' %}",
+                        type:"post",
+                        data:{base:base64},
+                        success:function(ret){
+                            if (ret.success === 1) {
+                                //新一行的图片显示
+                                layer.closeAll("loading");
+                                editor.insertValue("\n![](" + ret.url + ")");
+                                editor.focus()
+                            }else{
+                                layer.closeAll("loading");
+                                layer.msg("粘贴图片失败！")
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading');
+                        }
+                    })
+                }; // data url!
+                var url = reader.readAsDataURL(blob);
+            }
+        }
+    });
+    
+    //未保存离开提示
+    window.onbeforeunload =function() {
+    　　 if(md_changed){
+            //console.log("页面未保存数据")
+            return 1;
+        }else{
+            return null;
+        }
+    };
+</script>

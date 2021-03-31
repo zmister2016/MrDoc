@@ -63,7 +63,7 @@ layui.define(['jquery'],function (exports) {
 
         option.images_upload_url = option.images_upload_url ? option.images_upload_url : settings.images_upload_url;
 
-        option.images_upload_handler = function (blobInfo, succFun, failFun) {
+        option.images_upload_handler = option.images_upload_handler !=null? option.images_upload_handle:function (blobInfo, succFun, failFun) {
 
             var formData = new FormData();
 

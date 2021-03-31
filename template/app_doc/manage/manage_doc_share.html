@@ -1,0 +1,230 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "文档分享管理" %}{% endblock %}
+{% block content %}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="share-doc-table" lay-filter="share-doc-table"></table>
+    </div>
+</div>
+
+    <!-- 自定义表单工具栏 -->
+    <script type="text/html" id="share-doc-toolbar">
+        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
+            <i class="layui-icon layui-icon-delete"></i>
+            {% trans "删除" %}
+        </button>
+    </script>
+
+    <!-- 表格操作栏 -->
+    <script type="text/html" id="share-doc-bar">
+        <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    </script>
+
+    <!-- 分享类型 -->
+    <script type="text/html" id="share-type">
+        {% verbatim %}
+        {{#if (d['share_type'] == '0') { }}
+        <span>公开</span>
+        {{# }else if(d['share_type'] == '1'){ }}
+        <span>私密</span>
+        {{# } }}
+        {% endverbatim %}
+    </script>
+
+    <!-- 分享时间 -->
+    <script type="text/html" id="share-create-time">
+        {% verbatim %}
+        {{layui.util.toDateString(d.createTime,  "yyyy-MM-dd HH:mm:ss")}}
+        {% endverbatim %}
+    </script>
+
+    <!-- 分享状态 -->
+    <script type="text/html" id="share-enable">
+        {% verbatim %}
+        <input type="checkbox" name="share-enable" value="{{d.token}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="share-enable" {{ d.share_status == true ? 'checked' : '' }}>
+        {% endverbatim %}
+    </script>
+
+{% endblock %}
+{% block custom_script %}
+<script>
+    layui.use(['layer', 'echarts', 'element', 'count','topBar','form','table'], function() {
+        var $ = layui.jquery,
+            table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            element = layui.element,
+            count = layui.count,
+            echarts = layui.echarts;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        delTemp = function(doctemp_id){
+            layer.open({
+                type:1,
+                title:'删除文档',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：此操作将删除此文档模板！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'doctemp_id':doctemp_id,
+                    }
+                    $.post("{% url 'del_doctemp' %}",data,function(r){
+                        layer.closeAll('loading');
+                        if(r.status){
+                            //修改成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //修改失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        }
+        let cols = [
+                [
+                    {type: 'checkbox'},
+                    {title: '文档名称',field: 'doc_name',align: 'left'},
+                    {title: '分享类型',field: 'share_type',align: 'left',width: 100,templet:"#share-type"},
+                    {title: '分享码',field: 'share_value',align: 'left',width: 100},
+                    {title: '分享时间',field: 'create_time',align: 'left',width: 150,templet:"#share-create-time"},
+                    {title: '状态',field: 'share_status',align: 'left',width: 100,templet:"#share-enable"},
+                    {title: '操作',toolbar: '#share-doc-bar',align: 'left',width: 130}
+                ]
+            ]
+        // 渲染表格
+        table.render({
+            elem: '#share-doc-table',
+            method:'post',
+            where:{'type':1},
+            url: "{% url 'manage_doc_share' %}",
+            page: true,
+            cols: cols,
+            skin: 'line',
+            toolbar: '#share-doc-toolbar',
+            defaultToolbar: ['filter']
+        });
+        
+        // 侦听分享状态开关
+        form.on('switch(share-enable)',function(obj){
+            var data = {
+                    'type':3,
+                    'token':this.value,
+                    'key':'share_status',
+                }
+            if(obj.elem.checked){
+                data['value'] = 'true'
+            }else{
+                data['value'] = 'false'
+            }
+            $.post("{% url 'manage_doc_share' %}",data,function(r){
+                if(r.status){
+                    layer.msg("设置成功")
+                }else{
+                    layer.msg("设置失败")
+                }
+            })
+        })
+        // 侦听单个删除按钮
+        table.on('tool(share-doc-table)', function(obj) {
+            // console.log(obj)
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                window.remove(obj);
+            }
+        });
+        window.remove = function(obj) {
+            layer.confirm('确定要删除该分享？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "{% url 'manage_doc_share' %}",
+                    dataType: 'json',
+                    type: 'post',
+                    data:{'token':obj.data.token,'type':2,'range':'single'},
+                    success: function(r) {
+                        layer.close(loading);
+                        if (r.status) {
+                            layer.msg("删除成功", {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(r.data, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        };
+        // 侦听批量删除
+        table.on('toolbar(share-doc-table)', function(obj) {
+            if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+        window.batchRemove = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let tokens = "";
+            for (let i = 0; i < data.length; i++) {
+                tokens += data[i].token + ",";
+            }
+            tokens = tokens.substr(0, tokens.length - 1);
+            console.log(tokens)
+            layer.confirm('确定要删除这些分享？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "{% url 'manage_doc_share' %}",
+                    dataType: 'json',
+                    type: 'post',
+                    data:{'token':tokens,'type':2,'range':'multi'},
+                    success: function(r) {
+                        layer.close(loading);
+                        if (r.status) {
+                            layer.msg("删除成功", {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                table.reload('share-doc-table');
+                            });
+                        } else {
+                            layer.msg(r.data, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+    })
+</script>
+{% endblock %}

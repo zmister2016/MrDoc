@@ -1,5 +1,6 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
+{% load i18n %}
 {% block title %}文档模板管理{% endblock %}
 {% block content %}
 <div class="layui-card">
@@ -16,8 +17,8 @@
                 <div class="layui-input-inline">
                     <input type="text" name="kw" id="kw"  placeholder="输入文档模板内容" autocomplete="off" class="layui-input">
                 </div>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
-                <a href="{% url 'create_doctemp' %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-addition"></i>新建文档模板</a>
+                <button class="pear-btn pear-btn-primary pear-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                <a href="{% url 'create_doctemp' %}" target="_blank" class="pear-btn pear-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-addition"></i>新建文档模板</a>
             </div>
             </form>
         </div>
@@ -43,10 +44,10 @@
                 <td>{{ temp.create_user }}</td>
             <td>{{ temp.create_time }}</td>
             <td>
-                <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
+                <a href="{% url 'modify_doctemp' doctemp_id=temp.id %}" target="_blank" class="pear-btn pear-btn-primary pear-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>修改
                     </a>
-                <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');" class="layui-btn layui-btn-danger layui-btn-xs">
+                <a href="javascript:void(0);" onclick="delTemp('{{temp.id}}');" class="pear-btn pear-btn-danger pear-btn-xs">
                     <i class="layui-icon layui-icon-delete"></i>删除
                 </a>
             </td>

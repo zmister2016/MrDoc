@@ -2,32 +2,33 @@
 {% extends 'app_doc/tag_doc_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
 {% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
-{% block title %}{{ doc.name }} - 标签：{{ tag.name }}{% endblock %}
+{% block title %}{{ doc.name }} - {% trans "标签：" %}{{ tag.name }}{% endblock %}
 
 {% block head_toolbar %}
     {% if request.user == doc.create_user or request.user == project.create_user %}
         <span class="btn pull-left">|</span>
         <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
-            <i class="fa fa-edit"></i> <span class="layui-hide-xs">修改</span>
+            <i class="fa fa-edit"></i> <span class="layui-hide-xs">{% trans "修改" %}</span>
         </a>
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">添加</span>
+            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
         <a class="btn pull-left" aria-label="" href="{% url 'manage_doc' %}" target="_blank">
-            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理</span>
+            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% elif colla_user > 0 %}
         <span class="btn pull-left">|</span>
         {% if colla_user_role == 1 %}
         <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
-            <i class="fa fa-edit"></i> <span class="layui-hide-xs">修改</span>
+            <i class="fa fa-edit"></i> <span class="layui-hide-xs">{% trans "修改" %}</span>
         </a>
         {% endif %}
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">添加</span>
+            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
     {% endif %}
     <!-- 文档目录 -->
@@ -68,12 +69,12 @@
     </span>
 
     <button id="share" class="doc-bottom-btn" tooltip="分享本文档">
-        <i class="fa fa-share-alt" ></i> 分享
+        <i class="fa fa-share-alt" ></i> {% trans "分享" %}
     </button>
 
     {% if request.user == doc.create_user or request.user.is_superuser %}
     <button class="doc-bottom-btn" tooltip="下载文档Markdown" id="download_doc">
-        <i class="fa fa-download"></i> 下载
+        <i class="fa fa-download"></i> {% trans "下载" %}
     </button>
     {% endif %}
 </div>
@@ -87,23 +88,23 @@
         <!-- <hr> -->
         <div>
             {% if doc.id|get_doc_previous == None %}
-                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>上一篇</button>
+                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>{% trans "上一篇" %}</button>
             {% else %}
-                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_previous %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>上一篇</a>
+                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_previous %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>{% trans "上一篇" %}</a>
             {% endif %}
         </div>
         <div>
             {% if doc.id|get_doc_next == None %}
-                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius">下一篇<i class="layui-icon layui-icon-next"></i></button>
+                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius">{% trans "下一篇" %}<i class="layui-icon layui-icon-next"></i></button>
             {% else %}
-                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_next %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius">下一篇<i class="layui-icon layui-icon-next"></i></a>
+                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_next %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius">{% trans "下一篇" %}<i class="layui-icon layui-icon-next"></i></a>
             {% endif %}
         </div>
     </div>
 {% endblock %}
 
 {% block right_widget %}
-<div class="tocMenu" style="display: none;">目录</div>
+<div class="tocMenu" style="display: none;">{% trans "目录" %}</div>
 {% endblock %}
 
 {% block custom_script %}
@@ -111,7 +112,7 @@
 <div id="download_div" style="display: none;">
     <div class="layui-row" style="margin: 10px;">
         <a class="" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
-            <i class="fa fa-download"></i> 下载Markdown文件
+            <i class="fa fa-download"></i> {% trans "下载Markdown文件" %}
         </a>
     </div>
 </div>

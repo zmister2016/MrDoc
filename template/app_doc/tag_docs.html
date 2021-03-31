@@ -2,12 +2,13 @@
 {% extends 'app_doc/tag_doc_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
 {% block keyword %}{{ tag.name }},{% endblock %}
-{% block title %}标签：{{ tag.name }}{% endblock %}
+{% block title %}{% trans "标签：" %}{{ tag.name }}{% endblock %}
 
 {% block content_head %}
-    <h1>标签：{{ tag.name }}</h1><hr>
+    <h1>{% trans "标签：" %}{{ tag.name }}</h1><hr>
 {% endblock %}
 
 {% block page_content %}
@@ -21,7 +22,7 @@
     </span>
 
     <button id="share" class="doc-bottom-btn" tooltip="分享本文档">
-        <i class="fa fa-share-alt" ></i> 分享
+        <i class="fa fa-share-alt" ></i> {% trans "分享" %}
     </button>
 </div>
 

@@ -1,0 +1,70 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "我协作的文集" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+
+      <div class="layui-row">
+          <span style="font-size:18px;">{% trans "我的协作文集" %}
+          </span>
+      </div>
+    </div>
+    {% if colla_pros.count != 0 %}
+    <div class="layui-row">
+        <table class="layui-table">
+            <thead>
+                <tr>
+                    <th>{% trans "文集名称" %}</th>
+                    <th>{% trans "作者" %}</th>
+                    <th>{% trans "权限" %}</th>
+                    <th>{% trans "操作" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for colla in colla_pros %}
+                <tr>
+                    <td>{{ colla.project }}</td>
+                    <td>{{ colla.project.create_user }}</td>
+                    <td>
+                        {% if colla.role == 0 %}
+                        {% trans "初级 - 可新建文档、修改和删除自己创建的文档" %}
+                        {% else %}
+                        {% trans "高级 - 可新建文档、修改所有文档、删除自己创建的文档" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'pro_index' colla.project.id %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">{% trans "查看" %}</a>
+                        {% if colla.role == 1 %}
+                        <a href="{% url 'manage_pro_doc_sort' colla.project.id %}" class="layui-btn layui-btn-normal layui-btn-xs">{% trans "排序" %}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="layui-row">
+        {% trans "你还没有成为任何文集的协作者" %}
+    </div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block custom_script %}
+<script>
+    layui.use(['table','jquery','form','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+    })
+</script>
+{% endblock %}

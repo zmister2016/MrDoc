@@ -2,6 +2,7 @@
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
 {% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
@@ -11,27 +12,27 @@
     {% if request.user == doc.create_user or request.user == project.create_user %}
         <span class="btn pull-left">|</span>
         <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
-            <i class="fa fa-edit"></i> <span class="layui-hide-xs">修改</span>
+            <i class="layui-icon layui-icon-edit"></i> <span class="layui-hide-xs">{% trans "修改" %}</span>
         </a>
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">添加</span>
+            <i class="layui-icon layui-icon-add-1"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
-        <a class="btn pull-left" aria-label="" href="{% url 'manage_doc' %}" target="_blank">
-            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理</span>
+        <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}">
+            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% elif colla_user > 0 %}
         <span class="btn pull-left">|</span>
         {% if colla_user_role == 1 %}
         <a class="btn pull-left" aria-label="" href="{% url 'modify_doc' doc_id=doc.id %}">
-            <i class="fa fa-edit"></i> <span class="layui-hide-xs">修改</span>
+            <i class="layui-icon layui-icon-edit"></i> <span class="layui-hide-xs">{% trans "修改" %}</span>
         </a>
         {% endif %}
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">添加</span>
+            <i class="layui-icon layui-icon-add-1"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
     {% endif %}
     <!-- 文档目录 -->
-    <div id="toc-container" class='sidebar'></div>
+    <div id="toc-container" class='sidebar doc-toc-hide'></div>
     
 {% endblock %}
 
@@ -40,7 +41,23 @@
 {% endblock %}
 
 {% block page_content %}
+    {% if doc.editor_mode == 3 %}
+    {{ doc.content | safe }}
+    {% else %}
     <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+    {% endif %}
+
+    
+{% endblock %}
+
+{% block children_content %}
+    {% if doc.show_children %}
+    {% load doc_filter %}
+    {% for children in doc.id|get_next_doc %}
+        <li style="list-style: disc;font-size: 15px;"><a href="{% url 'doc' pro_id=pro_id doc_id=children.id %}" title="{{children.name}}">{{ children.name }}</a></li>
+    {% endfor %}
+    {% endif %}
+    
 {% endblock %}
 
 {% block doc_bottom_block %}
@@ -54,24 +71,35 @@
 </div>
 
 <div class="layui-row layui-col-space20" style="padding-left: 20px;">
-    <span>
-        <i class="fa fa-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
+    <span class="doc-bottom-icon">
+        <i class="layui-icon layui-icon-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
     </span>
-    <span tooltip="更新于:{{doc.modify_time}}">
-        <i class="fa fa-clock-o"></i> {{ doc.modify_time }}
+    <span tooltip="{% trans '更新于:' %}{{doc.modify_time}}" class="doc-bottom-icon">
+        <i class="layui-icon layui-icon-log"></i> {{ doc.modify_time }}
     </span>
 
-    <button id="share" class="doc-bottom-btn" tooltip="分享本文档">
-        <i class="fa fa-share-alt" ></i> 分享
+    <button id="share" class="doc-bottom-btn" tooltip="{% trans '分享本文档' %}">
+        <i class="layui-icon layui-icon-share" ></i> {% trans "分享文档" %}
     </button>
 
+    <span class="doc-bottom-icon">
+        {% if request.user.is_authenticated %}
+            {% if is_collect_doc %}
+            <i class="layui-icon layui-icon-star-fill collected" id="collect_doc"></i> {% trans "收藏文档" %}
+            {% else %}
+            <i class="layui-icon layui-icon-star" id="collect_doc"></i> {% trans "收藏文档" %}
+            {% endif %}
+        {% else %}
+            <i class="layui-icon layui-icon-star" title="请登录后收藏"></i> {% trans "收藏文档" %}
+        {% endif %}
+    </span>
+
     {% if request.user == doc.create_user or request.user.is_superuser %}
-    <button class="doc-bottom-btn" tooltip="下载文档" id="download_doc">
-        <i class="fa fa-download"></i> 下载
+    <button class="doc-bottom-btn" tooltip="{% trans '下载文档' %}" id="download_doc">
+        <i class="fa fa-download"></i> {% trans "下载文档" %}
     </button>
     {% endif %}
 </div>
-
 
 {% endblock %}
 
@@ -81,16 +109,16 @@
         <!-- <hr> -->
         <div>
             {% if doc.id|get_doc_previous == None %}
-                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>上一篇</button>
+                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>{% trans "上一篇" %}</button>
             {% else %}
-                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_previous %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>上一篇</a>
+                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_previous %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius"><i class="layui-icon layui-icon-prev "></i>{% trans "上一篇" %}</a>
             {% endif %}
         </div>
         <div>
             {% if doc.id|get_doc_next == None %}
-                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius">下一篇<i class="layui-icon layui-icon-next"></i></button>
+                <button class="layui-btn layui-btn-disabled layui-btn-sm layui-btn-radius">{% trans "下一篇" %}<i class="layui-icon layui-icon-next"></i></button>
             {% else %}
-                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_next %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius">下一篇<i class="layui-icon layui-icon-next"></i></a>
+                <a href="{% url 'doc' doc.top_doc doc.id|get_doc_next %}" class="layui-btn layui-btn-primary layui-btn-sm layui-btn-radius">{% trans "下一篇" %}<i class="layui-icon layui-icon-next"></i></a>
             {% endif %}
         </div>
     </div>
@@ -99,7 +127,7 @@
 {% block right_widget %}
 <!-- 修改文档 -->
 {% if doc.create_user == request.user %}
-    <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="修改文档"><i class="fa fa-pencil"></i></a>
+    <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="{% trans '修改文档' %}"><i class="fa fa-pencil"></i></a>
 {% endif %}
 <!-- 目录 -->
 <div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
@@ -110,11 +138,33 @@
 {% endblock %}
 
 {% block custom_script %}
+<!-- 解析渲染Markdown -->
+<script>
+    var editor_mode = {{ doc.editor_mode }};
+    var pro_id = {{doc.top_doc}};
+    var doc_id = {{doc.id}};
+    initDocRender(mode=editor_mode);
+    {% if doc.editor_mode != 2 %}
+        // 图片放大显示
+        var img_options = {
+            url: 'data-original',
+            fullscreen:false,//全屏
+            rotatable:false,//旋转
+            scalable:false,//翻转
+            button:false,//关闭按钮
+            toolbar:false,
+            title:false,
+            };
+        var img_viewer = new Viewer(document.getElementById('content'), img_options);
+    {% endif %}
+
+</script>
+
 <!-- 下载选项卡模板 -->
 <div id="download_div" style="display: none;">
     <div class="layui-row" style="margin: 10px;">
         <a class="" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
-            <i class="fa fa-download"></i> 下载Markdown文件
+            <i class="fa fa-download"></i> {% trans "下载Markdown文件" %}
         </a>
     </div>
 </div>
@@ -123,10 +173,10 @@
     <div class="layui-tab-content">
         <div class="layui-form layui-form-pane">
             <div class="layui-form-item">
-                <label class="layui-form-label">分享</label>
+                <label class="layui-form-label">{% trans "分享" %}</label>
                 <div class="layui-input-block">
                   <input type="checkbox" name="switch" 
-                    lay-skin="switch" lay-text="开启|关闭" lay-filter="share-switch"
+                    lay-skin="switch" lay-text="{% trans '开启|关闭' %}" lay-filter="share-switch"
                     {% if is_share and doc_share.is_enable %}checked{%endif%}
                     >
                 </div>
@@ -134,52 +184,55 @@
             
             <div class="layui-form" style="display: {% if is_share and doc_share.is_enable %}block;{% else %}none;{% endif %}" id="share-link">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">链接</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="share_link" class="layui-input" id="share_link" disabled>
+                    <label class="layui-form-label">{% trans "链接" %}</label>
+                    <div class="layui-input-block" id='copy_link'>
+                        <input type="text" name="share_link" class="layui-input" id="share_link" readonly>
                     </div>
                 </div>
             </div>
             
             <div class="layui-form-item" style="display:{% if is_share and doc_share.is_enable %}block;{% else %}none;{% endif %}" id="share-type">
-                <label class="layui-form-label">类型</label>
+                <label class="layui-form-label">{% trans "类型" %}</label>
                 <div class="layui-input-block">
                     {% if doc_share.share_type == 1 %}
-                    <input type="radio" name="share_type" value="0" title="公开" lay-filter="share_type">
-                    <input type="radio" name="share_type" value="1" title="私密" checked lay-filter="share_type">
+                    <input type="radio" name="share_type" value="0" title="{% trans '公开' %}" lay-filter="share_type">
+                    <input type="radio" name="share_type" value="1" title="{% trans '私密' %}" checked lay-filter="share_type">
                     {% else %}
-                    <input type="radio" name="share_type" value="0" title="公开" checked lay-filter="share_type">
-                    <input type="radio" name="share_type" value="1" title="私密" lay-filter="share_type">
+                    <input type="radio" name="share_type" value="0" title="{% trans '公开' %}" checked lay-filter="share_type">
+                    <input type="radio" name="share_type" value="1" title="{% trans '私密' %}" lay-filter="share_type">
                     {% endif %}
                 </div>
                 
             </div>
             <div class="layui-form" style="display:{% if is_share and doc_share.is_enable and doc_share.share_type == 1 %}block;{% else %}none;{% endif %}" id="share_value_item">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">密码</label>
+                    <label class="layui-form-label">{% trans "密码" %}</label>
                     <div class="layui-input-inline">
                         <input type="text" name="share_value" value='{{doc_share.share_value}}' disabled class="layui-input" id="share_doc_value">
                     </div>
                     <div class="layui-form-mid layui-word-aux">
-                        <button class="layui-btn layui-btn-xs layui-btn-primary" id="updateShareValue"><i class="fa fa-repeat"></i> 更新密码</button>
+                        <button class="layui-btn layui-btn-xs layui-btn-primary" id="updateShareValue"><i class="fa fa-repeat"></i> {% trans "更新密码" %}</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="{% static 'toc/doctoc.js' %}"></script>
-<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
+<script src="{% static 'toc/doctoc.js' %}?version={{mrdoc_version}}"></script>
 <script>
     var layer = layui.layer;
     var form = layui.form;
-    // 手机屏幕上默认最小化目录
-    if(window.outerWidth < 1300){
+    // Ajax默认配置
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    // 非小屏默认展开文档目录
+    if(window.innerWidth > 1650){
         $(".sidebar").toggleClass("doc-toc-hide");
     }
     // 切换文档目录显示与否
     $(".tocMenu").click(function() {
-        console.log("隐藏文档目录")
+        // console.log("切换文档目录显示")
         $(".sidebar").toggleClass("doc-toc-hide");
     });
     
@@ -187,19 +240,6 @@
     $('#content').on('click','a',function(e){
         e.target.target = '_blank';
     });
-    
-    // 图片放大显示
-    var img_options = {
-        url: 'data-original',
-        fullscreen:false,//全屏
-        rotatable:false,//旋转
-        scalable:false,//翻转
-        button:false,//关闭按钮
-        toolbar:false,
-        title:false,
-      };
-    var viewer = new Viewer(document.getElementById('content'), img_options);
-
     // 显示文档下载弹出框
     $("#download_doc").click(function(r){
         var layer = layui.layer;
@@ -233,11 +273,11 @@
     function updateDocShare(data){
         $.post("{% url 'share_doc' %}",data,function(r){
             if(r.status){
-                layer.msg("设置成功",{offset: 't'})
+                layer.msg("{% trans '设置成功' %}",{offset: 't'})
                 console.log(r.data)
-                $("input[name=share_link]").val(document.domain + '/share_doc/?token=' + r.data.doc)
+                $("input[name=share_link]").val(document.location.protocol + '//' + document.location.host + '/share_doc/?token=' + r.data.doc)
             }else{
-                layer.msg("设置出错")
+                layer.msg("{% trans '设置出错' %}")
             }
         })
     }
@@ -246,22 +286,35 @@
     $("#shareDoc").click(function(){
         layer.open({
             type:1,
-            title:'分享文档:{{doc.name}}',
+            title:'{% trans "分享文档" %}:{{doc.name}}',
             content:$("#share_doc_div"),
             area:'450px',
-            // btn:['创建分享','取消'],
             success : function(index, layero) { // 成功弹出后回调
                 form.render();
             },
         })
     })
     {% if is_share %}
-        $("input[name=share_link]").val(window.location.protocol + '//' + document.domain + '/share_doc/?token={{doc_share.token}}')
+        $("input[name=share_link]").val(window.location.protocol + '//' + document.location.host + '/share_doc/?token={{doc_share.token}}')
     {% endif %}
 
     var share_data = {
         'id':'{{doc.id}}',
     }
+
+    //监听链接栏被单击
+    $('#copy_link').click(function(){
+        var target = document.getElementById("share_link");
+        // 选择内容
+        target.focus();
+        target.setSelectionRange(0, target.value.length);
+        document.execCommand("copy");
+        layer.msg('链接地址已复制', {
+            time: 2000, //2s后自动关闭
+            btn: '好的',
+            btnAlign: 'c'
+        });
+    })
 
     //监听分享框分享类型的单选事件
     form.on('radio(share_type)', function(data){
@@ -303,7 +356,7 @@
             updateDocShare(share_data);
         }else{
             console.log("关闭分享")
-            layer.msg("关闭分享",{offset: 't'})
+            layer.msg("{% trans '关闭分享' %}",{offset: 't'})
             $("#share-type").css('display',"none")
             $("#share-expire").css('display',"none")
             $("#share_value_item").css("display","none");

@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -7,34 +8,55 @@
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
+        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}?version={{mrdoc_version}}" />
         <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         {% block custom_element %}
         {% endblock %}
 	</head>
 	<body class="pear-container">
 		{% if debug %}
-		<blockquote class="layui-elem-quote">当前站点处于Debug调试模式</blockquote>
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="layui-card-header" style="margin-bottom: 10px;">
+					<blockquote class="layui-elem-quote">{% trans "当前站点处于Debug调试模式" %}</blockquote>
+				</div>
+			</div>
+		</div>
 		{% endif %}
-		<blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;display: none;">检测到新版本发布，请及时更新！下载地址：<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
-        {% block content %}
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="" style="margin-bottom: 10px;font-weight: 700;color: red;">
+					<a href="https://curl.qcloud.com/rVF2jfrZ" style="color: #2176ff;" target="_blank">👉【腾讯云】云产品限时秒杀，爆款1核2G云服务器，首年99元</a><br>
+					<a href="https://curl.qcloud.com/NbjvQGEE" style="color: #2176ff;" target="_blank">👉【腾讯云】境外1核2G服务器低至2折，半价续费券限量免费领取！</a><br>
+					<a href="https://curl.qcloud.com/psEDIE4h" style="color: #2176ff;" target="_blank">👉【腾讯云】推广者专属福利，新客户无门槛领取总价值高达2860元代金券，每种代金券限量500张，先到先得。</a><br>
+				</div>
+			</div>
+		</div>
+		<div id="layer-photos-demo" class="layer-photos-demo" style="display: none;">
+			<img  layer-src="{% static 'dashang/dashang_wx.webp' %}" src="{% static 'dashang/dashang_wx.webp' %}" alt="蜜源">
+		  </div>
+		{% block content %}
         {% endblock %}
-		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
-		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
+		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}?version={{mrdoc_version}}"></script>
 		<script async>
-			layui.use(['jquery'], function() {
+			layui.use(['jquery','layer'], function() {
 				let $ = layui.jquery;
+				let layer = layui.layer;
 				// 检测版本更新
 				checkUpdate = function(){
 					$.get("{% url 'check_update' %}",function(r){
-						console.log(r)
+						// console.log(r)
 						if(r.status){
-						var new_version = r.data.name.slice(1,5)
-						var current_version = '{{mrdoc_version}}'
-						// 如果存在新版本，顶部提示div
-						if(new_version > current_version){
-							$("#check_update_div").show()
-						}
+							var new_version = r.data.name.slice(1,5)
+							var current_version = '{{mrdoc_version}}'
+							// 如果存在新版本，顶部提示div
+							if(new_version > current_version){
+								$("#check_update_div").show()
+								layer.msg("发现新版本，请更新！")
+							}else{
+								layer.msg("当前已是最新版本！")
+							}
 						}      
 					})
 				}
@@ -43,17 +65,17 @@
 				// console.log(check_update)
 				// 如果没有检测过，立即检测
 				if(check_update == null){
-				checkUpdate();
-				window.localStorage.setItem('check_update',new Date().getTime())
-				}else{
-				// 如果上次检测时间距今超过5天，再次检测
-				var time_diff = (new Date().getTime() - check_update)/86400000
-				// console.log(time_diff)
-				if(time_diff > 5){
-					checkUpdate()
+					checkUpdate();
 					window.localStorage.setItem('check_update',new Date().getTime())
-				}
-				}
+				}else{
+					// 如果上次检测时间距今超过5天，再次检测
+					var time_diff = (new Date().getTime() - check_update)/86400000
+					// console.log(time_diff)
+					if(time_diff > 5){
+						checkUpdate()
+						window.localStorage.setItem('check_update',new Date().getTime())
+					}
+				};
 			})
 		  </script>
         {% block custom_script %}

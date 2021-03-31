@@ -121,7 +121,7 @@ layui.define(['jquery', 'element'], function(exports) {
 			g.wrap.style.left = "0";
 			g.wrap.style.width = "100%";
 			g.wrap.style.height = "100%";
-			g.wrap.style.zIndex = 99;
+			g.wrap.style.zIndex = 99999999999;
 			g.inner.style.position = "absolute";
 			g.inner.style.top = g.top;
 			g.inner.style.bottom = g.bottom;
@@ -133,12 +133,12 @@ layui.define(['jquery', 'element'], function(exports) {
 			g.inner.style.transform = "translate3d(" + g.translate + ")";
 			g.inner.style.webkitTransition = "all .2s ease-out";
 			g.inner.style.transition = "all .2s ease-out";
-			g.inner.style.zIndex = 100;
+			g.inner.style.zIndex = 100000000000;
 			g.mask.style.width = "100%";
 			g.mask.style.height = "100%";
 			g.mask.style.opacity = "0";
 			g.mask.style.backgroundColor = "black";
-			g.mask.style.zIndex = "98";
+			g.mask.style.zIndex = "99999999998";
 			g.mask.style.webkitTransition = "all .2s ease-out";
 			g.mask.style.transition = "all .2s ease-out";
 			g.mask.style.webkitBackfaceVisibility = "hidden";

@@ -1,0 +1,314 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "导入文集" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <span style="font-size:18px;">{% trans "导入文集到MrDoc" %}</span>
+        </div>
+        <div>
+            <div style="width: 142px;cursor: pointer;display: inline-block;" id="upload-zip" tooltip="{% trans '导入Markdown文件压缩包' %}" placement="bottom">
+                <div style="width: 70px;height: 70px;margin: 0 auto;">
+                    <img src="{% static 'icon_img/file-zip.svg' %}">
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: #262626;font-size:14px;">Markdown</div>
+                    <div style="color: #8c8c8c;font-size:12px;">.zip</div>
+                </div>
+            </div>
+            <div style="width: 142px;cursor: pointer;display: inline-block;" id="import-yuque" tooltip="{% trans '导入语雀知识库，功能开发中' %}" placement="bottom">
+                <div style="width: 70px;height: 70px;margin: 0 auto;">
+                    <img src="{% static 'icon_img/file-yuque.svg' %}">
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: #262626;font-size:14px;">{% trans "语雀知识库" %}</div>
+                    <div style="color: #8c8c8c;font-size:12px;">api</div>
+                </div>
+            </div>
+            <div style="width: 142px;cursor: pointer;display: inline-block;" id="import-yuque" tooltip="导入GitBook，功能开发中" placement="bottom">
+                <div style="width: 70px;height: 70px;margin: 0 auto;">
+                    <img src="{% static 'icon_img/file-gitbook.svg' %}">
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: #262626;font-size:14px;">GitBook</div>
+                    <div style="color: #8c8c8c;font-size:12px;">.zip</div>
+                </div>
+            </div>
+            <!-- <button class="layui-btn layui-btn-normal layui-btn-sm" id="upload-zip"><i class="layui-icon layui-icon-upload"></i>导入Markdown压缩包（.Zip）</button> -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block custom_script %}
+<script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}"></script>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    var upload = layui.upload,form=layui.form;
+    // 上传Zip文件
+    var uploadZip = upload.render({
+        elem: '#upload-zip', //绑定元素
+        url: "{% url 'import_project' %}", //上传接口
+        accept:'file',
+        exts:'zip',
+        data:{'type':'zip',csrfmiddlewaretoken: '{{ csrf_token }}'},
+        field:'import_file',
+        before:function(){
+            layer.load(1);
+        },
+        done: function(res){
+            //上传完毕回调
+            layer.closeAll('loading'); //关闭loading
+            // 写入文集数据
+            $('input[name="project-name"]').val(res.project.name)
+            $('input[name="project-desc"]').val(res.project.desc)
+            // 遍历文集的文档
+            layui.each(res.data,function(index,item){ // 遍历一级文档
+                // console.log(index,item)
+                // var doc_ele = '<li data-sortable-id="'+ item[0] +'" class="list-group-item">'+item[1]+'<ul class="list-group nested-sortable"></ul></li>'
+                var doc_ele = '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title']
+                if(item['children'] != undefined){
+                    let li = '<i class="layui-icon layui-icon-down switch-toc"></i><ul class="list-group nested-sortable">';
+                    doc_ele += li;
+                    layui.each(item['children'],function(index,item){ // 遍历二级文档
+                        let li = '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title'];
+                        doc_ele += li;
+                        if(item['children'] != undefined){
+                            let li = '<i class="layui-icon layui-icon-down switch-toc"></i><ul class="list-group nested-sortable">';
+                            doc_ele += li;
+                            layui.each(item['children'],function(index,item){
+                                let li = '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title'] + '</li>';
+                            })
+                            doc_ele += '</ul>'
+                        }else{
+                            let li = '<ul class="list-group nested-sortable"></ul>'
+                            doc_ele += li;
+                        }
+                        doc_ele += '</li>'
+                    })
+                    doc_ele += '</ul>'
+                }else{
+                    let li = '<ul class="list-group nested-sortable"></ul>'
+                    doc_ele += li
+                }
+                doc_ele += '</li>'
+                $("#nestedDemo").append(doc_ele)
+            });
+            docSort();// 动态添加元素之后，调用一次
+            // 打开排序弹出框
+            var editor_import = layer.open({
+                type:1,
+                title:'编辑导入的文集',
+                area:['700px','400px'],
+                content:$("#import-project-sort"),
+                btn:['保存文档','发布文档'],
+                yes:function(index,layero){
+                    // 保存文档
+                    // console.log(serialize(root))
+                    var sort_data = {
+                        'pid':res.project.id,
+                        'title':$('input[name="project-name"]').val(),
+                        'desc':$('input[name="project-desc"]').val(),
+                        'role':$(':radio[name="role"]:checked').val(),
+                        'sort_data':JSON.stringify(serialize(root)),
+                        'status':0,
+                    }
+                    // console.log(sort_data)
+                    $.post('{% url "project_doc_sort" %}',sort_data,function(r){
+                        if(r.status){
+                            layer.msg("完成文集导入",function(){
+                                layer.close(index)
+                                // window.location.href = "{% url 'manage_project' %}"
+                            })
+                            
+                        }else{
+                            layer.msg("修改导入文集出错")
+                        }
+                    });
+                },
+                btn2:function(index,layero){
+                    // 发布文档
+                    console.log(serialize(root))
+                    var sort_data = {
+                        'pid':res.project.id,
+                        'title':$('input[name="project-name"]').val(),
+                        'desc':$('input[name="project-desc"]').val(),
+                        'role':$(':radio[name="role"]:checked').val(),
+                        'sort_data':JSON.stringify(serialize(root)),
+                        'status':1,
+                    }
+                    console.log(sort_data)
+                    $.post('{% url "project_doc_sort" %}',sort_data,function(r){
+                        if(r.status){
+                            layer.msg("完成文集导入",function(){
+                                layer.close(index)
+                                // window.location.href = "{% url 'manage_project' %}"
+                            })
+                        }else{
+                            layer.msg("修改导入文集出错")
+                        }
+                    });
+                },
+
+            })
+
+        },
+        error: function(){
+            //请求异常回调
+            layer.closeAll('loading'); //关闭loading
+            layer.msg("文件上传出错")
+        }
+    });
+    // 上传语雀知识库
+    $("#upload-yuque").click(function(r){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: ['350px','350px'],
+          });
+    });
+
+</script>
+<!-- 导入的文集文档排序模板div -->
+<style>
+    .row {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        }
+
+    .list-group {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+    .col {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 100%;
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .list-group-item:first-child {
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+    }
+    .list-group-item {
+        position: relative;
+        display: block;
+        padding: .75rem 1.25rem;
+        margin-bottom: -1px;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,.125);
+    }
+    .list-group-item:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    }
+    
+    .list-group-item:last-child {
+      margin-bottom: 0;
+      border-bottom-right-radius: 0.25rem;
+      border-bottom-left-radius: 0.25rem;
+    }
+    
+    .list-group-item:hover, .list-group-item:focus {
+      z-index: 1;
+      text-decoration: none;
+    }
+    .list-group-item.disabled, .list-group-item:disabled {
+      color: #6c757d;
+      pointer-events: none;
+      background-color: #fff;
+    }
+    
+    .list-group-item.active {
+      z-index: 2;
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    
+</style>
+<div id="import-project-sort" style="display: none;margin: 10px;" class="layui-form">
+    <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">
+        <input class="layui-input" placeholder="请输入文集名称" name="project-name">
+    </div>
+    <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">
+        <input class="layui-input" placeholder="请输入文集简介" name="project-desc">
+    </div>
+    <div class="layui-row" style="">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: auto;">文集状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="role" value="1" title="私密" checked>
+                <input type="radio" name="role" value="0" title="公开">
+            </div>
+          </div>
+    </div>
+    <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">文档拖拽排序</div>
+    <div id="nested" class="row">
+        <ul id="nestedDemo" class="list-group col nested-sortable"></ul>
+    </div>
+</div>
+<!-- 文档拖拽排序 -->
+<script src="{% static 'sortablejs/Sortable.js' %}"></script>
+<script>
+    // 文档动态排序
+    function docSort(){
+        // Nested demo
+        var nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
+        // Loop through each nested sortable element
+        for (var i = 0; i < nestedSortables.length; i++) {
+            new Sortable(nestedSortables[i], {
+                group: {
+                    name:'docsort',
+                    pull: function(event) {
+                        var deep = event.el.parentNode.parentNode.parentNode.parentNode.className
+                        if(deep == 'list-group nested-sortable') return false;
+                        return true;
+                    },
+                },
+                animation: 150,
+                fallbackOnBody: true,
+                invertSwap:true,
+                swapThreshold: 0.65,
+            });
+        }
+    };
+    
+    const nestedQuery = '.nested-sortable';
+    const identifier = 'sortableId';
+    const root = document.getElementById('nestedDemo');
+    function serialize(sortable) {
+      var serialized = [];
+      var children = [].slice.call(sortable.children);
+      for (var i in children) {
+        var nested = children[i].querySelector(nestedQuery);
+        serialized.push({
+          id: children[i].dataset[identifier],
+          children: nested ? serialize(nested) : []
+        });
+      }
+      return serialized
+    }
+    function getLevel(){
+        console.log(serialize(root))
+    }
+    form.render();
+</script>
+{% endblock %}

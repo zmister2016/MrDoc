@@ -1,0 +1,294 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "文集协作管理" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-row" style="margin-bottom: 10px;padding-left:15px;">
+            <span class="layui-breadcrumb" lay-separator=">">
+            <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
+            <a><cite>{% trans "协作管理" %}</cite></a>
+            </span>
+        </div>
+
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <div class="layui-row">
+                <span style="font-size:18px;">{% trans "管理文集" %}<strong style="text-decoration:underline;"><a href="{% url 'pro_index' pro.id %}" target="_blank">《{{pro.name}}》</a></strong>的协作
+                </span>
+            </div>
+        </div>
+        <div class="layui-row">
+            <form class="layui-form">
+                {% csrf_token %}
+                {% load project_filter %}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{% trans "文集名称" %}</label>
+                    <div class="layui-input-block">
+                    <input type="text" name="title" required value="{{pro.name}}"  disabled class="layui-input">
+                        <!--<span>{{pro.name}}</span>-->
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{% trans "协作人数：" %}</label>
+                    <div class="layui-input-inline">
+                        <input type="text" value="{{ pro.id | project_collaborator_cnt }}人" class="layui-input" disabled>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        <button class="pear-btn pear-btn-primary pear-btn-xs" type="button" onclick="addProjectColla('{{pro.id}}')">
+                            <i class="layui-icon layui-icon-addition"></i>{% trans "添加" %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% if collaborator.count != 0 %}
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <ul class="layui-tab-title">
+            <li class="layui-this">{% trans "协作用户" %}</li>
+            <li>{% trans "协作文档" %}</li>
+            </ul>
+            <div class="layui-tab-content">
+                <!-- 协作用户 -->
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-row">
+                        <table class="layui-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "用户名" %}</th>
+                                    <th>{% trans "协作权限" %}</th>
+                                    <th>{% trans "操作" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for colla in collaborator %}
+                                <tr>
+                                    <td>{{ colla.user }}</td>
+                                    <td>
+                                        {% if colla.role == 0 %}
+                                        {% trans "新建文档，修改、删除新建的文档" %}
+                                        {% else %}
+                                        {% trans "可操作所有文档" %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="modifyProjectColla('{{colla.user}}')" class="layui-btn layui-btn-xs layui-btn-normal">
+                                            <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
+                                        </a>
+                                        <a href="javascript:void(0);" onclick="delProColla('{{colla.user}}')" class="layui-btn layui-btn-xs layui-btn-warm">
+                                            <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <!-- 协作文档 -->
+                    <div class="layui-row">
+                        <table class="layui-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "文档名称" %}</th>
+                                    <th>{% trans "创建用户" %}</th>
+                                    <th>{% trans "创建时间" %}</th>
+                                    <th>{% trans "操作" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in colla_docs %}
+                                <tr>
+                                    <td><a href="{% url 'doc' doc.top_doc doc.id %}" target="_blank">{{ doc.name }}</a></td>
+                                    <td>{{ doc.create_user }}</td>
+                                    <th>{{ doc.create_time }}</th>
+                                    <td>
+                                        <a href="{% url 'modify_doc' doc.id %}" target="_blank" class="layui-btn layui-btn-xs layui-btn-normal">
+                                            <i class="layui-icon layui-icon-edit"></i>{% trans "修改" %}
+                                        </a>
+                                        <a href="javascript:void(0);" onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-normal">
+                                            <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>   
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block custom_script %}
+<script>
+    layui.use(['table', 'jquery','form', 'layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layer.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        //添加文集协作者
+        addProjectColla = function(pid){
+            layer.open({
+                type:1,
+                title:'添加文集协作者',
+                area:['400px','400px'],
+                id:'addProColla',//配置ID
+                content:$('#add-pro-colla-layer'),
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                success : function(index, layero) { // 成功弹出后回调
+                    form.render('radio'); // 刷新checkbox开关渲染(否则开关按钮会不显示)
+                },
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'types':0,
+                        'username':$("#user-select").val(),
+                        'role': $('input[name="add-role"]:checked').val()
+                    }
+                    $.post("{% url 'manage_pro_colla' pro.id %}",data,function(r){
+                        layer.closeAll('loading'); //关闭loading
+                        if(r.status){
+                            //添加成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //添加失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            })
+        };
+        // 删除文集协作者
+        delProColla = function(user){
+            layer.open({
+                type:1,
+                title:'删除文集协作者',
+                area:'300px;',
+                id:'delProColla',//配置ID
+                content:'<div style="margin:10px;">确定将用户' + user+ '从文集协作者中删除？</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    data = {
+                        'types':1,
+                        'username':user,
+                    }
+                    $.post("{% url 'manage_pro_colla' pro.id %}",data,function(r){
+                        if(r.status){
+                            //删除成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //删除失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            })
+        };
+        // 修改文集协作者
+        modifyProjectColla = function(user){
+            layer.open({
+                type:1,
+                title:'修改'+ user + '的协作权限',
+                area:'400px;',
+                id:'modifyProColla',//配置ID
+                content:$('#modify-pro-colla-layer'),
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                success : function(index, layero) { // 成功弹出后回调
+                    form.render('radio'); // 刷新checkbox开关渲染(否则开关按钮会不显示)
+                },
+                yes:function (index,layero) {
+                    data = {
+                        'types':2,
+                        'username':user,
+                        'role': $('input[name="modify-role"]:checked').val()
+                    }
+                    $.post("{% url 'manage_pro_colla' pro.id %}",data,function(r){
+                        if(r.status){
+                            //修改成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //修改失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            })
+        };
+        // 删除文档
+        delDoc = function(doc_id){
+            layer.open({
+                type:1,
+                title:'删除文档',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：此操作将删除此文档！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'doc_id':doc_id,
+                    }
+                    $.post("{% url 'del_doc' %}",data,function(r){
+                        layer.closeAll('loading')
+                        if(r.status){
+                            //修改成功
+                            window.location.reload();
+                            //layer.close(index)
+                        }else{
+                            //修改失败，提示
+                            console.log(r)
+                            layer.msg(r.data)
+                        }
+                    })
+                },
+            });
+        };
+    })
+</script>
+<!-- 添加文集协作者layer弹出框 -->
+<div id="add-pro-colla-layer" style="display:none;">
+    <div style="margin:10px;" class="layui-form">
+        <select name="user-select" id="user-select" lay-verify="" lay-search>
+            <option value="">选择用户，可搜索</option>
+            {% for user in user_list %}
+            <option value="{{user.username}}">{{user.first_name}}({{user.username}})</option>
+            {% endfor %}
+        </select>
+        <div class="layui-form-item">
+          <!-- <div class="layui-input-inline"> -->
+            <input type="radio" name="add-role" value="0" title="初级权限 - 可新建文档，修改、删除自己创建的文档" checked>
+            <input type="radio" name="add-role" value="1" title="高级权限 - 可操作所有文档" >
+          <!-- </div> -->
+        </div>
+    </div>
+</div>
+<!-- 修改文集协作者权限layer弹出框 -->
+<div id="modify-pro-colla-layer" style="display:none;">
+    <div style="margin:10px;" class="layui-form">
+        <div class="layui-form-item">
+          <!-- <div class="layui-input-inline"> -->
+            <input type="radio" name="modify-role" value="0" title="初级权限 - 可新建文档，修改、删除自己创建的文档" checked>
+            <input type="radio" name="modify-role" value="1" title="高级权限 - 可操作所有文档" >
+          <!-- </div> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

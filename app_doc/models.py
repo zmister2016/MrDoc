@@ -4,11 +4,16 @@ from django.contrib.auth.models import User
 
 # 文集模型
 class Project(models.Model):
-    name = models.CharField(verbose_name="文档名称",max_length=50)
+    name = models.CharField(verbose_name="文集名称",max_length=50)
+    icon= models.CharField(verbose_name="文集图标",max_length=50,blank=True,null=True,default=None)
     intro = models.TextField(verbose_name="介绍")
     # 文集权限说明：0表示公开，1表示私密,2表示指定用户可见,3表示访问码可见 默认公开
     role = models.IntegerField(choices=((0,0),(1,1),(2,2),(3,3)), default=0,verbose_name="文集权限")
     role_value = models.TextField(verbose_name="文集权限值",blank=True,null=True)
+    is_watermark = models.BooleanField(verbose_name="水印状态",default=False)
+    watermark_type = models.IntegerField(verbose_name="水印类型",default=1) # 1表示文字水印 2表示图片水印
+    watermark_value = models.CharField(verbose_name="水印内容",null=True,blank=True,default='',max_length=250)
+    is_top = models.BooleanField(verbose_name="是否置顶",default=False)
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)
@@ -71,9 +76,10 @@ class Doc(models.Model):
     modify_time = models.DateTimeField(auto_now=True)
     # 文档状态说明：0表示草稿状态，1表示发布状态，2表示删除状态
     status = models.IntegerField(choices=((0,0),(1,1)),default=1,verbose_name='文档状态')
-    # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器
+    # 编辑器模式：1表示Editormd编辑器，2表示Vditor编辑器，3表示iceEditor编辑器
     editor_mode = models.IntegerField(default=1,verbose_name='编辑器模式')
     open_children = models.BooleanField(default=False,verbose_name="展开下级目录")
+    show_children = models.BooleanField(verbose_name="显示下级文档",default=False)
 
     def __str__(self):
         return self.name
@@ -245,4 +251,20 @@ class Attachment(models.Model):
 
     class Meta:
         verbose_name = '附件管理'
+        verbose_name_plural = verbose_name
+
+
+# 我的收藏
+class MyCollect(models.Model):
+    # 收藏类型 1表示文档 2表示文集
+    collect_type = models.IntegerField(verbose_name="收藏类型")
+    collect_id = models.IntegerField(verbose_name="收藏对象ID")
+    create_user = models.ForeignKey(User,on_delete=models.CASCADE)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.collect_type
+
+    class Meta:
+        verbose_name = '我的收藏'
         verbose_name_plural = verbose_name

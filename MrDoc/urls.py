@@ -23,7 +23,6 @@ from app_doc.sitemaps import SitemapAll
 sitemaps = SitemapAll()
 
 urlpatterns = [
-    path('admin/', admin.site.urls), # Django自带admin
     path('',include('app_doc.urls')), # doc应用
     path('user/',include('app_admin.urls'),), # admin应用
     path('api/',include('app_api.urls')), # API应用
@@ -34,3 +33,10 @@ urlpatterns = [
     path('sitemap-<section>.xml', views.sitemap, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap.xml'},
          name='django.contrib.sitemaps.views.sitemap')  # 站点地图
 ]
+
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        urlpatterns.append(path('__debug__/', include(debug_toolbar.urls)))
+    except ImportError:
+        pass

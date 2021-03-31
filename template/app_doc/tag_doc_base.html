@@ -1,8 +1,10 @@
-{% load staticfiles %}
+{% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn" style="font-size: 14px;">
 <head>
     <meta charset="UTF-8">
+    <meta name=renderer  content=webkit>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -11,100 +13,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
-    <title>{% block title %}标签：{{tag.name}}{% endblock %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% else %}站点标题{% endif %}</title>
+    <title>{% block title %}{% trans "标签：" %}{{tag.name}}{% endblock %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% else %}{% trans "站点标题" %}{% endif %}</title>
 
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}?version={{mrdoc_version}}" />
-    <!-- <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet"> -->
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
-        /*一级无序li显示实心圆点*/
-        .doc-content ul li{
-            list-style:disc;
-        }
-        /*二级无序li显示空心圆点*/
-        .doc-content ul > li > ul > li{
-            list-style-type: circle;
-        }
-        /*有序li显示数字*/
-        .doc-content ol li{
-            list-style-type: decimal;
-        }
-        .doc-content ol ol ul,.doc-content ol ul ul,.doc-content ul ol ul,.doc-content ul ul ul {
-            list-style-type: square;
-        }
-        /* 三级及以下无序li显示小方块 */
-        .doc-content ul ul ul li{
-            list-style-type: square;
-        }
-        /* 下拉目录隐藏li样式 */
-        .editormd-toc-menu ul.markdown-toc-list li{
-            /*list-style:none;*/
-        }
-        /* 弹出框文档目录样式 */
-        ul.markdown-toc-list{
-            list-style-position:inside;
-        }
-        ul.markdown-toc-list li{
-            list-style: none!important;
-            line-height: 24px;
-        }
-        ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
-            padding-left:15px;
-        }
-        ul.markdown-toc-list a{
-            text-decoration: underline!important;
-        }
-        /* 块级代码和行内代码去除边框 */
-        .markdown-body p code{
-            border:none;
-        }
-        /* HTML预览样式 */
-        .markdown-body h1{ 
-            font-size: 1.7em;
-        }
-        .markdown-body h2{
-            font-size: 1.5em;
-        }
-        .markdown-body h3{
-            font-size: 1.25em;
-        }
-        .markdown-body h4{
-            font-size: 1em;
-        }
-        .markdown-body h5{
-            font-size: .875em;
-        }
-        .markdown-body h6{
-            font-size: .85em;
-        }
+        {% if img_scale %}
         .markdown-body p img{
             max-width: 350px;
         }
-        #url_qrcode img{
-            margin: auto;
-        }
-        /* 文档代码块样式 */
-        ol.linenums li{ 
-            width: max-content;
-        }
-        pre.linenums{
-            max-height: 500px;
-        }
-        li.L1, li.L3, li.L5, li.L7, li.L9 {
-            background: none !important;
-        }
-
-        /* layui弹出框颜色 */
-        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
-            border-bottom: 2px solid #333;
-        }
-        .layui-tab-brief>.layui-tab-title .layui-this{
-            color: #333;
-        }
+        {% endif %}
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -124,7 +48,7 @@
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
-            <i class="fa fa-tag"></i> 标签：<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
+            <i class="fa fa-tag"></i> {% trans "标签：" %}<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
                 {% if project.role == 1 %}
                     <i class="layui-icon layui-icon-password" title="私密文档"></i>
                 {% endif %}
@@ -139,13 +63,13 @@
             <!-- 一级目录 -->
             {% for doc in docs %}
                 <li tooltip="{{doc.doc.top_doc | get_doc_top}}" placement="bottom">
-                    <a href="{% url 'tag_doc' tag_id=tag.id doc_id=doc.doc.id %}" target="_blank" >{{ doc.doc.name }}</a>
+                    <a href="{% url 'tag_doc' tag_id=tag.id doc_id=doc.doc.id %}" target="_blank" ><i class="iconfont mrdoc-icon-wendang"></i> {{ doc.doc.name }}</a>
                 </li>
             {% endfor %}
             </ul>
         </nav>
         <div class="bq">
-            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">本文档使用MrDoc发布</a>
+            <a href="javascript:void(0);" class="mrdoc-link" id="dashang">{% trans "本文档使用MrDoc发布" %}</a>
         </div>
         <!-- 右下角广告块 -->
         <!-- 广告代码开始 -->
@@ -182,7 +106,7 @@
             {% endblock %}
 
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
+                <i class="fa fa-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
         </div>
         <!-- 文档主体 -->
@@ -194,7 +118,7 @@
                     <div class="doc-info">
                         <!-- 页面主体头信息 -->
                         {% block content_head %}
-                        <h1>标签：{{ tag.name }}</h1><hr>
+                        <h1>{% trans "标签：" %}{{ tag.name }}</h1><hr>
                         {% endblock %}
 
                         <!-- 广告代码开始 -->

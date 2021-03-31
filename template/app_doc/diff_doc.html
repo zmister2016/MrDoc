@@ -1,8 +1,10 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
+    <meta name=renderer  content=webkit>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -10,13 +12,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="{% block keyword %}{% endblock %}mrdoc"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
-    <title>文档历史版本对比：{{ doc.name }} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}觅道文档MrDoc{% endif %}</title>
+    <title>{% trans "文档历史版本对比：" %}{{ doc.name }} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon_16.png' %}"/>
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
 
-    <link rel=stylesheet href="{% static '/docdiff/codemirror.css' %}">
-    <link rel=stylesheet href="{% static '/docdiff/merge.css' %}">
+    <link rel=stylesheet href="{% static '/docdiff/codemirror.css' %}?version={{mrdoc_version}}">
+    <link rel=stylesheet href="{% static '/docdiff/merge.css' %}?version={{mrdoc_version}}">
     <style>
         .CodeMirror-merge, .CodeMirror-merge .CodeMirror{
             height: 600px;
@@ -32,8 +34,8 @@
 <div class="doc layui-fluid" style="padding-left:0px;">
     <!-- 左侧工具栏 -->
     <div class="doc-summary">
-        <div class="project-title"><i class="fa fa-edit"></i> MrDoc文档编辑器<br>
-            <span style="font-size: 14px;">你正在：对比文档历史版本</span>
+        <div class="project-title"><i class="fa fa-edit"></i> {% trans "MrDoc文档编辑器" %}<br>
+            <span style="font-size: 14px;">{% trans "你正在：对比文档历史版本" %}</span>
         </div>
         <hr>
         <div class="layui-row" style="padding: 10px;">
@@ -41,9 +43,9 @@
             <table class="layui-table" lay-size="sm">
                 <thead>
                   <tr>
-                    <th>创建时间</th>
-                    <th>用户</th>
-                    <th>查看</th>
+                    <th>{% trans "创建时间" %}</th>
+                    <th>{% trans "用户" %}</th>
+                    <th>{% trans "查看" %}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -52,7 +54,7 @@
                     <td>{{ history.create_time }}</td>
                     <td>{{ history.create_user }}</td>
                     <td>
-                        <a href="{% url 'diff_doc' history.doc.id history.id %}" >对比</a>
+                        <a href="{% url 'diff_doc' history.doc.id history.id %}" >{% trans "对比" %}</a>
                     </td>
                   </tr>
                   {% endfor %}
@@ -66,12 +68,12 @@
     <div class="doc-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
-            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="{% trans '切换侧边栏' %}">
                 <i class="layui-icon layui-icon-spread-left"></i>
             </a>
             <!-- 顶部工具栏 -->
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">首页</span>
+                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
         </div>
         <!-- 文档主体 -->
@@ -86,10 +88,10 @@
                     <!-- 对比开始 -->
                     <div class="layui-row" style="margin-bottom: 10px;">
                         <div class="layui-col-md6" style="text-align: center;">
-                            <span style="font-weight: 700;">当前版本</span>
+                            <span style="font-weight: 700;">{% trans "当前版本" %}</span>
                         </div>
                         <div class="layui-col-md6" style="text-align: center;">
-                            <span style="font-weight: 700;color: darkblue;">历史版本:{{history.create_time}}</span>
+                            <span style="font-weight: 700;color: darkblue;">{% trans "历史版本:" %}{{history.create_time}}</span>
                         </div>
                     </div>
                     <div class="markdown-body" id="content">
@@ -104,12 +106,12 @@
 </div>
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
 
-<script src="{% static '/docdiff/codemirror.js' %}"></script>
-<script src="{% static '/docdiff/markdown.js' %}"></script>
-<script src="{% static '/docdiff/diff_match_patch.js' %}"></script>
-<script src="{% static '/docdiff/merge.js' %}"></script>
+<script src="{% static '/docdiff/codemirror.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/docdiff/markdown.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/docdiff/diff_match_patch.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/docdiff/merge.js' %}?version={{mrdoc_version}}"></script>
 
 <script>
     $.ajaxSetup({

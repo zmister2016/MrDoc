@@ -1,0 +1,100 @@
+<script>
+    var editor = new ice.editor("editor-md");
+    editor.height='600px';
+    editor.plugin({
+        name:"attachments",
+        menu:'<div title="添加附件"><svg t="1607826716758" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3230" width="20" height="20" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M385.706667 914.773333c-75.093333 0-146.773333-30.72-201.386667-81.92S102.4 706.56 102.4 631.466667s30.72-146.773333 81.92-201.386667l252.586667-252.586667c112.64-112.64 293.546667-112.64 402.773333 0 112.64 112.64 112.64 293.546667 0 402.773334l-252.586667 252.586666c-54.613333 54.613333-126.293333 81.92-201.386666 81.92z m252.586666-716.8c-47.786667 0-92.16 17.066667-129.706666 54.613334l-252.586667 252.586666c-34.133333 34.133333-54.613333 81.92-54.613333 129.706667s20.48 95.573333 54.613333 129.706667S337.92 819.2 385.706667 819.2s95.573333-20.48 129.706666-54.613333l252.586667-252.586667c71.68-71.68 71.68-187.733333 0-259.413333-37.546667-37.546667-85.333333-54.613333-129.706667-54.613334z" fill="#0A0B09" p-id="3231"></path><path d="M426.666667 648.533333c-13.653333 0-27.306667-3.413333-37.546667-13.653333-20.48-20.48-20.48-51.2 0-71.68l204.8-204.8c20.48-20.48 51.2-20.48 71.68 0 20.48 20.48 20.48 51.2 0 71.68l-204.8 204.8c-10.24 6.826667-23.893333 13.653333-34.133333 13.653333z" fill="#0A0B09" p-id="3232"></path></svg></div>',
+        click:function(e,z){
+            layer.ready(function(){
+                  element.init();
+                });
+                layer.open({
+                    type:'1',
+                    title:'添加附件',
+                    area:['800px','600px'],
+                    id:'uploadAttach',//配置ID,
+                    content:$('#upload-attach'),
+                    success: function(layero, index){
+                        layer.load(1);
+                        $.post('{% url "manage_attachment" %}',{types:2},function(r){
+                            $("#attach_table tbody").empty()
+                            if(r.status){
+                                //调用分页显示
+                                laypage.render({
+                                    elem: 'select-attach-page',//分页的div
+                                    count: r.data.length, //数据总数
+                                    limit:10, //单页数
+                                    jump: function(obj){
+                                        //渲染HTML
+                                        $("#attach_table tbody").empty();
+                                        var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                        layui.each(thisData, function(k, v){
+                                            var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                            // arr.push(row);
+                                            $("#attach_table tbody").append(row)
+                                        });
+                                    }
+                                });
+                                layer.closeAll("loading");//关闭加载提示
+                            }else{
+                                layer.closeAll("loading");//关闭加载提示
+                                layer.msg("获取附件失败，请稍后重试！")
+                            }
+                        })
+
+                    }
+                })
+        }
+    });
+    editor.plugin({
+        name:'image',
+        menu:'<div title="添加图片"><svg t="1607829798978" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4249" width="20" height="20" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M822 891H202c-68.37 0-124-55.63-124-124V257c0-68.37 55.63-124 124-124h620c68.37 0 124 55.63 124 124v510c0 68.37-55.63 124-124 124zM202 201c-30.88 0-56 25.12-56 56v510c0 30.88 25.12 56 56 56h620c30.88 0 56-25.12 56-56V257c0-30.88-25.12-56-56-56H202z" fill="#040000" p-id="4250"></path><path d="M723 344m-56 0a56 56 0 1 0 112 0 56 56 0 1 0-112 0Z" fill="#040000" p-id="4251"></path><path d="M879.22 779.01l-157.3-121.43c-12.51-9.66-29.17-11.49-43.48-4.79l-95.48 44.72c-43.49 20.37-95.16 6.68-122.86-32.54L357.31 519.41c-16.08-22.77-47.29-29.18-71.04-14.58L141.8 593.6l-35.6-57.94 144.46-88.78c54.23-33.33 125.47-18.7 162.19 33.29l102.79 145.56a30.966 30.966 0 0 0 38.47 10.19l95.48-44.72c37.48-17.56 81.11-12.75 113.88 12.54l157.3 121.43-41.55 53.84z" fill="#040000" p-id="4252"></path></svg></div>',
+        click:function(e,z){
+            layer.ready(function(){
+                element.init();
+            });
+            layer.open({
+                type:'1',
+                title:'添加图片',
+                area:['800px','600px'],
+                id:'uploadImg',//配置ID,
+                content:$('#upload-img'),
+            })
+        }
+    })
+    editor.menu = [
+    'backColor',                 //字体背景颜色
+    'fontSize',                  //字体大小
+    'foreColor',                 //字体颜色
+    'bold',                      //粗体
+    'italic',                    //斜体
+    'underline',                 //下划线
+    'strikeThrough',             //删除线
+    'justifyLeft',               //左对齐
+    'justifyCenter',             //居中对齐
+    'justifyRight',              //右对齐
+    'indent',                    //增加缩进
+    'outdent',                   //减少缩进
+    'insertOrderedList',         //有序列表
+    'insertUnorderedList',       //无序列表
+    'superscript',               //上标
+    'subscript',                 //下标
+    'createLink',                //创建连接
+    'unlink',                    //取消连接
+    'hr',                        //水平线
+    'table',                     //表格
+    'image',               //图片
+    'attachments',                     //附件
+    'music',                     //音乐
+    'video',                     //视频
+    'removeFormat',              //格式化样式
+    'code',                      //源码    
+    'line',                       //菜单分割线
+    'paste'                    //富文本粘贴
+    //'files',                    //ice内置多文件上传,需要配合修改js才能用
+    ]
+    editor.uploadUrl="{% url 'upload_ice_img' %}";          //粘贴上传请求路径
+    editor.imgAutoUpload=true;
+    editor.create();
+    autoCacheDoc();
+</script>

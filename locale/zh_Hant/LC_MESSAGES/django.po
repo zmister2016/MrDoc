@@ -1,0 +1,2342 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-13 12:22+0800\n"
+"PO-Revision-Date: 2021-03-13 14:20+0800\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.4.2\n"
+
+#: .\app_admin\utils.py:40
+msgid "MrDoc - 重置密码验证码"
+msgstr "MrDoc -重置密碼驗證碼"
+
+#: .\app_admin\utils.py:41
+msgid "你的验证码为：{}，验证码30分钟内有效！"
+msgstr "你的驗證碼為：{}，驗證碼30分鐘內有效！"
+
+#: .\app_admin\views.py:36
+msgid "生成验证码图片异常"
+msgstr "生成驗證碼圖片异常"
+
+#: .\app_admin\views.py:37
+msgid "请求异常：{}"
+msgstr "請求异常：{}"
+
+#: .\app_admin\views.py:57
+msgid "验证码错误！"
+msgstr "驗證碼錯誤！"
+
+#: .\app_admin\views.py:66
+msgid "用户被禁用！"
+msgstr "用戶被禁用！"
+
+#: .\app_admin\views.py:69 .\app_admin\views.py:72
+msgid "用户名或密码错误！"
+msgstr "用戶名或密碼錯誤！"
+
+#: .\app_admin\views.py:76 .\app_api\views_app.py:541
+#: .\app_api\views_app.py:583 .\app_api\views_app.py:622
+#: .\app_api\views_app.py:669 .\app_api\views_app.py:690
+#: .\app_api\views_app.py:706 .\app_doc\views.py:430 .\app_doc\views.py:548
+#: .\app_doc\views.py:1035 .\app_doc\views.py:1168 .\app_doc\views.py:1230
+#: .\app_doc\views.py:1545 .\app_doc\views.py:1779 .\app_doc\views.py:1822
+#: .\app_doc\views.py:1841 .\app_doc\views.py:1893 .\app_doc\views.py:3157
+msgid "请求出错"
+msgstr "請求出錯"
+
+#: .\app_admin\views.py:100
+msgid "注册码无效!"
+msgstr "註冊碼無效！"
+
+#: .\app_admin\views.py:108
+msgid "此电子邮箱已被注册！"
+msgstr "此電子郵箱已被注册！"
+
+#: .\app_admin\views.py:111
+msgid "用户名已被使用！"
+msgstr "用戶名已被使用！"
+
+#: .\app_admin\views.py:114
+msgid "用户名只能为英文数字组合"
+msgstr "用戶名只能為英文數位組合"
+
+#: .\app_admin\views.py:117
+msgid "用户名必须大于等于5位！"
+msgstr "用戶名必須大於等於5位！"
+
+#: .\app_admin\views.py:120
+msgid "密码必须大于等于6位！"
+msgstr "密碼必須大於等於6位！"
+
+#: .\app_admin\views.py:123
+msgid "验证码错误"
+msgstr "驗證碼錯誤"
+
+#: .\app_admin\views.py:151
+msgid "用户被禁用，请联系管理员！"
+msgstr "用戶被禁用，請聯系管理員！"
+
+#: .\app_admin\views.py:154
+msgid "请输入正确的电子邮箱格式！"
+msgstr "請輸入正確的電子郵箱格式！"
+
+#: .\app_admin\views.py:157
+msgid "请检查输入值"
+msgstr "請檢查輸入值"
+
+#: .\app_admin\views.py:174
+msgid "注销异常"
+msgstr "註銷異常"
+
+#: .\app_admin\views.py:195
+msgid "修改密码成功，请返回登录！"
+msgstr "修改密碼成功！請返回登錄"
+
+#: .\app_admin\views.py:198
+msgid "验证码已过期"
+msgstr "驗證碼已過期"
+
+#: .\app_admin\views.py:201
+msgid "邮箱不存在：{}"
+msgstr "郵箱不存在：{}"
+
+#: .\app_admin\views.py:202 .\app_admin\views.py:206
+msgid "验证码或邮箱错误"
+msgstr "驗證碼或郵箱錯誤"
+
+#: .\app_admin\views.py:231
+msgid "发送成功"
+msgstr "發送成功"
+
+#: .\app_admin\views.py:233
+msgid "发送验证码出错，请重试！"
+msgstr "發送驗證碼出錯，請重試！"
+
+#: .\app_admin\views.py:236
+msgid "电子邮箱不存在！"
+msgstr "電子郵箱不存在！"
+
+#: .\app_admin\views.py:238 .\app_admin\views.py:306 .\app_admin\views.py:373
+#: .\app_admin\views.py:396 .\app_admin\views.py:681 .\app_admin\views.py:706
+msgid "方法错误"
+msgstr "方法錯誤"
+
+#: .\app_admin\views.py:322
+msgid "电子邮箱不可重复"
+msgstr "電子郵箱不可重複"
+
+#: .\app_admin\views.py:325
+msgid "用户名不可重复"
+msgstr "用戶名不可重複"
+
+#: .\app_admin\views.py:343 .\app_admin\views.py:667 .\app_admin\views.py:677
+#: .\app_api\views.py:132 .\app_api\views.py:160 .\app_api\views.py:187
+#: .\app_api\views.py:212 .\app_api\views.py:245 .\app_doc\views.py:2159
+#: .\app_doc\views.py:2254
+msgid "系统异常"
+msgstr "系統異常"
+
+#: .\app_admin\views.py:345
+msgid "请检查参数"
+msgstr "請檢查參數"
+
+#: .\app_admin\views.py:347 .\app_doc\views.py:1037
+msgid "方法不允许"
+msgstr "方法不允許"
+
+#: .\app_admin\views.py:364 .\app_admin\views.py:698 .\app_api\views_app.py:576
+#: .\app_api\views_app.py:683 .\app_doc\views.py:425 .\app_doc\views.py:815
+#: .\app_doc\views.py:1154 .\app_doc\views.py:1815 .\app_doc\views.py:2391
+#: .\app_doc\views.py:2777 .\template\app_doc\manage\manage_self.html:83
+#: .\template\app_doc\manage\manage_self.html:105
+msgid "修改成功"
+msgstr "修改成功"
+
+#: .\app_admin\views.py:366 .\app_admin\views.py:702
+msgid "两个密码不一致"
+msgstr "兩個密碼不一致"
+
+#: .\app_admin\views.py:368 .\app_api\views_app.py:413
+#: .\app_api\views_app.py:580 .\app_api\views_app.py:619
+#: .\app_api\views_app.py:687 .\app_api\views_app.py:703 .\app_doc\views.py:545
+#: .\app_doc\views.py:776 .\app_doc\views.py:939 .\app_doc\views.py:1165
+#: .\app_doc\views.py:1227 .\app_doc\views.py:1542 .\app_doc\views.py:1745
+#: .\app_doc\views.py:1819 .\app_doc\views.py:1838 .\app_doc\views.py:1890
+#: .\app_doc\views.py:1929 .\app_doc\views.py:1991 .\app_doc\views.py:2340
+#: .\app_doc\views.py:2977 .\app_doc\views.py:3026 .\app_doc\views.py:3154
+#: .\app_doc\views_import.py:133 .\app_doc\views_import.py:223
+msgid "参数错误"
+msgstr "參數錯誤"
+
+#: .\app_admin\views.py:371
+msgid "请求错误"
+msgstr "請求錯誤"
+
+#: .\app_admin\views.py:392 .\app_admin\views.py:673 .\app_doc\views.py:803
+#: .\app_doc\views.py:1465 .\app_doc\views.py:2544
+#: .\template\app_admin\admin_project.html:268
+#: .\template\app_admin\admin_project.html:322
+#: .\template\app_doc\manage\manage_project.html:230
+#: .\template\app_doc\manage\manage_project.html:284
+msgid "删除成功"
+msgstr "刪除成功"
+
+#: .\app_admin\views.py:394 .\app_doc\views.py:806
+msgid "删除出错"
+msgstr "刪除出錯"
+
+#: .\app_admin\views.py:495
+msgid "置顶文集出错"
+msgstr "置頂文集出錯"
+
+#: .\app_admin\views.py:496
+msgid "执行出错"
+msgstr "執行出錯"
+
+#: .\app_admin\views.py:648
+msgid "最大使用次数不可为负数"
+msgstr "最大使用次數不可為負數"
+
+#: .\app_admin\views.py:664
+msgid "新增成功"
+msgstr "新增成功"
+
+#: .\app_admin\views.py:666
+msgid "生成注册码异常"
+msgstr "生成註冊碼異常"
+
+#: .\app_admin\views.py:675
+msgid "注册码不存在"
+msgstr "註冊碼不存在"
+
+#: .\app_admin\views.py:679 .\app_doc\views.py:543 .\app_doc\views.py:1224
+#: .\app_doc\views.py:1730 .\app_doc\views.py:3151
+msgid "类型错误"
+msgstr "類型錯誤"
+
+#: .\app_admin\views.py:700
+msgid "密码不得少于6位数"
+msgstr "密碼不得少於6位數"
+
+#: .\app_admin\views.py:704
+msgid "修改出错"
+msgstr "修改出錯"
+
+#: .\app_admin\views.py:950 .\app_doc\views_user.py:44
+#: .\template\app_doc\manage\manage_overview.html:4
+msgid "仪表盘"
+msgstr "儀錶盤"
+
+#: .\app_admin\views.py:957 .\app_doc\views_user.py:58
+#: .\template\app_doc\manage\manage_project.html:4
+#: .\template\app_doc\manage\manage_project_collaborator.html:10
+#: .\template\app_doc\manage\manage_project_doc_sort.html:13
+#: .\template\app_doc\manage\manage_project_options.html:15
+#: .\template\app_doc\manage\manage_project_transfer.html:10
+msgid "文集管理"
+msgstr "文集管理"
+
+#: .\app_admin\views.py:964 .\app_doc\views_user.py:91
+#: .\template\app_doc\manage\manage_doc.html:4
+#: .\template\app_doc\manage\manage_doc_history.html:10
+msgid "文档管理"
+msgstr "文檔管理"
+
+#: .\app_admin\views.py:971 .\template\app_doc\manage\manage_doctemp.html:4
+#: .\template\app_doc\manage\manage_doctemp.html:10
+msgid "文档模板管理"
+msgstr "文檔模板管理"
+
+#: .\app_admin\views.py:978
+msgid "注册码管理"
+msgstr "註冊碼管理"
+
+#: .\app_admin\views.py:985
+msgid "用户管理"
+msgstr "用戶管理"
+
+#: .\app_admin\views.py:992
+msgid "站点设置"
+msgstr "站點設置"
+
+#: .\app_admin\views.py:999
+msgid "使用帮助"
+msgstr "使用幫助"
+
+#: .\app_admin\views.py:1005
+msgid "安装说明"
+msgstr "安裝說明"
+
+#: .\app_admin\views.py:1012
+msgid "使用说明"
+msgstr "使用說明"
+
+#: .\app_api\auth_app.py:49
+msgid "无效的token"
+msgstr "無效的Token"
+
+#: .\app_api\auth_app.py:52
+msgid "请求的URL中必须携带token参数"
+msgstr "請求的URL中必須攜帶Token參數"
+
+#: .\app_api\permissions_app.py:11
+msgid "只有VIP才能访问"
+msgstr "只有VIP才能訪問"
+
+#: .\app_api\views.py:44
+msgid "链接已失效，请从合法路径访问，或联系管理员！"
+msgstr "鏈接已失效！請從合法路徑訪問，或聯繫管理員！"
+
+#: .\app_api\views.py:48
+msgid "请求用户出错！"
+msgstr "請求用戶出錯！"
+
+#: .\app_api\views.py:55
+msgid "非法用户！"
+msgstr "非法用戶！"
+
+#: .\app_api\views.py:67
+msgid "验证失败,可能是用户名或Token不正确!详情请联系管理员！"
+msgstr "驗證失敗！可能是用戶名或Token不正確！詳情請聯繫管理員"
+
+#: .\app_api\views.py:69
+msgid "关键字验证失败，请联系管理员！部分关键字为空"
+msgstr "關鍵字驗證失敗，請聯繫管理員！部分關鍵字為空"
+
+#: .\app_api\views.py:74
+msgid "API接口运行出错！"
+msgstr "API接口運行出錯！"
+
+#: .\app_api\views.py:88
+msgid "你还没有生成过Token！"
+msgstr "你還沒有生成過Token！"
+
+#: .\app_api\views.py:91
+msgid "Token管理页面异常"
+msgstr "Token管理頁面異常"
+
+#: .\app_api\views.py:108
+msgid "用户Token生成异常"
+msgstr "用戶Token生成異常"
+
+#: .\app_api\views.py:109
+msgid "生成出错，请重试！"
+msgstr "生成出錯，請重試！"
+
+#: .\app_api\views.py:129 .\app_api\views.py:157 .\app_api\views.py:184
+#: .\app_api\views.py:209 .\app_api\views.py:242 .\app_api\views.py:266
+msgid "token无效"
+msgstr "Token無效"
+
+#: .\app_api\views.py:131 .\app_api\views.py:159
+msgid "token获取文集异常"
+msgstr "Token獲取文集異常"
+
+#: .\app_api\views.py:211
+msgid "token创建文集异常"
+msgstr "Token創建文集異常"
+
+#: .\app_api\views.py:240 .\app_api\views_app.py:376 .\app_api\views_app.py:617
+#: .\app_api\views_app.py:701 .\app_doc\views.py:427 .\app_doc\views.py:525
+#: .\app_doc\views.py:1214 .\app_doc\views.py:1222 .\app_doc\views.py:1433
+#: .\app_doc\views.py:1435 .\app_doc\views.py:1526 .\app_doc\views.py:1577
+#: .\app_doc\views.py:1800 .\app_doc\views.py:1836 .\app_doc\views.py:3142
+#: .\app_doc\views.py:3149
+msgid "非法请求"
+msgstr "非法請求"
+
+#: .\app_api\views.py:244
+msgid "token创建文档异常"
+msgstr "Token創建文檔異常"
+
+#: .\app_api\views.py:268
+msgid "token上传图片异常"
+msgstr "Token上傳圖片異常"
+
+#: .\app_api\views.py:269 .\app_doc\util_upload_img.py:169
+msgid "上传出错"
+msgstr "上傳出錯"
+
+#: .\app_api\views_app.py:90
+msgid "账号被禁用"
+msgstr "賬號被禁用"
+
+#: .\app_api\views_app.py:95
+msgid "用户名或密码错误"
+msgstr "用戶名或密碼錯誤"
+
+#: .\app_api\views_app.py:341 .\app_doc\views.py:3014
+msgid "参数不正确"
+msgstr "參數不正確"
+
+#: .\app_api\views_app.py:344 .\app_doc\views.py:309
+msgid "创建文集出错"
+msgstr "創建文集出錯"
+
+#: .\app_api\views_app.py:346
+msgid "系统异常请稍后再试"
+msgstr "系統異常，請稍後再試"
+
+#: .\app_api\views_app.py:350
+msgid "请登录后操作"
+msgstr "請登錄后操作"
+
+#: .\app_api\views_app.py:380 .\app_api\views_app.py:417
+msgid "资源未找到"
+msgstr "資源未找到"
+
+#: .\app_api\views_app.py:383 .\app_doc\views.py:429
+msgid "修改文集出错"
+msgstr "修改文集出錯"
+
+#: .\app_api\views_app.py:420
+msgid "API文集删除异常"
+msgstr "API文集刪除異常"
+
+#: .\app_api\views_app.py:485
+msgid "返回HTML"
+msgstr "返回HTML"
+
+#: .\app_api\views_app.py:536 .\app_doc\views.py:1030
+msgid "无权操作此文集"
+msgstr "無權操作此文集"
+
+#: .\app_api\views_app.py:538 .\app_doc\views.py:1032
+msgid "请确认文档标题、文集正确"
+msgstr "請確認文檔標題、文集正確"
+
+#: .\app_api\views_app.py:540
+msgid "api新建文档异常"
+msgstr "API新建文檔異常"
+
+#: .\app_api\views_app.py:578 .\app_api\views_app.py:754
+#: .\app_doc\views.py:1163 .\app_doc\views.py:2297
+msgid "未授权请求"
+msgstr "未授權請求"
+
+#: .\app_api\views_app.py:582
+msgid "api修改文档出错"
+msgstr "API修改文檔出錯"
+
+#: .\app_api\views_app.py:615 .\app_api\views_app.py:699
+#: .\app_doc\views.py:1212 .\app_doc\views.py:1220 .\app_doc\views.py:1524
+#: .\app_doc\views.py:1834 .\app_doc\views.py:2316 .\app_doc\views.py:2402
+#: .\app_doc\views.py:2792 .\app_doc\views.py:3140 .\app_doc\views.py:3147
+msgid "删除完成"
+msgstr "刪除完成"
+
+#: .\app_api\views_app.py:621
+msgid "api删除文档出错"
+msgstr "API刪除文檔出錯"
+
+#: .\app_api\views_app.py:639 .\app_doc\views.py:708
+msgid "无权操作"
+msgstr "無權操作"
+
+#: .\app_api\views_app.py:648 .\app_api\views_app.py:666
+msgid "请登录"
+msgstr "請登錄"
+
+#: .\app_api\views_app.py:662
+msgid "创建成功"
+msgstr "創建成功"
+
+#: .\app_api\views_app.py:664 .\app_doc\views.py:1776
+msgid "模板标题不能为空"
+msgstr "模板標題不能為空"
+
+#: .\app_api\views_app.py:668
+msgid "api创建文档模板出错"
+msgstr "API創建文檔模板出錯"
+
+#: .\app_api\views_app.py:685 .\app_doc\views.py:1817
+msgid "非法操作"
+msgstr "非法操作"
+
+#: .\app_api\views_app.py:689
+msgid "api修改文档模板出错"
+msgstr "API修改文檔模板出錯"
+
+#: .\app_api\views_app.py:705
+msgid "api删除文档模板出错"
+msgstr "API刪除文檔模板出錯"
+
+#: .\app_api\views_app.py:746
+msgid "出错信息"
+msgstr "出錯信息"
+
+#: .\app_api\views_app.py:772 .\app_doc\views.py:2412
+#: .\template\app_doc\manage\manage_image.html:31
+msgid "全部图片"
+msgstr "全部圖片"
+
+#: .\app_api\views_app.py:773 .\app_api\views_app.py:789
+#: .\app_api\views_app.py:800 .\app_doc\views.py:2377 .\app_doc\views.py:2388
+#: .\app_doc\views.py:2413 .\template\app_doc\manage\manage_image.html:32
+msgid "未分组"
+msgstr "未分組"
+
+#: .\app_api\views_app.py:785 .\app_doc\views.py:2426 .\app_doc\views.py:2803
+msgid "出现错误"
+msgstr "出現錯誤"
+
+#: .\app_api\views_app.py:789 .\app_api\views_app.py:800
+#: .\app_doc\views.py:2377 .\app_doc\views.py:2388
+msgid "默认分组"
+msgstr "默認分組"
+
+#: .\app_api\views_app.py:796 .\app_api\views_app.py:805
+#: .\app_doc\views.py:2384 .\app_doc\views.py:2393 .\app_doc\views.py:2767
+#: .\app_doc\views.py:2781
+msgid "名称无效"
+msgstr "名稱無效"
+
+#: .\app_api\views_app.py:815 .\app_doc\views.py:2405 .\app_doc\views.py:2795
+msgid "删除错误"
+msgstr "刪除錯誤"
+
+#: .\app_api\views_app.py:868 .\app_doc\views.py:2511
+#: .\app_doc\views_import.py:47 .\app_doc\views_import.py:198
+msgid "文件大小超出限制"
+msgstr "文件大小超出限制"
+
+#: .\app_api\views_app.py:879 .\app_doc\views.py:2535
+msgid "不支持的格式"
+msgstr "不支持的格式"
+
+#: .\app_api\views_app.py:881 .\app_doc\views.py:2537
+msgid "无效文件"
+msgstr "無效文件"
+
+#: .\app_doc\import_utils.py:96
+msgid "未发现yaml文件"
+msgstr "未發現yaml文件"
+
+#: .\app_doc\import_utils.py:150
+msgid "解析导入文件异常"
+msgstr "解析導入文件異常"
+
+#: .\app_doc\import_utils.py:160
+msgid "删除临时文件异常"
+msgstr "刪除臨時文件異常"
+
+#: .\app_doc\import_utils.py:204 .\app_doc\import_utils.py:241
+#: .\app_doc\util_upload_img.py:217
+msgid "本地上传"
+msgstr "本地上傳"
+
+#: .\app_doc\import_utils.py:269
+msgid "读取异常"
+msgstr "讀取異常"
+
+#: .\app_doc\report_utils.py:270
+msgid "本格式不支持iframe视频显示，视频地址为：{}"
+msgstr "本格式不支持iframe視頻顯示，視頻地址為：{}"
+
+#: .\app_doc\report_utils.py:301 .\template\app_doc\tag_doc_single.html:107
+msgid "目录"
+msgstr "目錄"
+
+#: .\app_doc\report_utils.py:816
+msgid "生成PDF出错"
+msgstr "生成PDF出錯"
+
+#: .\app_doc\templatetags\doc_filter.py:32
+msgid "【协作】"
+msgstr "【協作】"
+
+#: .\app_doc\templatetags\doc_filter.py:40
+msgid "无上级文档"
+msgstr "無上級文檔"
+
+#: .\app_doc\templatetags\project_filter.py:20
+msgid "它还没有文档……"
+msgstr "它還沒有文檔"
+
+#: .\app_doc\util_upload_img.py:57
+msgid "文件格式不允许"
+msgstr "文件格式不允許"
+
+#: .\app_doc\util_upload_img.py:81
+msgid "iceEditor上传"
+msgstr "iceEditor上傳"
+
+#: .\app_doc\util_upload_img.py:94
+msgid "文件存储异常"
+msgstr "文件存儲異常"
+
+#: .\app_doc\util_upload_img.py:122
+msgid "iceurl粘贴上传"
+msgstr "iceurl粘貼上傳"
+
+#: .\app_doc\util_upload_img.py:191
+msgid "图片格式不正确"
+msgstr "圖片格式不正確"
+
+#: .\app_doc\util_upload_img.py:201
+msgid "图片大小超出{}MB"
+msgstr "圖片大小超出{}MB"
+
+#: .\app_doc\util_upload_img.py:220 .\app_doc\util_upload_img.py:242
+msgid "上传图片成功"
+msgstr "上傳圖片成功"
+
+#: .\app_doc\util_upload_img.py:240 .\app_doc\util_upload_img.py:267
+msgid "粘贴上传"
+msgstr "粘貼上傳"
+
+#: .\app_doc\views.py:306
+msgid "文集名称不能为空！"
+msgstr "文集名稱不能為空！"
+
+#: .\app_doc\views.py:310
+msgid "出现异常,请检查输入值！"
+msgstr "出現異常，請檢查輸入值！"
+
+#: .\app_doc\views.py:387
+msgid "文集页访问异常"
+msgstr "文集頁面訪問異常"
+
+#: .\app_doc\views.py:474
+msgid "出错"
+msgstr "出錯"
+
+#: .\app_doc\views.py:496
+msgid "访问码错误"
+msgstr "訪問碼錯誤"
+
+#: .\app_doc\views.py:499
+msgid "验证文集访问码出错"
+msgstr "驗證文集訪問碼出錯"
+
+#: .\app_doc\views.py:540 .\app_doc\views.py:3170
+msgid "异常"
+msgstr "異常"
+
+#: .\app_doc\views.py:541 .\app_doc\views.py:1720 .\app_doc\views.py:1728
+msgid "无指定内容"
+msgstr "無指定內容"
+
+#: .\app_doc\views.py:547
+msgid "删除文集出错"
+msgstr "刪除文集出錯"
+
+#: .\app_doc\views.py:676 .\app_doc\views_import.py:150
+msgid "文档参数错误"
+msgstr "文檔參數錯誤"
+
+#: .\app_doc\views.py:681 .\app_doc\views_import.py:155
+msgid "没有匹配的文集"
+msgstr "沒有匹配的文集"
+
+#: .\app_doc\views.py:784
+msgid "文集创建者无需添加"
+msgstr "文集創建者無需添加"
+
+#: .\app_doc\views.py:786
+msgid "用户已存在"
+msgstr "用戶已存在"
+
+#: .\app_doc\views.py:793
+msgid "添加成功"
+msgstr "添加成功"
+
+#: .\app_doc\views.py:795 .\app_doc\views.py:861
+msgid "用户不存在"
+msgstr "用戶不存在"
+
+#: .\app_doc\views.py:805
+msgid "删除协作者出错"
+msgstr "刪除協作者出錯"
+
+#: .\app_doc\views.py:817
+msgid "修改协作权限出错"
+msgstr "修改協作權限出錯"
+
+#: .\app_doc\views.py:818 .\app_doc\views.py:1160
+msgid "修改失败"
+msgstr "修改失敗"
+
+#: .\app_doc\views.py:821
+msgid "无效的类型"
+msgstr "無效的類型"
+
+#: .\app_doc\views.py:925
+msgid "【预览草稿】"
+msgstr "【預覽草稿】"
+
+#: .\app_doc\views.py:941 .\app_doc\views.py:2979
+msgid "文集浏览出错"
+msgstr "文集瀏覽出錯"
+
+#: .\app_doc\views.py:963 .\template\app_doc\head_base.html:39
+#: .\template\app_doc\head_base.html:75
+msgid "新建文档"
+msgstr "新建文檔"
+
+#: .\app_doc\views.py:970
+msgid "访问创建文档页面出错"
+msgstr "訪問創建文檔頁面出錯"
+
+#: .\app_doc\views.py:1024
+msgid "创建文档异常"
+msgstr "創建文檔異常"
+
+#: .\app_doc\views.py:1028
+msgid "创建失败"
+msgstr "創建失敗"
+
+#: .\app_doc\views.py:1044 .\template\app_doc\doc.html:130
+msgid "修改文档"
+msgstr "修改文檔"
+
+#: .\app_doc\views.py:1075
+msgid "修改文档页面访问出错"
+msgstr "修改文檔頁面訪問出錯"
+
+#: .\app_doc\views.py:1156
+msgid "修改文档异常"
+msgstr "修改文檔異常"
+
+#: .\app_doc\views.py:1167
+msgid "修改文档出错"
+msgstr "修改文檔出錯"
+
+#: .\app_doc\views.py:1187
+msgid "文档{}的所属文集不存在。"
+msgstr "文檔{}的所屬文集不存在。"
+
+#: .\app_doc\views.py:1229
+msgid "删除文档出错"
+msgstr "刪除文檔出錯"
+
+#: .\app_doc\views.py:1342
+msgid "文集无权限"
+msgstr "文集無權限"
+
+#: .\app_doc\views.py:1344 .\app_doc\views.py:2018 .\app_doc\views.py:2155
+#: .\app_doc\views.py:2251
+msgid "文集不存在"
+msgstr "文集不存在"
+
+#: .\app_doc\views.py:1349 .\app_doc\views.py:1505 .\app_doc\views.py:1564
+#: .\app_doc\views.py:1640 .\app_doc\views.py:2711 .\app_doc\views.py:2716
+msgid "文档不存在"
+msgstr "文檔不存在"
+
+#: .\app_doc\views.py:1355
+msgid "上级文档不存在"
+msgstr "上級文檔不存在"
+
+#: .\app_doc\views.py:1380
+msgid "移动文档异常"
+msgstr "移動文檔異常"
+
+#: .\app_doc\views.py:1381 .\app_doc\views.py:1396
+msgid "移动文档失败"
+msgstr "移動文檔失敗"
+
+#: .\app_doc\views.py:1395
+msgid "移动包含下级的文档异常"
+msgstr "移動包含下級的文檔異常"
+
+#: .\app_doc\views.py:1398
+msgid "移动类型错误"
+msgstr "移動類型出錯"
+
+#: .\app_doc\views.py:1420
+msgid "文档历史版本页面访问出错"
+msgstr "文檔歷史版本頁面訪問出錯"
+
+#: .\app_doc\views.py:1437
+msgid "文档历史版本获取出错"
+msgstr "文檔歷史版本獲取出錯"
+
+#: .\app_doc\views.py:1438
+msgid "获取异常"
+msgstr "獲取異常"
+
+#: .\app_doc\views.py:1459
+msgid "管理文档历史版本页面访问出错"
+msgstr "管理文檔歷史版本頁面訪問出錯"
+
+#: .\app_doc\views.py:1467
+msgid "操作文档历史版本出错"
+msgstr "操作文檔歷史版本出錯"
+
+#: .\app_doc\views.py:1468
+msgid "出现异常"
+msgstr "出現異常"
+
+#: .\app_doc\views.py:1523
+msgid "无效请求"
+msgstr "無效請求"
+
+#: .\app_doc\views.py:1536
+msgid "清空成功"
+msgstr "清空成功"
+
+#: .\app_doc\views.py:1540
+msgid "还原成功"
+msgstr "還原成功"
+
+#: .\app_doc\views.py:1544
+msgid "处理文档出错"
+msgstr "處理文檔出錯"
+
+#: .\app_doc\views.py:1572
+msgid "发布成功"
+msgstr "發佈成功"
+
+#: .\app_doc\views.py:1574
+msgid "文档一键发布失败"
+msgstr "文檔一鍵發佈失敗"
+
+#: .\app_doc\views.py:1575
+msgid "发布失败"
+msgstr "發佈失敗"
+
+#: .\app_doc\views.py:1666
+msgid "分享码错误"
+msgstr "分享碼出錯"
+
+#: .\app_doc\views.py:1754
+msgid "新建文档模板"
+msgstr "新建文檔模板"
+
+#: .\app_doc\views.py:1778
+msgid "创建文档模板出错"
+msgstr "創建文檔模板出錯"
+
+#: .\app_doc\views.py:1787
+msgid "修改文档模板"
+msgstr "修改文檔模板"
+
+#: .\app_doc\views.py:1802
+msgid "访问文档模板修改页面出错"
+msgstr "訪問文檔模板修改頁面出錯"
+
+#: .\app_doc\views.py:1821
+msgid "修改文档模板出错"
+msgstr "修改文檔模板出錯"
+
+#: .\app_doc\views.py:1840
+msgid "删除文档模板出错"
+msgstr "刪除文檔模板出錯"
+
+#: .\app_doc\views.py:1876
+msgid "管理文档模板页面访问出错"
+msgstr "管理文檔模板頁面訪問出錯"
+
+#: .\app_doc\views.py:1892
+msgid "获取指定文档模板出错"
+msgstr "獲取指定文檔模板出錯"
+
+#: .\app_doc\views.py:2015
+msgid "无权限"
+msgstr "無權限"
+
+#: .\app_doc\views.py:2017
+msgid "导出文集MD文件出错"
+msgstr "導出文集Markdown文件出錯"
+
+#: .\app_doc\views.py:2113
+msgid "生成EPUB出错"
+msgstr "生成EPUB出錯"
+
+#: .\app_doc\views.py:2114 .\app_doc\views.py:2122 .\app_doc\views.py:2146
+#: .\app_doc\views.py:2147
+msgid "生成出错"
+msgstr "生成出錯"
+
+#: .\app_doc\views.py:2149 .\app_doc\views.py:2247
+msgid "不支持的类型"
+msgstr "不支持的類型"
+
+#: .\app_doc\views.py:2152 .\app_doc\views.py:2249
+msgid "无权限导出"
+msgstr "無權限導出"
+
+#: .\app_doc\views.py:2158
+msgid "生成文集文件出错"
+msgstr "生成文集文件出錯"
+
+#: .\app_doc\views.py:2230 .\app_doc\views.py:2241
+msgid "无可用文件,请联系文集创建者"
+msgstr "無可用文件，請聯繫文集創建者"
+
+#: .\app_doc\views.py:2234 .\app_doc\views.py:2245
+msgid "导出出错"
+msgstr "導出出錯"
+
+#: .\app_doc\views.py:2253
+msgid "获取文集前台导出文件出错"
+msgstr "獲取文集前台導出文件出錯"
+
+#: .\app_doc\views.py:2285
+msgid "图片素材管理出错"
+msgstr "圖片素材管理出錯"
+
+#: .\app_doc\views.py:2308
+msgid "图片{}非法删除"
+msgstr "圖片{}非法刪除"
+
+#: .\app_doc\views.py:2335
+msgid "移动完成"
+msgstr "移動完成"
+
+#: .\app_doc\views.py:2356
+msgid "非法参数"
+msgstr "非法參數"
+
+#: .\app_doc\views.py:2358
+msgid "图片不存在"
+msgstr "圖片不存在"
+
+#: .\app_doc\views.py:2360
+msgid "操作图片素材出错"
+msgstr "操作圖片素材出錯"
+
+#: .\app_doc\views.py:2361
+msgid "程序异常"
+msgstr "程序異常"
+
+#: .\app_doc\views.py:2404
+msgid "删除图片分组出错"
+msgstr "刪除圖片分組出錯"
+
+#: .\app_doc\views.py:2425
+msgid "获取图片分组出错"
+msgstr "獲取圖片分組出錯"
+
+#: .\app_doc\views.py:2491
+msgid "附件管理访问出错"
+msgstr "附件管理訪問出錯"
+
+#: .\app_doc\views.py:2558
+msgid "无效参数"
+msgstr "無效參數"
+
+#: .\app_doc\views.py:2779
+msgid "标签ID无效"
+msgstr "標籤ID無效"
+
+#: .\app_doc\views.py:2783
+msgid "修改异常"
+msgstr "修改異常"
+
+#: .\app_doc\views.py:2784
+msgid "异常错误"
+msgstr "異常錯誤"
+
+#: .\app_doc\views.py:2794
+msgid "删除标签出错"
+msgstr "刪除標籤出錯"
+
+#: .\app_doc\views.py:2802
+msgid "获取文档标签出错"
+msgstr "獲取文檔標籤出錯"
+
+#: .\app_doc\views.py:2918
+msgid "标签文档页访问异常"
+msgstr "標籤文檔頁訪問異常"
+
+#: .\app_doc\views.py:2999
+msgid "昵称长度不得小于2位大于10位"
+msgstr "暱稱長度不得小於2位大於10位"
+
+#: .\app_doc\views.py:3001
+msgid "昵称已被使用"
+msgstr "暱稱已被使用"
+
+#: .\app_doc\views.py:3003
+msgid "电子邮箱已被使用"
+msgstr "電子郵箱已被使用"
+
+#: .\app_doc\views.py:3032
+msgid "取消收藏成功"
+msgstr "取消收藏成功"
+
+#: .\app_doc\views.py:3040
+msgid "收藏成功"
+msgstr "收藏成功"
+
+#: .\app_doc\views.py:3136
+msgid "收藏不存在"
+msgstr "收藏不存在"
+
+#: .\app_doc\views.py:3156
+msgid "取消收藏出错"
+msgstr "取消收藏出錯"
+
+#: .\app_doc\views_import.py:125 .\app_doc\views_import.py:127
+#: .\app_doc\views_import.py:217
+msgid "上传失败"
+msgstr "上傳失敗"
+
+#: .\app_doc\views_import.py:129
+msgid "仅支持.zip格式"
+msgstr "僅支持.zip格式"
+
+#: .\app_doc\views_import.py:131 .\app_doc\views_import.py:221
+msgid "无有效文件"
+msgstr "無有效文件"
+
+#: .\app_doc\views_import.py:219
+msgid "仅支持.docx格式"
+msgstr "僅支持.docx格式"
+
+#: .\app_doc\views_user.py:51
+msgid "我的文集"
+msgstr "我的文集"
+
+#: .\app_doc\views_user.py:66
+msgid "我的协作"
+msgstr "我的協作"
+
+#: .\app_doc\views_user.py:74
+#: .\template\app_doc\manage\manage_project_import.html:4
+msgid "导入文集"
+msgstr "導入文集"
+
+#: .\app_doc\views_user.py:84
+msgid "我的文档"
+msgstr "我的文檔"
+
+#: .\app_doc\views_user.py:99
+msgid "文档模板"
+msgstr "文檔模板"
+
+#: .\app_doc\views_user.py:107
+msgid "文档标签"
+msgstr "文檔標籤"
+
+#: .\app_doc\views_user.py:115
+msgid "我的分享"
+msgstr "我的分享"
+
+#: .\app_doc\views_user.py:123
+msgid "文档回收站"
+msgstr "文檔回收站"
+
+#: .\app_doc\views_user.py:133
+msgid "我的素材"
+msgstr "我的素材"
+
+#: .\app_doc\views_user.py:140
+msgid "我的图片"
+msgstr "我的圖片"
+
+#: .\app_doc\views_user.py:148
+msgid "我的附件"
+msgstr "我的附件"
+
+#: .\app_doc\views_user.py:158
+msgid "我的收藏"
+msgstr "我的收藏"
+
+#: .\app_doc\views_user.py:166
+msgid "个人管理"
+msgstr "個人管理"
+
+#: .\app_doc\views_user.py:173 .\template\app_doc\manage\manage_self.html:4
+msgid "个人设置"
+msgstr "個人設置"
+
+#: .\app_doc\views_user.py:181
+msgid "Token管理"
+msgstr "Token管理"
+
+#: .\app_doc\views_user.py:191
+msgid "使用手册"
+msgstr "使用手冊"
+
+#: .\template\403.html:7
+msgid "拒绝访问"
+msgstr "拒絕訪問"
+
+#: .\template\403.html:7 .\template\404.html:7 .\template\app_api\api404.html:7
+#: .\template\app_doc\diff_doc.html:14
+#: .\template\app_doc\user\user_center.html:8 .\template\forget_pwd.html:6
+#: .\template\login.html:12 .\template\register.html:6
+msgid "觅道文档MrDoc"
+msgstr "覓道文檔MrDoc"
+
+#: .\template\403.html:20
+msgid "你无权访问当前页面……"
+msgstr "你無權訪問當前頁面"
+
+#: .\template\403.html:22 .\template\404.html:19
+#: .\template\app_api\api404.html:21 .\template\app_doc\search.html:42
+#: .\template\app_doc\search_result.html:61 .\template\login.html:102
+#: .\template\register.html:99 .\template\search\search.html:59
+msgid "返回首页"
+msgstr "返回首頁"
+
+#: .\template\404.html:7 .\template\app_api\api404.html:7
+msgid "页面未找到"
+msgstr "頁面未找到"
+
+#: .\template\app_admin\admin_base.html:21
+msgid "当前站点处于Debug调试模式"
+msgstr "當前站點處於Debug調試模式"
+
+#: .\template\app_admin\admin_base.html:29
+msgid "检测到新版本发布，请及时更新！下载地址："
+msgstr "檢測到新版本發佈，請及時更新！下載地址："
+
+#: .\template\app_admin\admin_project.html:252
+#: .\template\app_admin\admin_project.html:304
+#: .\template\app_doc\manage\manage_project.html:214
+#: .\template\app_doc\manage\manage_project.html:266
+#: .\template\app_doc\manage\manage_project_options.html:202
+#: .\template\app_doc\manage\manage_project_options.html:205
+msgid "删除文集"
+msgstr "刪除文集"
+
+#: .\template\app_admin\admin_project.html:256
+#: .\template\app_doc\manage\manage_attachment.html:48
+#: .\template\app_doc\manage\manage_doc_history.html:48
+#: .\template\app_doc\manage\manage_doc_recycle.html:46
+#: .\template\app_doc\manage\manage_doc_share.html:17
+#: .\template\app_doc\manage\manage_doc_tag.html:45
+#: .\template\app_doc\manage\manage_doctemp.html:50
+#: .\template\app_doc\manage\manage_image_group.html:43
+#: .\template\app_doc\manage\manage_project.html:24
+#: .\template\app_doc\manage\manage_project.html:218
+#: .\template\app_doc\manage\manage_project_collaborator.html:79
+#: .\template\app_doc\manage\manage_project_collaborator.html:111
+msgid "删除"
+msgstr "刪除"
+
+#: .\template\app_admin\admin_project.html:256
+#: .\template\app_admin\admin_project.html:308
+#: .\template\app_doc\manage\manage_project.html:155
+#: .\template\app_doc\manage\manage_project.html:186
+#: .\template\app_doc\manage\manage_project.html:218
+#: .\template\app_doc\manage\manage_project.html:270
+#: .\template\app_doc\manage\manage_self.html:70
+#: .\template\app_doc\pro_list.html:326 .\template\app_doc\pro_list.html:397
+#: .\template\app_doc\pro_list.html:428
+msgid "取消"
+msgstr "取消"
+
+#: .\template\app_admin\admin_project.html:290
+#: .\template\app_doc\manage\manage_project.html:252
+#: .\template\app_doc\manage\manage_project.html:308
+msgid "未选中任何文集"
+msgstr "未選中任何文集"
+
+#: .\template\app_admin\admin_project.html:308
+#: .\template\app_doc\manage\manage_project.html:270
+msgid "批量删除"
+msgstr "批量刪除"
+
+#: .\template\app_doc\check_viewcode.html:13
+#: .\template\app_doc\check_viewcode.html:64
+#: .\template\app_doc\manage\manage_project_options.html:98
+msgid "请输入访问码"
+msgstr "請輸入訪問碼"
+
+#: .\template\app_doc\check_viewcode.html:13
+#: .\template\app_doc\docs_base.html:15 .\template\app_doc\pro_list.html:14
+#: .\template\app_doc\share\share_check.html:13
+#: .\template\app_doc\share\share_doc.html:15
+#: .\template\app_doc\tag_doc_base.html:15
+msgid "站点标题"
+msgstr "站點標題"
+
+#: .\template\app_doc\check_viewcode.html:57
+msgid "你正在访问："
+msgstr "你正在訪問："
+
+#: .\template\app_doc\check_viewcode.html:69
+#: .\template\app_doc\share\share_check.html:69
+msgid "确认"
+msgstr "確認"
+
+#: .\template\app_doc\diff_doc.html:14
+msgid "文档历史版本对比："
+msgstr "文檔歷史版本對比："
+
+#: .\template\app_doc\diff_doc.html:36
+#: .\template\app_doc\editor\create_base.html:40
+msgid "MrDoc文档编辑器"
+msgstr "MrDoc文檔編輯器"
+
+#: .\template\app_doc\diff_doc.html:37
+msgid "你正在：对比文档历史版本"
+msgstr "你正在：對比文檔歷史版本"
+
+#: .\template\app_doc\diff_doc.html:45
+#: .\template\app_doc\manage\manage_doc_history.html:33
+#: .\template\app_doc\manage\manage_doc_recycle.html:25
+#: .\template\app_doc\manage\manage_doctemp.html:36
+#: .\template\app_doc\manage\manage_project.html:105
+#: .\template\app_doc\manage\manage_project_collaborator.html:96
+msgid "创建时间"
+msgstr "創建時間"
+
+#: .\template\app_doc\diff_doc.html:46
+msgid "用户"
+msgstr "用戶"
+
+#: .\template\app_doc\diff_doc.html:47
+#: .\template\app_doc\manage\manage_project_self_colla.html:39
+msgid "查看"
+msgstr "查看"
+
+#: .\template\app_doc\diff_doc.html:56
+#: .\template\app_doc\manage\manage_doc_history.html:45
+msgid "对比"
+msgstr "對比"
+
+#: .\template\app_doc\diff_doc.html:70 .\template\app_doc\docs_base.html:164
+msgid "切换侧边栏"
+msgstr "切換側邊欄"
+
+#: .\template\app_doc\diff_doc.html:75 .\template\app_doc\docs_base.html:180
+#: .\template\app_doc\tag_doc_base.html:108
+#: .\template\app_doc\user\user_center.html:101
+#: .\template\search\search.html:90
+msgid "首页"
+msgstr "首頁"
+
+#: .\template\app_doc\diff_doc.html:90
+msgid "当前版本"
+msgstr "當前版本"
+
+#: .\template\app_doc\diff_doc.html:93
+msgid "历史版本:"
+msgstr "歷史版本："
+
+#: .\template\app_doc\doc.html:15 .\template\app_doc\doc.html:27
+#: .\template\app_doc\manage\manage_doc_tag.html:42
+#: .\template\app_doc\manage\manage_doctemp.html:47
+#: .\template\app_doc\manage\manage_image_group.html:40
+#: .\template\app_doc\manage\manage_project_collaborator.html:76
+#: .\template\app_doc\manage\manage_project_collaborator.html:108
+#: .\template\app_doc\tag_doc_single.html:15
+#: .\template\app_doc\tag_doc_single.html:27
+msgid "修改"
+msgstr "修改"
+
+#: .\template\app_doc\doc.html:18 .\template\app_doc\doc.html:31
+#: .\template\app_doc\manage\manage_project_collaborator.html:39
+#: .\template\app_doc\project.html:13 .\template\app_doc\tag_doc_single.html:18
+#: .\template\app_doc\tag_doc_single.html:31
+msgid "添加"
+msgstr "添加"
+
+#: .\template\app_doc\doc.html:21 .\template\app_doc\project.html:18
+#: .\template\app_doc\tag_doc_single.html:21
+msgid "管理"
+msgstr "管理"
+
+#: .\template\app_doc\doc.html:77 .\template\app_doc\share\share_doc.html:190
+msgid "更新于:"
+msgstr "更新于："
+
+#: .\template\app_doc\doc.html:81
+msgid "分享本文档"
+msgstr "分享本文檔"
+
+#: .\template\app_doc\doc.html:82 .\template\app_doc\doc.html:267
+msgid "分享文档"
+msgstr "分享文檔"
+
+#: .\template\app_doc\doc.html:88 .\template\app_doc\doc.html:90
+#: .\template\app_doc\doc.html:93
+msgid "收藏文档"
+msgstr "收藏文檔"
+
+#: .\template\app_doc\doc.html:98 .\template\app_doc\doc.html:99
+msgid "下载文档"
+msgstr "下載文檔"
+
+#: .\template\app_doc\doc.html:112 .\template\app_doc\doc.html:114
+#: .\template\app_doc\tag_doc_single.html:91
+#: .\template\app_doc\tag_doc_single.html:93
+msgid "上一篇"
+msgstr "上一篇"
+
+#: .\template\app_doc\doc.html:119 .\template\app_doc\doc.html:121
+#: .\template\app_doc\tag_doc_single.html:98
+#: .\template\app_doc\tag_doc_single.html:100
+msgid "下一篇"
+msgstr "下一篇"
+
+#: .\template\app_doc\doc.html:145 .\template\app_doc\tag_doc_single.html:115
+msgid "下载Markdown文件"
+msgstr "下載Markdown文件"
+
+#: .\template\app_doc\doc.html:154 .\template\app_doc\project.html:144
+#: .\template\app_doc\tag_doc_single.html:72
+#: .\template\app_doc\tag_docs.html:25
+msgid "分享"
+msgstr "分享"
+
+#: .\template\app_doc\doc.html:157
+msgid "开启|关闭"
+msgstr "開啟|關閉"
+
+#: .\template\app_doc\doc.html:165
+#: .\template\app_doc\manage\manage_overview.html:149
+msgid "链接"
+msgstr "鏈接"
+
+#: .\template\app_doc\doc.html:173
+msgid "类型"
+msgstr "類型"
+
+#: .\template\app_doc\doc.html:176 .\template\app_doc\doc.html:179
+#: .\template\app_doc\manage\manage_overview.html:120
+#: .\template\app_doc\manage\manage_project_options.html:88
+msgid "公开"
+msgstr "公開"
+
+#: .\template\app_doc\doc.html:177 .\template\app_doc\doc.html:180
+#: .\template\app_doc\manage\manage_overview.html:122
+#: .\template\app_doc\manage\manage_project_options.html:89
+msgid "私密"
+msgstr "私密"
+
+#: .\template\app_doc\doc.html:187
+#: .\template\app_doc\manage\manage_overview.html:126
+msgid "密码"
+msgstr "密碼"
+
+#: .\template\app_doc\doc.html:192
+msgid "更新密码"
+msgstr "更新密碼"
+
+#: .\template\app_doc\doc.html:254
+msgid "设置成功"
+msgstr "設置成功"
+
+#: .\template\app_doc\doc.html:258
+msgid "设置出错"
+msgstr "設置出錯"
+
+#: .\template\app_doc\doc.html:337
+msgid "关闭分享"
+msgstr "關閉分享"
+
+#: .\template\app_doc\docs_base.html:49
+msgid "输入并回车搜索"
+msgstr "確認并回車搜索"
+
+#: .\template\app_doc\docs_base.html:59
+msgid "私密文档"
+msgstr "私密文檔"
+
+#: .\template\app_doc\docs_base.html:73
+msgid "* 此为协作文集"
+msgstr "*此為協作文集"
+
+#: .\template\app_doc\docs_base.html:81
+msgid "文集大纲加载中……"
+msgstr "文集大綱加載中……"
+
+#: .\template\app_doc\docs_base.html:146
+#: .\template\app_doc\tag_doc_base.html:71
+msgid "本文档使用MrDoc发布"
+msgstr "本文檔使用MrDoc發佈"
+
+#: .\template\app_doc\docs_base.html:167
+#: .\template\app_doc\share\share_doc.html:130
+msgid "缩小字体"
+msgstr "縮小字體"
+
+#: .\template\app_doc\docs_base.html:170
+#: .\template\app_doc\share\share_doc.html:133
+msgid "放大字体"
+msgstr "放大字體"
+
+#: .\template\app_doc\docs_base.html:173
+#: .\template\app_doc\share\share_doc.html:136
+msgid "切换字体类型"
+msgstr "切換字體類型"
+
+#: .\template\app_doc\docs_base.html:250
+msgid "微信扫一扫"
+msgstr "微信掃一掃"
+
+#: .\template\app_doc\docs_base.html:251 .\template\app_doc\docs_base.html:260
+msgid "复制链接"
+msgstr "複製鏈接"
+
+#: .\template\app_doc\docs_base.html:255
+msgid "手机扫一扫进行分享"
+msgstr "手機掃一掃進行分享"
+
+#: .\template\app_doc\docs_base.html:270
+msgid "微信"
+msgstr "微信"
+
+#: .\template\app_doc\docs_base.html:271
+msgid "支付宝"
+msgstr "支付寶"
+
+#: .\template\app_doc\docs_base.html:272
+msgid "QQ支付"
+msgstr "QQ支付"
+
+#: .\template\app_doc\docs_base.html:273
+msgid "PayPal"
+msgstr "PayPal"
+
+#: .\template\app_doc\docs_base.html:274
+msgid "项目源码"
+msgstr "項目源碼"
+
+#: .\template\app_doc\foot_base.html:6
+msgid "网站地图"
+msgstr "網站地圖"
+
+#: .\template\app_doc\head_base.html:15
+msgid "搜索文档"
+msgstr "搜索文檔"
+
+#: .\template\app_doc\head_base.html:33
+#: .\template\app_doc\manage\manage_doctemp.html:22
+msgid "新建"
+msgstr "新建"
+
+#: .\template\app_doc\head_base.html:46
+#: .\template\app_doc\manage\manage_project.html:151
+#: .\template\app_doc\pro_list.html:322
+msgid "新建文集"
+msgstr "新建文集"
+
+#: .\template\app_doc\head_base.html:68
+msgid "进入后台"
+msgstr "進入後台"
+
+#: .\template\app_doc\head_base.html:81
+#: .\template\app_doc\search_result.html:73
+#: .\template\app_doc\user\user_center.html:8
+#: .\template\app_doc\user\user_center.html:85 .\template\search\search.html:70
+msgid "个人中心"
+msgstr "個人中心"
+
+#: .\template\app_doc\head_base.html:87
+#: .\template\app_doc\manage\manage_self.html:66
+#: .\template\app_doc\pro_list.html:424
+#: .\template\app_doc\search_result.html:79 .\template\forget_pwd.html:62
+msgid "修改密码"
+msgstr "修改密碼"
+
+#: .\template\app_doc\head_base.html:93
+#: .\template\app_doc\search_result.html:85 .\template\search\search.html:76
+msgid "退出登录"
+msgstr "退出登錄"
+
+#: .\template\app_doc\head_base.html:101
+#: .\template\app_doc\search_result.html:93 .\template\search\search.html:84
+msgid "游客"
+msgstr "遊客"
+
+#: .\template\app_doc\head_base.html:105 .\template\app_doc\head_base.html:108
+#: .\template\app_doc\search_result.html:98
+#: .\template\app_doc\search_result.html:101 .\template\login.html:62
+#: .\template\login.html:91 .\template\search\search.html:94
+#: .\template\search\search.html:97
+msgid "登录"
+msgstr "登錄"
+
+#: .\template\app_doc\head_base.html:107
+#: .\template\app_doc\search_result.html:100 .\template\register.html:56
+#: .\template\search\search.html:96
+msgid "注册"
+msgstr "註冊"
+
+#: .\template\app_doc\manage\manage_attachment.html:4
+msgid "附件管理"
+msgstr "附件管理"
+
+#: .\template\app_doc\manage\manage_attachment.html:14
+#: .\template\app_doc\manage\manage_collect.html:15
+#: .\template\app_doc\manage\manage_doc.html:15
+#: .\template\app_doc\manage\manage_doctemp.html:20
+#: .\template\app_doc\manage\manage_project.html:18
+#: .\template\app_doc\project_doc_search.html:7
+#: .\template\app_doc\project_doc_search.html:18
+msgid "搜索"
+msgstr "搜索"
+
+#: .\template\app_doc\manage\manage_attachment.html:16
+msgid "上传附件"
+msgstr "上傳附件"
+
+#: .\template\app_doc\manage\manage_attachment.html:34
+msgid "附件名称"
+msgstr "附件名稱"
+
+#: .\template\app_doc\manage\manage_attachment.html:35
+msgid "文件大小"
+msgstr "文件大小"
+
+#: .\template\app_doc\manage\manage_attachment.html:36
+msgid "上传时间"
+msgstr "上傳時間"
+
+#: .\template\app_doc\manage\manage_attachment.html:37
+#: .\template\app_doc\manage\manage_doc_history.html:35
+#: .\template\app_doc\manage\manage_doc_recycle.html:27
+#: .\template\app_doc\manage\manage_doc_tag.html:31
+#: .\template\app_doc\manage\manage_doctemp.html:37
+#: .\template\app_doc\manage\manage_image_group.html:29
+#: .\template\app_doc\manage\manage_project.html:106
+#: .\template\app_doc\manage\manage_project_collaborator.html:60
+#: .\template\app_doc\manage\manage_project_collaborator.html:97
+#: .\template\app_doc\manage\manage_project_self_colla.html:23
+msgid "操作"
+msgstr "操作"
+
+#: .\template\app_doc\manage\manage_attachment.html:61
+#: .\template\app_doc\manage\manage_attachment.html:63
+#: .\template\app_doc\manage\manage_doc_history.html:61
+#: .\template\app_doc\manage\manage_doc_history.html:63
+#: .\template\app_doc\manage\manage_doc_recycle.html:59
+#: .\template\app_doc\manage\manage_doc_recycle.html:61
+#: .\template\app_doc\manage\manage_doctemp.html:63
+#: .\template\app_doc\manage\manage_doctemp.html:65
+#: .\template\app_doc\manage\manage_image.html:63
+#: .\template\app_doc\manage\manage_image.html:65
+#: .\template\app_doc\pro_list.html:185 .\template\app_doc\pro_list.html:187
+#: .\template\app_doc\search_result.html:246
+#: .\template\app_doc\search_result.html:248 .\template\search\search.html:213
+#: .\template\search\search.html:215
+msgid "上一页"
+msgstr "上一頁"
+
+#: .\template\app_doc\manage\manage_attachment.html:72
+#: .\template\app_doc\manage\manage_attachment.html:74
+#: .\template\app_doc\manage\manage_doc_history.html:72
+#: .\template\app_doc\manage\manage_doc_history.html:74
+#: .\template\app_doc\manage\manage_doc_recycle.html:70
+#: .\template\app_doc\manage\manage_doc_recycle.html:72
+#: .\template\app_doc\manage\manage_doctemp.html:74
+#: .\template\app_doc\manage\manage_doctemp.html:76
+#: .\template\app_doc\manage\manage_image.html:74
+#: .\template\app_doc\manage\manage_image.html:76
+#: .\template\app_doc\pro_list.html:196 .\template\app_doc\pro_list.html:198
+#: .\template\app_doc\search_result.html:257
+#: .\template\app_doc\search_result.html:259 .\template\search\search.html:224
+#: .\template\search\search.html:226
+msgid "下一页"
+msgstr "下一頁"
+
+#: .\template\app_doc\manage\manage_collect.html:4
+msgid "收藏管理"
+msgstr "收藏管理"
+
+#: .\template\app_doc\manage\manage_collect.html:7
+#: .\template\app_doc\manage\manage_doc.html:7
+msgid "高级筛选"
+msgstr "高級篩選"
+
+#: .\template\app_doc\manage\manage_collect.html:11
+#: .\template\app_doc\manage\manage_doc.html:11
+msgid "关键词"
+msgstr "關鍵詞"
+
+#: .\template\app_doc\manage\manage_collect.html:18
+msgid "收藏类型"
+msgstr "收藏類型"
+
+#: .\template\app_doc\manage\manage_doc.html:18
+#: .\template\app_doc\manage\manage_overview.html:114
+#: .\template\app_doc\search_result.html:144 .\template\search\search.html:140
+msgid "文集"
+msgstr "文集"
+
+#: .\template\app_doc\manage\manage_doc.html:21
+msgid "按文集筛选"
+msgstr "按文集篩選"
+
+#: .\template\app_doc\manage\manage_doc.html:48
+msgid "文档状态"
+msgstr "文檔狀態"
+
+#: .\template\app_doc\manage\manage_doc_history.html:4
+msgid "文档历史版本管理"
+msgstr "文檔歷史版本管理"
+
+#: .\template\app_doc\manage\manage_doc_history.html:11
+msgid "历史版本管理"
+msgstr "歷史版本管理"
+
+#: .\template\app_doc\manage\manage_doc_history.html:21
+msgid "文档："
+msgstr "文檔："
+
+#: .\template\app_doc\manage\manage_doc_history.html:21
+msgid "的历史版本管理"
+msgstr "的歷史版本管理"
+
+#: .\template\app_doc\manage\manage_doc_history.html:34
+msgid "创建人"
+msgstr "創建人"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:4
+msgid "文档回收站管理"
+msgstr "文檔回收站管理"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:10
+msgid "还原所有"
+msgstr "還原所有"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:12
+msgid "清空回收站"
+msgstr "清空回收站"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:22
+#: .\template\app_doc\manage\manage_project_collaborator.html:94
+msgid "文档名称"
+msgstr "文檔名稱"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:23
+msgid "上级文档"
+msgstr "上級文檔"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:24
+msgid "所属文集"
+msgstr "所屬文集"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:26
+msgid "删除时间"
+msgstr "刪除時間"
+
+#: .\template\app_doc\manage\manage_doc_recycle.html:43
+msgid "还原"
+msgstr "還原"
+
+#: .\template\app_doc\manage\manage_doc_share.html:4
+msgid "文档分享管理"
+msgstr "文檔分享管理"
+
+#: .\template\app_doc\manage\manage_doc_tag.html:4
+#: .\template\app_doc\manage\manage_doc_tag.html:10
+msgid "文档标签管理"
+msgstr "文檔標籤管理"
+
+#: .\template\app_doc\manage\manage_doc_tag.html:29
+msgid "标签名称"
+msgstr "標籤名稱"
+
+#: .\template\app_doc\manage\manage_doc_tag.html:30
+msgid "标签文档数量"
+msgstr "標籤文檔數量"
+
+#: .\template\app_doc\manage\manage_doctemp.html:35
+msgid "模板名称"
+msgstr "模板名稱"
+
+#: .\template\app_doc\manage\manage_image.html:4
+msgid "图片素材管理"
+msgstr "圖片素材管理"
+
+#: .\template\app_doc\manage\manage_image.html:17
+msgid "上传图片"
+msgstr "上傳圖片"
+
+#: .\template\app_doc\manage\manage_image.html:19
+msgid "新建分组"
+msgstr "新建分組"
+
+#: .\template\app_doc\manage\manage_image.html:20
+msgid "分组管理"
+msgstr "分組管理"
+
+#: .\template\app_doc\manage\manage_image_group.html:4
+#: .\template\app_doc\manage\manage_image_group.html:11
+msgid "图片分组管理"
+msgstr "圖片分組管理"
+
+#: .\template\app_doc\manage\manage_image_group.html:10
+msgid "图片管理"
+msgstr "圖片管理"
+
+#: .\template\app_doc\manage\manage_image_group.html:27
+msgid "分组名称"
+msgstr "分組名稱"
+
+#: .\template\app_doc\manage\manage_image_group.html:28
+#: .\template\app_doc\manage\manage_overview.html:45
+msgid "图片数量"
+msgstr "圖片數量"
+
+#: .\template\app_doc\manage\manage_overview.html:15
+msgid "文集总数"
+msgstr "文集總數"
+
+#: .\template\app_doc\manage\manage_overview.html:30
+msgid "文档数量"
+msgstr "文檔數量"
+
+#: .\template\app_doc\manage\manage_overview.html:60
+msgid "附件数量"
+msgstr "附件數量"
+
+#: .\template\app_doc\manage\manage_overview.html:77
+msgid "动态"
+msgstr "動態"
+
+#: .\template\app_doc\manage\manage_overview.html:86
+msgid "修改了文档"
+msgstr "修改了文檔"
+
+#: .\template\app_doc\manage\manage_overview.html:88
+msgid "保存了文档"
+msgstr "保存了文檔"
+
+#: .\template\app_doc\manage\manage_overview.html:90
+msgid "删除了文档"
+msgstr "刪除了文檔"
+
+#: .\template\app_doc\manage\manage_overview.html:102
+msgid "快速草稿"
+msgstr "快速草稿"
+
+#: .\template\app_doc\manage\manage_overview.html:108
+msgid "标题"
+msgstr "標題"
+
+#: .\template\app_doc\manage\manage_overview.html:124
+msgid "指定用户"
+msgstr "指定用戶"
+
+#: .\template\app_doc\manage\manage_overview.html:133
+msgid "文本域"
+msgstr "文本域"
+
+#: .\template\app_doc\manage\manage_overview.html:140
+msgid "保存草稿"
+msgstr "保存草稿"
+
+#: .\template\app_doc\manage\manage_overview.html:141
+msgid "重置"
+msgstr "重置"
+
+#: .\template\app_doc\manage\manage_overview.html:153
+msgid "支持项目发展"
+msgstr "支持項目發展"
+
+#: .\template\app_doc\manage\manage_overview.html:157
+msgid "觅 道 文 档 官 网"
+msgstr "覓 道 文 檔 官 網"
+
+#: .\template\app_doc\manage\manage_overview.html:161
+msgid "使 用 手 册"
+msgstr "使 用 手 冊"
+
+#: .\template\app_doc\manage\manage_overview.html:165
+msgid "源 码 下 载"
+msgstr "源 碼 下 載"
+
+#: .\template\app_doc\manage\manage_project.html:21
+msgid "新增"
+msgstr "新增"
+
+#: .\template\app_doc\manage\manage_project.html:27
+msgid "打包文集"
+msgstr "打包文集"
+
+#: .\template\app_doc\manage\manage_project.html:100
+#: .\template\app_doc\manage\manage_project_collaborator.html:26
+#: .\template\app_doc\manage\manage_project_options.html:37
+#: .\template\app_doc\manage\manage_project_self_colla.html:20
+msgid "文集名称"
+msgstr "文集名稱"
+
+#: .\template\app_doc\manage\manage_project.html:103
+msgid "文档数"
+msgstr "文檔數"
+
+#: .\template\app_doc\manage\manage_project.html:104
+msgid "文集成员"
+msgstr "文集成員"
+
+#: .\template\app_doc\manage\manage_project.html:155
+#: .\template\app_doc\manage\manage_project.html:186
+#: .\template\app_doc\pro_list.html:326 .\template\app_doc\pro_list.html:397
+msgid "确定"
+msgstr "確定"
+
+#: .\template\app_doc\manage\manage_project.html:182
+#: .\template\app_doc\pro_list.html:393
+msgid "修改文集"
+msgstr "修改文集"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:4
+msgid "文集协作管理"
+msgstr "文集協作管理"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:11
+msgid "协作管理"
+msgstr "協作管理"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:17
+msgid "管理文集"
+msgstr "管理文集"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:33
+msgid "协作人数："
+msgstr "協作人數："
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:48
+msgid "协作用户"
+msgstr "協作用戶"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:49
+msgid "协作文档"
+msgstr "協作文檔"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:58
+#: .\template\app_doc\manage\manage_self.html:10
+msgid "用户名"
+msgstr "用戶名"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:59
+msgid "协作权限"
+msgstr "協作權限"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:69
+msgid "新建文档，修改、删除新建的文档"
+msgstr "新建文檔，修改、刪除新建的文檔"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:71
+msgid "可操作所有文档"
+msgstr "可操作所有文檔"
+
+#: .\template\app_doc\manage\manage_project_collaborator.html:95
+msgid "创建用户"
+msgstr "創建用戶"
+
+#: .\template\app_doc\manage\manage_project_doc_sort.html:4
+#: .\template\app_doc\manage\manage_project_doc_sort.html:14
+msgid "文集文档排序"
+msgstr "文集文檔排序"
+
+#: .\template\app_doc\manage\manage_project_doc_sort.html:24
+#: .\template\app_doc\manage\manage_project_options.html:17
+msgid "文集："
+msgstr "文集："
+
+#: .\template\app_doc\manage\manage_project_doc_sort.html:25
+msgid "保存排序"
+msgstr "保存排序"
+
+#: .\template\app_doc\manage\manage_project_import.html:9
+msgid "导入文集到MrDoc"
+msgstr "導入文集到MrDoc"
+
+#: .\template\app_doc\manage\manage_project_import.html:12
+msgid "导入Markdown文件压缩包"
+msgstr "導入Markdown文件壓縮包"
+
+#: .\template\app_doc\manage\manage_project_import.html:21
+msgid "导入语雀知识库，功能开发中"
+msgstr "導入語雀知識庫，功能開發中"
+
+#: .\template\app_doc\manage\manage_project_import.html:26
+msgid "语雀知识库"
+msgstr "語雀知識庫"
+
+#: .\template\app_doc\manage\manage_project_options.html:4
+#: .\template\app_doc\manage\manage_project_options.html:16
+#: .\template\app_doc\manage\manage_project_transfer.html:4
+#: .\template\app_doc\manage\manage_project_transfer.html:11
+msgid "文集设置"
+msgstr "文集設置"
+
+#: .\template\app_doc\manage\manage_project_options.html:27
+msgid "基础信息"
+msgstr "基礎信息"
+
+#: .\template\app_doc\manage\manage_project_options.html:28
+msgid "权限配置"
+msgstr "權限配置"
+
+#: .\template\app_doc\manage\manage_project_options.html:29
+msgid "下载配置"
+msgstr "下載配置"
+
+#: .\template\app_doc\manage\manage_project_options.html:30
+msgid "管理控制"
+msgstr "管理控制"
+
+#: .\template\app_doc\manage\manage_project_options.html:52
+msgid "输入文集名"
+msgstr "輸入文集名"
+
+#: .\template\app_doc\manage\manage_project_options.html:68
+msgid "文集简介"
+msgstr "文集簡介"
+
+#: .\template\app_doc\manage\manage_project_options.html:77
+msgid "立即修改"
+msgstr "立即修改"
+
+#: .\template\app_doc\manage\manage_project_options.html:86
+msgid "浏览权限"
+msgstr "瀏覽權限"
+
+#: .\template\app_doc\manage\manage_project_options.html:90
+msgid "指定用户可见"
+msgstr "指定用戶可見"
+
+#: .\template\app_doc\manage\manage_project_options.html:91
+msgid "访问码可见"
+msgstr "訪問碼可見"
+
+#: .\template\app_doc\manage\manage_project_options.html:96
+msgid "访问码"
+msgstr "訪問碼"
+
+#: .\template\app_doc\manage\manage_project_options.html:100
+msgid "不少于4位数"
+msgstr "不少於4位數"
+
+#: .\template\app_doc\manage\manage_project_options.html:104
+msgid "允许用户"
+msgstr "允許用戶"
+
+#: .\template\app_doc\manage\manage_project_options.html:107
+msgid "请输入用户名，回车输入多个用户"
+msgstr "請輸入用戶名，回車輸入多個……"
+
+#: .\template\app_doc\manage\manage_project_options.html:114
+msgid "修改权限"
+msgstr "修改權限"
+
+#: .\template\app_doc\manage\manage_project_options.html:124
+msgid ""
+"注意：开启某类型文件下载后，请先点击“生成或更新XXX文件”，EPUB格式文件不支持思"
+"维导图、公式、流程图等图形"
+msgstr ""
+"注意：開啟某類型文件下載后，請先點擊“生成或更新XXX文件”，EPUB格式文件不支持思"
+"維導圖、公式、流程圖等圖形"
+
+#: .\template\app_doc\manage\manage_project_options.html:127
+msgid "EPUB下载"
+msgstr "EPUB下載"
+
+#: .\template\app_doc\manage\manage_project_options.html:131
+#: .\template\app_doc\manage\manage_project_options.html:155
+msgid "允许|禁止"
+msgstr "允許|禁止"
+
+#: .\template\app_doc\manage\manage_project_options.html:134
+msgid "生成或更新EPUB文件"
+msgstr "生成或更新EPUB文件"
+
+#: .\template\app_doc\manage\manage_project_options.html:138
+msgid "下载文集EPUB文件"
+msgstr "下載文集EPUB文件"
+
+#: .\template\app_doc\manage\manage_project_options.html:144
+#: .\template\app_doc\manage\manage_project_options.html:168
+msgid "未生成文集导出文件"
+msgstr "未生成文集到戶文件"
+
+#: .\template\app_doc\manage\manage_project_options.html:151
+msgid "PDF下载"
+msgstr "PDF下載"
+
+#: .\template\app_doc\manage\manage_project_options.html:158
+msgid "生成或更新PDF文件"
+msgstr "生成或更新PDF文件"
+
+#: .\template\app_doc\manage\manage_project_options.html:162
+msgid "下载文集PDF文件"
+msgstr "下載文集PDF文件"
+
+#: .\template\app_doc\manage\manage_project_options.html:176
+msgid "保存文集导出配置"
+msgstr "保存文集導出配置"
+
+#: .\template\app_doc\manage\manage_project_options.html:186
+#: .\template\app_doc\manage\manage_project_options.html:189
+msgid "导出文集"
+msgstr "導出文集"
+
+#: .\template\app_doc\manage\manage_project_options.html:187
+msgid "将文集内的文档以Markdown（.md）的形式导出为zip压缩文件"
+msgstr "將文集內的文檔以Markdown的形式導出到Zip壓縮文件"
+
+#: .\template\app_doc\manage\manage_project_options.html:194
+#: .\template\app_doc\manage\manage_project_options.html:197
+#: .\template\app_doc\manage\manage_project_transfer.html:12
+msgid "转让文集"
+msgstr "轉讓文集"
+
+#: .\template\app_doc\manage\manage_project_options.html:195
+msgid "将文集的管理权限和文集下自己创建的文档转让给站点的其他用户"
+msgstr "將文集的管理權限和文集下自己創建的文檔轉讓給站點的其他用戶"
+
+#: .\template\app_doc\manage\manage_project_options.html:203
+msgid "删除文集及文集下的所有文档"
+msgstr "刪除文集及文集下的所有文檔"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:4
+msgid "我协作的文集"
+msgstr "我協作的文集"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:11
+msgid "我的协作文集"
+msgstr "我的協作文集"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:21
+msgid "作者"
+msgstr "作者"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:22
+msgid "权限"
+msgstr "權限"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:33
+msgid "初级 - 可新建文档、修改和删除自己创建的文档"
+msgstr "初級 - 可新建文檔、修改和刪除自己創建的文檔"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:35
+msgid "高级 - 可新建文档、修改所有文档、删除自己创建的文档"
+msgstr "高級 - 可新建文檔、修改所有文檔、刪除自己創建的文檔"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:41
+#: .\template\app_doc\pro_list.html:110
+msgid "排序"
+msgstr "排序"
+
+#: .\template\app_doc\manage\manage_project_self_colla.html:51
+msgid "你还没有成为任何文集的协作者"
+msgstr "你還沒有成為任何文集的協作者"
+
+#: .\template\app_doc\manage\manage_project_transfer.html:22
+msgid "转让文集："
+msgstr "轉讓文集："
+
+#: .\template\app_doc\manage\manage_project_transfer.html:29
+msgid "选择用户，可搜索"
+msgstr "選擇用戶，可搜索"
+
+#: .\template\app_doc\manage\manage_project_transfer.html:37
+msgid "转让文集的管理权限及文档"
+msgstr "轉讓文集的管理權限及文檔"
+
+#: .\template\app_doc\manage\manage_project_transfer.html:63
+msgid "转让成功，即将返回文集列表……"
+msgstr "轉讓成功，即將返回文集列表……"
+
+#: .\template\app_doc\manage\manage_self.html:14
+msgid "不可修改"
+msgstr "不可修改"
+
+#: .\template\app_doc\manage\manage_self.html:17
+msgid "昵称"
+msgstr "暱稱"
+
+#: .\template\app_doc\manage\manage_self.html:19
+msgid "请输入昵称"
+msgstr "請輸入暱稱"
+
+#: .\template\app_doc\manage\manage_self.html:23
+msgid "电子邮箱"
+msgstr "電子郵箱"
+
+#: .\template\app_doc\manage\manage_self.html:25
+msgid "请输入电子邮箱地址"
+msgstr "請輸入電子郵箱地址"
+
+#: .\template\app_doc\manage\manage_self.html:29
+msgid "新密码"
+msgstr "新密碼"
+
+#: .\template\app_doc\manage\manage_self.html:30
+msgid "点击修改密码"
+msgstr "點擊修改密碼"
+
+#: .\template\app_doc\manage\manage_self.html:34
+msgid "编辑器"
+msgstr "編輯器"
+
+#: .\template\app_doc\manage\manage_self.html:44
+msgid "更新个人资料"
+msgstr "更新個人資料"
+
+#: .\template\app_doc\manage\manage_self.html:70
+#: .\template\app_doc\pro_list.html:428
+msgid "确认修改"
+msgstr "確認修改"
+
+#: .\template\app_doc\pro_list.html:14
+msgid "又一个MrDoc站点"
+msgstr "又一個覓道文檔站點"
+
+#: .\template\app_doc\pro_list.html:96
+msgid "筛选"
+msgstr "篩選"
+
+#: .\template\app_doc\pro_list.html:98 .\template\app_doc\pro_list.html:103
+msgid "公开文集"
+msgstr "公開文集"
+
+#: .\template\app_doc\pro_list.html:99
+msgid "私密文集"
+msgstr "私密文集"
+
+#: .\template\app_doc\pro_list.html:100
+msgid "协作文集"
+msgstr "協作文集"
+
+#: .\template\app_doc\pro_list.html:101 .\template\app_doc\pro_list.html:104
+msgid "访问码文集"
+msgstr "訪問碼文集"
+
+#: .\template\app_doc\pro_list.html:111
+msgid "时间升序"
+msgstr "時間升序"
+
+#: .\template\app_doc\pro_list.html:112
+msgid "时间降序"
+msgstr "時間降序"
+
+#: .\template\app_doc\pro_list.html:153
+msgid "此文集没有填写简介"
+msgstr "此文集沒有填寫簡介"
+
+#: .\template\app_doc\pro_list.html:243
+msgid "*在可个人中心对文集权限进行进一步控制"
+msgstr "*可在個人中心對文集權限進行進一步控制"
+
+#: .\template\app_doc\pro_list.html:326
+msgid "创建并添加文档"
+msgstr "創建并添加文檔"
+
+#: .\template\app_doc\project.html:26
+msgid "创建人："
+msgstr "創建人："
+
+#: .\template\app_doc\project.html:27
+msgid "创建于："
+msgstr "創建於："
+
+#: .\template\app_doc\project.html:36
+msgid "简介"
+msgstr "簡介"
+
+#: .\template\app_doc\project.html:37
+msgid "目录大纲"
+msgstr "目錄大綱"
+
+#: .\template\app_doc\project.html:38
+msgid "最新文档"
+msgstr "最新文檔"
+
+#: .\template\app_doc\project.html:40
+msgid "文集下载"
+msgstr "文集下載"
+
+#: .\template\app_doc\project.html:47
+msgid "暂无文集简介"
+msgstr "暫無文集簡介"
+
+#: .\template\app_doc\project.html:84 .\template\app_doc\project.html:87
+msgid "文集作者未开放此文集的任何格式下载！"
+msgstr "文集作者未開放此文集的任何格式下載！"
+
+#: .\template\app_doc\project_doc_search.html:7
+msgid "的结果"
+msgstr "的結果"
+
+#: .\template\app_doc\project_doc_search.html:12
+msgid "添加文档"
+msgstr "添加文檔"
+
+#: .\template\app_doc\project_doc_search.html:18
+msgid "共有"
+msgstr "共有"
+
+#: .\template\app_doc\project_doc_search.html:18
+msgid "个结果"
+msgstr "個結果"
+
+#: .\template\app_doc\search.html:25 .\template\app_doc\search_result.html:14
+#: .\template\search\search.html:14
+msgid "觅道搜索"
+msgstr "覓道搜索"
+
+#: .\template\app_doc\search_result.html:143 .\template\search\search.html:139
+msgid "文档"
+msgstr "文檔"
+
+#: .\template\app_doc\search_result.html:145 .\template\search\search.html:141
+msgid "标签"
+msgstr "標籤"
+
+#: .\template\app_doc\search_result.html:151 .\template\search\search.html:147
+msgid "时间筛选"
+msgstr "時間篩選"
+
+#: .\template\app_doc\search_result.html:152 .\template\search\search.html:148
+msgid "全部时间"
+msgstr "全部時間"
+
+#: .\template\app_doc\search_result.html:153 .\template\search\search.html:149
+msgid "近1天"
+msgstr "近1天"
+
+#: .\template\app_doc\search_result.html:154 .\template\search\search.html:150
+msgid "近7天"
+msgstr "近7天"
+
+#: .\template\app_doc\search_result.html:155 .\template\search\search.html:151
+msgid "近30天"
+msgstr "近30天"
+
+#: .\template\app_doc\search_result.html:156 .\template\search\search.html:152
+msgid "近1年"
+msgstr "近1年"
+
+#: .\template\app_doc\search_result.html:168 .\template\search\search.html:164
+msgid "觅道文档在"
+msgstr "覓道文檔在"
+
+#: .\template\app_doc\search_result.html:170 .\template\search\search.html:166
+msgid "近1天内"
+msgstr "近1天内"
+
+#: .\template\app_doc\search_result.html:172 .\template\search\search.html:168
+msgid "近7天内"
+msgstr "近7天内"
+
+#: .\template\app_doc\search_result.html:174 .\template\search\search.html:170
+msgid "近30天内"
+msgstr "近30天内"
+
+#: .\template\app_doc\search_result.html:176 .\template\search\search.html:172
+msgid "近一年内"
+msgstr "近一年內"
+
+#: .\template\app_doc\search_result.html:178 .\template\search\search.html:174
+msgid "全部时间内"
+msgstr "全部時間內"
+
+#: .\template\app_doc\search_result.html:180 .\template\search\search.html:176
+msgid "搜索到"
+msgstr "搜索到"
+
+#: .\template\app_doc\search_result.html:180 .\template\search\search.html:176
+msgid "条结果"
+msgstr "條結果"
+
+#: .\template\app_doc\share\share_check.html:13
+msgid "请输入分享码"
+msgstr "請輸入分享碼"
+
+#: .\template\app_doc\share\share_check.html:58
+msgid "你正在访问私密文档："
+msgstr "你正在訪問私密文檔："
+
+#: .\template\app_doc\share\share_check.html:64
+msgid "请输入文档分享码"
+msgstr "請輸入文檔分享碼"
+
+#: .\template\app_doc\share\share_doc.html:15
+msgid "文档分享"
+msgstr "文檔分享"
+
+#: .\template\app_doc\tag_doc_base.html:15
+#: .\template\app_doc\tag_doc_base.html:50
+#: .\template\app_doc\tag_doc_base.html:120
+#: .\template\app_doc\tag_doc_single.html:9 .\template\app_doc\tag_docs.html:8
+#: .\template\app_doc\tag_docs.html:11
+msgid "标签："
+msgstr "標籤："
+
+#: .\template\app_doc\tag_doc_single.html:77
+msgid "下载"
+msgstr "下載"
+
+#: .\template\app_doc\user\user_center.html:43
+msgid "后台管理"
+msgstr "後台管理"
+
+#: .\template\app_doc\user\user_center.html:45
+msgid "站点首页"
+msgstr "站點首頁"
+
+#: .\template\app_doc\user\user_center.html:46
+msgid "注销登录"
+msgstr "註銷登錄"
+
+#: .\template\app_doc\user\user_center.html:131
+msgid "官方网站"
+msgstr "官方網站"
+
+#: .\template\app_doc\user\user_center.html:136
+msgid "说明文档"
+msgstr "說明文檔"
+
+#: .\template\app_doc\user\user_center.html:141
+msgid "开源地址"
+msgstr "開源地址"
+
+#: .\template\app_doc\user\user_center.html:146
+msgid "QQ群"
+msgstr "QQ群"
+
+#: .\template\app_doc\user\user_center.html:151
+msgid "当前版本："
+msgstr "當前版本："
+
+#: .\template\forget_pwd.html:6 .\template\forget_pwd.html:43
+#: .\template\login.html:100
+msgid "忘记密码"
+msgstr "忘記密碼"
+
+#: .\template\forget_pwd.html:43 .\template\login.html:62
+#: .\template\register.html:56
+msgid "觅道文档"
+msgstr "覓道文檔"
+
+#: .\template\forget_pwd.html:50
+msgid "发送验证码"
+msgstr "發送驗證碼"
+
+#: .\template\forget_pwd.html:64 .\template\register.html:98
+msgid "返回登录"
+msgstr "返回登錄"
+
+#: .\template\login.html:12
+msgid "用户登录"
+msgstr "用戶登錄"
+
+#: .\template\login.html:95
+msgid "本站暂不开放注册"
+msgstr "本站暫不開放註冊"
+
+#: .\template\login.html:97
+msgid "注册账号"
+msgstr "註冊賬戶"
+
+#: .\template\register.html:6
+msgid "用户注册"
+msgstr "用戶註冊"
+
+#: .\template\search\search.html:199
+msgid "没有搜索结果。"
+msgstr "沒有搜索結果。"

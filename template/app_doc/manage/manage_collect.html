@@ -1,0 +1,223 @@
+{% extends 'app_doc/user/user_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "收藏管理" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-header">{% trans "高级筛选" %}</div>
+    <div class="layui-card-body">
+        <div class="layui-form">
+            <!-- <div class="layui-form-item">
+              <label class="layui-form-label">{% trans "关键词" %}</label>
+              <div class="layui-input-inline">
+                <input type="text" name="kw"  placeholder="请输入标题" autocomplete="off" class="layui-input">
+              </div>
+              <button class="layui-btn layui-btn-normal layui-btn-sm" id="search">{% trans "搜索" %}</button>
+            </div> -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">{% trans "收藏类型" %}</label>
+              <div class="layui-input-block">
+                <input type="radio" name="status" title="全部({{all_cnt}})" value="-1" lay-skin="primary" checked lay-filter="collect_type">
+                <input type="radio" name="status" title="文集({{collect_project_cnt}})" value="2"  lay-skin="primary" lay-filter="collect_type">
+                <input type="radio" name="status" title="文档({{collect_doc_cnt}})" value="1" lay-skin="primary" lay-filter="collect_type">
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="collect-table" lay-filter="collect-table"></table>
+    </div>
+</div>
+
+<!-- 表格工具栏 -->
+<script type="text/html" id="doc-toolbar">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>取消收藏
+    </button>
+</script>
+
+<!-- 文档名称 -->
+<script type="text/html" id="collect-name">
+    {% verbatim %}
+        {{#if (d.type == 1) { }}
+            <img src="/static/icon_img/manage-doc-icon.svg" height="14px" width="14px"></img>
+            <a href="/project-{{d.item_project_id}}/doc-{{d.item_id}}" target="_blank">{{d.item_name}}</a>
+        {{# }else if(d.type == 2){ }}
+            <!-- <span class="layui-badge-dot layui-bg-orange"></span> -->
+            <img src="/static/icon_img/manage-pro-icon.svg" height="14px" width="14px"></img>
+            <a href="/project-{{d.item_id}}/" target="_blank">{{ d.item_name }} </a>
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 修改时间 -->
+<script type="text/html" id="collect-create-time">
+    {% verbatim %}
+    {{layui.util.toDateString(d.create_time,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 单个收藏操作 -->
+<script type="text/html" id="doc-bar">
+    {% verbatim %}
+    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    {% endverbatim %}
+</script>
+
+{% endblock %}
+{% block custom_script %}
+<script>
+    layui.use(['table', 'form', 'jquery', 'dtree','layer'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let dtree = layui.dtree;
+        var layer = layui.layer;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        let cols = [
+            [
+            {type: 'checkbox',width:20},
+                {title: '名称',field: 'name',align: 'left',templet:"#collect-name",minWidth:280},
+                {title: '归属',field: 'item_project_name',align: 'left',templet:"#project-role"},
+                {title: '收藏时间',field: 'create_time',align: 'left',templet:"#collect-create-time"},
+                {title: '操作',toolbar: '#doc-bar',align: 'left',}            ]
+        ]
+        // 渲染表格
+        table.render({
+            elem: '#collect-table',
+            method:'post',
+            where:{
+                'type':-1,
+            },
+            url: "{% url 'manage_collect' %}",
+            page: true,
+            cols: cols,
+            skin: 'line',
+            toolbar: '#doc-toolbar',
+            defaultToolbar: ['filter']
+        });
+        // 取消收藏
+        delCollect = function(collect_id){
+            layer.open({
+                type:1,
+                title:'删除收藏',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：此操作将删除此收藏！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    let loading = layer.load();
+                    $.ajax({
+                        url: "{% url 'manage_collect' %}",
+                        dataType: 'json',
+                        type: 'delete',
+                        data:{'collect_id':collect_id,'range':'single',},
+                        success: function(r) {
+                            layer.closeAll();
+                            if (r.status) {
+                                layer.msg("取消成功", {
+                                    icon: 1,
+                                    time: 1000
+                                }, function() {
+                                    table.reload('collect-table');
+                                });
+                            } else {
+                                layer.msg(r.data, {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                            }
+                        }
+                    })
+                },
+            });
+        };
+
+        // 批量取消收藏
+        batchRemoveCollect = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中任何收藏", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let collect_id = "";
+            for (let i = 0; i < data.length; i++) {
+                collect_id += data[i].id + ",";
+            }
+            collect_id = collect_id.substr(0, collect_id.length - 1);
+            // console.log(pro_id)
+            layer.confirm('确定要取消这些收藏？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "{% url 'manage_collect' %}",
+                    dataType: 'json',
+                    type: 'delete',
+                    data:{'collect_id':collect_id,'range':'multi'},
+                    success: function(r) {
+                        layer.close(loading);
+                        if (r.status) {
+                            layer.msg("取消成功", {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                table.reload('collect-table');
+                            });
+                        } else {
+                            layer.msg(r.data, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+        // 监听类型筛选
+        form.on('radio(collect_type)', function(data){
+            console.log(data.value); //被点击的radio的value值
+            table.reload('collect-table',{
+                    where:{
+                    'type':data.value,
+                },
+            })
+        });
+        // 监听搜索按钮
+        $("#search").click(function(){
+            table.reload('collect-table',{
+                where:{
+                    'type':1,'kw':$("input[name=kw]").val(),
+                },
+            })
+        });
+
+        // 侦听取消收藏按钮
+        table.on("tool(collect-table)",function(obj){
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                delCollect(obj.data.id)
+            }
+        });
+        // 侦听表格工具栏
+        table.on("toolbar(collect-table)",function(obj){
+            if (obj.event === 'add') { // 新增文集
+                createProject();
+            }else if(obj.event === 'batchRemove'){ // 批量删除文集
+                batchRemoveCollect(obj)
+            }
+        });
+    })
+</script>
+{% endblock %}

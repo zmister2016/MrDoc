@@ -1,130 +1,154 @@
-<h1 align="center">MrDoc觅道文档 - 记录文档、汇聚思想</h1>
+<h1 align="center">MrDoc - Writing documents, Gathering ideas</h1>
 
-<p align="center">个人和小型团队的笔记、文档、知识管理私有化部署方案</p>
+<p align="center">Personal and small team notes, documents, knowledge management privatization deployment scheme</p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.6.1-brightgreen.svg" title="Mrdoc" />
+<a href="./README-zh.md">中文介绍</a> |
+<a href="./README.md">English Description</a> 
+</p>
+
+<p align="center">
+<img src="https://img.shields.io/badge/MrDoc-v0.6.5-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
 
 <p align="center">
-<a href="http://mrdoc.zmister.com/project-7/">安装手册</a> | 
-<a href="http://mrdoc.zmister.com/project-20/">文档效果</a> |
-<a href="http://mrdoc.zmister.com/">示例站点</a> |
-<a href="./README_ENG.md">English</a>
+<a href="https://mrdocapp.com">Home</a> | 
+<a href="http://mrdoc.zmister.com/">Example Site</a> |
+<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ Group</a>
+
 </p>
 
-<p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">码云</a> | 
+<p align="center">
+<a href="http://mrdoc.zmister.com/project-7/">Installation Manual</a> | 
+<a href="http://mrdoc.zmister.com/project-54/">User Manual</a> |
+<a href="http://mrdoc.zmister.com/project-20/">Document Example</a>
+</p>
+
+
+<p align="center">Source code：<a href="https://gitee.com/zmister/MrDoc">Gitee</a> | 
 <a href="https://github.com/zmister2016/MrDoc">GitHub</a>
 </p>
 
-## 简介
 
-`MrDoc` 是基于`Python`开发的在线文档系统，适合作为个人和小型团队的文档、知识和笔记管理工具。致力于成为优秀的私有化在线文档部署方案。
+### Introduce
 
-目前涵盖：
+`Mrdoc` is an online document system developed based on python. It is suitable for individuals and small teams to manage documents, knowledge and notes. It is committed to become a private online document deployment solution for the whole platform (web, desktop, mobile).
 
-- Web端，[安装手册](http://mrdoc.zmister.com/project-7/)，[使用手册](http://mrdoc.zmister.com/project-54/)；
-- Chrome扩展：
-    - MrDoc官方插件：[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
-    - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
-- App端（开发中）
-- Windows免安装体验版，[使用说明](http://mrdoc.zmister.com/project-7/doc-249/)
+Current Platform：
 
+- Web，[instructions](http://mrdoc.zmister.com/project-7/)；
+- Chrome Extends:
+    - [instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
+    - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
+- Mobile App(developing)
 
-## 打赏
+## Donate
 
-<p align="center">给作者打赏一罐红牛，祝他天天能迭代，日日可更新</p>
-<p align="center">
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212410.png" height=300>
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212511.png" height=300>
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_212543.png" height=300>
-</p>
-<p align="center">
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">PayPal</a>
+<p align="center">Donate a can of Coffee to the author to speed up the development.</p>
+<p>    
+<a href="https://ko-fi.com/zmister">Ko-Fi</a> |
+<a href="https://paypal.me/zmister">PayPal</a>
 </p>
 
-## 功能特性
+## Feature
 
-- **站点管理**
-	- 用户注册、用户登录、用户管理、注册邀请码配置、全站关闭注册开关、全站强制登录开关；
-	- 广告代码配置、统计代码配置、站点信息配置、备案号配置；
-	- 附件格式配置、附件大小配置、图片大小配置；
+- **Site Manage & User Manage**
+    - Support user registration, login, management, administrator and other basic user functions;
+    - Support site configuration registration invitation code, advertising code, statistics code, email retrieval password, site wide close registration, site wide forced login and other management functions;
+    - It supports the configuration of the permission of the Project, and provides four permission modes: public, private, visible to the specified user and visible to the access code;
+    
+- **Document System**
+    - Document writing and reading are based on the Project, with five modules, namely **project**, **document**, **document template**, **image** and **attachment**;
+    - The `markdown` editor based on `editormd` and `vditor` is used to optimize and extend, and the `markdown` syntax is used for document writing, and image management and uploading, table pasting, mind mapping, flow chart drawing and sequence diagram drawing are supported;
+    - Two column **document reading** page, three-level directory level display, document reading font scaling, font type switching, page social sharing, mobile reading optimization, text collection export PDF, ePub file;
+    - Support the account based `API` interface, which can use the account `token` to get the corpus, upload pictures and create documents through the 'API';
+    - Supports the project collaboration function. A project can have one Creator and multiple collaborators, and can flexibly select collaboration permissions;
+    - It supports the function of document historical version to view and compare the differences between the historical version and the existing version, and restore a historical version to the current version;
 
-- **个人管理**
-	- 文集管理：新建、删除、权限控制、转让、协作、导出、生成电子书格式文件
-	- 文档管理：新建、删除、回收站、历史版本
-	- 文档模板管理：新建、删除
-	- 图片管理：上传、分组、删除
-	- 附件管理：上传、删除
-	- Token管理：借助Token高效新建和获取文档；
-	- 个人信息管理：修改昵称、修改电子邮箱、切换文档编辑器；
-	
-- **文档书写**
-	- `Editor.md`、`Vditor`双编辑器加持，自由选择、自由切换；
-	- 图片、附件、科学公式、音视频、思维导图、流程图、Echart图表；
-	- 文档排序、文档上级设置、文档模板插入；
-	- 标签设置
+Update Record : [CHANGES.md](./CHANGES.md)
 
-- **文档阅读**
-	- 两栏式布局，三级目录层级显示，左侧文集大纲，右侧文档正文；
-	- 文档阅读字体缩放、字体类型切换、页面社交分享、移动端阅读优化；
-	- 文集EPUB、PDF文件下载，文档Markdown文件下载；
-	- 标签关系网络图；
+## Simple Installation Tutorial
 
-完整更新记录详见：[CHANGES.md](./CHANGES.md)
-
-## 简明安装教程
-
-### 1、安装依赖库
+### 1. install dependent modules
 ```
 pip install -r requirements.txt
 ```
 
-### 2、初始化数据库
+### 2. Initialize database
 
-在安装完所需的第三方库并配置好数据库信息之后，我们需要对数据库进行初始化。
+After installing the required third-party library and configuring the database information, we need to initialize the database.
 
-在项目路径下打开命令行界面，运行如下命令生成数据库迁移：
+Open the command line interface under the project path and run the following command to generate the database migration:
 
 ```
 python manage.py makemigrations 
 ```
 
-运行如下命令执行数据库迁移:
+Run the following command to perform database migration:
 
 ```
 python manage.py migrate
 ```
-执行完毕之后，数据库就初始化完成了。
 
-### 3、创建管理员账户
-在初始化完数据库之后，需要创建一个管理员账户来管理整个MrDoc，在项目路径下打开命令行终端，运行如下命令：
+After execution, the database is initialized.
+
+### 3. Create Super User
+
+After initializing the database, you need to create an administrator account to manage the whole mrdoc. Open the command line terminal in the project path and run the following command:
+
 ```
 python manage.py createsuperuser
 ```
-按照提示输入用户名、电子邮箱地址和密码即可。
 
-### 4、测试运行
-在完成上述步骤之后，即可运行使用MrDoc。
+Follow the prompts to enter the user name, email address and password.
 
-在测试环境中，可以使用Django自带的服务器运行MrDoc，其命令为：
+### 4、Test Running
+
+After completing the above steps, you can run and use mrdoc.
+
+In the test environment, you can use the server provided by Django to run mrdoc. The command is:
 
 ```
 python manage.py runserver
 ```
 
-## 交流：
+## Feedback
 
-微信公众号：州的先生（ID：zmister2016）
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_213550.png" height=150 />
+### 1. Commit Issue
 
-<p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
+Submit questions on the following pages:
 
-## 协议
+- [https://gitee.com/zmister/MrDoc/issues](https://gitee.com/zmister/MrDoc/issues)
+- [https://github.com/zmister2016/MrDoc/issues](https://github.com/zmister2016/MrDoc/issues)
+
+### 2. Join the mrdoc communication group
+
+Join the mrdoc communication Tencent QQ group ，Group number is **735507293**
+
+### 3. Contact author
+
+WeChat Subscription : **zmister2016**
+
+## Dependent
+
+Thanks for the development based on the following projects：
+
+- Python
+- Django
+- Jquery
+- LayUI
+- PearAdminLayui
+- Editor.md
+- Marked
+- CodeMirror
+- Echarts
+- Viewer.js
+- Sortable.js
+- Vditor
+- iceEditor
+
+## License
 
 <a href="./LICENSE">GPL-3.0</a>

@@ -4,19 +4,20 @@ from django.http.response import JsonResponse,HttpResponse,Http404
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
+from django.views.decorators.http import require_http_methods,require_GET,require_POST # 视图请求方法装饰器
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
-from app_admin.decorators import superuser_only,open_register
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.urls import reverse
-import datetime
-import requests
+from django.utils.translation import gettext_lazy as _
+from app_admin.decorators import superuser_only,open_register
 from app_doc.models import *
 from app_admin.models import *
 from app_admin.utils import *
-import traceback
 from loguru import logger
 import re
+import datetime
+import requests
 
 
 # 返回验证码图片
@@ -32,8 +33,8 @@ def check_code(request):
         request.session["CheckCode"] = code
         return HttpResponse(stream.getvalue(), content_type="image/png")
     except Exception as e:
-        logger.exception("生成验证码图片异常")
-        return HttpResponse("请求异常：{}".format(repr(e)))
+        logger.exception(_("生成验证码图片异常"))
+        return HttpResponse(_("请求异常：{}".format(repr(e))))
 
 
 # 登录视图
@@ -48,6 +49,13 @@ def log_in(request):
         try:
             username = request.POST.get('username','')
             pwd = request.POST.get('password','')
+            # 判断是否需要验证码
+            require_login_check_code = SysSetting.objects.filter(types="basic",name="enable_login_check_code")
+            if (len(require_login_check_code) > 0) and (require_login_check_code[0].value == 'on'):
+                checkcode = request.POST.get("check_code", None)
+                if checkcode != request.session['CheckCode'].lower():
+                    errormsg = _('验证码错误！')
+                    return render(request, 'login.html', locals())
             if username != '' and pwd != '':
                 user = authenticate(username=username,password=pwd)
                 if user is not None:
@@ -55,17 +63,17 @@ def log_in(request):
                         login(request,user)
                         return redirect('/')
                     else:
-                        errormsg = '用户被禁用！'
+                        errormsg = _('用户被禁用！')
                         return render(request, 'login.html', locals())
                 else:
-                    errormsg = '用户名或密码错误！'
+                    errormsg = _('用户名或密码错误！')
                     return render(request, 'login.html', locals())
             else:
-                errormsg = '用户名或密码错误！'
+                errormsg = _('用户名或密码错误！')
                 return render(request, 'login.html', locals())
         except Exception as e:
             logger.exception("登录异常")
-            return HttpResponse('请求出错')
+            return HttpResponse(_('请求出错'))
 
 
 # 注册视图
@@ -89,7 +97,7 @@ def register(request):
                 try:
                     register_code_value = RegisterCode.objects.get(code=register_code,status=1)
                 except ObjectDoesNotExist:
-                    errormsg = '注册码无效!'
+                    errormsg = _('注册码无效!')
                     return render(request, 'register.html', locals())
             # 判断是否输入了用户名、邮箱和密码
             if username and email and password:
@@ -97,22 +105,22 @@ def register(request):
                     email_exit = User.objects.filter(email=email)
                     username_exit = User.objects.filter(username=username)
                     if email_exit.count() > 0: # 验证电子邮箱
-                        errormsg = '此电子邮箱已被注册！'
+                        errormsg = _('此电子邮箱已被注册！')
                         return render(request, 'register.html', locals())
                     elif username_exit.count() > 0: # 验证用户名
-                        errormsg = '用户名已被使用！'
+                        errormsg = _('用户名已被使用！')
                         return render(request, 'register.html', locals())
                     elif re.match('^[0-9a-z]+$',username) is False:
-                        errormsg = '用户名只能为英文数字组合'
+                        errormsg = _('用户名只能为英文数字组合')
                         return render(request, 'register.html', locals())
-                    elif len(username) < 6:
-                        errormsg = '用户名必须大于等于6位！'
+                    elif len(username) < 5:
+                        errormsg = _('用户名必须大于等于5位！')
                         return render(request, 'register.html', locals())
                     elif len(password) < 6: # 验证密码长度
-                        errormsg = '密码必须大于等于6位！'
+                        errormsg = _('密码必须大于等于6位！')
                         return render(request, 'register.html', locals())
                     elif checkcode != request.session['CheckCode'].lower(): # 验证验证码
-                        errormsg = "验证码错误"
+                        errormsg = _("验证码错误")
                         return render(request, 'register.html', locals())
                     else:
                         # 创建用户
@@ -140,13 +148,13 @@ def register(request):
                             login(request, user)
                             return redirect('/')
                         else:
-                            errormsg = '用户被禁用，请联系管理员！'
+                            errormsg = _('用户被禁用，请联系管理员！')
                             return render(request, 'register.html', locals())
                 else:
-                    errormsg = '请输入正确的电子邮箱格式！'
+                    errormsg = _('请输入正确的电子邮箱格式！')
                     return render(request, 'register.html', locals())
             else:
-                errormsg = "请检查输入值"
+                errormsg = _("请检查输入值")
                 return render(request, 'register.html', locals())
 
 
@@ -154,9 +162,17 @@ def register(request):
 def log_out(request):
     try:
         logout(request)
+        project_viewcode_list = []
+        for c in list(request.COOKIES.keys()):
+            if c.startswith('viewcode-'):
+                project_viewcode_list.append(c)
+        resp = redirect(request.META['HTTP_REFERER'])
+        for c in project_viewcode_list:
+            resp.delete_cookie(c)
+        return resp
     except Exception as e:
-        logger.exception("注销异常")
-    return redirect(request.META['HTTP_REFERER'])
+        logger.exception(_("注销异常"))
+        return redirect(request.META['HTTP_REFERER'])
 
 
 # 忘记密码
@@ -172,19 +188,22 @@ def forget_pwd(request):
         try:
             data = EmaiVerificationCode.objects.get(email_name=email,verification_code=vcode,verification_type='忘记密码')
             expire_time = data.expire_time
-            print(expire_time)
             if expire_time > datetime.datetime.now():
                 user = User.objects.get(email=email)
                 user.set_password(new_pwd)
                 user.save()
-                errormsg = "修改密码成功，请返回登录！"
+                errormsg = _("修改密码成功，请返回登录！")
                 return render(request, 'forget_pwd.html', locals())
             else:
-                errormsg = "验证码已过期"
+                errormsg = _("验证码已过期")
                 return render(request, 'forget_pwd.html', locals())
+        except ObjectDoesNotExist:
+            logger.error(_("邮箱不存在：{}".format(email)))
+            errormsg = _("验证码或邮箱错误")
+            return render(request, 'forget_pwd.html', locals())
         except Exception as e:
             logger.exception("修改密码异常")
-            errormsg = "验证码错误"
+            errormsg = _("验证码或邮箱错误")
             return render(request,'forget_pwd.html',locals())
 
 
@@ -209,14 +228,14 @@ def send_email_vcode(request):
                     verification_code = vcode_str,
                     expire_time = expire_time
                 )
-                return JsonResponse({'status':True,'data':'发送成功'})
+                return JsonResponse({'status':True,'data':_('发送成功')})
             else:
-                return JsonResponse({'status':False,'data':'发送验证码出错，请重试！'})
+                return JsonResponse({'status':False,'data':_('发送验证码出错，请重试！')})
 
         else:
-            return JsonResponse({'status':False,'data':'电子邮箱不存在！'})
+            return JsonResponse({'status':False,'data':_('电子邮箱不存在！')})
     else:
-        return JsonResponse({'status':False,'data':'方法错误'})
+        return JsonResponse({'status':False,'data':_('方法错误')})
 
 
 # 后台管理 - 仪表盘
@@ -234,7 +253,8 @@ def admin_overview(request):
         attachment_cnt = Attachment.objects.filter(user=request.user).count()
         # 文档动态
         doc_active_list = Doc.objects.all().order_by('-modify_time')[:5]
-
+        # 个人文集列表
+        pro_list = Project.objects.filter(create_user=request.user).order_by('-create_time')
         return render(request,'app_admin/admin_overview.html',locals())
     else:
         pass
@@ -244,34 +264,46 @@ def admin_overview(request):
 @logger.catch()
 def admin_user(request):
     if request.method == 'GET':
-        # user_list = User.objects.all()
         return render(request, 'app_admin/admin_user.html', locals())
     elif request.method == 'POST':
         username = request.POST.get('username','')
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
         if username == '':
-            user_data = User.objects.all().values_list(
+            user_data = User.objects.all().values(
                 'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
             )
         else:
-            user_data = User.objects.filter(username__icontains=username).values_list(
+            user_data = User.objects.filter(username__icontains=username).values(
                 'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
             )
+
+        # 分页处理
+        paginator = Paginator(user_data, limit)
+        page = request.GET.get('page', page)
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+
         table_data = []
-        for i in list(user_data):
+        for i in users:
             item = {
-                'id':i[0],
-                'last_login':i[1],
-                'is_superuser':i[2],
-                'username':i[3],
-                'email':i[4],
-                'date_joined':i[5],
-                'is_active':i[6],
-                'first_name':i[7]
+                'id':i['id'],
+                'last_login':i['last_login'],
+                'is_superuser':i['is_superuser'],
+                'username':i['username'],
+                'email':i['email'],
+                'date_joined':i['date_joined'],
+                'is_active':i['is_active'],
+                'first_name':i['first_name'],
             }
             table_data.append(item)
-        return JsonResponse({'status':True,'data':table_data})
+        return JsonResponse({'code':0,'data':table_data,"count": user_data.count()})
     else:
-        return JsonResponse({'status':False,'data':'方法错误'})
+        return JsonResponse({'code':1,'msg':_('方法错误')})
 
 
 # 后台管理 - 创建用户
@@ -284,13 +316,13 @@ def admin_create_user(request):
         password = request.POST.get('password','') # 接收密码参数
         user_type = request.POST.get('user_type',0) # 用户类型 0为普通用户，1位管理员
         if username != '' and password != '' and email != '' and \
-                '@' in email and re.match(r'^[0-9a-z]',username) and len(username) >= 6 :
+                '@' in email and re.match(r'^[0-9a-z]',username) and len(username) >= 5 :
             # 不允许电子邮箱重复
             if User.objects.filter(email = email).count() > 0:
-                return JsonResponse({'status':False,'data':'电子邮箱不可重复'})
+                return JsonResponse({'status':False,'data':_('电子邮箱不可重复')})
             # 不允许重复的用户名
             if User.objects.filter(username = username).count() > 0:
-                return JsonResponse({'status': False,'data':'用户名不可重复'})
+                return JsonResponse({'status': False,'data':_('用户名不可重复')})
             try:
                 if user_type == 0:
                     user = User.objects.create_user(
@@ -308,11 +340,11 @@ def admin_create_user(request):
                     user.save()
                 return JsonResponse({'status':True})
             except Exception as e:
-                return JsonResponse({'status':False,'data':'系统异常'})
+                return JsonResponse({'status':False,'data':_('系统异常')})
         else:
-            return JsonResponse({'status':False,'data':'请检查参数'})
+            return JsonResponse({'status':False,'data':_('请检查参数')})
     else:
-        return HttpResponse('方法不允许')
+        return HttpResponse(_('方法不允许'))
 
 
 # 后台管理 - 修改密码
@@ -329,16 +361,16 @@ def admin_change_pwd(request):
                     user = User.objects.get(id=int(user_id))
                     user.set_password(password)
                     user.save()
-                    return JsonResponse({'status':True,'data':'修改成功'})
+                    return JsonResponse({'status':True,'data':_('修改成功')})
                 else:
-                    return JsonResponse({'status':False,'data':'两个密码不一致'})
+                    return JsonResponse({'status':False,'data':_('两个密码不一致')})
             else:
-                return JsonResponse({'status':False,'data':'参数错误'})
+                return JsonResponse({'status':False,'data':_('参数错误')})
         except Exception as e:
             print(repr(e))
-            return JsonResponse({'status':False,'data':'请求错误'})
+            return JsonResponse({'status':False,'data':_('请求错误')})
     else:
-        return JsonResponse({'status':False,'data':'方法错误'})
+        return JsonResponse({'status':False,'data':_('方法错误')})
 
 
 # 后台管理 - 删除用户
@@ -347,14 +379,21 @@ def admin_change_pwd(request):
 def admin_del_user(request):
     if request.method == 'POST':
         try:
-            user_id = request.POST.get('user_id',None)
-            user = User.objects.get(id=int(user_id))
+            user_id = request.POST.get('user_id',None) # 获取用户ID
+            user = User.objects.get(id=int(user_id)) # 获取用户
+            colloas = ProjectCollaborator.objects.filter(user=user) # 获取参与协作的文集
+            # 遍历用户参与协作的文集
+            for colloa in colloas:
+                # 查询出用户协作创建的文档，修改作者为文集所有者
+                Doc.objects.filter(
+                    top_doc=colloa.project.id,create_user=user
+                ).update(create_user=colloa.project.create_user)
             user.delete()
-            return JsonResponse({'status':True,'data':'删除成功'})
+            return JsonResponse({'status':True,'data':_('删除成功')})
         except Exception as e:
-            return JsonResponse({'status':False,'data':'删除出错'})
+            return JsonResponse({'status':False,'data':_('删除出错')})
     else:
-        return JsonResponse({'status':False,'data':'方法错误'})
+        return JsonResponse({'status':False,'data':_('方法错误')})
 
 
 # 后台管理 - 文集管理
@@ -362,32 +401,48 @@ def admin_del_user(request):
 @logger.catch()
 def admin_project(request):
     if request.method == 'GET':
-        search_kw = request.GET.get('kw','')
-        if search_kw == '':
-            project_list = Project.objects.all().order_by('-create_time')
-            paginator = Paginator(project_list,10)
-            page = request.GET.get('page',1)
-            try:
-                projects = paginator.page(page)
-            except PageNotAnInteger:
-                projects = paginator.page(1)
-            except EmptyPage:
-                projects = paginator.page(paginator.num_pages)
-        else:
-            project_list = Project.objects.filter(intro__icontains=search_kw)
-            paginator = Paginator(project_list, 10)
-            page = request.GET.get('page', 1)
-
-            try:
-                projects = paginator.page(page)
-            except PageNotAnInteger:
-                projects = paginator.page(1)
-            except EmptyPage:
-                projects = paginator.page(paginator.num_pages)
-            projects.kw = search_kw
         return render(request,'app_admin/admin_project.html',locals())
-    else:
-        return HttpResponse('方法错误')
+    elif request.method == 'POST':
+        kw = request.POST.get('kw', '')
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 获取文集列表
+        if kw == '':
+            project_list = Project.objects.all().order_by('-create_time')
+        else:
+            project_list = Project.objects.filter(
+                Q(intro__icontains=kw) | Q(name__icontains=kw),
+            ).order_by('-create_time')
+        paginator = Paginator(project_list, limit)
+        try:
+            pros = paginator.page(page)
+        except PageNotAnInteger:
+            pros = paginator.page(1)
+        except EmptyPage:
+            pros = paginator.page(paginator.num_pages)
+        table_data = []
+        for project in pros:
+            item = {
+                'id': project.id,
+                'name': project.name,
+                'intro': project.intro,
+                'doc_total': Doc.objects.filter(top_doc=project.id).count(),
+                'role': project.role,
+                'role_value': project.role_value,
+                'colla_total': ProjectCollaborator.objects.filter(project=project).count(),
+                'is_top':project.is_top,
+                'create_user':project.create_user.username,
+                'create_time': project.create_time,
+                'modify_time': project.modify_time
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": project_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
 
 # 后台管理 - 修改文集权限
 @superuser_only
@@ -423,35 +478,116 @@ def admin_project_role(request,pro_id):
         else:
             return Http404
 
+# 后台管理 - 控制文集置顶状态
+@superuser_only
+@require_POST
+def admin_project_istop(request):
+    try:
+        project_id = request.POST.get('id')
+        is_top = request.POST.get('is_top')
+        if is_top == 'true':
+            is_top = True
+        else:
+            is_top = False
+        Project.objects.filter(id=project_id).update(is_top=is_top)
+        return JsonResponse({'status':True})
+    except:
+        logger.exception(_("置顶文集出错"))
+        return JsonResponse({'status':False,'data':_('执行出错')})
+
 
 # 后台管理 - 文档管理
 @superuser_only
 @logger.catch()
 def admin_doc(request):
     if request.method == 'GET':
-        kw = request.GET.get('kw','')
-        if kw == '':
-            doc_list = Doc.objects.all().order_by('-modify_time')
-            paginator = Paginator(doc_list, 10)
-            page = request.GET.get('page', 1)
-            try:
-                docs = paginator.page(page)
-            except PageNotAnInteger:
-                docs = paginator.page(1)
-            except EmptyPage:
-                docs = paginator.page(paginator.num_pages)
-        else:
-            doc_list = Doc.objects.filter(Q(content__icontains=kw) | Q(name__icontains=kw)).order_by('-modify_time')
-            paginator = Paginator(doc_list, 10)
-            page = request.GET.get('page', 1)
-            try:
-                docs = paginator.page(page)
-            except PageNotAnInteger:
-                docs = paginator.page(1)
-            except EmptyPage:
-                docs = paginator.page(paginator.num_pages)
-            docs.kw = kw
+        # 文集列表
+        project_list = Project.objects.all()  # 自己创建的文集列表
+        # 文档数量
+        # 已发布文档数量
+        published_doc_cnt = Doc.objects.filter(status=1).count()
+        # 草稿文档数量
+        draft_doc_cnt = Doc.objects.filter(status=0).count()
+        # 所有文档数量
+        all_cnt = published_doc_cnt + draft_doc_cnt
         return render(request,'app_admin/admin_doc.html',locals())
+    elif request.method == 'POST':
+        kw = request.POST.get('kw', '')
+        project = request.POST.get('project', '')
+        status = request.POST.get('status', '')
+        if status == '-1':  # 全部文档
+            q_status = [0, 1]
+        elif status in ['0', '1']:
+            q_status = [int(status)]
+        else:
+            q_status = [0, 1]
+
+        if project == '':
+            project_list = Project.objects.all().values_list('id', flat=True)  # 自己创建的文集列表
+            q_project = list(project_list)
+        else:
+            q_project = [project]
+
+        page = request.POST.get('page', 1)
+        limit = request.POST.get('limit', 10)
+        # 没有搜索
+        if kw == '':
+            doc_list = Doc.objects.filter(
+                status__in=q_status,
+                top_doc__in=q_project
+            ).order_by('-modify_time')
+        # 有搜索
+        else:
+            doc_list = Doc.objects.filter(
+                Q(content__icontains=kw) | Q(name__icontains=kw),
+                status__in=q_status, top_doc__in=q_project
+            ).order_by('-modify_time')
+
+        # 文集列表
+        project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
+        colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
+
+        # 文档数量
+        # 已发布文档数量
+        published_doc_cnt = Doc.objects.filter(create_user=request.user, status=1).count()
+        # 草稿文档数量
+        draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
+        # 所有文档数量
+        all_cnt = published_doc_cnt + draft_doc_cnt
+
+        # 分页处理
+        paginator = Paginator(doc_list, limit)
+        page = request.GET.get('page', page)
+        try:
+            docs = paginator.page(page)
+        except PageNotAnInteger:
+            docs = paginator.page(1)
+        except EmptyPage:
+            docs = paginator.page(paginator.num_pages)
+
+        table_data = []
+        for doc in docs:
+            item = {
+                'id': doc.id,
+                'name': doc.name,
+                'parent': Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else '无',
+                'project_id': Project.objects.get(id=doc.top_doc).id,
+                'project_name': Project.objects.get(id=doc.top_doc).name,
+                'status': doc.status,
+                'editor_mode': doc.editor_mode,
+                'open_children': doc.open_children,
+                'create_user':doc.create_user.username,
+                'create_time': doc.create_time,
+                'modify_time': doc.modify_time
+            }
+            table_data.append(item)
+        resp_data = {
+            "code": 0,
+            "msg": "ok",
+            "count": doc_list.count(),
+            "data": table_data
+        }
+        return JsonResponse(resp_data)
 
 
 # 后台管理 - 文档模板管理
@@ -509,7 +645,7 @@ def admin_register_code(request):
             try:
                 all_cnt = int(request.POST.get('all_cnt',1)) # 注册码的最大使用次数
                 if all_cnt <= 0:
-                    return JsonResponse({'status': False, 'data': '最大使用次数不可为负数'})
+                    return JsonResponse({'status': False, 'data': _('最大使用次数不可为负数')})
                 is_code = False
                 while is_code is False:
                     code_str = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
@@ -525,24 +661,25 @@ def admin_register_code(request):
                     all_cnt = all_cnt,
                     create_user = request.user
                 )
-                return JsonResponse({'status':True,'data':'新增成功'})
+                return JsonResponse({'status':True,'data':_('新增成功')})
             except Exception as e:
-                logger.exception("生成注册码异常")
-                return JsonResponse({'status': False,'data':'系统异常'})
+                logger.exception(_("生成注册码异常"))
+                return JsonResponse({'status': False,'data':_('系统异常')})
         elif int(types) == 2:
             code_id = request.POST.get('code_id',None)
             try:
                 register_code = RegisterCode.objects.get(id=int(code_id))
                 register_code.delete()
-                return JsonResponse({'status':True,'data':'删除成功'})
+                return JsonResponse({'status':True,'data':_('删除成功')})
             except ObjectDoesNotExist:
-                return JsonResponse({'status':False,'data':'注册码不存在'})
+                return JsonResponse({'status':False,'data':_('注册码不存在')})
             except:
-                return JsonResponse({'status':False,'data':'系统异常'})
+                return JsonResponse({'status':False,'data':_('系统异常')})
         else:
-            return JsonResponse({'status':False,'data':'类型错误'})
+            return JsonResponse({'status':False,'data':_('类型错误')})
     else:
-        return JsonResponse({'status': False,'data':'方法错误'})
+        return JsonResponse({'status': False,'data':_('方法错误')})
+
 
 # 普通用户修改密码
 @login_required()
@@ -558,15 +695,15 @@ def change_pwd(request):
                     user = User.objects.get(id=request.user.id)
                     user.set_password(password)
                     user.save()
-                    return JsonResponse({'status':True,'data':'修改成功'})
+                    return JsonResponse({'status':True,'data':_('修改成功')})
                 else:
-                    return JsonResponse({'status':False,'data':'密码不得少于6位数'})
+                    return JsonResponse({'status':False,'data':_('密码不得少于6位数')})
             else:
-                return JsonResponse({'status':False,'data':'两个密码不一致'})
+                return JsonResponse({'status':False,'data':_('两个密码不一致')})
         except Exception as e:
-            return JsonResponse({'status':False,'data':'修改出错'})
+            return JsonResponse({'status':False,'data':_('修改出错')})
     else:
-        return HttpResponse('方法错误')
+        return HttpResponse(_('方法错误'))
 
 
 # 后台管理 - 应用设置
@@ -603,6 +740,7 @@ def admin_setting(request):
             img_scale = request.POST.get('img_scale',None) # 图片缩略
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
             enable_project_report = request.POST.get('enable_project_report',None) # 文集导出
+            enable_login_check_code = request.POST.get('enable_login_check_code',None) # 登录验证码
             # 更新首页文集默认排序
             SysSetting.objects.update_or_create(
                 name='index_project_sort',
@@ -682,6 +820,11 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name = 'enable_project_report',
                 defaults={'value':enable_project_report,'types':'basic'}
+            )
+            # 更新登录验证码状态
+            SysSetting.objects.update_or_create(
+                name = 'enable_login_check_code',
+                defaults={'value':enable_login_check_code,'types':'basic'}
             )
 
             return render(request,'app_admin/admin_setting.html',locals())
@@ -804,52 +947,74 @@ def admin_center_menu(request):
     menu_data = [
         {
             "id": 1,
-            "title": "仪表盘",
+            "title": _("仪表盘"),
             "type": 1,
             "icon": "layui-icon layui-icon-console",
             "href": reverse('admin_overview'),
         },
         {
             "id": 2,
-            "title": "文集管理",
+            "title": _("文集管理"),
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-list",
             "href": reverse('project_manage'),
         },
         {
             "id": 3,
-            "title": "文档管理",
+            "title": _("文档管理"),
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-form",
             "href": reverse('doc_manage'),
         },
         {
             "id": 4,
-            "title": "文档模板管理",
+            "title": _("文档模板管理"),
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-templeate-1",
             "href": reverse('doctemp_manage'),
         },
         {
             "id": 5,
-            "title": "注册码管理",
+            "title": _("注册码管理"),
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-component",
             "href": reverse('register_code_manage'),
         },
         {
             "id": 6,
-            "title": "用户管理",
+            "title": _("用户管理"),
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-user",
             "href": reverse('user_manage'),
         },
         {
             "id": 7,
-            "title": "站点设置",
+            "title": _("站点设置"),
             "type": 1,
-            "icon": "layui-icon layui-icon-console",
+            "icon": "layui-icon layui-icon-set",
             "href": reverse('sys_setting'),
         },
+        {
+            "id": "common",
+            "title": _("使用帮助"),
+            "icon": "layui-icon layui-icon-template-1",
+            "type": 0,
+            "href": "",
+            "children": [{
+                "id": 701,
+                "title": _("安装说明"),
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "http://mrdoc.zmister.com/project-7/"
+            }, {
+                "id": 702,
+                "title": _("使用说明"),
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "http://mrdoc.zmister.com/project-54/"
+            }]
+        }
     ]
     return JsonResponse(menu_data,safe=False)

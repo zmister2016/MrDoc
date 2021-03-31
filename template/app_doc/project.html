@@ -2,6 +2,7 @@
 {% extends 'app_doc/docs_base.html' %}
 <!-- 引入静态文件 -->
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ project.name }}{% endblock %}
 
@@ -9,22 +10,18 @@
     {% if request.user == project.create_user or colla_user > 0 %}
         <span class="btn pull-left">|</span>
         <a class="btn pull-left" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">添加</span>
+            <i class="layui-icon layui-icon-add-1"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
     {% endif %}
     {% if request.user == project.create_user %}
-        <a class="btn pull-left" href="{% url 'manage_project' %}" target="_blank">
-            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理</span>
+        <a class="btn pull-left" href="{% url 'user_center' %}">
+            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% endif %}
 {% endblock %}
 
 {% block content_head %}
     <h1>{{ project.name }}</h1><hr>
-    <p style="" class="project-doc-content-head">
-        <i class="fa fa-user"></i> 创建人：{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user}}{% endif %}
-    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-timer"></i> 创建于：{{ project.create_time }}
-    </p>
 {% endblock %}
 
 {% block page_content %}
@@ -32,17 +29,19 @@
     {% load doc_filter %}
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
         <ul class="layui-tab-title">
-            <li class="layui-this">简介</li>
-            <li>目录大纲</li>
-            <li>最新文档</li>
+            <li class="layui-this">{% trans "简介" %}</li>
+            <li>{% trans "目录大纲" %}</li>
+            <li>{% trans "最新文档" %}</li>
             {% if enable_project_report %}
-            <li>文集下载</li>
+            <li>{% trans "文集下载" %}</li>
             {% endif %}
         </ul>
         <div class="layui-tab-content" style="padding: 0;">
             <!-- 文集简介 -->
             <div class="layui-tab-item layui-show">
-                <div id="project-desc"><textarea style="display: none;">{{project.intro}}</textarea></div>
+                <div id="project-desc">
+                    <textarea style="display: none;">{% if project.intro == '' or project.intro is None %}{% trans "暂无文集简介" %}{% else %}{{project.intro}}{% endif %}
+                </textarea></div>
             </div>
             <!-- 目录大纲 -->
             <div class="layui-tab-item">
@@ -78,10 +77,10 @@
                                 <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="fa fa-download"></i> <u>PDF电子书</u></a>
                             {% endif %}
                             {% if allow_download.allow_pdf == 0 and allow_download.allow_epub == 0 %}
-                                <a>文集作者未开放此文集的任何格式下载！</a>
+                                <a>{% trans "文集作者未开放此文集的任何格式下载！" %}</a>
                             {% endif %}
                         {% else %}
-                            <a>文集作者未开放此文集的任何格式下载！</a>
+                            <a>{% trans "文集作者未开放此文集的任何格式下载！" %}</a>
                         {% endif %}
                     </span>
                 </p>
@@ -129,24 +128,32 @@
 {% endblock %}
 
 {% block doc_bottom_block %}
-<button id="share" class="doc-bottom-btn" tooltip="分享本文档" style="padding-left: 20px;">
-    <i class="fa fa-share-alt" ></i> 分享
-</button>
+<div class="layui-row layui-col-space20" style="padding-left: 20px;">
+    <span >
+        <i class="layui-icon layui-icon-user"></i>
+        <span tooltip="文集创建者">{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user.username}}{% endif %}</span>
+        {% for colla in colla_user_list %}
+        ,<span tooltip="文集成员">{% if colla.user.first_name != '' %} {{colla.user.first_name}} {% else %} {{colla.user.username}}{% endif %}</span>
+        {% endfor %}
+    </span>
+
+    <button id="share" class="doc-bottom-btn" tooltip="分享本文档" style="padding-left: 20px;">
+        <i class="fa fa-share-alt" ></i> {% trans "分享" %}
+    </button>
+</div>
 {% endblock %}
 
 {% block custom_script %}
-<link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
-<style>
-    .vditor-reset{
-        font-size: inherit;
-        font-family:inherit;
-    }
-</style>
-<script src="{% static 'vditor/dist/index.min.js' %}"></script>
+<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
 <script>
-    // 生成文集目录大纲
+    // 生成文集简介中的文档大纲
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
     var tree = layui.tree;
     var layer = layui.layer;
+    var util = layui.util;
     getDocTree = function(){
         layer.load(1)
         $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
@@ -155,27 +162,27 @@
                 layui.each(r.data,function(index,item){
                     toc_str += "<li>"
                     if(item['children'] != undefined){ // 存在二级文档
-                        li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +'<ul class="sub-menu">'
+                        li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>' +'<ul class="sub-menu">'
                         toc_str += li
                         layui.each(item['children'],function(index,item){// 遍历二级文档
                             toc_str += '<li>'
                             if(item['children'] != undefined){ //存在三级文档
-                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +'<ul class="sub-menu">'
+                                li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>' +'<ul class="sub-menu">'
                                 toc_str += li
                                 layui.each(item['children'],function(index,item){ // 遍历三级文档
-                                    li = '<li><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></li>'
+                                    li = '<li><div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div></li>'
                                     toc_str += li
                                 })
                                 toc_str += '</ul>'
                             }else{// 不存在三级文档
-                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
+                                li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>'
                                 toc_str += li
                             }
                             toc_str += '</li>'
                         })    
                         toc_str += '</ul>'
                     }else{//不存在二级文档
-                       li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
+                       li = '<div class="project-toc-left"><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>'
                        toc_str += li
                     }
                     toc_str += '</li>'
@@ -190,20 +197,21 @@
     getDocTree();
     // 渲染文集简介Markdown
     const renderDesc = () => {
-        layer.load(1);
-        const md_desc = $("#project-desc textarea").val()
-        Vditor.preview(document.getElementById('project-desc'),
-            md_desc, {
-                "cdn":"{% static 'vditor' %}",
-                speech: {
-                    enable: true,
-                },
-                anchor: 1,
-                after:function(){
-                    layer.closeAll('loading');
-                }
-            })
+        editormd.markdownToHTML("project-desc", {
+            emoji           : true,  //emoji表情
+            taskList        : true,  // 任务列表
+            tex             : true,  // 科学公式
+            flowChart       : true,  // 流程图
+            sequenceDiagram : true,  // 时序图
+            tocm            : false, //目录
+            toc             :false,
+            tocContainer : "#toc-container",
+            tocDropdown   : false,
+            atLink    : false,//禁用@链接
+            htmlDecode     : "link,style,base,script,iframe", //过滤部分HTML标签
+        });
     }
+    layer.load(1);
     renderDesc();
 </script>
 {% endblock %}

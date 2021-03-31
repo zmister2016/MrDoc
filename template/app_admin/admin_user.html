@@ -1,5 +1,6 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
+{% load i18n %}
 {% block title %}用户管理{% endblock %}
 {% block content %}
 <div class="layui-card">
@@ -15,12 +16,12 @@
                 <div class="layui-input-inline">
                     <input type="text" name="username" id="username" required lay-verify="required" placeholder="输入用户名" autocomplete="off" class="layui-input">
                 </div>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="getUserInfo()"><i class="layui-icon layui-icon-search"></i>搜索</button>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createUser()" type="button"><i class="layui-icon layui-icon-addition"></i>新增用户</button>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createSuperUser()" type="button"><i class="layui-icon layui-icon-addition"></i>添加管理员</button>
+                <button class="pear-btn pear-btn-sm" onclick="getUserInfo()"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                <button class="pear-btn pear-btn-primary pear-btn-sm" onclick="createUser()" type="button"><i class="layui-icon layui-icon-addition"></i>新增用户</button>
+                <button class="pear-btn pear-btn-primary pear-btn-sm" onclick="createSuperUser()" type="button"><i class="layui-icon layui-icon-addition"></i>添加管理员</button>
             </div>
         </div>
-        <div class="layui-row" lay-skin="line">
+        <div class="layui-row">
             <table class="layui-table"  id="user-list"></table>
         </div>
     </div>
@@ -48,6 +49,18 @@
           {{#  } }}
       {% endverbatim %}
     </script>
+    <!-- 注册时间 -->
+    <script type="text/html" id="registerTime">
+        {% verbatim %}
+        {{layui.util.toDateString(d.date_joined,  "yyyy-MM-dd HH:mm:ss")}}
+        {% endverbatim %}
+    </script>
+    <!-- 最后登录时间 -->
+    <script type="text/html" id="lastLoginTime">
+        {% verbatim %}
+        {{layui.util.toDateString(d.last_login,  "yyyy-MM-dd HH:mm:ss")}}
+        {% endverbatim %}
+    </script>
     <!-- 用户操作模板 -->
     <script type="text/html" id="userOpera">
       {% verbatim %}
@@ -65,33 +78,27 @@
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-        //获取用户列表
-        getUserInfo = function () {
-            layer.load(1);
-            $.post("{% url 'user_manage' %}",{'username':$("#username").val()},function(r){
-                layer.closeAll('loading');
-                if(r.status){
-                    //执行表格渲染
-                    table.render({
-                        elem: '#user-list' //指定原始表格元素选择器（推荐id选择器）
-                        ,height: 600 //容器高度
-                        ,limit:20
-                        ,page:true
-                        ,cols: [[
-                            {field:'username',title:'用户名',width:160},
-                            {field:'first_name',title:'昵称',width:160},
-                            {field:'email',title:'电子邮箱',width:160},
-                            {field:'is_superuser',title:'用户角色',width:100,templet:'#userRole'},
-                            {field:'date_joined',title:'注册时间',width:200},
-                            {field:'last_login',title:'最后登录时间',width:200},
-                            {field:'is_active',title:'状态',width:60,templet:'#userStatus'},
-                            {field:'oprate',title:'操作',width:180,templet:'#userOpera'},
-                        ]] //设置表头
-                        ,data:r.data
-                    });
-                }
-            });
-        };
+        //获取用户列表，执行表格渲染
+        table.render({
+            elem: '#user-list',
+            url: "{% url 'user_manage' %}",
+            method:'post',
+            where:{
+                'username':$("#username").val(),
+            },
+            page:true,
+            cols: [[
+                {field:'username',title:'用户名',width:160},
+                {field:'first_name',title:'昵称',width:160},
+                {field:'email',title:'电子邮箱',width:160},
+                {field:'is_superuser',title:'用户角色',width:100,templet:'#userRole'},
+                {field:'date_joined',title:'注册时间',width:160,templet:'#registerTime'},
+                {field:'last_login',title:'最后登录时间',width:160,templet:'#lastLoginTime'},
+                {field:'is_active',title:'状态',width:60,templet:'#userStatus'},
+                {field:'oprate',title:'操作',width:180,templet:'#userOpera'},
+            ]],
+            skin: 'line',
+        });
         //新建用户
         createUser = function(){
             layer.open({
@@ -193,7 +200,7 @@
                 title:'删除用户',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将删除用户'+username+'及其所有文档！</div>',
+                content:'<div style="margin-left:10px;">警告：此操作将删除用户'+username+'及其文集文档！协作文档将转移给文集所有者</div>',
                 btn:['确定','取消'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
@@ -216,8 +223,6 @@
                 },
             });
         };
-        //页面加载执行 获取所有用户信息
-        getUserInfo();
     })
 </script>
 {% endblock %}

@@ -1,123 +1,188 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
+{% load i18n %}
 {% block title %}文集管理{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
-        <div class="layui-card-header" style="margin-bottom: 10px;">
-        <div class="layui-row">
-            <span style="font-size:18px;">文集管理
-            </span>
-        </div>
-        </div>
-        <div class="layui-row">
-            <form action="{% url 'project_manage' %}" method="get">
-            <div class="layui-form-item">
-                <div class="layui-input-inline">
-                    <input type="text" name="kw" id="kw" placeholder="输入文集内容" autocomplete="off" class="layui-input">
-                </div>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>搜索</button>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="createProject()" type="button"><i class="layui-icon layui-icon-addition"></i>新建文集</button>
-            </div>
-            </form>
-        </div>
-        <div class="layui-row" >
-            <table class="layui-table"  id="doctemp-list" lay-skin="nob" lay-size='' lay-even>
-                <colgroup>
-                    <col width="90">
-                    <col width="100">
-                    <col width="40">
-                    <col width="60">
-                    <col width="90">
-                    <col width="30">
-                    <col width="50">
-                </colgroup>
-        <thead>
-            <tr>
-                <th>文集名称</th>
-                <th>文集简介</th>
-                <th>文档数量</th>
-                <th>权限</th>
-                <th>创建时间</th>
-                <th>所属用户</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pro in projects %}
-            <tr>
-            <td><a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank">{{ pro.name }}</a></td>
-            <td>{{ pro.intro }}</td>
-            {% load project_filter %}
-            <td>{{ pro.id | get_doc_count }}</td>
-                <td>
-                <div class="layui-input-inline">
-                {% if pro.role == 0 %}
-                    <i class="layui-icon layui-icon-circle"></i> 公开 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
-                {% elif pro.role == 1 %}
-                    <i class="layui-icon layui-icon-menu-fill"></i> 私密 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
-                {% elif pro.role == 2 %}
-                    <i class="layui-icon layui-icon-group"></i> 指定用户可见 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
-                {% elif pro.role == 3 %}
-                    <i class="layui-icon layui-icon-password"></i> 访问码可见 <a href="{% url 'admin_project_role' pro.id %}"  title="修改文集权限"><i class="layui-icon layui-icon-edit"></i></a>
-                {% endif %}
-                </div>
-            </td>
-            <td>{{ pro.create_time }}</td>
-            <td>{{ pro.create_user }}</td>
-            <td>
-                <!-- <a href="{% url 'pro_index' pro_id=pro.id %}"  target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">
-                    <i class="layui-icon layui-icon-read"></i>查看
-                    </a> -->
-                <a href="javascript:void(0);" onclick="modifyProject('{{pro.id}}','{{pro.name}}','{{pro.intro}}')" class="layui-btn layui-btn-normal layui-btn-xs">
-                    <i class="layui-icon layui-icon-edit"></i>
-                </a>
-                <a href="javascript:void(0);" onclick="delProject('{{pro.id}}');" class="layui-btn layui-btn-warm layui-btn-xs">
-                    <i class="layui-icon layui-icon-delete"></i>
-                </a>
-            </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-            </table>
-        </div>
-        <!-- 分页 -->
-        <div class="layui-row">
-            <div class="layui-box layui-laypage layui-laypage-default">
-                    <!-- 上一页 -->
-                    {% if projects.has_previous %}
-                        <a href="?page={{ projects.previous_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">上一页</a>
-                    {% else %}
-                        <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-disabled">上一页</a>
-                    {% endif %}
-                    <!-- 当前页 -->
-                    <span class="layui-laypage-curr">
-                        <em class="layui-laypage-em"></em>
-                        <em>{{ projects.number }}/{{ projects.paginator.num_pages }}</em>
-                    </span>
-                    <!-- 下一页 -->
-                    {% if projects.has_next %}
-                        <a href="?page={{ projects.next_page_number }}&kw={{projects.kw}}" class="layui-btn layui-btn-xs layui-btn-normal">下一页</a>
-                    {% else %}
-                        <a class="layui-btn layui-btn-xs layui-btn-disabled">下一页</a>
-                    {% endif %}
-            </div>
-        </div>
+        <table id="project-table" lay-filter="project-table"></table>
     </div>
 </div>
-{% endblock %}
 
+<!-- 表格工具栏 -->
+<script type="text/html" id="project-toolbar">
+    <div class="layui-input-inline">
+        <input type="text" name="project-search-kw" placeholder="" class="layui-input" >
+    </div>
+    <button class="pear-btn pear-btn-sm" lay-event="search">
+        <i class="layui-icon layui-icon-search"></i>搜索
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>新增
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>删除
+    </button>
+    
+</script>
+
+<!-- 文集名称 -->
+<script type="text/html" id="project-name">
+    {% verbatim %}
+    <a href="/project-{{d.id}}/" target="_blank">
+        {{d.name}}
+        {{#if (d.role == 0) { }}
+        {{# }else if(d.role == 1){ }}
+        <span  tooltip="私密" placement="right"><i class="layui-icon layui-icon-password"></i></span>
+        {{# }else if(d.role == 2){ }}
+        <span  tooltip="指定用户" placement="right"><i class="layui-icon layui-icon-user"></i></span>
+        {{# }else if(d.role == 3){ }}
+        <span  tooltip="访问码" placement="right"><i class="layui-icon layui-icon-key"></i></span>
+        {{# } }}
+    </a>
+    {% endverbatim %}
+</script>
+
+<!-- 单个文集操作 -->
+<script type="text/html" id="project-bar">
+    {% verbatim %}
+    <!-- <a href="/manage_pro_doc_sort/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a> -->
+    <!-- <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a> -->
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    {% endverbatim %}
+</script>
+
+<!-- 文集权限 -->
+<script type="text/html" id="project-role">
+    {% verbatim %}
+    {{#if (d.role == 0) { }}
+    <span>公开</span>
+    {{# }else if(d.role == 1){ }}
+    <span>私密</span>
+    {{# }else if(d.role == 2){ }}
+    <span>指定用户</span>
+    {{# }else if(d.role == 3){ }}
+    <span>访问码</span>
+    {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 协作人数 -->
+<script type="text/html" id="colla-cnt">
+    {% verbatim %}
+    <span>{{d.colla_total}}</span> <a href="/manage_project_colla/{{d.id}}/"  title="管理文集协作"><i class="layui-icon layui-icon-set"></i></a>
+    {% endverbatim %}
+</script>
+
+<!-- 创建时间 -->
+<script type="text/html" id="project-create-time">
+    {% verbatim %}
+    {{layui.util.toDateString(d.create_time,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 文集置顶 -->
+<script type="text/html" id="is-top">
+    {% verbatim %}
+    <input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="topActive" {{ d.is_top === true ? 'checked' : '' }}>
+    {% endverbatim %}
+</script>
+
+{% endblock %}
 {% block custom_script %}
 <script>
-    layui.use(['table','jquery','form','layer','element'], function() {
+    layui.use(['table', 'form', 'jquery', 'layer'], function() {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let layer = layui.layer;
-        let element = layui.element;
         $.ajaxSetup({
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+        let cols = [
+            [
+                {type: 'checkbox',width:20},
+                {title: '文集名称',field: 'name',align: 'left',templet:"#project-name",minWidth:200},
+                // {title: '简介',field: 'intro',align: 'left',templet:"#share-type"},
+                // {title: '权限',field: 'role',align: 'left',templet:"#project-role"},
+                {title: '文档数',field: 'doc_total',align: 'left',width:90},
+                {title: '协作人数',field: 'colla_total',align: 'left',templet:"#colla-cnt",width:90},
+                {title: '作者',field: 'create_user',align: 'left',width:90},
+                {title: '置顶',field: 'is_top',align: 'left',width:90,templet:"#is-top"},
+                {title: '创建时间',field: 'create_time',align: 'left',templet:"#project-create-time"},
+                {title: '操作',toolbar: '#project-bar',align: 'left',}
+            ]
+        ]
+        // 渲染表格
+        table.render({
+            elem: '#project-table',
+            method:'post',
+            where:{
+                'type':1
+            },
+            url: "{% url 'project_manage' %}",
+            page: true,
+            cols: cols,
+            skin: 'line',
+            toolbar: '#project-toolbar',
+            defaultToolbar: ['filter']
         });
+        // 侦听文集删除按钮
+        table.on("tool(project-table)",function(obj){
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                delProject(obj.data.id,obj.data.name)
+            }
+        });
+        // 侦听表格工具栏
+        table.on("toolbar(project-table)",function(obj){
+            if (obj.event === 'add') { // 新增文集
+                createProject();
+            }else if(obj.event === 'batchRemove'){ // 批量删除文集
+                batchRemove(obj)
+            }else if(obj.event === 'search'){ // 搜索文集
+                console.log('搜索文集')
+                table.reload('project-table',{
+                    where:{
+                    'type':1,'kw':$('input[name="project-search-kw"]').val()
+                },
+                })
+            } 
+        });
+
+        // 侦听文集置顶开关        
+        form.on('switch(topActive)', function(obj){
+            loading = layer.load(1)
+            $.ajax({
+                url:'{% url "admin_project_istop" %}',
+                type:'post',
+                data:{
+                    'id':this.value,'is_top':obj.elem.checked,
+                },
+                success: function(r) {
+                    layer.close(loading);
+                    if (r.status) {
+                        layer.msg('修改成功', {
+                            icon: 1,
+                            time: 1000
+                        },function(){
+                            table.reload("project-table")
+                        });
+                    } else {
+                        layer.msg(r.data, {
+                            icon: 2,
+                            time: 1000
+                        });
+                    }
+                },
+                error:function(){
+                    layer.close(loading);
+                    layer.msg("置顶失败")
+                }
+            })
+        });
+
+        //创建文集
         createProject = function(){
             layer.open({
                 type:1,
@@ -134,7 +199,7 @@
                         'desc':$("#desc").val(),
                     }
                     $.post("{% url 'create_project' %}",data,function(r){
-                        layer.closeAll('loading');
+                        layer.closeAll('loading'); //关闭loading
                         if(r.status){
                             //创建成功
                             window.location.reload();
@@ -148,6 +213,7 @@
                 },
             });
         };
+        //修改文集
         modifyProject = function(pro_id,pro_name,pro_intro){
             layer.open({
                 type:1,
@@ -158,50 +224,119 @@
                 btn:['确定','取消'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
+                    layer.load(1);
                     data = {
                         'pro_id':pro_id,
                         'name':$("#pname").val(),
                         'desc':$("#desc").val(),
                     }
                     $.post("{% url 'modify_project' %}",data,function(r){
+                        layer.closeAll('loading'); //关闭loading
                         if(r.status){
                             //修改成功
                             window.location.reload();
                             //layer.close(index)
                         }else{
                             //修改失败，提示
-                            console.log(r)
+                            // console.log(r)
                             layer.msg(r.data)
                         }
                     })
                 },
             });
         };
-        delProject = function(pro_id){
+        //删除文集
+        delProject = function(pro_id,pro_name){
             layer.open({
                 type:1,
-                title:'删除文集',
+                title:'{% trans "删除文集" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将删除文集及文集下所有文档！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">你正在删除：<span style="font-weight:700;color:red;">【'+pro_name+'】</span><br><br>警告！此操作将<span style="font-weight:700;color:red;">删除此文集及文集下所有文档！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_delete_project" placeholder="DELETE"></div>',
+                btn:['{% trans "删除" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
-                    data = {
-                        'pro_id':pro_id,
-                    }
-                    $.post("{% url 'del_project' %}",data,function(r){
-                        if(r.status){
-                            //修改成功
-                            window.location.reload();
-                            //layer.close(index)
-                        }else{
-                            //修改失败，提示
-                            console.log(r)
-                            layer.msg(r.data)
+                    var confirm_delete = $("#confirm_delete_project").val()
+                    if(confirm_delete === 'DELETE'){
+                        layer.load(1);
+                        data = {
+                            'pro_id':pro_id,
                         }
-                    })
+                        $.post("{% url 'del_project' %}",data,function(r){
+                            layer.closeAll(); //关闭loading
+                            if(r.status){
+                                layer.msg("{% trans '删除成功' %}", {
+                                    icon: 1,
+                                    time: 1000
+                                }, function() {
+                                    table.reload('project-table');
+                                });
+                            }else{
+                                //修改失败，提示
+                                console.log(r)
+                                layer.msg(r.data)
+                            }
+                        })
+                    }else{
+                        layer.msg("输入错误！")
+                    }
                 },
+            });
+        }
+        // 批量删除文集
+        batchRemove = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("{% trans '未选中任何文集' %}", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let pro_id = "";
+            for (let i = 0; i < data.length; i++) {
+                pro_id += data[i].id + ",";
+            }
+            pro_id = pro_id.substr(0, pro_id.length - 1);
+            // console.log(pro_id)
+            layer.open({
+                type:1,
+                title:'{% trans "删除文集" %}',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">你正在批量删除文集！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选文集及文集下所有文档！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
+                btn:['{% trans "批量删除" %}','{% trans "取消" %}'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    var confirm_delete = $("#confirm_batch_delete_project").val()
+                    if(confirm_delete === 'DELETE'){
+                        let loading = layer.load();
+                        $.ajax({
+                            url: "{% url 'del_project' %}",
+                            dataType: 'json',
+                            type: 'post',
+                            data:{'pro_id':pro_id,'range':'multi'},
+                            success: function(r) {
+                                layer.closeAll();
+                                if (r.status) {
+                                    layer.msg("{% trans '删除成功' %}", {
+                                        icon: 1,
+                                        time: 1000
+                                    }, function() {
+                                        table.reload('project-table');
+                                    });
+                                } else {
+                                    layer.msg(r.data, {
+                                        icon: 2,
+                                        time: 1000
+                                    });
+                                }
+                            }
+                        })
+                    }else{
+                        layer.msg("输入错误！")
+                    }
+                }
             });
         }
     })

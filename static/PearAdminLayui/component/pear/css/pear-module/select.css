@@ -220,7 +220,7 @@ select[xm-select] {
 
 .xm-select-parent dl dd.xm-select-this div i {
 	border: none;
-	color: #67c23a;
+	color: #5FB878;
 	font-size: 18px;
 }
 
@@ -294,7 +294,7 @@ select[xm-select] {
 .xm-select-parent .xm-select-title div.xm-select-label>span {
 	position: relative;
 	padding: 2px 5px;
-	background-color: #67c23a;
+	background-color: #5FB878;
 	border-radius: 2px;
 	color: #FFF;
 	display: inline-block;
@@ -439,27 +439,27 @@ div[xm-select-skin=default].xm-form-selected .xm-select:hover {
 }
 
 div[xm-select-skin=primary] .xm-select-title div.xm-select-label>span {
-	background-color: #67c23a!important
+	background-color: #5FB878!important
 	color: #FFF;
-	border: 1px solid #67c23a!important
+	border: 1px solid #5FB878!important
 }
 
 div[xm-select-skin=primary] .xm-select-title div.xm-select-label>span i {
-	background-color: #67c23a!important
+	background-color: #5FB878!important
 	color: #FFF
 }
 
 div[xm-select-skin=primary] dl dd:not(.xm-dis-disabled) i {
-	border-color: #67c23a!important
+	border-color: #5FB878!important
 }
 
 div[xm-select-skin=primary] dl dd.xm-select-this:not(.xm-dis-disabled) i {
-	color: #67c23a!important
+	color: #5FB878!important
 }
 
 div[xm-select-skin=primary].xm-form-selected .xm-select,
 div[xm-select-skin=primary].xm-form-selected .xm-select:hover {
-	border-color: #67c23a!important
+	border-color: #5FB878!important
 }
 
 div[xm-select-skin=normal] .xm-select-title div.xm-select-label>span {

@@ -1,9 +1,6 @@
 layui.define(['jquery', 'element'], function(exports) {
 	"use strict";
 
-	/**
-	 * 数 字 滚 动 组 件
-	 * */
 	var MOD_NAME = 'count',
 		$ = layui.jquery,
 		element = layui.element;

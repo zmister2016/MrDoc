@@ -45,7 +45,7 @@
     right: 0px;
     width: 160px;
     height: 25px;
-    display: none;
+    /* display: none; */
     background:#393D49;
     opacity:0.5;
 }
@@ -117,13 +117,20 @@
     color: #2176ff;
   }
   .layui-form-select dl dd.layui-this{
-      background-color: #2176ff !important;
+      /* background-color: #2176ff !important; */
   }
   /* 开关样式 */
   .layui-form-onswitch{
     border-color: #2176ff;
     background-color: #2176ff;
   }
+  /* 多选框样式 */
+  .layui-form-checked[lay-skin=primary] i {
+        border-color: #2176ff!important;
+        background-color: #2176ff;
+        color: #fff;
+    }
+
   /* 选项卡样式 */
   .layui-tab-brief>.layui-tab-title .layui-this{
     color: #2176ff;
@@ -147,6 +154,36 @@
 /* 面包屑链接 */
 .layui-breadcrumb a:hover{
   color: #2176ff !important;
+}
+
+/* 图标选择器 */
+.layui-iconpicker {max-width: 280px;}
+.layui-iconpicker{position:absolute;left:0;top:42px;padding:5px 0;z-index:899;min-width:250px;border:1px solid #d2d2d2;max-height:200px;overflow-y:auto;background-color:#fff;border-radius:2px;box-shadow:0 2px 4px rgba(0,0,0,.12);box-sizing:border-box;}
+.layui-iconpicker-item{border:1px solid #e6e6e6;width:90px;height:38px;border-radius:4px;cursor:pointer;position:relative;}
+.layui-iconpicker-icon{border-right:1px solid #e6e6e6;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:block;width:60px;height:100%;float:left;text-align:center;background:#fff;transition:all .3s;}
+.layui-iconpicker-icon i{line-height:38px;font-size:18px;}
+.layui-iconpicker-item > .layui-edge{left:70px;}
+.layui-iconpicker-item:hover{border-color:#D2D2D2!important;}
+.layui-iconpicker-item:hover .layui-iconpicker-icon{border-color:#D2D2D2!important;}
+.layui-iconpicker.layui-form-selected .layui-anim{display:block;}
+.layui-iconpicker-body{padding:6px;}
+.layui-iconpicker .layui-iconpicker-list{background-color:#fff;border:1px solid #ccc;border-radius:4px;}
+.layui-iconpicker .layui-iconpicker-icon-item{display:inline-block;width:21.1%;line-height:36px;text-align:center;cursor:pointer;vertical-align:top;height:36px;margin:4px;border:1px solid #ddd;border-radius:2px;transition:300ms;}
+.layui-iconpicker .layui-iconpicker-icon-item i.layui-icon{font-size:17px;}
+.layui-iconpicker .layui-iconpicker-icon-item:hover{background-color:#eee;border-color:#ccc;-webkit-box-shadow:0 0 2px #aaa,0 0 2px #fff inset;-moz-box-shadow:0 0 2px #aaa,0 0 2px #fff inset;box-shadow:0 0 2px #aaa,0 0 2px #fff inset;text-shadow:0 0 1px #fff;}
+
+.icon {
+    width: 1em; height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+}
+.hide-project-icon-list{
+    display: none;
+}
+
+#project-icon-select i.layui-icon{
+    margin-right: 0px;
 }
 
 /* 文字悬浮提示样式 */

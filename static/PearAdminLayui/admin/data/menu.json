@@ -25,6 +25,13 @@
 			"type": 1,
 			"openType": "_iframe",
 			"href": "http://www.baidu.com"
+		}, {
+			"id": 15,
+			"title": "主题预览",
+			"icon": "layui-icon layui-icon-console",
+			"type": 1,
+			"openType": "_iframe",
+			"href": "view/system/theme.html"
 		}]
 	},
 	{
@@ -155,6 +162,26 @@
 				"type": 1,
 				"openType": "_iframe",
 				"href": "view/document/popup.html"
+			}]
+		},{
+			"id": 60331,
+			"title": "高级组件",
+			"icon": "layui-icon layui-icon-console",
+			"type": 0,
+			"children": [{
+				"id": 60131,
+				"title": "多选项卡",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/document/tab.html"
+			},{
+				"id": 60132,
+				"title": "数据菜单",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/document/menu.html"
 			}]
 		}, {
 			"id": 204,
@@ -308,7 +335,7 @@
 				"icon": "layui-icon layui-icon-face-cry",
 				"type": 1,
 				"openType": "_iframe",
-				"href": "view/system/logging.html"
+				"href": "view/system/log.html"
 			}, {
 				"id": 606,
 				"title": "数据字典",
