@@ -133,6 +133,8 @@
                     <div class="layui-card-header" 
                         {% if p.role == 1 %}
                         style="background: url({% static 'icon_img/simi.svg' %}) no-repeat right bottom;"
+                        {% elif p.role == 3 %}
+                        style="background: url({% static 'icon_img/viewcode.svg' %}) no-repeat right center;"
                         {% endif %}
                         >
                         {% if p.icon %}
