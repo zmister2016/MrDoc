@@ -935,9 +935,9 @@ def check_update(request):
     resp1 = requests.get(url[0],timeout=5)
     resp2 = requests.get(url[1],timeout=5)
     if resp1.status_code == 200:
-        return JsonResponse({'status':True,'data':resp[-1]})
+        return JsonResponse({'status':True,'data':resp.json()[-1]})
     elif resp2.status_code == 200:
-        return JsonResponse({'status':True,'data':resp[0]})
+        return JsonResponse({'status':True,'data':resp.json()[0]})
     else:
         return JsonResponse({'status':True,'data':{'name': 'v0.0.1'}})
 
