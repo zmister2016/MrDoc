@@ -939,7 +939,7 @@ def check_update(request):
     elif resp2.status_code == 200:
         return JsonResponse({'status':True,'data':resp[0]})
     else:
-        return JsonResponse({'status':True,'data':"{'name': 'v0.0.1'}"})
+        return JsonResponse({'status':True,'data':{'name': 'v0.0.1'}})
 
 
 # 后台管理
