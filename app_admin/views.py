@@ -931,9 +931,15 @@ def admin_setting(request):
 
 # 检测版本更新
 def check_update(request):
-    url = 'https://gitee.com/api/v5/repos/zmister/MrDoc/tags'
-    resp = requests.get(url,timeout=5).json()
-    return JsonResponse({'status':True,'data':resp[-1]})
+    url = ['https://gitee.com/api/v5/repos/zmister/MrDoc/tags','https://api.github.com/repos/zmister2016/MrDoc/tags']
+    resp1 = requests.get(url[0],timeout=5)
+    resp2 = requests.get(url[1],timeout=5)
+    if resp1.status_code == 200:
+        return JsonResponse({'status':True,'data':resp.json()[-1]})
+    elif resp2.status_code == 200:
+        return JsonResponse({'status':True,'data':resp.json()[0]})
+    else:
+        return JsonResponse({'status':True,'data':{'name': 'v0.0.1'}})
 
 
 # 后台管理
