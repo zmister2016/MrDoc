@@ -119,6 +119,7 @@
                 </div>
             </div>
             <!-- 下载和导出 -->
+            {% if enable_project_report %}
             <div class="layui-tab-item">
                 <div class="layui-form">
                     {% load project_filter %}
@@ -154,19 +155,17 @@
                                {% if pro.id|report_status_pdf == 1 %} checked {%endif%}
                                lay-skin="switch" lay-text="{% trans '允许|禁止' %}">
                                <!-- 判断后台是否开启导出，如果开启，则显示 -->
-                               {% if enable_project_report %}
-                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新PDF文件" %}</u></a>
-                                    {% if project_files %}
-                                        {% for file in project_files %}
-                                            {% if file.file_type == 'pdf' %}
-                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集PDF文件" %}</u></a>
-                                            {% else %}
-                                                
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                    | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
-                                    {% endif %}
+                                <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新PDF文件" %}</u></a>
+                                {% if project_files %}
+                                    {% for file in project_files %}
+                                        {% if file.file_type == 'pdf' %}
+                                            | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集PDF文件" %}</u></a>
+                                        {% else %}
+                                            
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
                                 {% endif %}
                         </div>
                     </div>
@@ -179,6 +178,7 @@
                     
                 </div>
             </div>
+            {% endif %}
             <!-- 文集删除和转让 -->
             <div class="layui-tab-item">
                 <div class="layui-row">
