@@ -55,9 +55,10 @@ def __get_pdf_from_html(path: str, timeout: int, install_driver: bool, print_opt
     webdriver_prefs = {}
     driver = None
 
+    webdriver_options.add_argument('--no-sandbox')
     webdriver_options.add_argument('--headless')
     webdriver_options.add_argument('--disable-gpu')
-    webdriver_options.add_argument('--no-sandbox')
+    webdriver_options.add_argument("--remote-debugging-port=9222")
     webdriver_options.add_argument('--disable-dev-shm-usage')
     webdriver_options.experimental_options['prefs'] = webdriver_prefs
 
