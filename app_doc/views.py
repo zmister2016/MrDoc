@@ -957,11 +957,10 @@ def create_doc(request):
     if request.method == 'GET':
         # 获取url切换的编辑器模式
         eid = request.GET.get('eid',editor_mode)
-        if eid in [1,2,3,'1','2','3']:
+        if eid in [1,2,3,4,'1','2','3','4']:
             editor_mode = int(eid)
-
         try:
-            editor_type = _("新建文档")
+            editor_type = _("新建表格") if editor_mode == 4 else _("新建文档")
             pid = request.GET.get('pid',-999)
             project_list = Project.objects.filter(create_user=request.user) # 自己创建的文集列表
             colla_project_list = ProjectCollaborator.objects.filter(user=request.user) # 协作的文集列表
@@ -1339,7 +1338,7 @@ def move_doc(request):
     try:
         project = Project.objects.get(id=int(pro_id)) # 自己的文集
         colla = ProjectCollaborator.objects.filter(project=project, user=request.user) # 协作文集
-        if (project.create_user is not request.user) and (colla.count()): # 请求者不是文集创建者和协作者返回错误
+        if (project.create_user is not request.user) and (colla.count() == 0): # 请求者不是文集创建者和协作者返回错误
             return JsonResponse({'status':False,'data':_('文集无权限')})
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('文集不存在')})
