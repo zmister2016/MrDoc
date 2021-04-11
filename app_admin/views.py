@@ -110,7 +110,7 @@ def register(request):
                     elif username_exit.count() > 0: # 验证用户名
                         errormsg = _('用户名已被使用！')
                         return render(request, 'register.html', locals())
-                    elif re.match('^[0-9a-z]+$',username) is False:
+                    elif re.match('^[0-9a-z]+$',username) is None:
                         errormsg = _('用户名只能为英文数字组合')
                         return render(request, 'register.html', locals())
                     elif len(username) < 5:
@@ -315,8 +315,11 @@ def admin_create_user(request):
         email = request.POST.get('email','') # 接收email参数
         password = request.POST.get('password','') # 接收密码参数
         user_type = request.POST.get('user_type',0) # 用户类型 0为普通用户，1位管理员
-        if username != '' and password != '' and email != '' and \
-                '@' in email and re.match(r'^[0-9a-z]',username) and len(username) >= 5 :
+        # 用户名只能为英文小写或数字且大于等于5位，密码大于等于6位
+        if len(username) >= 5 and \
+                len(password) >= 6 and \
+                '@' in email and \
+                re.match(r'^[0-9a-z]',username):
             # 不允许电子邮箱重复
             if User.objects.filter(email = email).count() > 0:
                 return JsonResponse({'status':False,'data':_('电子邮箱不可重复')})
