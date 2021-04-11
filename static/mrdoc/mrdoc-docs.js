@@ -431,6 +431,37 @@ function initDocRender(mode){
                 var img_viewer = new Viewer(document.getElementById('content'), img_options);
             },
         })
+    }else if(mode == 4){
+        //配置项
+        var options = {
+            container: 'luckysheet', //luckysheet为容器id
+            lang: 'zh',
+            showGridLines:true,
+            allowEdit:false,
+            showtoolbar:false, // 是否显示顶部工具栏
+            showinfobar: false, // 是否显示顶部信息栏
+            showsheetbar: true, // 是否显示底部sheet页按钮
+            showstatisticBar: true, // 是否显示底部计数栏
+            sheetBottomConfig: false, // sheet页下方的添加行按钮和回到顶部按钮配置
+            userInfo: false, // 右上角的用户信息展示样式
+            enableAddRow:false, // 允许添加行
+            enableAddBackTop:false, // 回到顶部
+            
+            // plugins: ['chart'],
+            showstatisticBarConfig: {
+                count:false,
+                view:false,
+                zoom:false,
+            },
+            showsheetbarConfig: {
+                add: false, //新增sheet
+                // menu: false, //sheet管理菜单
+                // sheet: false, //sheet页显示
+            },
+            data:JSON.parse($("#sheet_table_content").val()),
+
+        }
+        luckysheet.create(options)
     }
 };
 

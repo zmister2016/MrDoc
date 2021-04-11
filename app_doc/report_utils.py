@@ -174,7 +174,7 @@ class ReportMD():
 
 
 # 批量导出文集Markdown压缩包
-class ReportMdBetch():
+class ReportMdBatch():
     def __init__(self,username,project_id_list):
         self.project_list = project_id_list
         self.username = username

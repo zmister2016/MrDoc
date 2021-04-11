@@ -20,8 +20,14 @@
         {% elif editor_mode == 2 %}
         <!-- Vditor编辑器样式表 -->
         <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+        {% elif editor_mode == 4 %}
+        <!-- 在线表格 -->
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/css/pluginsCss.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/plugins.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/css/luckysheet.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
         {% endif %}
-        <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+        <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
         <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <link href="{% static 'mrdoc/mrdoc-editor.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
@@ -203,9 +209,6 @@
         <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
         <script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
         <script>
-            $.ajaxSetup({
-                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-            });
             var tree = layui.tree;
             var layer = layui.layer;
             var form = layui.form;
@@ -231,8 +234,17 @@
             <!-- iceEditor富文本编辑器 -->
             <script src="{% static 'iceEditor/src/iceEditor.min.js' %}?version={{mrdoc_version}}"></script>
             {% include 'app_doc/editor/tpl_editor_ice.html' %}
+        {% elif editor_mode == 4 %}
+            <!-- 在线表格 -->
+            <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
+            <script src="{% static 'luckysheet/dist/luckysheet.umd.js' %}?version={{mrdoc_version}}"></script>
+            {% include 'app_doc/editor/tpl_editor_table.html' %}
         {% endif %}
-        <script>    
+        <script>
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+    
             //未保存离开提示
             window.onbeforeunload =function() {
             　　 if(md_changed){

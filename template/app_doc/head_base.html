@@ -39,6 +39,12 @@
                                 <span class="layui-hide-xs">{% trans "新建文档" %}</span>
                             </a>
                         </dd>
+                        <dd>
+                            <a href="{% url 'create_doc' %}?eid=4">
+                                <img src="{% static 'icon_img/create-table-icon.svg' %}" height="14px" width="14px"></img>
+                                <span class="layui-hide-xs">{% trans "新建表格" %}</span>
+                            </a>
+                        </dd>
                         {% if request.user.is_authenticated %}
                         <dd>
                             <a href="javascript:void(0);" onclick="createPro();">

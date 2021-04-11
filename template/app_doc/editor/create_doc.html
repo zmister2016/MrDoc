@@ -1,7 +1,7 @@
 {% extends 'app_doc/editor/create_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}新建文档{% endblock %}
+{% block title %}{{editor_type}}{% endblock %}
 
 {% block head_toolbar %}
     <ul class="layui-nav layui-form">
@@ -17,7 +17,7 @@
                 <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary"></dd>
             </dl>
         </li>
-
+        {% if editor_mode != 4 %}
         <li class="layui-nav-item mrdoc-import-doc-item">
           <a href="javascript:;"><i class="fa fa-upload layui-hide-md"></i><span class="layui-hide-xs">导入</span></a>
           <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
@@ -37,13 +37,15 @@
                 Word文档(.docx)</a></dd>
           </dl>
         </li>
-
+        {% endif %}
         <li class="layui-nav-item mrdoc-import-doc-item">
             <a href="javascript:;"><i class="fa fa-edit layui-hide-md"></i><span class="layui-hide-xs">编辑器</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
               <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
               <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
-              <dd><a href="?pid={{pid}}&eid=3">iceEditor{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+              <dd><a href="?pid={{pid}}&eid=3">富文本{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+              <dd><a href="?pid={{pid}}&eid=4">在线表格{% if editor_mode == 4 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+
             </dl>
         </li>
 
@@ -121,16 +123,20 @@
     <div class="create-doc-form">
         <div class="layui-form">
             <!-- 标题 -->
-            <div style="padding-bottom:10px;">
+            <div style="padding-bottom:0px;">
                 <div class="layui-input-block" style="margin-left:0px;">
-                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题……" autocomplete="off" class="layui-input">
+                    <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题……" autocomplete="off" class="layui-input">
                 </div>
             </div>
+            <br/>
         </div>
     </div>
-    <div id="editor-md" class="layui-col-xs12">
+
+    <div id="editor-md" class="layui-col-xs12">    
         {% if editor_mode == 1 %}
         <textarea style="display:none;"></textarea>
+        {% elif editor_mode == 4 %}
+        <div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:600px;left: 0px;top: 0px;"></div>
         {% endif %}
     </div>
 {% endblock %}
@@ -260,7 +266,11 @@
             }else if(editor_mode == 3){
                 var content = editor.getHTML()
                 var pre_content = editor.getText()
+            }else if(editor_mode == 4){
+                var content  = '';
+                var pre_content = JSON.stringify(luckysheet.getAllSheets());
             }
+
             var data = {
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),

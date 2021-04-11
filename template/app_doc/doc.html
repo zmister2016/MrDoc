@@ -42,9 +42,12 @@
 
 {% block page_content %}
     {% if doc.editor_mode == 3 %}
-    {{ doc.content | safe }}
+        {{ doc.content | safe }}
+    {% elif doc.editor_mode == 4 %}
+        <div id="luckysheet" style="margin:0px;padding:0px;width:100%;min-height:500px;left: 0px;top: 0px;"></div>
+        <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
     {% else %}
-    <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+        <textarea style="display: none;">{{ doc.pre_content }}</textarea>
     {% endif %}
 
     

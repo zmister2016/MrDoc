@@ -23,9 +23,9 @@
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
     </button>
-    <!-- <button class="pear-btn pear-btn-normal pear-btn-sm" lay-event="batchReport">
+    <button class="pear-btn pear-btn-normal pear-btn-sm" lay-event="batchReport">
         <i class="layui-icon layui-icon-util"></i>{% trans "打包文集" %}
-    </button> -->
+    </button>
     
 </script>
 
@@ -316,7 +316,54 @@
                 pro_id += data[i].id + ",";
             }
             pro_id = pro_id.substr(0, pro_id.length - 1);
-        }
+            console.log(pro_id);
+            layer.open({
+                type:1,
+                title:"{% trans '打包文集' %}",
+                area:"300px",
+                id:"reportMd",
+                content:'<div style="margin-left:10px;">确定打包导出所选的文集？</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    var load = layer.load()
+                    data = {
+                        'project_id':pro_id,'type':'multi'
+                    }
+                    $.post("{% url 'report_md' %}",data,function(r){
+                        layer.closeAll('loading'); //关闭loading
+                        if(r.status){
+                            //导出成功
+                            //文件下载提示
+                            downloadMd(r.data)
+                        }else{
+                            //导出失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                        layer.close(load)
+                    })
+                },
+            });
+        };
+        //下载文件弹出框
+        downloadMd = function(download_link){
+            layer.open({
+                type:1,
+                title:"{% trans '下载导出文档' %}",
+                area:"300px",
+                id:"downloadMd",
+                content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a>',
+                //btn:['确定','取消'], //添加按钮
+                //btnAlign:'c', //按钮居中
+                success: function (layero, index) {
+                    $(layero).find('.download-md-link').click(function () {
+                        layer.closeAll();
+                    })
+            }
+            })
+        };
+
     })
 </script>
 {% endblock %}

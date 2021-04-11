@@ -2000,10 +2000,11 @@ def handle_404(request):
 @require_http_methods(["POST"])
 def report_md(request):
     pro_id = request.POST.get('project_id','')
+    types = request.POST.get('type','single')
     user = request.user
-    try:
-        project = Project.objects.get(id=int(pro_id))
-        if project.create_user == user:
+    if types == 'single':
+        try:
+            Project.objects.get(id=int(pro_id),create_user=user)
             project_md = ReportMD(
                 project_id=int(pro_id)
             )
@@ -2011,11 +2012,27 @@ def report_md(request):
             md_file_filename = os.path.split(md_file_path)[-1] # 提取文件名
             md_file = "/media/reportmd_temp/"+ md_file_filename # 拼接相对链接
             return JsonResponse({'status':True,'data':md_file})
-        else:
-            return JsonResponse({'status':False,'data':_('无权限')})
-    except Exception as e:
-        logger.exception(_("导出文集MD文件出错"))
-        return JsonResponse({'status':False,'data':_('文集不存在')})
+        except Exception as e:
+            logger.exception(_("导出文集MD文件出错"))
+            return JsonResponse({'status':False,'data':_('文集不存在')})
+    elif types == 'multi':
+        project_list = pro_id.split(',')
+        for project in project_list:
+            try:
+                Project.objects.get(id=project,create_user=request.user)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status':False,'data':_('无权限')})
+        project_md = ReportMdBatch(
+            project_id_list = project_list,
+            username = request.user.username
+        )
+        md_file_path = project_md.work()  # 生成并获取MD文件压缩包绝对路径
+        md_file_filename = os.path.split(md_file_path)[-1]  # 提取文件名
+        md_file = "/media/reportmd_temp/" + md_file_filename  # 拼接相对链接
+        return JsonResponse({'status': True, 'data': md_file})
+
+    else:
+        return JsonResponse({'status':False,'data':_('无效参数')})
 
 
 # 生成文集文件 - 个人中心 - 文集管理

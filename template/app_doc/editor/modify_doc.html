@@ -1,7 +1,7 @@
 {% extends 'app_doc/editor/create_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}修改文档{% endblock %}
+{% block title %}修改文档 - {{doc.name}} {% endblock %}
 
 {% block custom_style %}
     <style>
@@ -38,6 +38,7 @@
             </dl>  
         </li>
 
+        {% if doc.editor_mode != 4 %}
         <li class="layui-nav-item mrdoc-import-doc-item">
           <a href="javascript:;">导入</a>
           <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
@@ -57,14 +58,18 @@
                 Word文档(.docx)</a></dd>
           </dl>
         </li>
+
+        
         <li class="layui-nav-item mrdoc-import-doc-item">
             <a href="javascript:;">编辑器</a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
               <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
               <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
-              <dd><a href="?pid={{pid}}&eid=3">iceEditor{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+              <dd><a href="?pid={{pid}}&eid=3">富文本{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
             </dl>
         </li>
+        {% endif %}
+
         <li class="layui-nav-item mrdoc-import-doc-item">
             <a href="javascript:;"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
@@ -108,14 +113,9 @@
                 </div>
             </div>
             
-            <!-- <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;"> -->
-                <!-- <div class="layui-colla-item"> -->
-                    <!-- <h2 class="layui-colla-title">文档结构树</h2> -->
-                    <div class="layui-colla-content layui-show" style="max-height: 100%;overflow: hidden;overflow-y: hidden;overflow-x: scroll;">
-                        <div id="doc-tree"></div>
-                    </div>
-                <!-- </div> -->
-            <!-- </div> -->
+            <div class="layui-colla-content layui-show" style="max-height: 100%;overflow: hidden;overflow-y: hidden;overflow-x: scroll;">
+                <div id="doc-tree"></div>
+            </div>
         </div>
         
 
@@ -126,19 +126,25 @@
     <div class="create-doc-form">
         <div class="layui-form">
             <!-- 标题 -->
-            <div class="layui-input-block" style="margin-left:0;">
-                <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input">
+            <div style="padding-bottom:0px;">
+                <div class="layui-input-block" style="margin-left:0px;">
+                    <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题" value="{{ doc.name }}" class="layui-input">
+                </div>
             </div>
-            <br>
+            <br/>
         </div>
     </div>
-    <div id="editor-md">
+
+    <div id="editor-md" class="layui-col-xs12">
         {% if editor_mode == 1 %}
-        <textarea style="display:none;">{{ doc.pre_content }}</textarea>
+            <textarea style="display:none;">{{ doc.pre_content }}</textarea>
         {% elif editor_mode == 3 %}
-        {{ doc.content | safe }}
+            {{ doc.content | safe }}
+        {% elif editor_mode == 4 %}
+            <div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:600px;left: 0px;top: 0px;"></div>
+            <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
         {% else %}
-        {{ doc.pre_content }}
+            {{ doc.pre_content }}
         {% endif %}
     </div>
 {% endblock %}
@@ -239,6 +245,9 @@
             }else if(editor_mode == 3){
                 var content = editor.getHTML()
                 var pre_content = editor.getText()
+            }else if(editor_mode == 4){
+                var content  = '';
+                var pre_content = JSON.stringify(luckysheet.getAllSheets());
             }
             var data = {
                 'doc_id':'{{ doc.id }}',
@@ -465,6 +474,9 @@
                         });
                     });
                 },
+                cancel: function(index, layero){ 
+                    $("#move-project").hide();
+}   
             })
         };
         // 提交移动文档

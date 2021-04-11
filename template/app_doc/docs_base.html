@@ -15,9 +15,16 @@
     <meta name="description" content="{% block description %}{% endblock %}" />
     <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    {% if doc.editor_mode == 1 %}
     <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
-    {% if doc.editor_mode == 2 %}
+    {% elif doc.editor_mode == 2 %}
     <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+    {% elif doc.editor_mode == 4 %}
+    <!-- 在线表格 -->
+    <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/css/pluginsCss.css' %}?version={{mrdoc_version}}" />
+    <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/plugins.css' %}?version={{mrdoc_version}}" />
+    <link rel='stylesheet' href="{% static 'luckysheet/dist/css/luckysheet.css' %}?version={{mrdoc_version}}" />
+    <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
     {% endif %}
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -323,6 +330,10 @@
 {% elif doc.editor_mode == 1 %}
 <script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 4 %}
+<!-- 在线表格 -->
+<script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'luckysheet/dist/luckysheet.umd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
 
 <script>
