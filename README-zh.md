@@ -42,6 +42,12 @@
     - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
 - App端（开发中）
 
+## 演示站点
+
+[http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+
+用户名：test1  密码：123456
+
 ## 打赏支持
 
 <p align="center">给作者打赏一罐红牛，祝他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
