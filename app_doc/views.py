@@ -1338,7 +1338,8 @@ def move_doc(request):
     try:
         project = Project.objects.get(id=int(pro_id)) # 自己的文集
         colla = ProjectCollaborator.objects.filter(project=project, user=request.user) # 协作文集
-        if (project.create_user is not request.user) and (colla.count() == 0): # 请求者不是文集创建者和协作者返回错误
+        if (project.create_user != request.user) and (colla.count() == 0) : # 文集创建者
+            print(project.create_user,request.user,colla.count())
             return JsonResponse({'status':False,'data':_('文集无权限')})
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('文集不存在')})
@@ -1361,6 +1362,7 @@ def move_doc(request):
             content = doc.content,
             parent_doc = parent_id,
             top_doc = int(pro_id),
+            editor_mode = doc.editor_mode,
             create_user = request.user,
             create_time = datetime.datetime.now(),
             modify_time = datetime.datetime.now(),
