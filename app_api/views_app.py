@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from app_api.models import AppUserToken
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.authentication import SessionAuthentication
 from app_doc.models import *
 from app_api.serializers_app import *
 from app_api.auth_app import AppAuth,AppMustAuth
@@ -98,7 +99,7 @@ class LoginView(APIView):
 
 # 文集视图
 class ProjectView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
     # 获取文集
     def get(self,request):
         pro_id = request.query_params.get('id',None)
@@ -428,7 +429,7 @@ class ProjectView(APIView):
 
 # 文档视图
 class DocView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
 
     # 获取文档
     def get(self,request):
@@ -624,7 +625,7 @@ class DocView(APIView):
 
 # 文档模板视图
 class DocTempView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
 
     # 获取文档模板
     def get(self, request):
@@ -708,7 +709,7 @@ class DocTempView(APIView):
 
 # 图片视图
 class ImageView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
 
     def get(self, request):
         if request.auth:
@@ -762,7 +763,7 @@ class ImageView(APIView):
 
 # 图片分组视图
 class ImageGroupView(APIView):
-    authentication_classes = (AppMustAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
 
     def get(self, request):
         try:
@@ -817,7 +818,7 @@ class ImageGroupView(APIView):
 
 # 附件视图
 class AttachmentView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
 
     # 文件大小 字节转换
     def sizeFormat(size, is_disk=False, precision=2):
