@@ -5,7 +5,7 @@
         <!-- LOGO -->
         <div class="">
             <a class="logo" href="{% url 'pro_list' %}">
-                <img src="{% static 'logo.jpg' %}" style="height: 32px;width: auto;">
+                <img src="{% static 'logo.svg' %}" style="height: 32px;width: auto;">
             </a>
         </div>
         <!-- 搜索框 -->
@@ -108,10 +108,25 @@
                 </a>
                 <dl class="layui-nav-child">
                     {% if close_register == 'on' %}
-                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
+                    <dd>
+                        <a href="{% url 'login' %}">
+                            <i class="iconfont mrdoc-icon-denglu"></i>
+                            {% trans "登录" %}
+                        </a>
+                    </dd>
                     {% else %}
-                    <dd><a href="{% url 'register' %}">{% trans "注册" %}</a></dd>
-                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
+                    <dd>
+                        <a href="{% url 'register' %}">
+                            <i class="iconfont mrdoc-icon-zhuce"></i>
+                            {% trans "注册" %}
+                        </a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'login' %}">
+                            <i class="iconfont mrdoc-icon-denglu"></i>
+                            {% trans "登录" %}
+                        </a>
+                    </dd>
                     {% endif %}
                 </dl>
             </li>
