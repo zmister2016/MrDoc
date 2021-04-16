@@ -27,19 +27,20 @@ import os
 
 '''
 响应：
-	code：状态码
-	data：数据
-	
+    code：状态码
+    data：数据
+
 状态码：
-	0：成功
-	1：资源未找到
-	2：无权访问
-	3：需要访问码
-	4：系统异常
-	5：参数不正确
-	6：需要登录
+    0：成功
+    1：资源未找到
+    2：无权访问
+    3：需要访问码
+    4：系统异常
+    5：参数不正确
+    6：需要登录
 
 '''
+
 
 # 生成Token的函数
 def get_token_code(username):
@@ -625,28 +626,25 @@ class DocView(APIView):
 
 # 文档模板视图
 class DocTempView(APIView):
-    authentication_classes = (AppAuth,SessionAuthentication)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
     # 获取文档模板
     def get(self, request):
-        if request.auth:
-            temp_id = request.query_params.get('id','')
-            if temp_id != '':
-                doctemp = DocTemp.objects.get(id=int(temp_id))
-                if request.user == doctemp.create_user:
-                    serializer = DocTempSerializer(doctemp)
-                    resp = {'code': 0, 'data': serializer.data}
-                else:
-                    resp = {'code':2,'data':_('无权操作')}
+        temp_id = request.query_params.get('id','')
+        if temp_id != '':
+            doctemp = DocTemp.objects.get(id=int(temp_id))
+            if request.user == doctemp.create_user:
+                serializer = DocTempSerializer(doctemp)
+                resp = {'code': 0, 'data': serializer.data}
             else:
-                doctemps = DocTemp.objects.filter(create_user=request.user)
-                page = PageNumberPagination()
-                page_doctemps = page.paginate_queryset(doctemps,request,view=self)
-                serializer = DocTempSerializer(page_doctemps,many=True)
-                resp = {'code':0,'data':serializer.data,'count':doctemps.count()}
-            return Response(resp)
+                resp = {'code':2,'data':_('无权操作')}
         else:
-            return Response({'code': 6, 'data': _('请登录')})
+            doctemps = DocTemp.objects.filter(create_user=request.user)
+            page = PageNumberPagination()
+            page_doctemps = page.paginate_queryset(doctemps,request,view=self)
+            serializer = DocTempSerializer(page_doctemps,many=True)
+            resp = {'code':0,'data':serializer.data,'count':doctemps.count()}
+        return Response(resp)
 
     def post(self, request):
         try:
@@ -709,24 +707,22 @@ class DocTempView(APIView):
 
 # 图片视图
 class ImageView(APIView):
-    authentication_classes = (AppAuth,SessionAuthentication)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
+    # 获取
     def get(self, request):
-        if request.auth:
-            g_id = int(request.query_params.get('group', 0))  # 图片分组id
-            if int(g_id) == 0:
-                image_list = Image.objects.filter(user=request.user)  # 查询所有图片
-            elif int(g_id) == -1:
-                image_list = Image.objects.filter(user=request.user, group_id=None)  # 查询指定分组的图片
-            else:
-                image_list = Image.objects.filter(user=request.user, group_id=g_id)  # 查询指定分组的图片
-            page = PageNumberPagination()
-            page_images = page.paginate_queryset(image_list,request,view=self)
-            serializer = ImageSerializer(page_images,many=True)
-            resp = {'code':0,'data':serializer.data,'count':image_list.count()}
-            return Response(resp)
+        g_id = int(request.query_params.get('group', 0))  # 图片分组id
+        if int(g_id) == 0:
+            image_list = Image.objects.filter(user=request.user)  # 查询所有图片
+        elif int(g_id) == -1:
+            image_list = Image.objects.filter(user=request.user, group_id=None)  # 查询指定分组的图片
         else:
-            return Response({'code': 6, 'data': '请登录'})
+            image_list = Image.objects.filter(user=request.user, group_id=g_id)  # 查询指定分组的图片
+        page = PageNumberPagination()
+        page_images = page.paginate_queryset(image_list,request,view=self)
+        serializer = ImageSerializer(page_images,many=True)
+        resp = {'code':0,'data':serializer.data,'count':image_list.count()}
+        return Response(resp)
 
     # 上传
     def post(self, request):
@@ -763,7 +759,7 @@ class ImageView(APIView):
 
 # 图片分组视图
 class ImageGroupView(APIView):
-    authentication_classes = (AppAuth,SessionAuthentication)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
     def get(self, request):
         try:
@@ -818,7 +814,7 @@ class ImageGroupView(APIView):
 
 # 附件视图
 class AttachmentView(APIView):
-    authentication_classes = (AppAuth,SessionAuthentication)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
     # 文件大小 字节转换
     def sizeFormat(size, is_disk=False, precision=2):

@@ -25,8 +25,8 @@ sitemaps = SitemapAll()
 urlpatterns = [
     path('',include('app_doc.urls')), # doc应用
     path('user/',include('app_admin.urls'),), # admin应用
-    path('api/',include('app_api.urls')), # API应用
-    path('api_app/',include('app_api.urls_app')), # App的API接口
+    path('api/',include('app_api.urls')), # 用户 Token API 接口
+    path('api_app/',include('app_api.urls_app')), # RESTFUL API 接口
     re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
     re_path('^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
     path('sitemap.xml', views.index, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap-index.xml'},name='sitemap',), # 站点地图索引

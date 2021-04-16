@@ -54,8 +54,10 @@ def get_pro_toc(pro_id):
     # except:
     # print("重新生成")
     # 查询存在上级文档的文档
-    parent_id_list = Doc.objects.filter(top_doc=pro_id, status=1).exclude(parent_doc=0).values_list('parent_doc',
-                                                                                                    flat=True)
+    parent_id_list = Doc.objects.filter(
+        top_doc=pro_id,
+        status=1
+    ).exclude(parent_doc=0).values_list('parent_doc',flat=True)
     # 获取存在上级文档的上级文档ID
     # print(parent_id_list)
     doc_list = []
@@ -75,7 +77,10 @@ def get_pro_toc(pro_id):
         if doc['id'] in parent_id_list:
             # 获取二级文档
             sec_docs = Doc.objects.filter(
-                top_doc=pro_id, parent_doc=doc['id'], status=1).values('id', 'name','open_children').order_by('sort')
+                top_doc=pro_id,
+                parent_doc=doc['id'],
+                status=1
+            ).values('id', 'name','open_children').order_by('sort')
             top_item['children'] = []
             for doc in sec_docs:
                 sec_item = {
@@ -88,7 +93,10 @@ def get_pro_toc(pro_id):
                 if doc['id'] in parent_id_list:
                     # 获取三级文档
                     thr_docs = Doc.objects.filter(
-                        top_doc=pro_id, parent_doc=doc['id'], status=1).values('id','name').order_by('sort')
+                        top_doc=pro_id,
+                        parent_doc=doc['id'],
+                        status=1
+                    ).values('id','name').order_by('sort')
                     sec_item['children'] = []
                     for doc in thr_docs:
                         item = {
