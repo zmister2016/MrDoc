@@ -4446,10 +4446,8 @@
         var markdownParsed = marked(markdownDoc, markedOptions);
         
         // markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
-        // 加载DOMPurify过滤HTML
-        editormd.loadScript(settings.plugin_path + 'purify.min',function(){
-            markdownParsed = DOMPurify.sanitize(markdownParsed,{ADD_TAGS: ['iframe']});
-        });
+        // 使用DOMPurify过滤HTML
+        markdownParsed = DOMPurify.sanitize(markdownParsed,{ADD_TAGS: ['iframe']});
         // console.log(markdownParsed)
         
         if (settings.markdownSourceCode) {
