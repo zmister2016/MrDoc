@@ -63,13 +63,14 @@ def get_pro_toc(pro_id):
     doc_list = []
     n = 0
     # 获取一级文档
-    top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name','open_children').order_by('sort')
+    top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name','open_children','editor_mode').order_by('sort')
     # 遍历一级文档
     for doc in top_docs:
         top_item = {
             'id': doc['id'],
             'name': doc['name'],
-            'open_children':doc['open_children']
+            'open_children':doc['open_children'],
+            'editor_mode':doc['editor_mode']
             # 'spread': True,
             # 'level': 1
         }
@@ -80,13 +81,14 @@ def get_pro_toc(pro_id):
                 top_doc=pro_id,
                 parent_doc=doc['id'],
                 status=1
-            ).values('id', 'name','open_children').order_by('sort')
+            ).values('id', 'name','open_children','editor_mode').order_by('sort')
             top_item['children'] = []
             for doc in sec_docs:
                 sec_item = {
                     'id': doc['id'],
                     'name': doc['name'],
-                    'open_children': doc['open_children']
+                    'open_children': doc['open_children'],
+                    'editor_mode': doc['editor_mode']
                     # 'level': 2
                 }
                 # 如果二级文档存在下级文档，查询第三级文档
@@ -96,12 +98,13 @@ def get_pro_toc(pro_id):
                         top_doc=pro_id,
                         parent_doc=doc['id'],
                         status=1
-                    ).values('id','name').order_by('sort')
+                    ).values('id','name','editor_mode').order_by('sort')
                     sec_item['children'] = []
                     for doc in thr_docs:
                         item = {
                             'id': doc['id'],
                             'name': doc['name'],
+                            'editor_mode': doc['editor_mode']
                             # 'level': 3
                         }
                         sec_item['children'].append(item)
