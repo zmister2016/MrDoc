@@ -50,7 +50,7 @@
 
 ## 打赏支持
 
-<p align="center">给作者打赏一罐红牛，祝他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
+<p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
 <p align="center">
 <a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
