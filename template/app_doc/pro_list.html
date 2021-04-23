@@ -93,6 +93,9 @@
                 <!-- 筛选开始 -->
                 <div class="layui-inline">
                     <div class="layui-input-inline">
+                        <input type="text" name="kw" id="search-project" placeholder="{% trans '搜索文集' %}" value="{{kw}}" class="layui-input">
+                    </div>
+                    <div class="layui-input-inline">
                         <select name="role" lay-verify="" id="sel-role">
                             <option value="">{% trans "筛选" %}</option>
                             {% if request.user.is_authenticated %}
@@ -293,9 +296,16 @@
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){
             var filter_data = form.val("filter-project-form");
-            console.log(filter_data)
+            // console.log(filter_data)
             window.location.href = '/?sort=' + filter_data['sort'] + '&role=' + filter_data['role'] + '&kw={{kw}}' 
         });
+        // 首页文集搜索框回车事件
+        $("#search-project").keydown(function(e){
+            if(e.keyCode === 13){
+                var filter_data = form.val("filter-project-form");
+                window.location.href = '/?sort=' + filter_data['sort'] + '&role=' + filter_data['role'] + '&kw=' + filter_data['kw'];
+            }
+        })
         
         // 动态生成文集图标列表
         for(var i=1;i<44;i++){
