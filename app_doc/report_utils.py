@@ -5,13 +5,15 @@
 # 博客地址：zmister.com
 # MrDoc文集文档导出相关功能代码
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
+from bs4 import BeautifulSoup
 import subprocess
 import datetime,time
 import re
 import os,sys
 import shutil
-from bs4 import BeautifulSoup
+
 
 from django.core.wsgi import get_wsgi_application
 sys.path.extend([settings.BASE_DIR])
@@ -652,9 +654,10 @@ class ReportEPUB():
 # 导出PDF
 @logger.catch()
 class ReportPDF():
-    def __init__(self,project_id):
+    def __init__(self,project_id,user_id):
         # 查询文集信息
         self.pro_id = project_id
+        self.user_id = user_id
         self.editormd_html_str = '''
             <!DOCTYPE html>
             <html>
@@ -667,7 +670,9 @@ class ReportPDF():
             <link rel="stylesheet" href="../../static/editor.md/css/editormd.css" />
             <link rel="stylesheet" href="../../static/mrdoc/mrdoc-docs.css" />
             <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+            <script>var iframe_whitelist = []</script>
             <script src="../../static/editor.md/lib/marked.min.js"></script>
+            <script src="../../static/editor.md/lib/purify.min.js"></script>
             <script src="../../static/editor.md/lib/prettify.min.js"></script>
             <script src="../../static/editor.md/lib/raphael.min.js"></script>
             <script src="../../static/editor.md/lib/underscore.min.js"></script>
@@ -745,8 +750,13 @@ class ReportPDF():
 
     def work(self):
         try:
-            project = Project.objects.get(pk=self.pro_id)
+            user = User.objects.get(id=self.user_id)
+            project = Project.objects.get(pk=self.pro_id,create_user=user)
+        except ObjectDoesNotExist:
+            logger.error("查询文集或用户失败")
+            return False
         except:
+            logger.exception("未知异常")
             return False
         # 拼接文档的HTML字符串
         data = Doc.objects.filter(top_doc=self.pro_id,parent_doc=0).order_by("sort")

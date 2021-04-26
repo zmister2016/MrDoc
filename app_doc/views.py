@@ -2146,7 +2146,8 @@ def genera_project_file(request):
             elif report_type in ['pdf']:
                 try:
                     report_project = ReportPDF(
-                        project_id=project.id
+                        project_id=project.id,
+                        user_id=request.user.id
                     ).work()
                     if report_project is False:
                         return JsonResponse({'status':False,'data':_('生成出错')})
