@@ -44,38 +44,28 @@
 				let $ = layui.jquery;
 				let layer = layui.layer;
 				// 检测版本更新
-				checkUpdate = function(){
+				checkUpdate = function(silence=false){
 					$.get("{% url 'check_update' %}",function(r){
 						// console.log(r)
 						if(r.status){
-							var new_version = r.data.name.slice(1,5)
+							var new_version = r.data.name.slice(1,6)
 							var current_version = '{{mrdoc_version}}'
-							// 如果存在新版本，顶部提示div
+							console.log(new_version,current_version)
 							if(new_version > current_version){
-								$("#check_update_div").show()
-								layer.msg("发现新版本，请更新！")
+								console.log("发现新版本")
+								layer.open({
+									title:"{% trans '版本更新' %}",
+									content:"{% trans '觅道文档已发布新版本，请及时更新' %}",
+								})
 							}else{
-								layer.msg("当前已是最新版本！")
+								if(silence == false){
+									layer.msg("当前已是最新版本！")
+								}
 							}
 						}      
 					})
 				}
-				
-				var check_update = window.localStorage.getItem('check_update')
-				// console.log(check_update)
-				// 如果没有检测过，立即检测
-				if(check_update == null){
-					checkUpdate();
-					window.localStorage.setItem('check_update',new Date().getTime())
-				}else{
-					// 如果上次检测时间距今超过5天，再次检测
-					var time_diff = (new Date().getTime() - check_update)/86400000
-					// console.log(time_diff)
-					if(time_diff > 5){
-						checkUpdate()
-						window.localStorage.setItem('check_update',new Date().getTime())
-					}
-				};
+				checkUpdate(silence=true);
 			})
 		  </script>
         {% block custom_script %}

@@ -934,15 +934,17 @@ def admin_setting(request):
 
 # 检测版本更新
 def check_update(request):
-    url = ['https://gitee.com/api/v5/repos/zmister/MrDoc/tags','https://api.github.com/repos/zmister2016/MrDoc/tags']
-    resp1 = requests.get(url[0],timeout=5)
-    resp2 = requests.get(url[1],timeout=5)
-    if resp1.status_code == 200:
-        return JsonResponse({'status':True,'data':resp1.json()[-1]})
-    elif resp2.status_code == 200:
-        return JsonResponse({'status':True,'data':resp2.json()[0]})
+    gitee_url = 'https://gitee.com/api/v5/repos/zmister/MrDoc/tags'
+    github_url = 'https://api.github.com/repos/zmister2016/MrDoc/tags'
+    gitee_resp = requests.get(gitee_url,timeout=5)
+    if gitee_resp.status_code == 200:
+        return JsonResponse({'status':True,'data':gitee_resp.json()[-1]})
     else:
-        return JsonResponse({'status':True,'data':{'name': 'v0.0.1'}})
+        github_resp = requests.get(github_url[1],timeout=5)
+        if github_resp.status_code == 200:
+            return JsonResponse({'status':True,'data':github_resp.json()[0]})
+        else:
+            return JsonResponse({'status':True,'data':{'name': 'v0.0.1'}})
 
 
 # 后台管理
