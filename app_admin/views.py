@@ -940,7 +940,7 @@ def check_update(request):
     if gitee_resp.status_code == 200:
         return JsonResponse({'status':True,'data':gitee_resp.json()[-1]})
     else:
-        github_resp = requests.get(github_url[1],timeout=5)
+        github_resp = requests.get(github_url,timeout=5)
         if github_resp.status_code == 200:
             return JsonResponse({'status':True,'data':github_resp.json()[0]})
         else:
