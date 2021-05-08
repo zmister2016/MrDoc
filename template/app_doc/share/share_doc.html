@@ -15,100 +15,33 @@
     <meta name="description" content="{% block description %}{% endblock %}" />
     <title>{{doc.name}} - {% trans "文档分享" %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
-    {% if doc.editor_mode == 2 %}
-    <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+    {% if doc.editor_mode != 4 %}
+        <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
     {% endif %}
-
+    {% if doc.editor_mode == 2 %}
+        <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+    {% endif %}
+    {% if doc.editor_mode == 4 %}
+        <!-- 在线表格 -->
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/css/pluginsCss.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/plugins.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/css/luckysheet.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
+    {% endif %}
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
-        /*一级无序li显示实心圆点*/
-        .doc-content ul li{
-            list-style:disc;
-        }
-        /*二级无序li显示空心圆点*/
-        .doc-content ul > li > ul > li{
-            list-style-type: circle;
-        }
-        /*有序li显示数字*/
-        .doc-content ol li{
-            list-style-type: decimal;
-        }
-        .doc-content ol ol ul,.doc-content ol ul ul,.doc-content ul ol ul,.doc-content ul ul ul {
-            list-style-type: square;
-        }
-        /* 三级及以下无序li显示小方块 */
-        .doc-content ul ul ul li{
-            list-style-type: square;
-        }
-        /* 弹出框文档目录样式 */
-        ul.markdown-toc-list{
-            list-style-position:inside;
-        }
-        ul.markdown-toc-list li{
-            list-style: none!important;
-            line-height: 24px;
-        }
-        ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
-            padding-left:15px;
-        }
-        /* 块级代码和行内代码去除边框 */
-        .markdown-body p code{
-            border:none;
-        }
-        /* HTML预览样式 */
-        .markdown-body h1{ 
-            font-size: 1.7em;
-        }
-        .markdown-body h2{
-            font-size: 1.5em;
-        }
-        .markdown-body h3{
-            font-size: 1.25em;
-        }
-        .markdown-body h4{
-            font-size: 1em;
-        }
-        .markdown-body h5{
-            font-size: .875em;
-        }
-        .markdown-body h6{
-            font-size: .85em;
-        }
         {% if img_scale %}
         .markdown-body p img{
             max-width: 350px;
         }
         {% endif %}
-        #url_qrcode img{
-            margin: auto;
-        }
-        /* 文档代码块样式 */
-        ol.linenums li{ 
-            width: max-content;
-        }
-        pre.linenums{
-            max-height: 500px;
-        }
-        li.L1, li.L3, li.L5, li.L7, li.L9 {
-            background: none !important;
-        }
-
-        /* layui弹出框颜色 */
-        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
-            border-bottom: 2px solid #333;
-        }
-        .layui-tab-brief>.layui-tab-title .layui-this{
-            color: #333;
-        }
-        /* 覆盖vditor样式 */
-        .vditor-outline__item{
-            padding: 0;
-            padding-bottom: 5px;
-            color: #333;
-        }
+        /* html{
+        filter: invert(1) hue-rotate(180deg);
+        } */
     </style>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -156,25 +89,20 @@
                         <h1>{{ doc.name }}</h1><hr>
                         {% endblock %}
 
-                        <!-- 广告代码开始 -->
-                        {% if debug %}
-                        {% else %}
-                            {% if ad_code %}
-                                <div class="ad-code">
-                                {{ ad_code | safe }}
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                        <!-- 广告代码结束 -->
                     </div>
                     <!-- 标题结束 -->
                     <!-- 正文开始 -->
                     <div class="markdown-body" id="content" style="padding: 20px;padding-top: 5px;">
                         {% block page_content %}
                         {% if doc.editor_mode == 3 %}
-                        {{ doc.pre_content | safe }}
+                            {{ doc.content | safe }}
+                        {% elif doc.editor_mode == 2 %}
+                            <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+                        {% elif doc.editor_mode == 4 %}
+                            <div id="luckysheet" style="margin:0px;padding:0px;width:100%;min-height:500px;left: 0px;top: 0px;"></div>
+                            <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
                         {% else %}
-                        <textarea style="display: none;">{{ doc.pre_content }}</textarea>
+                            <textarea style="display: none;">{{ doc.pre_content }}</textarea>
                         {% endif %}
                         {% endblock %}
                     </div>
@@ -195,42 +123,52 @@
                 {% endblock %}
                 </div>
 
-                <!-- 广告代码开始 -->
-                {% if debug %}
-                {% else %}
-                    {% if ad_code_2 %}
-                        <div class="ad-code">
-                        {{ ad_code_2 | safe }}
-                        </div>
-                    {% endif %}
-                {% endif %}
-                <!-- 广告代码结束 -->
-
                 {% block doc_previous_next %}{% endblock %}
             </div>
         </div>
     </div>
     <!-- 右侧文档栏结束 -->
     <!-- 右下角工具按钮 -->
-    <div>
-        <div class="toTop" ><i class="fa fa-arrow-up"></i></div>
+    <div class="fixed-tool-bar">
+        <div class="toTop" ><i class="layui-icon layui-icon-up"></i></div>
         {% block right_widget %}
-            <!-- 目录 -->
-            <div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
+        <!-- 修改文档 -->
+        {% if doc.create_user == request.user %}
+            <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="{% trans '修改文档' %}"><i class="fa fa-pencil"></i></a>
+        {% endif %}
+        <!-- 目录 -->
+        <div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
         {% endblock %}
     </div>
 </div>
 
+<!-- 分享选项卡模板 -->
+<div id="share_div" style="display: none;">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{% trans "微信扫一扫" %}</li>
+            <li>{% trans "复制链接" %}</li>
+        </ul>
+    <div class="layui-tab-content" style="height: 100px;">
+        <div class="layui-tab-item layui-show" align='center'>
+            <p style="font-weight: 700;margin-bottom: 10px;">{% trans "手机扫一扫进行分享" %}</p>
+            <div id="url_qrcode"></div>
+        </div>
+        <div class="layui-tab-item" align='center'>
+            <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
+            <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
+        </div>
+    </div>
+    </div>
+</div>
+
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
-<!-- 生成文集目录大纲 -->
-<script>
-    $.ajaxSetup({
-        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-    });
-    // 视频iframe域名白名单
-    var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
-</script>
+<script src="{% static 'layui/layui.all.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'editor.md/lib/purify.min.js' %}?version={{mrdoc_version}}"></script>
 
 <!-- 小屏自动收起左侧文集大纲 -->
 <script>
@@ -256,114 +194,60 @@
 </script>
 
 {% if doc.editor_mode == 2 %}
-<script src="{% static 'vditor/dist/index.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/prettify.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/raphael.min.js' %}"></script>
-<script src="{% static 'editor.md/lib/underscore.min.js' %}"></script>
-<!-- <script src="{% static 'editor.md/editormd.min.js' %}?version={{mrdoc_version}}"></script> -->
+<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 4 %}
+<!-- 在线表格 -->
+<script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'luckysheet/dist/luckysheet.umd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
-<script src="{% static 'qrcodejs/qrcode.min.js' %}"></script>
 
-
-<!-- 解析Markdown -->
+<!-- 解析渲染Markdown -->
 <script>
-    // EditorMD模式
-    {% if doc.editor_mode == 1 %}
-        //解析Markdown为HTML
-        editormd.markdownToHTML("content", {
-            htmlDecode      : "style,script,iframe",
-            emoji           : true,  //emoji表情
-            taskList        : true,  // 任务列表
-            tex             : true,  // 科学公式
-            flowChart       : true,  // 流程图
-            sequenceDiagram : true,  // 时序图
-            tocm            : true, //目录
-            toc             :true,
-            tocContainer : "#toc-container",
-            tocDropdown   : false,
-            atLink    : false,//禁用@链接
-
-        });
-    // Vditor模式
-    {% elif doc.editor_mode == 2 %}
-        // 渲染Markdown
-        const initRender = () => {
-            const md_content = $("#content textarea").val()
-            Vditor.preview(document.getElementById('content'),
-            md_content, {
-                "cdn":"{% static 'vditor' %}",
-                speech: {
-                    enable: true,
-                },
-                anchor: 1,
-                after () {
-                    // if (window.innerWidth <= 768) {
-                    //     return
-                    // }
-                    const outlineElement = document.getElementById('toc-container')
-                    var sub_ele = "<div class='markdown-toc editormd-markdown-toc'><ul class='markdown-toc-list'></ul></div>"
-                    $("#toc-container").append(sub_ele)
-                    var toc_elem = $("#toc-container div ul.markdown-toc-list")
-                    Vditor.outlineRender(document.getElementById('content'), toc_elem[0])
-                    if (outlineElement.innerText.trim() !== '') {
-                        // 去除vditor默认添加的空格字符
-                        var toc_html = $("#toc-container");
-                        toc_html.html(toc_html.html().replace('  ',''))
-                        var toc_cnt = $(".markdown-toc-list").children().length;
-                        //console.log(toc_cnt)
-                        if(toc_cnt > 0){
-                            //console.log('显示文档目录')
-                            $(".tocMenu").show();
-                            initSidebar('.sidebar', '.doc-content');
-                        }
-                    }else{
-                        console.log("无目录")
-                    }
-                },
-            })
-        }
-        initRender();
+    var editor_mode = {{ doc.editor_mode }};
+    var pro_id = {{doc.top_doc}};
+    var doc_id = {{doc.id}};
+    initDocRender(mode=editor_mode);
+    {% if doc.editor_mode != 2 %}
+        // 图片放大显示
+        var img_options = {
+            url: 'data-original',
+            fullscreen:false,//全屏
+            rotatable:false,//旋转
+            scalable:false,//翻转
+            button:false,//关闭按钮
+            toolbar:false,
+            title:false,
+            };
+        var img_viewer = new Viewer(document.getElementById('content'), img_options);
     {% endif %}
 </script>
-
-<!-- 页面初始化字体设置 -->
+<script src="{% static 'toc/doctoc.js' %}?version={{mrdoc_version}}"></script>
 <script>
-    font_stauts = window.localStorage.getItem('font-sans')
-    if(font_stauts == 'serif'){// 字体类型
-        $(".doc-content").toggleClass("switch-font")
-        $("#content").toggleClass("switch-font")
+    // 非小屏默认展开文档目录
+    if(window.innerWidth > 1650){
+        $(".sidebar").toggleClass("doc-toc-hide");
     }
-    if(window.localStorage.getItem('font-size')){// 字体大小
-        font_size = window.localStorage.getItem('font-size')
-        console.log(font_size)
-        $('#content').css({'font-size':font_size+'rem'})
-    }else{
-        window.localStorage.setItem('font-size',1.0)
-    }
-</script>
 
-<!-- 返回顶部 -->
-<script type="text/javascript">
-    $(document).ready(function() {
-        // 初始时，“返回顶部”标签隐藏
-        $(".toTop").hide();
-        $(window).scroll(function() {
-            // 若滚动的高度，超出指定的高度后，“返回顶部”的标签出现。
-            if($(document).scrollTop() >= 140) {
-                $(".toTop").show();
-            } else {
-                $(".toTop").hide();
-            }
+    // 切换文档目录显示与否
+    $(".tocMenu").click(function() {
+        // console.log("切换文档目录显示")
+        $(".sidebar").toggleClass("doc-toc-hide");
+    });
+
+    // 外部链接添加图标
+    document.addEventListener('DOMContentLoaded', function() {
+        Array.prototype.filter.call(document.links, function(link) {
+            return link.hostname && link.hostname !== location.hostname;
         })
-        // 绑定点击事件，实现返回顶部的效果
-        $(".toTop").click(function() {
-            $(document).scrollTop(0);
+        .forEach(function(link) {
+            // console.log(link,$(link).children('img').length)
+            if($(link).children().length == 0){
+                link.classList.add('external');
+            }
         });
-        // 生成当前网页链接
-        $("input[name=current_url]").val(document.URL)
     });
 </script>
 
@@ -383,106 +267,25 @@
     toggleSidebar()
 </script>
 
-<!-- 切换内容字体 -->
+<!-- 动态添加广告代码 -->
+{% if debug %}
+{% else %}
+<div id="ad-1">
+    {{ad_code|safe}}
+</div>
+<div id="ad-2">
+    {{ad_code_2|safe}}
+</div>
+<div id="ad-3">
+    {{ad_code_3|safe}}
+</div>
 <script>
-    //切换文档内容字体类型
-    $(function(){
-        $('.font-switch').click(switchFont);
-    });
-    function switchFont(){
-        if(font_stauts == 'serif'){
-            $(".doc-content").toggleClass("switch-font")
-            $("#content").toggleClass("switch-font")
-            window.localStorage.setItem('font-sans','sans')
-        }else{
-            $(".doc-content").toggleClass("switch-font")
-            $("#content").toggleClass("switch-font")
-            window.localStorage.setItem('font-sans','serif')
-        }
-    };
-    //放大字体
-    $(function(){
-        $('.font-large').click(largeFont);
-    });
-    function largeFont(){
-        var font_size = window.localStorage.getItem('font-size')
-        console.log(font_size)
-        if(parseFloat(font_size) < 1.4){
-            size = parseFloat(font_size) + 0.1
-            $('#content').css({'font-size':size+'rem'})
-            window.localStorage.setItem('font-size',size)
-        }else{
-            console.log("xxx")
-        }
-    };
-    //缩小字体
-    $(function(){
-        $('.font-small').click(smallFont);
-    });
-    function smallFont(){
-        var font_size = window.localStorage.getItem('font-size')
-        if(parseFloat(font_size) >= 0.6){
-            size = parseFloat(font_size) - 0.1
-            $('#content').css({'font-size':size+'rem'})
-            window.localStorage.setItem('font-size',size)
-        }else{
-            console.log("xxx")
-        }
-    };
-
-    // 显示打赏图片
-    $("#dashang").click(function(r){
-        var layer = layui.layer;
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 0,
-            area: ['480px','400px'],
-            shadeClose: true,
-            content: $('#dashang_img')
-          });
-    });
+    $("#ad-1").appendTo($("#ad-code-1"));
+    $("#ad-2").appendTo($("#ad-code-2"));
+    $("#ad-3").appendTo($("#ad-code-3"));
 </script>
-
-<!-- 打赏选项卡模板 -->
-<div id="dashang_img" style="display: none;">
-    <div class="layui-tab layui-tab-brief">
-        <ul class="layui-tab-title">
-          <li class="layui-this">微信</li>
-          <li>支付宝</li>
-          <li>QQ支付</li>
-          <li>PayPal</li>
-          <li>项目源码</li>
-        </ul>
-        <div class="layui-tab-content" style="height: 100px;">
-          <div class="layui-tab-item layui-show" align='center'>
-            <img src="{% static 'dashang/dashang_wx.webp' %}" style="width: 300px;height: auto;" />
-          </div>
-
-          <div class="layui-tab-item" align='center'>
-            <img src="{% static 'dashang/dashang_alipay.webp' %}" style="width: 300px;height: auto;" />
-          </div>
-          
-          <div class="layui-tab-item" align='center'>
-            <img src="{% static 'dashang/dashang_qq.webp' %}" style="width: 300px;height: auto;" />
-          </div>
-          
-          <div class="layui-tab-item" align='center'>
-            <a href="https://paypal.me/zmister" target="_blank">
-                <img src="{% static 'dashang/dashang_paypal.png' %}" style="width: 280px;height: auto;" />
-            </a>
-          </div>
-          
-          <div class="layui-tab-item" align='center'>
-            <p><a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub：https://github.com/zmister2016/MrDoc</a></p>
-            <br>
-            <p><a href="https://gitee.com/zmister/MrDoc" target="_blank">码云：https://gitee.com/zmister/MrDoc</a> </p>
-            <br>
-            <p><a href="https://zmister.com" target="_blank">作者博客：https://zmister.com</a></p>
-          </div>
-        </div>
-      </div> 
-  </div>
+{% endif %}
+<!-- 广告代码结束 -->
 
 <!-- 统计代码开始 -->
     {% if debug %}
@@ -491,40 +294,6 @@
     {% endif %}
 <!-- 统计代码结束 -->
 {% block custom_script %}
-<script src="{% static 'toc/doctoc.js' %}"></script>
-<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
-<script>
-    var layer = layui.layer;
-    var form = layui.form;
-    // 手机屏幕上默认最小化目录
-    if(window.outerWidth < 1300){
-        // console.log('最小化目录');
-        // setTimeout(function(){
-        $(".sidebar").toggleClass("doc-toc-hide");
-        // },300)
-    }
-    // 切换文档目录显示与否
-    $(".tocMenu").click(function() {
-        console.log("隐藏文档目录")
-        $(".sidebar").toggleClass("doc-toc-hide");
-    });
-    
-    //修改a标签链接新窗口打开
-    $('#content').on('click','a',function(e){
-        e.target.target = '_blank';
-    });
-    // 图片放大显示
-    var img_options = {
-        url: 'data-original',
-        fullscreen:false,//全屏
-        rotatable:false,//旋转
-        scalable:false,//翻转
-        button:false,//关闭按钮
-        toolbar:false,
-        title:false,
-      };
-    var viewer = new Viewer(document.getElementById('content'), img_options);
-</script>
 {% endblock %}
 </body>
 </html>
