@@ -297,6 +297,9 @@
             success : function(index, layero) { // 成功弹出后回调
                 form.render();
             },
+            cancel: function(){
+                $("#share_doc_div").hide();
+            }
         })
     })
     {% if is_share %}
