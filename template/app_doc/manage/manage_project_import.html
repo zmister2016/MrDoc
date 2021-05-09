@@ -82,6 +82,7 @@
                             doc_ele += li;
                             layui.each(item['children'],function(index,item){
                                 let li = '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title'] + '</li>';
+                                doc_ele += li;
                             })
                             doc_ele += '</ul>'
                         }else{
