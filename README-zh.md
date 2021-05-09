@@ -50,6 +50,8 @@
 
 ## 打赏支持
 
+<p align="center">前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
+
 <p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
 <p align="center">
