@@ -481,6 +481,52 @@ def admin_project_role(request,pro_id):
         else:
             return Http404
 
+# 后台管理 - 删除文集
+@superuser_only
+@require_POST
+def admin_project_delete(request):
+    try:
+        range = request.POST.get('range','single')
+        pro_id = request.POST.get('pro_id','')
+        if pro_id != '':
+            if range == 'single':
+                pro = Project.objects.get(id=pro_id)
+                # 删除文集下的文档、文档历史、文档分享、文档标签
+                pro_doc_list = Doc.objects.filter(top_doc=int(pro_id))
+                for doc in pro_doc_list:
+                    DocHistory.objects.filter(doc=doc).delete()
+                    DocShare.objects.filter(doc=doc).delete()
+                    DocTag.objects.filter(doc=doc).delete()
+                pro_doc_list.delete()
+                # 删除文集
+                pro.delete()
+                return JsonResponse({'status':True})
+            elif range == 'multi':
+                pros = pro_id.split(",")
+                try:
+                    projects = Project.objects.filter(id__in=pros)
+                    # 删除文集下的文档、文档历史、文档分享、文档标签
+                    pro_doc_list = Doc.objects.filter(top_doc__in=[i.id for i in projects])
+                    for doc in pro_doc_list:
+                        DocHistory.objects.filter(doc=doc).delete()
+                        DocShare.objects.filter(doc=doc).delete()
+                        DocTag.objects.filter(doc=doc).delete()
+                    pro_doc_list.delete()
+                    projects.delete()
+                    return JsonResponse({'status': True, 'data': 'ok'})
+                except Exception:
+                    logger.exception(_("异常"))
+                    return JsonResponse({'status': False, 'data': _('无指定内容')})
+            else:
+                return JsonResponse({'status': False, 'data': _('类型错误')})
+        else:
+            return JsonResponse({'status':False,'data':_('参数错误')})
+    except Exception as e:
+        logger.exception(_("删除文集出错"))
+        return JsonResponse({'status':False,'data':_('请求出错')})
+
+
+
 # 后台管理 - 控制文集置顶状态
 @superuser_only
 @require_POST

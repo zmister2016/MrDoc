@@ -13,6 +13,7 @@ urlpatterns = [
     path('project_manage/',views.admin_project,name='project_manage'), # 文集管理
     path('project_role_manage/<int:pro_id>/',views.admin_project_role,name="admin_project_role"), # 管理文集权限
     path('project_manage_istop',views.admin_project_istop,name="admin_project_istop"), # 修改文集置顶状态
+    path('project_del/', views.admin_project_delete, name="admin_project_del"),  # 删除文集
     path('doc_manage/',views.admin_doc,name='doc_manage'), # 文档管理
     path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文档模板管理
     path('setting/',views.admin_setting,name="sys_setting"), # 应用设置

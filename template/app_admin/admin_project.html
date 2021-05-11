@@ -262,7 +262,7 @@
                         data = {
                             'pro_id':pro_id,
                         }
-                        $.post("{% url 'del_project' %}",data,function(r){
+                        $.post("{% url 'admin_project_del' %}",data,function(r){
                             layer.closeAll(); //关闭loading
                             if(r.status){
                                 layer.msg("{% trans '删除成功' %}", {
@@ -312,7 +312,7 @@
                     if(confirm_delete === 'DELETE'){
                         let loading = layer.load();
                         $.ajax({
-                            url: "{% url 'del_project' %}",
+                            url: "{% url 'admin_project_del' %}",
                             dataType: 'json',
                             type: 'post',
                             data:{'pro_id':pro_id,'range':'multi'},
