@@ -17,24 +17,12 @@
 		{% if debug %}
 		<div class="layui-card">
 			<div class="layui-card-body">
-				<div class="layui-card-header" style="margin-bottom: 10px;">
-					<blockquote class="layui-elem-quote">{% trans "当前站点处于Debug调试模式" %}</blockquote>
+				<div class="layui-card-header" style="margin-bottom: 10px;font-weight: 700;color: red;">
+					<i class="layui-icon layui-icon-tips"></i> {% trans "当前站点处于Debug调试模式" %}
 				</div>
 			</div>
 		</div>
 		{% endif %}
-		<div class="layui-card">
-			<div class="layui-card-body">
-				<div class="" style="margin-bottom: 10px;font-weight: 700;color: red;">
-					<a href="https://curl.qcloud.com/rVF2jfrZ" style="color: #2176ff;" target="_blank">👉【腾讯云】云产品限时秒杀，爆款1核2G云服务器，首年99元</a><br>
-					<a href="https://curl.qcloud.com/NbjvQGEE" style="color: #2176ff;" target="_blank">👉【腾讯云】境外1核2G服务器低至2折，半价续费券限量免费领取！</a><br>
-					<a href="https://curl.qcloud.com/psEDIE4h" style="color: #2176ff;" target="_blank">👉【腾讯云】推广者专属福利，新客户无门槛领取总价值高达2860元代金券，每种代金券限量500张，先到先得。</a><br>
-				</div>
-			</div>
-		</div>
-		<div id="layer-photos-demo" class="layer-photos-demo" style="display: none;">
-			<img  layer-src="{% static 'dashang/dashang_wx.webp' %}" src="{% static 'dashang/dashang_wx.webp' %}" alt="蜜源">
-		  </div>
 		{% block content %}
         {% endblock %}
 		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
