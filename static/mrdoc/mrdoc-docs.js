@@ -484,16 +484,13 @@ function keyLight(id, key, bgColor){
         key = decodeURI(key);
         var oDiv = document.getElementById(id),
         sText = oDiv.innerHTML,
-        bgColor = bgColor || "#c00",    
-        sKey = "<span name='addSpan' style='color: "+bgColor+";background:ff0;'>"+key+"</span>",
         num = -1,
         rStr = new RegExp(key, "ig"),
         rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
-        aHtml = sText.match(rHtml); //存放html元素的数组
+        aHtml = sText.match(rHtml), //存放html元素的数组
         sText = sText.replace(rHtml, '{~}');  //替换html标签
-        // sText = sText.replace(rStr,sKey); //替换key
         sText = sText.replace(rStr,function(text){
-            return "<span name='addSpan' style='color:#333;background:#ff0;'>"+text+"</span>"
+            return "<mark>" + text +"</mark>"
         }); //替换key
         sText = sText.replace(/{~}/g,function(){  //恢复html标签
                 num++;
@@ -502,4 +499,3 @@ function keyLight(id, key, bgColor){
         oDiv.innerHTML = sText;
     }
 };
-keyLight('doc-content',getQueryVariable("highlight"))

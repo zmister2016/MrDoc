@@ -335,26 +335,6 @@
 <script src="{% static 'luckysheet/dist/luckysheet.umd.js' %}?version={{mrdoc_version}}"></script>
 {% endif %}
 
-<script>
-    {% if project.is_watermark %}
-        initWhterMark('{{project.watermark_value}}')
-    {% endif %}
-        
-    // 外部链接添加图标
-    document.addEventListener('DOMContentLoaded', function() {
-        Array.prototype.filter.call(document.links, function(link) {
-            return link.hostname && link.hostname !== location.hostname;
-        })
-        .forEach(function(link) {
-            // console.log(link,$(link).children('img').length)
-            if($(link).children().length == 0){
-                link.classList.add('external');
-            }
-        });
-    });
-
-</script>
-
 <!-- 动态添加广告代码 -->
 {% if debug %}
 {% else %}
@@ -383,5 +363,27 @@
 <!-- 统计代码结束 -->
 {% block custom_script %}
 {% endblock %}
+<script>
+    {% if project.is_watermark %}
+        initWhterMark('{{project.watermark_value}}')
+    {% endif %}
+        
+    // 外部链接添加图标
+    document.addEventListener('DOMContentLoaded', function() {
+        Array.prototype.filter.call(document.links, function(link) {
+            return link.hostname && link.hostname !== location.hostname;
+        })
+        .forEach(function(link) {
+            link.target = '_blank';
+            // console.log(link,$(link).children('img').length)
+            console.log(link,$(link).children().length)
+            if($(link).children().length == 0){
+                link.classList.add('external');
+            }
+        });
+    });
+    // 高亮搜索词
+    keyLight('doc-content',getQueryVariable("highlight"))
+</script>
 </body>
 </html>
