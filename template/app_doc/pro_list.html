@@ -140,7 +140,7 @@
                         style="background: url({% static 'icon_img/viewcode.svg' %}) no-repeat right center;"
                         {% endif %}
                         >
-                        {% if p.icon %}
+                        {% if p.icon and p.icon != None %}
                             <p class="layui-elip" style="font-weight: 700;">
                                 {% if p.is_top %}<i class="iconfont mrdoc-icon-totop" title="置顶文集" style="color: red;font-size: 12px;"></i>{% endif %}
                                 <svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span>
