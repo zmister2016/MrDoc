@@ -22,7 +22,7 @@ services:
 
   mysql:
     image: mysql:5.7
-    container_name: mysql-with-mrdoc
+    container_name: mysql-with-mrdoc    # 这里名字不要修改,否则无法连接数据库.如果修改,请注意自行更改mrdoc的配置文件.
     restart: always
     volumes:
       - /path/to/you/dir:/var/lib/mysql # 请注意修改 /path/to/you/dir 为您要存储mysql数据的目录绝对路径.
