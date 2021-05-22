@@ -1,0 +1,49 @@
+version: "3"
+services:
+  mrdoc:
+    image: jonnyan404/mrdoc-nginx:0.6.6-with-mysql
+    container_name: mrdoc-mysql
+    restart: always
+    volumes:
+      - /path/to/you/dir/config:/app/MrDoc/config  # 请注意修改 /path/to/you/dir 为您要存储mrdoc数据的绝对路径.
+      - /path/to/you/dir/media:/app/MrDoc/media    # 同上
+    environment:
+      - TZ=Asia/Shanghai
+###### 以下注释项为可选变量
+#      - LISTEN_PORT=10086   # 自定义端口
+#      - CREATE_USER=1       # 0 不创建管理员用户, 1 创建管理员用户,默认是1
+#      - USER=jonnyan404     # 自定义管理员用户名
+#      - MM=1                # 自定义管理员密码
+###### 如果默认用户密码,以及变量添加用户密码无法登录,请参考:https://www.mrdoc.fun/project-1/doc-242/
+    ports:
+      - "10086:10086"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-with-mrdoc    # 这里名字不要修改,否则无法连接数据库.如果修改,请注意自行更改mrdoc的配置文件.
+    restart: always
+    volumes:
+      - /path/to/you/dir:/var/lib/mysql # 请注意修改 /path/to/you/dir 为您要存储mysql数据的目录绝对路径.
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=Jonnyan404!
+      - MYSQL_DATABASE=mrdoc
+      - MYSQL_USER=jonnyan404
+      - MYSQL_PASSWORD=www.mrdoc.fun
+    expose:
+      - "3306"
+    ports:
+      - "63306:3306"  # 如果不需要外部连接mysql,可注释此行+上一行.
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+
+
+# Volumes for persisting data, see https://docs.docker.com/engine/admin/volumes/volumes/
+#volumes:
+#  mrdoc-data:
+#    driver: local
+#  mysql-data:
+#    driver: local
