@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="layui-row">
-            <table class="layui-table"  id="user-list"></table>
+            <table class="layui-table"  id="user-list" lay-filter="user-table"></table>
         </div>
     </div>
 </div>
@@ -64,8 +64,9 @@
     <!-- 用户操作模板 -->
     <script type="text/html" id="userOpera">
       {% verbatim %}
-      <a class="layui-table-link" href="javascript:void(0);" onclick="changePwd('{{ d.id }}','{{ d.username }}')">修改密码</a>&nbsp;&nbsp;
-      <a class="layui-table-link" href="javascript:void(0);" onclick="delUser('{{ d.id }}','{{ d.username }}')">删除用户</a>
+      <a class="layui-table-link" href="javascript:void(0);" onclick="changeInfo('{{ d.id }}','{{ d.username }}')">编辑</a>&nbsp;&nbsp;
+      <!-- <a class="layui-table-link" href="javascript:void(0);" onclick="changePwd('{{ d.id }}','{{ d.username }}')">修改密码</a>&nbsp;&nbsp; -->
+      <a class="layui-table-link" href="javascript:void(0);" onclick="delUser('{{ d.id }}','{{ d.username }}')">删除</a>
       {% endverbatim %}
     </script>
 <script>
@@ -77,12 +78,13 @@
         let element = layui.element;
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            headers: {"X-CSRFToken":'{{ csrf_token }}'},
         });
         //获取用户列表，执行表格渲染
         table.render({
             elem: '#user-list',
-            url: "{% url 'user_manage' %}",
-            method:'post',
+            url: "{% url 'api_admin_users' %}",
+            method:'get',
             where:{
                 'username':$("#username").val(),
             },
@@ -116,11 +118,11 @@
                         'password':$("#password").val(),
                         'email':$("#email").val()
                     }
-                    $.post("{% url 'create_user' %}",data,function(r){
-                        layer.closeAll('loading');
-                        if(r.status){
+                    $.post("{% url 'api_admin_users' %}",data,function(r){
+                        layer.closeAll();
+                        if(r.code === 0){
                             //创建成功，刷新页面
-                            window.location.reload();
+                            table.reload('user-list');
                         }else{
                             //创建失败，提示
                             // console.log(r)
@@ -148,11 +150,11 @@
                         'email':$("#email2").val(),
                         'user_type':1,
                     }
-                    $.post("{% url 'create_user' %}",data,function(r){
-                        layer.closeAll('loading');
-                        if(r.status){
+                    $.post("{% url 'api_admin_users' %}",data,function(r){
+                        layer.closeAll();
+                        if(r.code === 0){
                             //创建成功，刷新页面
-                            window.location.reload();
+                            table.reload('user-list');
                         }else{
                             //创建失败，提示
                             // console.log(r)
@@ -174,24 +176,37 @@
                 yes:function (index,layero) {
                     layer.load();
                     data = {
-                        'user_id':uid,
+                        'obj':'pwd',
                         'password':$("#newPwd1").val(),
                         'password2':$("#newPwd2").val(),
                     }
-                    $.post("{% url 'change_pwd' %}",data,function(r){
-                        layer.closeAll('loading');
-                        if(r.status){
-                            //修改成功
-                            window.location.reload();
-                            //layer.close(index)
-                        }else{
-                            //修改失败，提示
-                            //console.log(r)
+                    $.ajax({
+                        url:'/admin/api/user/'+uid,
+                        type:'put',
+                        data:data,
+                        success:function(r){
+                            layer.closeAll();
+                            if(r.code === 0){
+                                //删除成功
+                                layer.msg(r.data)
+                                // table.reload('user-list',{page:{curr:1}});
+                            }else{
+                                //删除失败，提示
+                                //console.log(r)
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll();
                             layer.msg(r.data)
                         }
-                    })
+                    });
                 },
             })
+        };
+        // 修改用户资料
+        changeInfo = function(uid,username){
+            location.href = "{% url 'user_profile' %}?id="+uid
         };
         //删除用户
         delUser = function(uid,username){
@@ -205,21 +220,25 @@
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
-                    data = {
-                        'user_id':uid,
-                    }
-                    $.post("{% url 'del_user' %}",data,function(r){
-                        layer.closeAll('loading');
-                        if(r.status){
-                            //删除成功
-                            window.location.reload();
-                            //layer.close(index)
-                        }else{
-                            //删除失败，提示
-                            //console.log(r)
+                    $.ajax({
+                        url:'/admin/api/user/'+uid,
+                        type:'delete',
+                        success:function(r){
+                            layer.closeAll();
+                            if(r.code === 0){
+                                //删除成功
+                                table.reload('user-list',{page:{curr:1}});
+                            }else{
+                                //删除失败，提示
+                                //console.log(r)
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll();
                             layer.msg(r.data)
                         }
-                    })
+                    });
                 },
             });
         };

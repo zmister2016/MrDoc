@@ -8,6 +8,15 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
 from app_doc.models import *
 
+# 用户序列化器
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+                'id', 'last_login', 'is_superuser', 'username', 'email', 'date_joined', 'is_active', 'first_name'
+            )
+
+
 # 文集序列化器
 class ProjectSerializer(ModelSerializer):
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M')

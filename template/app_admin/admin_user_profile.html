@@ -1,0 +1,181 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "用户资料设置" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb" lay-separator="-">
+            <a href="{% url 'user_manage' %}">用户管理</a>
+            <a><cite>用户资料编辑</cite></a>
+          </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form" lay-filter="user-profile">
+            <div class="layui-form-item">
+            <label class="layui-form-label">{% trans "用户名" %}</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" disabled autocomplete="off" class="layui-input" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">{% trans "不可修改" %}</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">{% trans "昵称" %}</label>
+                <div class="layui-input-inline">
+                <input type="text" name="nickname" id="first_name" required  lay-verify="required" placeholder="{% trans '请输入昵称' %}" autocomplete="off" class="layui-input" value="{{user.first_name}}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">{% trans "电子邮箱" %}</label>
+                <div class="layui-input-inline">
+                <input type="email" name="email" id="email" required  lay-verify="required" placeholder="{% trans '请输入电子邮箱地址' %}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">{% trans "用户状态" %}</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="is_active" lay-skin="switch" lay-text="启用|停用">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">{% trans "用户角色" %}</label>
+                <div class="layui-input-inline">
+                    <select name="is_superuser" lay-verify="">
+                        <option value=""></option>
+                        <option value="false">普通用户</option>
+                        <option value="true">超级管理员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">{% trans "新密码" %}</label>
+                <div class="layui-form-mid layui-word-aux"><button class="layui-btn layui-btn-primary layui-btn-xs" onclick="changePwd();">{% trans "点击修改密码" %}</button></div>
+            </div>
+
+            <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="pear-btn pear-btn-primary" onclick="updateUser();">{% trans "更新用户资料" %}</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_script %}
+<script>
+    layui.use(['table', 'form', 'jquery', 'dtree', 'element','layer'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let dtree = layui.dtree;
+        var element = layui.element;
+        var layer = layui.layer;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            headers: {"X-CSRFToken":'{{ csrf_token }}'},
+        });
+        // URL参数解析
+        function getQueryVariable(variable)
+        {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        };
+        var user_id = getQueryVariable("id");
+        // 获取用户资料
+        getUserProfile = function(){
+            $.ajax({
+                url:'/admin/api/user/'+user_id,
+                type:'get',
+                success:function(r){
+                    if(r.code === 0){
+                        form.val("user-profile",{
+                            "username":r.data.username,
+                            "nickname":r.data.first_name,
+                            "email":r.data.email,
+                            "is_active":r.data.is_active,
+                            "is_superuser":r.data.is_superuser?'true':'false',
+                        })
+                    }else{
+                        layer.msg("用户资料获取出错")
+                    }
+                },
+                error:function(){
+                    layer.msg("用户资料获取异常")
+                }
+            })
+        };
+        getUserProfile();
+        //修改用户密码
+        changePwd = function(uid,username){
+            layer.open({
+                type:1,
+                title:'修改密码',
+                area:'300px;',
+                id:'changePwd',
+                content:'<div style="padding:10px 0 0 20px;">修改用户的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
+                btn:['确认修改','取消'],
+                yes:function (index,layero) {
+                    layer.load();
+                    data = {
+                        'obj':'pwd',
+                        'password':$("#newPwd1").val(),
+                        'password2':$("#newPwd2").val(),
+                    }
+                    $.ajax({
+                        url:'/admin/api/user/'+user_id,
+                        type:'put',
+                        data:data,
+                        success:function(r){
+                            layer.closeAll();
+                            if(r.code === 0){
+                                //修改成功
+                                layer.msg(r.data)
+                            }else{
+                                //修改失败，提示
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll();
+                            layer.msg(r.data)
+                        }
+                    });
+                },
+            })
+        };
+        // 更新用户选项
+        updateUser = function(){
+            layer.load();
+            let data = form.val('user-profile')
+            data['obj'] = 'info'
+            // console.log(data)
+            $.ajax({
+                url:'/admin/api/user/'+user_id,
+                type:'put',
+                data:data,
+                success:function(r){
+                    layer.closeAll();
+                    if(r.code === 0){
+                        //删除成功
+                        layer.msg(r.data)
+                    }else{
+                        //删除失败，提示
+                        layer.msg(r.data)
+                    }
+                },
+                error:function(){
+                    layer.closeAll();
+                    layer.msg(r.data)
+                }
+            });
+        }
+
+    });
+</script>
+{% endblock %}

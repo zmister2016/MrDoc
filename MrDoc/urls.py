@@ -24,7 +24,7 @@ sitemaps = SitemapAll()
 
 urlpatterns = [
     path('',include('app_doc.urls')), # doc应用
-    path('user/',include('app_admin.urls'),), # admin应用
+    path('admin/',include('app_admin.urls'),), # admin应用
     path('api/',include('app_api.urls')), # 用户 Token API 接口
     path('api_app/',include('app_api.urls_app')), # RESTFUL API 接口
     re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件

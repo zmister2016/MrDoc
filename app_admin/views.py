@@ -10,6 +10,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from rest_framework.views import APIView # 视图
+from rest_framework.response import Response # 响应
+from rest_framework.pagination import PageNumberPagination # 分页
+from rest_framework.authentication import SessionAuthentication # 认证
+from rest_framework.permissions import IsAdminUser # 权限
+from app_api.serializers_app import *
+from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
+from app_api.permissions_app import SuperUserPermission # 自定义权限
 from app_admin.decorators import superuser_only,open_register
 from app_doc.models import *
 from app_admin.models import *
@@ -69,7 +77,7 @@ def log_in(request):
                     errormsg = _('用户名或密码错误！')
                     return render(request, 'login.html', locals())
             else:
-                errormsg = _('用户名或密码错误！')
+                errormsg = _('用户名或密码未输入！')
                 return render(request, 'login.html', locals())
         except Exception as e:
             logger.exception("登录异常")
@@ -259,73 +267,67 @@ def admin_overview(request):
     else:
         pass
 
-# 后台管理 - 用户管理
+# 后台管理 - 用户管理HTML
 @superuser_only
 @logger.catch()
+@require_GET
 def admin_user(request):
-    if request.method == 'GET':
-        return render(request, 'app_admin/admin_user.html', locals())
-    elif request.method == 'POST':
-        username = request.POST.get('username','')
-        page = request.POST.get('page', 1)
-        limit = request.POST.get('limit', 10)
+    return render(request, 'app_admin/admin_user.html', locals())
+
+
+# 后台管理 - 用户管理 - 用户资料编辑HTML
+def admin_user_profile(request):
+    return render(request, 'app_admin/admin_user_profile.html',locals())
+
+
+# 后台管理 - 用户列表接口
+class AdminUserList(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    # 获取用户列表
+    def get(self, request):
+        username = request.query_params.get('username', '')
+        page_num = request.query_params.get('page', 1)
+        limit = request.query_params.get('limit', 10)
         if username == '':
             user_data = User.objects.all().values(
-                'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
+                'id', 'last_login', 'is_superuser', 'username', 'email', 'date_joined', 'is_active', 'first_name'
             )
         else:
             user_data = User.objects.filter(username__icontains=username).values(
-                'id','last_login','is_superuser','username','email','date_joined','is_active','first_name'
+                'id', 'last_login', 'is_superuser', 'username', 'email', 'date_joined', 'is_active', 'first_name'
             )
 
-        # 分页处理
-        paginator = Paginator(user_data, limit)
-        page = request.GET.get('page', page)
-        try:
-            users = paginator.page(page)
-        except PageNotAnInteger:
-            users = paginator.page(1)
-        except EmptyPage:
-            users = paginator.page(paginator.num_pages)
+        page = PageNumberPagination()  # 实例化一个分页器
+        page.page_size = limit
+        page_users = page.paginate_queryset(user_data, request, view=self)  # 进行分页查询
+        serializer = UserSerializer(page_users, many=True)  # 对分页后的结果进行序列化处理
+        resp = {
+            'code': 0,
+            'data': serializer.data,
+            'count': user_data.count()
+        }
 
-        table_data = []
-        for i in users:
-            item = {
-                'id':i['id'],
-                'last_login':i['last_login'],
-                'is_superuser':i['is_superuser'],
-                'username':i['username'],
-                'email':i['email'],
-                'date_joined':i['date_joined'],
-                'is_active':i['is_active'],
-                'first_name':i['first_name'],
-            }
-            table_data.append(item)
-        return JsonResponse({'code':0,'data':table_data,"count": user_data.count()})
-    else:
-        return JsonResponse({'code':1,'msg':_('方法错误')})
+        return Response(resp)
 
-
-# 后台管理 - 创建用户
-@superuser_only
-@logger.catch()
-def admin_create_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username','') # 接收用户名参数
-        email = request.POST.get('email','') # 接收email参数
-        password = request.POST.get('password','') # 接收密码参数
-        user_type = request.POST.get('user_type',0) # 用户类型 0为普通用户，1位管理员
+    # 新增用户
+    def post(self, request):
+        username = request.data.get('username', '')  # 接收用户名参数
+        email = request.data.get('email', '')  # 接收email参数
+        password = request.data.get('password', '')  # 接收密码参数
+        user_type = request.data.get('user_type', 0)  # 用户类型 0为普通用户，1位管理员
         # 用户名只能为英文小写或数字且大于等于5位，密码大于等于6位
         if len(username) >= 5 and \
                 len(password) >= 6 and \
                 '@' in email and \
-                re.match(r'^[0-9a-z]',username):
+                re.match(r'^[0-9a-z]', username):
             # 不允许电子邮箱重复
-            if User.objects.filter(email = email).count() > 0:
-                return JsonResponse({'status':False,'data':_('电子邮箱不可重复')})
+            if User.objects.filter(email=email).count() > 0:
+                return JsonResponse({'status': False, 'data': _('电子邮箱不可重复')})
             # 不允许重复的用户名
-            if User.objects.filter(username = username).count() > 0:
-                return JsonResponse({'status': False,'data':_('用户名不可重复')})
+            if User.objects.filter(username=username).count() > 0:
+                return JsonResponse({'status': False, 'data': _('用户名不可重复')})
             try:
                 if user_type == 0:
                     user = User.objects.create_user(
@@ -341,62 +343,111 @@ def admin_create_user(request):
                         email=email
                     )
                     user.save()
-                return JsonResponse({'status':True})
+                return Response({'code': 0})
             except Exception as e:
-                return JsonResponse({'status':False,'data':_('系统异常')})
+                return Response({'code': 4, 'data': _('系统异常')})
         else:
-            return JsonResponse({'status':False,'data':_('请检查参数')})
-    else:
-        return HttpResponse(_('方法不允许'))
+            return JsonResponse({'code': 5, 'data': _('请检查参数')})
 
 
-# 后台管理 - 修改密码
-@superuser_only
-@logger.catch()
-def admin_change_pwd(request):
-    if request.method == 'POST':
+# 后台管理 - 用户接口
+class AdminUserDetail(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    def get_object(self, id):
         try:
-            user_id = request.POST.get('user_id',None)
-            password = request.POST.get('password',None)
-            password2 = request.POST.get('password2',None)
-            if user_id and password:
-                if password == password2:
-                    user = User.objects.get(id=int(user_id))
-                    user.set_password(password)
-                    user.save()
-                    return JsonResponse({'status':True,'data':_('修改成功')})
+            return User.objects.get(id=id)
+        except ObjectDoesNotExist:
+            raise Http404
+
+    # 获取用户
+    def get(self,request, id):
+        user = self.get_object(id)
+        serializer = UserSerializer(user)
+        resp = {
+            'code': 0,
+            'data': serializer.data,
+        }
+
+        return Response(resp)
+
+    # 修改用户（资料、密码）
+    def put(self, request, id):
+        obj = request.data.get('obj','')
+        if obj.replace(' ','') == '':
+            resp = {
+                'code':5,
+                'data':'无效类型'
+            }
+            return Response(resp)
+        elif obj == 'info': # 修改资料
+            status = request.POST.get('is_active', '')  # 状态
+            username = request.POST.get('username', '')  # 用户名
+            nickname = request.POST.get('nickname', '')  # 昵称
+            email = request.POST.get('email', '')  # 电子邮箱
+            is_superuser = request.POST.get('is_superuser', '')  # 是否超级管理员
+            try:
+                User.objects.filter(id=id).update(
+                    username = username,
+                    first_name = nickname,
+                    email = email,
+                    is_active = True if status == 'on' else False,
+                    is_superuser = True if is_superuser == 'true' else False
+                )
+                return Response({'code': 0, 'data': _('修改成功')})
+            except:
+                logger.exception("修改用户资料异常")
+                return Response({'code': 4, 'data': _('修改异常')})
+
+        elif obj == 'pwd': # 修改密码
+            try:
+                password = request.data.get('password', None)
+                password2 = request.data.get('password2', None)
+                if id and password:
+                    if password == password2:
+                        user = User.objects.get(id=int(id))
+                        user.set_password(password)
+                        user.save()
+                        return Response({'code': 0, 'data': _('修改成功')})
+                    else:
+                        return Response({'code': 5, 'data': _('两个密码不一致')})
                 else:
-                    return JsonResponse({'status':False,'data':_('两个密码不一致')})
-            else:
-                return JsonResponse({'status':False,'data':_('参数错误')})
-        except Exception as e:
-            print(repr(e))
-            return JsonResponse({'status':False,'data':_('请求错误')})
-    else:
-        return JsonResponse({'status':False,'data':_('方法错误')})
+                    return JsonResponse({'code': 5, 'data': _('参数错误')})
+            except Exception as e:
+                return JsonResponse({'code': 4, 'data': _('请求错误')})
 
+        else:
+            resp = {
+                'code': 5,
+                'data': '无效类型'
+            }
+            return Response(resp)
 
-# 后台管理 - 删除用户
-@superuser_only
-@logger.catch()
-def admin_del_user(request):
-    if request.method == 'POST':
+    # 删除用户
+    def delete(self, request, id):
         try:
-            user_id = request.POST.get('user_id',None) # 获取用户ID
-            user = User.objects.get(id=int(user_id)) # 获取用户
-            colloas = ProjectCollaborator.objects.filter(user=user) # 获取参与协作的文集
+            user = self.get_object(id)  # 获取用户
+            colloas = ProjectCollaborator.objects.filter(user=user)  # 获取参与协作的文集
             # 遍历用户参与协作的文集
             for colloa in colloas:
                 # 查询出用户协作创建的文档，修改作者为文集所有者
                 Doc.objects.filter(
-                    top_doc=colloa.project.id,create_user=user
+                    top_doc=colloa.project.id, create_user=user
                 ).update(create_user=colloa.project.create_user)
             user.delete()
-            return JsonResponse({'status':True,'data':_('删除成功')})
+            resp = {
+                'code':0,
+                'data':_('删除成功')
+            }
+            return Response(resp)
         except Exception as e:
-            return JsonResponse({'status':False,'data':_('删除出错')})
-    else:
-        return JsonResponse({'status':False,'data':_('方法错误')})
+            logger.exception("删除用户出错")
+            resp = {
+                'code': 4,
+                'data': _('删除出错')
+            }
+            return Response(resp)
 
 
 # 后台管理 - 文集管理
@@ -524,7 +575,6 @@ def admin_project_delete(request):
     except Exception as e:
         logger.exception(_("删除文集出错"))
         return JsonResponse({'status':False,'data':_('请求出错')})
-
 
 
 # 后台管理 - 控制文集置顶状态
