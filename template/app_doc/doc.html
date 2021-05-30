@@ -8,6 +8,9 @@
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
 {% block title %}{{ doc.name }} - {{ project.name }}{% endblock %}
 
+{% block ogp_title %}{{ doc.name }} - {{ project.name }}{% endblock %}
+{% block ogp_desc %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
+
 {% block head_toolbar %}
     {% if request.user == doc.create_user or request.user == project.create_user %}
         <span class="btn pull-left">|</span>

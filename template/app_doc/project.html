@@ -5,6 +5,10 @@
 {% load i18n %}
 
 {% block title %}{{ project.name }}{% endblock %}
+{% block description %}{{project.intro | slice:"0:100"}}{% endblock %}
+
+{% block ogp_title %}{{ project.name }}{% endblock %}
+{% block ogp_desc %}{{project.intro | slice:"0:100"}}{% endblock %}
 
 {% block head_toolbar %}
     {% if request.user == project.create_user or colla_user > 0 %}
