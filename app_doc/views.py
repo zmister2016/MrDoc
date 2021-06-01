@@ -2031,9 +2031,11 @@ def report_md(request):
             md_file_filename = os.path.split(md_file_path)[-1] # 提取文件名
             md_file = "/media/reportmd_temp/"+ md_file_filename # 拼接相对链接
             return JsonResponse({'status':True,'data':md_file})
+        except ObjectDoesNotExist as e:
+            return JsonResponse({'status': False, 'data': _('文集不存在')})
         except Exception as e:
             logger.exception(_("导出文集MD文件出错"))
-            return JsonResponse({'status':False,'data':_('文集不存在')})
+            return JsonResponse({'status': False, 'data': _('导出文集异常')})
     elif types == 'multi':
         project_list = pro_id.split(',')
         for project in project_list:
@@ -2045,7 +2047,11 @@ def report_md(request):
             project_id_list = project_list,
             username = request.user.username
         )
-        md_file_path = project_md.work()  # 生成并获取MD文件压缩包绝对路径
+        try:
+            md_file_path = project_md.work()  # 生成并获取MD文件压缩包绝对路径
+        except:
+            logger.exception("文集导出异常")
+            return JsonResponse({'status': False, 'data': _('文集导出异常')})
         md_file_filename = os.path.split(md_file_path)[-1]  # 提取文件名
         md_file = "/media/reportmd_temp/" + md_file_filename  # 拼接相对链接
         return JsonResponse({'status': True, 'data': md_file})
