@@ -13,7 +13,7 @@ class RequiredLoginMiddleware():
     def __init__(self, get_response):
         self.get_response = get_response
         # 设置排除URL
-        compile_tuple = (r'/user/login(.*)$', r'/user/logout(.*)$', r'/user/register(.*)$',r'/user/check_code(.*)$',r'/static/(.*)$')
+        compile_tuple = (r'/login(.*)$', r'/logout(.*)$', r'/register(.*)$',r'/check_code(.*)$',r'/static/(.*)$')
         self.exceptions = tuple(re.compile(url) for url in compile_tuple)
 
     def __call__(self, request):
