@@ -304,6 +304,9 @@ def create_project(request):
         role = request.POST.get('role',0)
         role_list = ['0','1','2','3',0,1,2,3]
         if name != '':
+            # 不允许用户下同名文集存在
+            if Project.objects.filter(name=name,create_user=request.user).exists():
+                return JsonResponse({'status': False, 'data': _('同名文集已存在！')})
             project = Project.objects.create(
                 name=validateTitle(name),
                 icon = icon,
@@ -1006,6 +1009,9 @@ def create_doc(request):
                 check_project = Project.objects.filter(id=project,create_user=request.user)
                 colla_project = ProjectCollaborator.objects.filter(project=project,user=request.user)
                 if check_project.count() > 0 or colla_project.count() > 0:
+                    # 判断文集下是否存在同名文档
+                    if Doc.objects.filter(name=doc_name,top_doc=int(project)).exists():
+                        return JsonResponse({'status':False,'data':_('文集内不允许同名文档')})
                     # 开启事务
                     with transaction.atomic():
                         save_id = transaction.savepoint()
