@@ -2,7 +2,6 @@ django==2.2.*
 beautifulsoup4==4.8.2
 lxml
 pillow==7.1.0
-pyppeteer==0.0.25
 loguru==0.4.1
 djangorestframework==3.9.1
 requests==2.24.0
