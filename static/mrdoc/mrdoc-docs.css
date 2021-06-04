@@ -167,6 +167,9 @@ ul#doc-tree{
     }
 }
 /* 覆盖vditor文档目录样式 */
+.vditor-outline{
+    width: 200px;
+}
 .vditor-outline ul{
     padding-left: 0px;
 }
