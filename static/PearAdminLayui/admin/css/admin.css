@@ -1,3 +1,9 @@
+html,
+body,
+.layui-layout {
+	height: 100%;
+}
+
 .pear-admin .layui-header,
 .pear-admin .layui-body,
 .pear-admin .layui-logo,
@@ -10,7 +16,7 @@
 	font-size: 20px;
 }
 
-.pear-admin .layui-layout-right .layui-nav-child{
+.pear-admin .layui-layout-right .layui-nav-child {
 	border: 1px solid whitesmoke;
 	border-radius: 6px;
 	width: 150px;
@@ -87,11 +93,11 @@
 .pear-admin .layui-body {
 	left: 230px;
 	bottom: 0px;
+	padding-bottom: 0px;
 }
 
 .pear-admin .layui-layout-left {
 	left: 0px;
-
 }
 
 /** 隐 藏 布 局 样 式 */
@@ -142,7 +148,7 @@
 	display: none;
 }
 
-.pear-admin .layui-header .layui-nav-more{
+.pear-admin .layui-header .layui-nav-more {
 	display: none;
 }
 
@@ -165,15 +171,15 @@
 	color: white !important;
 }
 
-@media screen and (min-width: 768px){
+@media screen and (min-width: 768px) {
 	.layui-hide-sm {
-		display: inline-block!important;
+		display: inline-block !important;
 	}
 }
 
-@media screen and (min-width: 769px){
+@media screen and (min-width: 769px) {
 	.layui-hide-sm {
-		display: none!important;
+		display: none !important;
 	}
 }
 
@@ -182,18 +188,20 @@
 	.collaspe {
 		display: none !important;
 	}
+
 	.pear-collasped-pe {
 		display: inline-block !important;
 	}
-	
-	.layui-layout-control{
-		left: 45px!important;
+
+	.layui-layout-control {
+		left: 45px !important;
 	}
-	.layui-layout-left{
+
+	.layui-layout-left {
 		padding-left: 10px;
 		padding-right: 10px;
 	}
-	
+
 	.pear-mini .bottom-nav {
 		display: none;
 	}

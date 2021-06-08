@@ -1,0 +1,987 @@
+/*!
+* Notiflix ('https://www.notiflix.com')
+* Version: 2.0.0 
+* Author: Furkan MT ('https://github.com/furcan')
+* Copyright 2020 Notiflix, MIT Licence ('https://opensource.org/licenses/MIT')
+*/
+
+/* Notiflix: Notify wrap on */
+[id^=NotiflixNotifyWrap] {
+position: fixed;
+z-index:4001;
+opacity:1;
+right: 10px;
+top: 10px;
+width: 280px;
+max-width:96%;
+box-sizing:border-box;
+background: transparent;}
+
+[id^=NotiflixNotifyWrap] * {
+box-sizing:border-box;}
+/* Notiflix: Notify wrap off */
+
+/* Notiflix: Notify content on */
+[id^=NotiflixNotifyWrap] > div {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+font-family: 'Quicksand', sans-serif;
+width:100%;
+display: inline-block;
+position:relative;
+margin:0 0 10px;
+border-radius:5px;
+background: #1e1e1e;
+color: #fff;
+padding: 10px 12px;
+font-size: 14px;
+line-height: 1.4;}
+
+[id^=NotiflixNotifyWrap] > div:last-child {
+margin:0;}
+
+[id^=NotiflixNotifyWrap] > div.with-callback {
+cursor:pointer;}
+
+[id^=NotiflixNotifyWrap] *::selection {
+background:inherit;}
+
+[id^=NotiflixNotifyWrap] > div.with-icon {
+padding: 8px;}
+
+[id^=NotiflixNotifyWrap] > div.click-to-close {
+cursor: pointer;}
+
+[id^=NotiflixNotifyWrap] > div.with-close-button {
+padding: 10px 30px 10px 12px;}
+[id^=NotiflixNotifyWrap] > div.with-icon.with-close-button {
+padding: 6px 30px 6px 6px;}
+
+[id^=NotiflixNotifyWrap] > div > span.the-message {
+font-weight: 500;
+font-family:inherit !important;
+word-break: break-all;
+word-break: break-word;}
+
+[id^=NotiflixNotifyWrap] > div > span.notify-close-button {
+cursor:pointer;
+transition:all .2s ease-in-out;
+position: absolute;
+right: 8px;
+top: 0;
+bottom:0;
+margin:auto;
+color:inherit;
+width: 16px;
+height: 16px;}
+[id^=NotiflixNotifyWrap] > div > span.notify-close-button:hover {
+transform:rotate(90deg);}
+[id^=NotiflixNotifyWrap] > div > span.notify-close-button > svg {
+position: absolute;
+width: 16px;
+height: 16px;
+right: 0;
+top: 0;}
+/* Notiflix: Notify content off */
+
+/* Notiflix: Notify icon on */
+[id^=NotiflixNotifyWrap] > div > .nmi {
+position: absolute;
+width: 40px;
+height: 40px;
+font-size: 30px;
+line-height: 40px;
+text-align: center;
+left: 8px;
+top: 0;
+bottom: 0;
+margin: auto;
+border-radius: inherit;}
+
+[id^=NotiflixNotifyWrap] > div > .wfa.shadow {
+color: inherit;
+background: rgba(0, 0, 0, 0.15);
+box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.2);
+text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);}
+
+[id^=NotiflixNotifyWrap] > div > span.with-icon {
+position: relative;
+float: left;
+width: calc(100% - 40px);
+margin:0 0 0 40px;
+padding:0 0 0 10px;
+box-sizing: border-box;}
+/* Notiflix: Notify icon off */
+
+/* Notiflix: Notify rtl on */
+[id^=NotiflixNotifyWrap] > div.rtl-on > .nmi {
+left:auto;
+right:8px;}
+
+[id^=NotiflixNotifyWrap] > div.rtl-on > span.with-icon {
+padding:0 10px 0 0;
+margin:0 40px 0 0;}
+
+[id^=NotiflixNotifyWrap] > div.rtl-on > span.notify-close-button {
+right: auto;
+left: 8px;}
+
+[id^=NotiflixNotifyWrap] > div.with-icon.with-close-button.rtl-on {
+padding: 6px 6px 6px 30px;}
+
+[id^=NotiflixNotifyWrap] > div.with-close-button.rtl-on {
+padding: 10px 12px 10px 30px;}
+/* Notiflix: Notify rtl off */
+
+/* Notiflix: Notify animation => fade on */
+[id^=NotiflixNotifyOverlay].with-animation,
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-fade {
+animation: notify-animation-fade .3s ease-in-out 0s normal;
+-webkit-animation: notify-animation-fade .3s ease-in-out 0s normal;}
+
+@keyframes notify-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes notify-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Notify animation => fade off */
+
+/* Notiflix: Notify animation => zoom on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-zoom {
+animation: notify-animation-zoom .3s ease-in-out 0s normal;
+-webkit-animation: notify-animation-zoom .3s ease-in-out 0s normal;}
+
+@keyframes notify-animation-zoom {
+0% {transform:scale(0);}
+50% {transform:scale(1.05);}
+100% {transform:scale(1);}
+}
+
+@-webkit-keyframes notify-animation-zoom {
+0% {transform:scale(0);}
+50% {transform:scale(1.05);}
+100% {transform:scale(1);}
+}
+/* Notiflix: Notify animation => zoom off */
+
+/* Notiflix: Notify animation => from right on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-right {
+animation: notify-animation-from-right .3s ease-in-out 0s normal;
+-webkit-animation: notify-animation-from-right .3s ease-in-out 0s normal;}
+
+@keyframes notify-animation-from-right {
+0% {right:-300px; opacity:0;}
+50% {right:8px; opacity:1;}
+100% {right:0px; opacity:1;}
+}
+
+@-webkit-keyframes notify-animation-from-right {
+0% {right:-300px; opacity:0;}
+50% {right:8px; opacity:1;}
+100% {right:0px; opacity:1;}
+}
+/* Notiflix: Notify animation => from right off */
+
+/* Notiflix: Notify animation => from left on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-left {
+animation: notify-animation-from-left .3s ease-in-out 0s normal;
+-webkit-animation: notify-animation-from-left .3s ease-in-out 0s normal;}
+
+@keyframes notify-animation-from-left {
+0% {left:-300px; opacity:0;}
+50% {left:8px; opacity:1;}
+100% {left:0px; opacity:1;}
+}
+
+@-webkit-keyframes notify-animation-from-left {
+0% {left:-300px; opacity:0;}
+50% {left:8px; opacity:1;}
+100% {left:0px; opacity:1;}
+}
+/* Notiflix: Notify animation => from left off */
+
+/* Notiflix: Notify animation => from top on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-top {
+animation: notify-animation-from-top .3s ease-in-out 0s normal;
+-webkit-animation: notify-animation-from-top .3s ease-in-out 0s normal;}
+
+@keyframes notify-animation-from-top {
+0% {top:-50px; opacity:0;}
+50% {top:8px; opacity:1;}
+100% {top:0px; opacity:1;}
+}
+
+@-webkit-keyframes notify-animation-from-top {
+0% {top:-50px; opacity:0;}
+50% {top:8px; opacity:1;}
+100% {top:0px; opacity:1;}
+}
+/* Notiflix: Notify animation => from top off */
+
+/* Notiflix: Notify animation => from bottom on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-bottom {
+animation: notify-animation-from-bottom .3s ease-in-out 0s normal;
+-webkit-animation: notify-animation-from-bottom .3s ease-in-out 0s normal;}
+
+@keyframes notify-animation-from-bottom {
+0% {bottom:-50px; opacity:0;}
+50% {bottom:8px; opacity:1;}
+100% {bottom:0px; opacity:1;}
+}
+
+@-webkit-keyframes notify-animation-from-bottom {
+0% {bottom:-50px; opacity:0;}
+50% {bottom:8px; opacity:1;}
+100% {bottom:0px; opacity:1;}
+}
+/* Notiflix: Notify animation => from bottom off */
+
+/* Notiflix: Notify animation remove => fade on */
+[id^=NotiflixNotifyOverlay].with-animation.remove,
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-fade.remove {
+opacity:0;
+animation: notify-remove-fade .3s ease-in-out 0s normal;
+-webkit-animation: notify-remove-fade .3s ease-in-out 0s normal;}
+
+@keyframes notify-remove-fade {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+
+@-webkit-keyframes notify-remove-fade {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+/* Notiflix: Notify animation remove => fade off */
+
+/* Notiflix: Notify animation remove => zoom on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-zoom.remove {
+transform:scale(0);
+animation: notify-remove-zoom .3s ease-in-out 0s normal;
+-webkit-animation: notify-remove-zoom .3s ease-in-out 0s normal;}
+
+@keyframes notify-remove-zoom {
+0% {transform:scale(1);}
+50% {transform:scale(1.05);}
+100% {transform:scale(0);}
+}
+
+@-webkit-keyframes notify-remove-zoom {
+0% {transform:scale(1);}
+50% {transform:scale(1.05);}
+100% {transform:scale(0);}
+}
+/* Notiflix: Notify animation remove => zoom off */
+
+/* Notiflix: Notify animation remove => from top on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-top.remove {
+opacity:0;
+animation: notify-remove-to-top .3s ease-in-out 0s normal;
+-webkit-animation: notify-remove-to-top .3s ease-in-out 0s normal;}
+
+@keyframes notify-remove-to-top {
+0% {top:0px; opacity:1;}
+50% {top:8px; opacity:1;}
+100% {top:-50px; opacity:0;}
+}
+
+@-webkit-keyframes notify-remove-to-top {
+0% {top:0px; opacity:1;}
+50% {top:8px; opacity:1;}
+100% {top:-50px; opacity:0;}
+}
+/* Notiflix: Notify animation remove => from top off */
+
+/* Notiflix: Notify animation remove => from right on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-right.remove {
+opacity:0;
+animation: notify-remove-to-right .3s ease-in-out 0s normal;
+-webkit-animation: notify-remove-to-right .3s ease-in-out 0s normal;}
+
+@keyframes notify-remove-to-right {
+0% {right:0px; opacity:1;}
+50% {right:8px; opacity:1;}
+100% {right:-300px; opacity:0;}
+}
+
+@-webkit-keyframes notify-remove-to-right {
+0% {right:0px; opacity:1;}
+50% {right:8px; opacity:1;}
+100% {right:-300px; opacity:0;}
+}
+/* Notiflix: Notify animation remove => from right off */
+
+/* Notiflix: Notify animation remove => from bottom on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-bottom.remove {
+opacity:0;
+animation: notify-remove-to-bottom .3s ease-in-out 0s normal;
+-webkit-animation: notify-remove-to-bottom .3s ease-in-out 0s normal;}
+
+@keyframes notify-remove-to-bottom {
+0% {bottom:0px; opacity:1;}
+50% {bottom:8px; opacity:1;}
+100% {bottom:-50px; opacity:0;}
+}
+
+@-webkit-keyframes notify-remove-to-bottom {
+0% {bottom:0px; opacity:1;}
+50% {bottom:8px; opacity:1;}
+100% {bottom:-50px; opacity:0;}
+}
+/* Notiflix: Notify animation remove => from bottom off */
+
+/* Notiflix: Notify animation remove => from left on */
+[id^=NotiflixNotifyWrap] > div.with-animation.nx-from-left.remove {
+opacity:0;
+animation: notify-remove-to-left .3s ease-in-out 0s normal;
+-webkit-animation: notify-remove-to-left .3s ease-in-out 0s normal;}
+
+@keyframes notify-remove-to-left {
+0% {left:0px; opacity:1;}
+50% {left:8px; opacity:1;}
+100% {left:-300px; opacity:0;}
+}
+
+@-webkit-keyframes notify-remove-to-left {
+0% {left:0px; opacity:1;}
+50% {left:8px; opacity:1;}
+100% {left:-300px; opacity:0;}
+}
+/* Notiflix: Notify animation remove => from left off */
+
+
+/* Notiflix: Report wrap on */
+[id^=NotiflixReportWrap] {
+position: fixed;
+z-index:4002;
+width: 320px;
+max-width:96%;
+box-sizing:border-box;
+font-family: "Quicksand", sans-serif;
+left: 0;
+right: 0;
+top: 20px;
+color:#1e1e1e;
+border-radius: 25px;
+background: transparent;
+margin: auto;}
+
+[id^=NotiflixReportWrap] * {
+box-sizing:border-box;}
+/* Notiflix: Report wrap off */
+
+/* Notiflix: Report content on */
+[id^=NotiflixReportWrap] > div[class*="-overlay"] {
+width:100%;
+height:100%;
+left:0;
+top:0;
+background: rgba(255, 255, 255, .5);
+position:fixed;
+z-index:0;}
+
+[id^=NotiflixReportWrap] > div[class*="-content"] {
+width:100%;
+float:left;
+border-radius: inherit;
+padding:10px;
+filter: drop-shadow(0 0 5px rgba(0,0,0,.1));
+border: 1px solid rgba(0,0,0,.03);
+background: #f8f8f8;
+position:relative;
+z-index:1;}
+
+[id^=NotiflixReportWrap] > div[class*="-content"] > div[class$="-icon"] {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+width:110px;
+height:110px;
+display:block;
+margin:6px auto 12px;}
+
+[id^=NotiflixReportWrap] > div[class*="-content"] > div[class$="-icon"] svg {
+min-width:100%;
+max-width:100%;
+height:auto;}
+
+[id^=NotiflixReportWrap] > * > h5 {
+word-break: break-all;
+word-break: break-word;
+font-family:inherit !important;
+font-size:16px;
+font-weight:500;
+line-height: 1.4;
+margin: 0 0 10px;
+padding: 0 0 10px;
+border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+float: left;
+width: 100%;
+text-align: center;}
+
+[id^=NotiflixReportWrap] > * > p {
+word-break: break-all;
+word-break: break-word;
+font-family:inherit !important;
+font-size:13px;
+line-height: 1.4;
+float: left;
+width: 100%;
+padding:0 10px;
+margin: 0 0 10px;}
+
+[id^=NotiflixReportWrap] a#NXReportButton {
+word-break: break-all;
+word-break: break-word;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+font-family:inherit !important;
+transition:all .25s ease-in-out;
+cursor:pointer;
+float: right;
+padding: 7px 17px;
+background: #32c682;
+font-size:14px;
+line-height: 1.4;
+font-weight: 500;
+border-radius: inherit !important;
+color: #fff;}
+
+[id^=NotiflixReportWrap] a#NXReportButton:hover {
+box-shadow:inset 0 -60px 5px -5px rgba(0, 0, 0, 0.25);}
+
+[id^=NotiflixReportWrap].rtl-on a#NXReportButton {
+float:left;}
+/* Notiflix: Report content off */
+
+/* Notiflix: Report overlay animation => fade on */
+[id^=NotiflixReportWrap] > div[class*="-overlay"].with-animation {
+animation: report-overlay-animation .3s ease-in-out 0s normal;
+-webkit-animation: report-overlay-animation .3s ease-in-out 0s normal;}
+
+@keyframes report-overlay-animation {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes report-overlay-animation {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Report overlay animation => fade off */
+
+/* Notiflix: Report content animation => fade on */
+[id^=NotiflixReportWrap] > div[class*="-content"].with-animation.nx-fade {
+animation: report-animation-fade .3s ease-in-out 0s normal;
+-webkit-animation: report-animation-fade .3s ease-in-out 0s normal;}
+
+@keyframes report-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes report-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Report content animation => fade off */
+
+/* Notiflix: Report content animation => zoom on */
+[id^=NotiflixReportWrap] > div[class*="-content"].with-animation.nx-zoom {
+animation: report-animation-zoom .3s ease-in-out 0s normal;
+-webkit-animation: report-animation-zoom .3s ease-in-out 0s normal;}
+
+@keyframes report-animation-zoom {
+0% {opacity:0; transform:scale(0.5);}
+50% {opacity:1; transform:scale(1.05);}
+100% {opacity:1; transform:scale(1);}
+}
+
+@-webkit-keyframes report-animation-zoom {
+0% {opacity:0; transform:scale(0.5);}
+50% {opacity:1; transform:scale(1.05);}
+100% {opacity:1; transform:scale(1);}
+}
+/* Notiflix: Report content animation => zoom off */
+
+/* Notiflix: Report overlay animation remove => fade on */
+[id^=NotiflixReportWrap].remove > div[class*="-overlay"].with-animation {
+opacity:0;
+animation: report-overlay-animation-remove .3s ease-in-out 0s normal;
+-webkit-animation: report-overlay-animation-remove .3s ease-in-out 0s normal;}
+
+@keyframes report-overlay-animation-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+
+@-webkit-keyframes report-overlay-animation-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+/* Notiflix: Report overlay animation remove => fade off */
+
+/* Notiflix: Report content animation remove => fade on */
+[id^=NotiflixReportWrap].remove > div[class*="-content"].with-animation.nx-fade {
+opacity:0;
+animation: report-animation-fade-remove .3s ease-in-out 0s normal;
+-webkit-animation: report-animation-fade-remove .3s ease-in-out 0s normal;}
+
+@keyframes report-animation-fade-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+
+@-webkit-keyframes report-animation-fade-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+/* Notiflix: Report content animation remove => fade off */
+
+/* Notiflix: Report content animation remove => zoom on */
+[id^=NotiflixReportWrap].remove > div[class*="-content"].with-animation.nx-zoom {
+opacity:0;
+animation: report-animation-zoom-remove .3s ease-in-out 0s normal;
+-webkit-animation: report-animation-zoom-remove .3s ease-in-out 0s normal;}
+
+@keyframes report-animation-zoom-remove {
+0% {opacity:1; transform:scale(1);}
+50% {opacity:0.5; transform:scale(1.05);}
+100% {opacity:0; transform:scale(0);}
+}
+
+@-webkit-keyframes report-animation-zoom-remove {
+0% {opacity:1; transform:scale(1);}
+50% {opacity:0.5; transform:scale(1.05);}
+100% {opacity:0; transform:scale(0);}
+}
+/* Notiflix: Report content animation remove => zoom off */
+
+
+/* Notiflix: Confirm wrap on */
+[id^=NotiflixConfirmWrap] {
+position: fixed;
+z-index: 4003;
+width: 300px;
+max-width:98%;
+left: 10px;
+right: 10px;
+top: 10px;
+margin:auto;
+text-align: center;
+box-sizing:border-box;
+background:transparent;
+font-family: "Quicksand", sans-serif;}
+
+[id^=NotiflixConfirmWrap] * {
+box-sizing:border-box;}
+/* Notiflix: Confirm wrap off */
+
+/* Notiflix: Confirm content on */
+[id^=NotiflixConfirmWrap] > div[class*="-overlay"] {
+width:100%;
+height:100%;
+left:0;
+top:0;
+background: rgba(255, 255, 255, .5);
+position:fixed;
+z-index:0;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] {
+width:100%;
+float:left;
+border-radius: 25px;
+padding:10px;
+margin:0;
+filter: drop-shadow(0 0 5px rgba(0,0,0,.1));
+background: #f8f8f8;
+color:#1e1e1e;
+position:relative;
+z-index:1;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-head"] {
+float:left;
+width:100%;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-head"] > h5 {
+float:left;
+width:100%;
+margin:0;
+padding:0 0 10px;
+border-bottom:1px solid rgba(0,0,0,0.1);
+color: #32c682;
+font-family:inherit !important;
+font-size:16px;
+line-height:1.4;
+font-weight:500;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-head"] > p {
+font-family:inherit !important;
+margin: 15px 0 20px;
+padding: 0 10px;
+float:left;
+width:100%;
+font-size: 14px;
+line-height: 1.4;
+color: inherit;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-buttons"] {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+border-radius:inherit;
+float:left;
+width:100%;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-buttons"] > a {
+cursor:pointer;
+font-family:inherit !important;
+transition:all .25s ease-in-out;
+float: left;
+width: 48%;
+padding: 9px 5px;
+border-radius:inherit !important;
+font-weight: 500;
+font-size: 15px;
+line-height: 1.4;
+color:#f8f8f8;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-buttons"] > a.confirm-button-ok {
+margin:0 2% 0 0;
+background:#32c682;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-buttons"] > a.confirm-button-cancel {
+margin:0 0 0 2%;
+background:#a9a9a9;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-buttons"] > a.full {
+margin:0;
+width:100%;}
+
+[id^=NotiflixConfirmWrap] > div[class*="-content"] > div[class*="-buttons"] > a:hover {
+box-shadow:inset 0 -60px 5px -5px rgba(0, 0, 0, 0.25);}
+/* Notiflix: Confirm content off */
+
+/* Notiflix: Confirm rtl on */
+[id^=NotiflixConfirmWrap].rtl-on > div[class*="-content"] > div[class*="-buttons"],
+[id^=NotiflixConfirmWrap].rtl-on > div[class*="-content"] > div[class*="-buttons"] > a {
+transform:rotateY(180deg);}
+/* Notiflix: Confirm rtl off */
+
+/* Notiflix: Confirm overlay animation => fade on */
+[id^=NotiflixConfirmWrap] > div[class*="-overlay"].with-animation {
+animation: confirm-overlay-animation .3s ease-in-out 0s normal;
+-webkit-animation: confirm-overlay-animation .3s ease-in-out 0s normal;}
+
+@keyframes confirm-overlay-animation {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes confirm-overlay-animation {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Confirm overlay animation => fade off */
+
+/* Notiflix: Confirm overlay animation remove => fade on */
+[id^=NotiflixConfirmWrap].remove > div[class*="-overlay"].with-animation {
+opacity:0;
+animation: confirm-overlay-animation-remove .3s ease-in-out 0s normal;
+-webkit-animation: confirm-overlay-animation-remove .3s ease-in-out 0s normal;}
+
+@keyframes confirm-overlay-animation-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+
+@-webkit-keyframes confirm-overlay-animation-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+/* Notiflix: Confirm overlay animation remove => fade off */
+
+/* Notiflix: Confirm content animation => fade on */
+[id^=NotiflixConfirmWrap].with-animation.nx-fade > div[class*="-content"] {
+animation: confirm-animation-fade .3s ease-in-out 0s normal;
+-webkit-animation: confirm-animation-fade .3s ease-in-out 0s normal;}
+
+@keyframes confirm-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes confirm-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Confirm content animation => fade off */
+
+/* Notiflix: Confirm content animation => zoom on */
+[id^=NotiflixConfirmWrap].with-animation.nx-zoom > div[class*="-content"] {
+animation: confirm-animation-zoom .3s ease-in-out 0s normal;
+-webkit-animation: confirm-animation-zoom .3s ease-in-out 0s normal;}
+
+@keyframes confirm-animation-zoom {
+0% {opacity:0; transform:scale(0.5);}
+50% {opacity:1; transform:scale(1.05);}
+100% {opacity:1; transform:scale(1);}
+}
+
+@-webkit-keyframes confirm-animation-zoom {
+0% {opacity:0; transform:scale(0.5);}
+50% {opacity:1; transform:scale(1.05);}
+100% {opacity:1; transform:scale(1);}
+}
+/* Notiflix: Confirm content animation => zoom off */
+
+/* Notiflix: Confirm content animation remove => fade on */
+[id^=NotiflixConfirmWrap].with-animation.nx-fade.remove > div[class*="-content"] {
+opacity:0;
+animation: confirm-animation-fade-remove .3s ease-in-out 0s normal;
+-webkit-animation: confirm-animation-fade-remove .3s ease-in-out 0s normal;}
+
+@keyframes confirm-animation-fade-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+
+@-webkit-keyframes confirm-animation-fade-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+/* Notiflix: Confirm content animation remove => fade off */
+
+/* Notiflix: Confirm content animation remove => zoom on */
+[id^=NotiflixConfirmWrap].with-animation.nx-zoom.remove > div[class*="-content"] {
+opacity:0;
+animation: confirm-animation-zoom-remove .3s ease-in-out 0s normal;
+-webkit-animation: confirm-animation-zoom-remove .3s ease-in-out 0s normal;}
+
+@keyframes confirm-animation-zoom-remove {
+0% {opacity:1; transform:scale(1);}
+50% {opacity:0.5; transform:scale(1.05);}
+100% {opacity:0; transform:scale(0);}
+}
+
+@-webkit-keyframes confirm-animation-zoom-remove {
+0% {opacity:1; transform:scale(1);}
+50% {opacity:0.5; transform:scale(1.05);}
+100% {opacity:0; transform:scale(0);}
+}
+/* Notiflix: Confirm content animation remove => zoom off */
+
+
+/* Notiflix: Loading wrap on */
+[id^=NotiflixLoadingWrap] {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+position: fixed;
+z-index: 4000;
+width: 100%;
+height: 100%;
+left: 0;
+top: 0;
+right:0;
+bottom:0;
+margin:auto;
+text-align: center;
+box-sizing:border-box;
+background: white!important;
+font-family: "Quicksand", sans-serif;}
+
+[id^=NotiflixLoadingWrap] * {
+box-sizing:border-box;}
+
+[id^=NotiflixLoadingWrap].click-to-close {
+cursor:pointer;}
+/* Notiflix: Loading wrap off */
+
+/* Notiflix: Loading content on */
+[id^=NotiflixLoadingWrap] > div[class*="-icon"] {
+width:60px;
+height:60px;
+position:fixed;
+background-color: white!important;
+transition:top .2s ease-in-out;
+left: 0;
+top: 0;
+right:0;
+bottom:0;
+margin:auto;}
+
+[id^=NotiflixLoadingWrap] > div[class*="-icon"] img,
+[id^=NotiflixLoadingWrap] > div[class*="-icon"] svg {
+max-width:unset;
+max-height:unset;
+width: 100%;
+height: 100%;
+position:absolute;
+left: 0;
+top: 0;}
+
+[id^=NotiflixLoadingWrap] > div[class*="-icon"].with-message {
+top:-42px;}
+
+[id^=NotiflixLoadingWrap] > p {
+position: fixed;
+left: 0;
+right: 0;
+top: 42px;
+bottom: 0;
+margin: auto;
+font-family: inherit !important;
+font-weight: 500;
+line-height: 1.4;
+padding: 0 10px;
+width: 100%;
+font-size:15px;
+height: 18px;}
+/* Notiflix: Loading content off */
+
+/* Notiflix: Loading animation => fade on */
+[id^=NotiflixLoadingWrap].with-animation {
+animation: loading-animation-fade .3s ease-in-out 0s normal;
+-webkit-animation: loading-animation-fade .3s ease-in-out 0s normal;}
+
+@keyframes loading-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes loading-animation-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Loading animation => fade off */
+
+/* Notiflix: Loading animation remove => fade on */
+[id^=NotiflixLoadingWrap].with-animation.remove {
+opacity:0;
+animation: loading-animation-fade-remove .3s ease-in-out 0s normal;
+-webkit-animation: loading-animation-fade-remove .3s ease-in-out 0s normal;}
+
+@keyframes loading-animation-fade-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+
+@-webkit-keyframes loading-animation-fade-remove {
+0% {opacity:1;}
+100% {opacity:0;}
+}
+/* Notiflix: Loading animation remove => fade off */
+
+/* Notiflix: Loading animation new message => fade on */
+[id^=NotiflixLoadingWrap] > p.new {
+animation: loading-new-message-fade .3s ease-in-out 0s normal;
+-webkit-animation: loading-new-message-fade .3s ease-in-out 0s normal;}
+
+@keyframes loading-new-message-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+@-webkit-keyframes loading-new-message-fade {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+/* Notiflix: Loading animation new message => fade off */
+
+
+/* Notiflix: Block wrap on */
+[id^=NotiflixBlockWrap] {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+box-sizing: border-box;
+position: absolute;
+z-index: 1000;
+font-family: "Quicksand", sans-serif;
+background: rgba(255, 255, 255, 0.9);
+text-align: center;
+animation-duration: 400ms;
+width: 100%;
+height: 100%;
+left: 0;
+top: 0;
+border-radius: inherit;}
+
+[id^=NotiflixBlockWrap] * {
+box-sizing: border-box;}
+/* Notiflix: Block wrap off */
+
+/* Notiflix: Block content on */
+[id^=NotiflixBlockWrap] > span[class*="-icon"] {
+width: 45px;
+height: 45px;
+position: absolute;
+left: 0;
+top: 0;
+right: 0;
+bottom: 0;
+margin: auto;}
+
+[id^=NotiflixBlockWrap] > span[class*="-message"] {
+position: absolute;
+left: 0;
+right: 0;
+top: 50px;
+bottom: 0;
+margin: auto;
+font-family: inherit !important;
+font-weight: 500;
+font-size: 14px;
+line-height: 1.4;
+padding: 0 10px;
+width: 100%;
+height: 20px;
+overflow: hidden;}
+/* Notiflix: Block content off */
+
+/* Notiflix: Block animation => fade on */
+[id^=NotiflixBlockWrap].with-animation {
+animation: block-animation-fade .3s ease-in-out 0s normal;
+-webkit-animation: block-animation-fade .3s ease-in-out 0s normal;}
+
+@keyframes block-animation-fade {
+0% {opacity: 0;}
+100% {opacity: 1;}
+}
+
+@-webkit-keyframes block-animation-fade {
+0% {opacity: 0;}
+100% {opacity: 1;}
+}
+/* Notiflix: Block animation => fade off */
+
+/* Notiflix: Block animation remove => fade on */
+[id^=NotiflixBlockWrap].with-animation.remove {
+opacity: 0;
+animation: block-animation-fade-remove .3s ease-in-out 0s normal;
+-webkit-animation: block-animation-fade-remove .3s ease-in-out 0s normal;}
+
+@keyframes block-animation-fade-remove {
+0% {opacity: 1;}
+100% {opacity: 0;}
+}
+
+@-webkit-keyframes block-animation-fade-remove {
+0% {opacity: 1;}
+100% {opacity: 0;}
+}
+/* Notiflix: Block animation remove => fade off */
+

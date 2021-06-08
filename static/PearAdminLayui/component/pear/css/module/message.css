@@ -1,0 +1,42 @@
+.pear-notice .layui-this {
+	color: #5FB878 !important;
+	font-weight: 500;
+}
+
+.pear-notice li {
+	border-right: 1px solid whitesmoke;
+}
+
+.pear-notice * {
+	color: dimgray !important;
+}
+
+.pear-notice{
+	width: 285px!important;
+}
+
+.pear-notice span{
+	margin-left: 20px;
+	font-size: 13px;
+}
+
+.pear-notice img{
+	margin-left: 8px;
+	width: 33px!important;
+	height: 33px!important;
+	border-radius: 50px;
+}
+
+.pear-notice-item{
+	height: 45px!important;
+	line-height: 45px!important;
+}
+
+/** 滚动条样式 */
+.pear-notice *::-webkit-scrollbar{width:0px;height:0px;}
+.pear-notice *::-webkit-scrollbar-track{background: white;border-radius:2px;}
+.pear-notice *::-webkit-scrollbar-thumb{background: #E6E6E6;border-radius:2px;}
+.pear-notice *::-webkit-scrollbar-thumb:hover{background: #E6E6E6;}
+.pear-notice *::-webkit-scrollbar-corner{background: #f6f6f6;}
+
+
