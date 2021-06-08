@@ -46,6 +46,11 @@
             max-width: 350px;
         }
         {% endif %}
+        {% if long_code == 'on' %}
+        pre.linenums,.vditor-reset > pre > code{
+            max-height: max-content!important;
+        }
+        {% endif %}
         /* html{
         filter: invert(1) hue-rotate(180deg);
         } */
