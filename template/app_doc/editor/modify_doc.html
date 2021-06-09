@@ -77,8 +77,13 @@
                 <dd><a href="{% url 'user_center' %}" target="_blank">个人中心</a></dd>
             </dl>  
         </li>        
-        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="发布文档" id="modify_pub_doc">发布</button>
-        <button class="layui-btn layui-btn-sm layui-btn-primary layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为草稿状态" id="modify_save_doc">存为草稿</button>
+        {% if doc.status == 0 %}
+        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档" id="modify_save_doc">保存</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为发布状态" id="modify_doc_to_pub">转为发布</button>
+        {% elif doc.status == 1 %}        
+        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档" id="modify_save_doc">保存</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为草稿状态" id="modify_doc_to_draft">转为草稿</button>
+        {% endif %}
 
     </ul>
 {% endblock %}
@@ -232,10 +237,11 @@
             });
         });
         // 修改文档
-        modifyDoc = function(status){
+        modifyDoc = function(status,is_save){
             $('button.layui-btn').attr("disabled",true);
             $('button.layui-btn').addClass('layui-btn-disabled');
             layer.load(1);
+            // 获取文档内容
             if(editor_mode == 1){
                 var content = editor.getHTML()
                 var pre_content = editor.getMarkdown()
@@ -248,6 +254,12 @@
             }else if(editor_mode == 4){
                 var content  = '';
                 var pre_content = JSON.stringify(luckysheet.getAllSheets());
+            }
+            // 获取文档状态
+            if(status == undefined){
+                var status = '{{doc.status}}'
+            }else{
+                var status = status;
             }
             var data = {
                 'doc_id':'{{ doc.id }}',
@@ -268,16 +280,25 @@
                 if(r.status){
                     //修改成功
                     window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
-                    if(status === 1){
+                    if(is_save == undefined){
+                        layer.msg('保存成功',{time:1000},function(){
+                            md_changed = false;
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
+                        });
+                    }
+                    else if(status === 1){
                         layer.msg('发布成功',function(){
                             md_changed = false;
-                            window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
+                            location.reload()
+                            // window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
                         });
                     }else{
                         layer.msg('保存成功',{time:1000},function(){
                             md_changed = false;
                             $('button.layui-btn').attr("disabled",false);
                             $('button.layui-btn').removeClass('layui-btn-disabled');
+                            location.reload();
                         });
                     }
                 }else{
@@ -288,12 +309,20 @@
                 }
             });
         };
+        
+        // 保存文档 - 只更新内容，不变更状态
         $("#modify_save_doc").click(function(){
-            modifyDoc(0);
+            modifyDoc();
         })
-        $("#modify_pub_doc").click(function(){
-            modifyDoc(1);
+        // 文档状态由草稿转为发布
+        $("#modify_doc_to_pub").click(function(){
+            modifyDoc(1,false);
         })
+        // 文档状态由发布转为草稿
+        $("#modify_doc_to_draft").click(function(){
+            modifyDoc(0,false);
+        })
+
         //选择文档模板
         $("#sel-doctemp").click(function(){
             layer.open({

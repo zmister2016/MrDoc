@@ -64,7 +64,7 @@
             </dl>  
         </li>
 
-        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="发布文档" id="pub_doc">发布</button>
+        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为发布状态" id="pub_doc">发布</button>
         <button class="layui-btn layui-btn-sm layui-btn-primary layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为草稿状态" id="save_doc">存为草稿</button>
 
     </ul>
@@ -315,8 +315,8 @@
                         if(status === 1){
                             layer.msg('发布成功',{time:1000},function(){
                                 md_changed = false;
-                                //跳转到文档阅读页面
-                                window.location.href = "/project-" + r.data.pro + "/doc-" + r.data.doc
+                                //跳转到文档修改
+                                window.location.href = "/modify_doc/"+r.data.doc+"/";
                             });
                         }else{
                             layer.msg('保存成功',{time:1000},function(){
