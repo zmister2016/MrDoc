@@ -33,6 +33,12 @@ import yaml
 # from pdfminer import high_level
 
 
+# 替换前端传来的非法字符
+def validate_title(title):
+  rstr = r"[\/\\\:\*\?\"\<\>\|\[\]]" # '/ \ : * ? " < > |'
+  new_title = re.sub(rstr, "_", title) # 替换为下划线
+  return new_title
+
 # 导出MD文件压缩包
 @logger.catch()
 class ReportMD():
@@ -44,7 +50,7 @@ class ReportMD():
         # 文集名称
         self.project_name = "{0}_{1}_{2}".format(
             self.project_data.create_user,
-            self.project_data.name,
+            validate_title(self.project_data.name),
             str(datetime.date.today())
         )
 
@@ -67,7 +73,7 @@ class ReportMD():
     def work(self):
         # 初始化文集YAML数据
         project_toc_list = {}
-        project_toc_list['project_name'] = self.project_data.name
+        project_toc_list['project_name'] = validate_title(self.project_data.name)
         project_toc_list['project_desc'] = self.project_data.intro
         project_toc_list['project_role'] = self.project_data.role
         project_toc_list['toc'] = []
@@ -76,10 +82,10 @@ class ReportMD():
         # 遍历一级文档
         for d in data:
             top_item = {
-                'name': d.name,
-                'file': d.name+'.md',
+                'name': validate_title(d.name),
+                'file': validate_title(d.name)+'.md',
             }
-            md_name = d.name # 文档名称
+            md_name = validate_title(d.name) # 文档名称
             # 文档内容，如果使用Markdown编辑器编写则导出Markdown文本，如果使用富文本编辑器编写则导出HTML文本
             md_content = self.operat_md_media(d.pre_content) \
                 if d.editor_mode in [1,2] else self.operat_md_media(d.content)
@@ -94,8 +100,8 @@ class ReportMD():
                 top_item['children'] = []
                 for d2 in data_2:
                     sec_item = {
-                        'name': d2.name,
-                        'file': d2.name+'.md',
+                        'name': validate_title(d2.name),
+                        'file': validate_title(d2.name)+'.md',
                     }
 
                     md_name_2 = d2.name
@@ -112,11 +118,11 @@ class ReportMD():
                         sec_item['children'] = []
                         for d3 in data_3:
                             item = {
-                                'name': d3.name,
-                                'file': d3.name+'.md',
+                                'name': validate_title(d3.name),
+                                'file': validate_title(d3.name)+'.md',
                             }
                             sec_item['children'].append(item)
-                            md_name_3 = d3.name
+                            md_name_3 = validate_title(d3.name)
                             md_content_3 = self.operat_md_media(d3.pre_content) \
                                 if d3.editor_mode in [1,2] else self.operat_md_media(d3.content)
 
