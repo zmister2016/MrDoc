@@ -116,6 +116,9 @@
   .layui-form-radio>i:hover, .layui-form-radioed>i{
     color: #2176ff;
   }
+  .layui-form-radio:hover *, .layui-form-radioed, .layui-form-radioed>i{
+    color: #2176ff;
+}
   .layui-form-select dl dd.layui-this{
       /* background-color: #2176ff !important; */
   }
