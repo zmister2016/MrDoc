@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 import datetime,time,json,base64,os,uuid
 from app_doc.models import Image,ImageGroup,Attachment
 from app_admin.models import SysSetting
+from loguru import logger
 import requests
 import random
 
@@ -255,24 +256,38 @@ def url_img_upload(url,dir_name,user):
     header = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
     }
-    r = requests.get(url, headers=header, stream=True)
+    try:
+        r = requests.get(url, headers=header, stream=True)
+        if r.status_code == 200:
+            with open(path_file, 'wb') as f:
+                f.write(r.content)  # 保存文件
+            Image.objects.create(
+                user=user,
+                file_path=file_url,
+                file_name=file_name,
+                remark=_('粘贴上传'),
+            )
 
-    if r.status_code == 200:
-        with open(path_file, 'wb') as f:
-            f.write(r.content)  # 保存文件
-        Image.objects.create(
-            user=user,
-            file_path=file_url,
-            file_name=file_name,
-            remark=_('粘贴上传'),
-        )
-    resp_data = {
-         'msg': '',
-         'code': 0,
-         'data' : {
-           'originalURL': url,
-           'url': file_url
-         }
+            resp_data = {
+                 'msg': '',
+                 'code': 0,
+                 'data' : {
+                   'originalURL': url,
+                   'url': file_url
+                 }
+                }
+        else:
+            resp_data = {
+                'msg': '',
+                'code': 1,
+                'data': {}
+            }
+    except Exception as e:
+        logger.error("上传URL图片异常：{}".format(repr(e)))
+        resp_data = {
+            'msg': '',
+            'code': 1,
+            'data': {}
         }
     return resp_data
     # return {"success": 1, "url": file_url, 'message': '上传图片成功'}
