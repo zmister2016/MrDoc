@@ -436,7 +436,9 @@ function initDocRender(mode){
                     // console.log('显示文档目录')
                     $(".tocMenu").show();
                     initSidebar('.sidebar', '.doc-content');
-                }
+                };
+                // 高亮搜索词
+                keyLight('doc-content',getQueryVariable("highlight"));
             },
         })
     }else if(mode == 4){

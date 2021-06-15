@@ -395,7 +395,9 @@
         });
     });
     // 高亮搜索词
+    {% if doc.editor_mode != 2 %}
     keyLight('doc-content',getQueryVariable("highlight"))
+    {% endif %}
 </script>
 </body>
 </html>
