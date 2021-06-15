@@ -166,6 +166,14 @@
     color: #333;
 }
 
+a.index-add-link{
+    color: #999;
+    float: right;
+}
+a.index-add-link:hover{
+    color: #333;
+}
+
 .layui-card{
     box-shadow:0 0 0 0;
 }
