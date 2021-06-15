@@ -104,7 +104,7 @@ class ReportMD():
                         'file': validate_title(d2.name)+'.md',
                     }
 
-                    md_name_2 = d2.name
+                    md_name_2 = validate_title(d2.name)
                     md_content_2 = self.operat_md_media(d2.pre_content) \
                         if d2.editor_mode in [1,2] else self.operat_md_media(d2.content)
 
