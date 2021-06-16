@@ -765,7 +765,7 @@ class ReportPDF():
             logger.exception("未知异常")
             return False
         # 拼接文档的HTML字符串
-        data = Doc.objects.filter(top_doc=self.pro_id,parent_doc=0).order_by("sort")
+        data = Doc.objects.filter(top_doc=self.pro_id,parent_doc=0,status=1).order_by("sort")
         toc_list = {'1':[],'2':[],'3':[]}
         for d in data:
             self.content_str += "<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d.name)
@@ -775,7 +775,7 @@ class ReportPDF():
                 self.content_str += d.content + '\n'
             toc_list['1'].append({'id':d.id,'name':d.name})
             # 获取第二级文档
-            data_2 = Doc.objects.filter(parent_doc=d.id).order_by("sort")
+            data_2 = Doc.objects.filter(parent_doc=d.id,status=1).order_by("sort")
             for d2 in data_2:
                 self.content_str += "\n\n<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d2.name)
                 if d2.editor_mode in [1, 2]:
@@ -784,7 +784,7 @@ class ReportPDF():
                     self.content_str += d2.content + '\n'
                 toc_list['2'].append({'id':d2.id,'name':d2.name,'parent':d.id})
                 # 获取第三级文档
-                data_3 = Doc.objects.filter(parent_doc=d2.id).order_by("sort")
+                data_3 = Doc.objects.filter(parent_doc=d2.id,status=1).order_by("sort")
                 for d3 in data_3:
                     # print(d3.name,d3.content)
                     self.content_str += "\n\n<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d3.name)
@@ -944,7 +944,7 @@ class ReportDocx():
 
     def work(self):
         # 拼接HTML字符串
-        data = Doc.objects.filter(top_doc=self.project.id,parent_doc=0).order_by("sort")
+        data = Doc.objects.filter(top_doc=self.project.id,parent_doc=0,status=1).order_by("sort")
         for d in data:
             # print(d.name,d.content)
             self.content_str += "<h1 style='page-break-before: always;'>{}</h1>".format(d.name)
