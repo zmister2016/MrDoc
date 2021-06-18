@@ -477,9 +477,9 @@ upload.render({
         //上传成功
         if(res.success == 1){
             if(editor_mode == 3){
-                editor.addValue('<img src="' + res.url + '" />')
+                editor.addValue('<img src="' + res.url.replace(" ",'%20') + '" />')
             }else{
-                editor.insertValue("\n![](" + res.url + ")");
+                editor.insertValue("\n![](" + res.url.replace(" ",'%20') + ")");
             }
             
             layer.closeAll();
