@@ -169,6 +169,8 @@
 a.index-add-link{
     color: #999;
     float: right;
+    position: absolute;
+    right: 10px;
 }
 a.index-add-link:hover{
     color: #333;

@@ -131,7 +131,7 @@
     {% for p in projects %}
         <!-- 网格布局 -->
         <div class="layui-col-md3 layui-col-xs12 project-item">
-            <a href="{% url 'pro_index' p.id %}" target="_blank">
+            <a href="{% url 'pro_index' p.id %}" target="_blank" title="{{p.name}}">
                 <div class="layui-card">
                     <div class="layui-card-header" 
                         {% if p.role == 1 %}
