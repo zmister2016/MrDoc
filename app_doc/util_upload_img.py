@@ -247,7 +247,7 @@ def base_img_upload(files,dir_name, user):
 def url_img_upload(url,dir_name,user):
 
     relative_path = upload_generation_dir(dir_name)
-    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').split('.')[0] + '.png'  # 日期时间
+    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').split('.')[0] + str(random.random()) + '.png'  # 日期时间
     path_file = os.path.join(relative_path, file_name)
     path_file = settings.MEDIA_ROOT + path_file
     # print('文件路径：', path_file)
