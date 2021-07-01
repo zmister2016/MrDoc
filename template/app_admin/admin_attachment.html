@@ -1,0 +1,276 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}附件管理{% endblock %}
+{% block custom_element %}
+<link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <div class="layui-row">
+                <span style="font-size:18px;">附件管理
+                </span>
+            </div>
+        </div>
+
+        <div class="layui-form">
+            <div class="layui-form-item">
+              <label class="layui-form-label">关键词</label>
+              <div class="layui-input-inline">
+                <input type="text" name="kw"  placeholder="请输入附件名称" autocomplete="off" class="layui-input">
+              </div>
+              <button class="pear-btn pear-btn-primary pear-btn-sm" id="search">搜索</button>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">用户</label>
+              <div class="layui-input-inline">
+                <div id="select-user"></div>
+              </div>
+              <button class="pear-btn pear-btn-primary pear-btn-sm" id="searchUser">筛选</button>
+            </div>
+        </div>
+
+        <div class="layui-row" id="img-div">
+            <table class="layui-table"  id="attachment-list" lay-filter="attachment-table"></table>
+        </div>
+    </div>
+</div>
+
+<!-- 表格工具栏 -->
+<script type="text/html" id="img-toolbar">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i> 批量删除
+    </button>
+</script>
+
+<!-- 附件名 -->
+<script type="text/html" id="fileName">
+    {% verbatim %}
+        {{#if (d.file_path.startsWith('attachment')) { }}
+            <a href="/media/{{d.file_path}}" target="_blank">{{d.file_name}}</a>
+        {{# }else{ }}
+            <a href="{{decodeURI(d.file_path.replace('/media/',''))}}" target="_blank" >{{ d.file_name }} </a>
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 上传时间 -->
+<script type="text/html" id="registerTime">
+    {% verbatim %}
+    {{layui.util.toDateString(d.date_joined,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 最后登录时间 -->
+<script type="text/html" id="lastLoginTime">
+    {% verbatim %}
+    {{layui.util.toDateString(d.last_login,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 用户操作模板 -->
+<script type="text/html" id="userOpera">
+    {% verbatim %}
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    {% endverbatim %}
+</script>
+{% endblock %}
+
+{% block custom_script %}
+
+<script src="{% static 'viewerjs/viewer.min.js' %}"></script>
+<script>
+    layui.use(['table','jquery','form','layer','element','table'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            headers: {"X-CSRFToken":'{{ csrf_token }}'},
+        });
+        // 获取用户列表
+        getUserList = function(usergroup_list){
+            $.ajax({
+                url:"{% url 'api_usergroups_userlist' %}",
+                type:'get',
+                success:function(r){
+                    if(r.code === 0){
+                        select_user.update({
+                            data:r.data,
+                            autoRow: true,
+                        })
+                    }else{
+                        layer.msg("用户列表获取出错")
+                    }
+                },
+                error:function(){
+                    layer.msg("用户列表获取异常")
+                }
+            })
+        };
+        //获取附件列表，执行表格渲染
+        table.render({
+            elem: '#attachment-list',
+            url: "{% url 'api_admin_attachments' %}",
+            method:'get',
+            where:{
+                'username':$("#username").val(),
+            },
+            page:true,
+            toolbar: '#img-toolbar',
+            cols: [[
+                {type: 'checkbox',width:20},
+                {field:'file_name',title:'附件名称',templet:"#fileName"},
+                {field:'file_path',title:'附件路径',},
+                {field:'file_size',title:'附件大小',},
+                {field:'username',title:'用户',},
+                {field:'create_time',title:'上传时间',width:160,templet:'#registerTime'},
+                {field:'oprate',title:'操作',width:180,templet:'#userOpera'},
+            ]],
+            skin: 'line',
+        });
+        // [文集权限指定用户]渲染用户多选下拉框
+        var select_user = xmSelect.render({
+            el:'#select-user',
+            filterable: true,
+            radio: true,
+            paging: true,
+            pageSize: 20,
+            theme: {
+                color: '#333333',
+            },
+            data:[]
+        });
+        getUserList();
+        // 删除附件
+        delImg = function(id){
+            layer.open({
+                type:1,
+                title:'删除文档',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：操作将<span style="font-weight:700;color:red;">删除此附件且不可恢复！</span></div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    $.ajax({
+                        url:'/admin/api/attachment/'+id + '/',
+                        type:'delete',
+                        success:function(r){
+                            layer.closeAll()
+                            if(r.code == 0){
+                                layer.msg("删除成功",{icon:1},function(){
+                                    table.reload('attachment-list',{page:{curr:1}});
+                                })
+                                
+                            }else{
+                                layer.msg(r.data,{icon:2})
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll()
+                            layer.mag("删除异常",{icon:2,})
+                        }
+                    })
+                },
+            })
+
+        };
+        // 批量删除
+        batchRemove = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("{% trans '未选中任何附件' %}", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let pro_id = "";
+            for (let i = 0; i < data.length; i++) {
+                pro_id += data[i].id + ",";
+            }
+            pro_id = pro_id.substr(0, pro_id.length - 1);
+            // console.log(pro_id)
+            layer.open({
+                type:1,
+                title:'{% trans "删除附件" %}',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">你正在批量删除附件！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选附件！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
+                btn:['{% trans "批量删除" %}','{% trans "取消" %}'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    var confirm_delete = $("#confirm_batch_delete_project").val()
+                    if(confirm_delete === 'DELETE'){
+                        let loading = layer.load();
+                        $.ajax({
+                            url: "{% url 'api_admin_attachments' %}",
+                            dataType: 'json',
+                            type: 'delete',
+                            data:{'id':pro_id},
+                            success: function(r) {
+                                layer.closeAll();
+                                if (r.code == 0) {
+                                    layer.msg("{% trans '删除成功' %}", {
+                                        icon: 1,
+                                        time: 1000
+                                    }, function() {
+                                        table.reload('attachment-list',{page:{curr:1}});
+                                    });
+                                } else {
+                                    layer.msg(r.data, {
+                                        icon: 2,
+                                        time: 1000
+                                    });
+                                }
+                            }
+                        })
+                    }else{
+                        layer.msg("输入错误！")
+                    }
+                }
+            });
+        };
+        // 侦听文档删除按钮
+        table.on("tool(attachment-table)",function(obj){
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                delImg(obj.data.id)
+            }
+        });
+        // 侦听表格工具栏
+        table.on("toolbar(attachment-table)",function(obj){
+            if(obj.event === 'batchRemove'){ // 批量删除附件
+                batchRemove(obj)
+            }else if(obj.event === 'search'){ // 搜索附件
+                table.reload('attachment-list',{
+                    where:{'kw':$('input[name="project-search-kw"]').val()
+                },
+                })
+            } 
+        });
+        // 监听搜索按钮
+        $("#search").click(function(){
+            table.reload('attachment-list',{
+                where:{
+                    'kw':$("input[name=kw]").val(),
+                },
+            })
+        });
+        // 监听用户筛选按钮
+        $("#searchUser").click(function(){
+            table.reload('attachment-list',{
+                where:{
+                    'username':select_user.getValue('valueStr'),
+                },
+            })
+        });
+
+    })
+</script>
+{% endblock %}

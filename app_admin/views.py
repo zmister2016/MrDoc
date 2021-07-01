@@ -26,6 +26,7 @@ from loguru import logger
 import re
 import datetime
 import requests
+import os
 
 
 # 返回验证码图片
@@ -719,6 +720,146 @@ def admin_doctemp(request):
         return render(request,'app_admin/admin_doctemp.html',locals())
 
 
+# 后台管理 - 图片管理页面
+@superuser_only
+def admin_image(request):
+    return render(request,'app_admin/admin_image.html',locals())
+
+# 图片列表接口
+class AdminImageList(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    # 获取图片列表
+    def get(self, request):
+        kw  = request.query_params.get('kw', '')
+        username = request.query_params.get('username', '')
+        page_num = request.query_params.get('page', 1)
+        limit = request.query_params.get('limit', 10)
+        if kw == '' and username == '':
+            img_data = Image.objects.all().order_by('-create_time')
+        elif kw != '':
+            img_data = Image.objects.filter(file_name__icontains=kw).order_by('-create_time')
+        elif username != '':
+            user = User.objects.get(id=username)
+            img_data = Image.objects.filter(user=user).order_by('-create_time')
+        page = PageNumberPagination()  # 实例化一个分页器
+        page.page_size = limit
+        page_imgs = page.paginate_queryset(img_data, request, view=self)  # 进行分页查询
+        serializer = ImageSerializer(page_imgs, many=True)  # 对分页后的结果进行序列化处理
+        resp = {
+            'code': 0,
+            'data': serializer.data,
+            'count': img_data.count()
+        }
+
+        return Response(resp)
+
+    # 批量删除图片
+    def delete(self,request):
+        ids = request.data.get('id','').split(',')
+        try:
+            image = Image.objects.filter(id__in=ids)  # 查询附件
+            for a in image:  # 遍历附件
+                file_path = settings.BASE_DIR + a.file_path
+                is_exist = os.path.exists(file_path)
+                if is_exist:
+                    os.remove(file_path)
+            image.delete()  # 删除数据库记录
+            return JsonResponse({'code': 0, 'data': _('删除成功')})
+        except Exception as e:
+            logger.exception("删除图片异常")
+            return JsonResponse({'code': 4, 'data': _('删除异常')})
+
+# 图片详情接口
+class AdminImageDetail(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    # 删除图片
+    def delete(self,request,id):
+        try:
+            image = Image.objects.filter(id=id)  # 查询附件
+            for a in image:  # 遍历附件
+                file_path = settings.BASE_DIR + a.file_path
+                is_exist = os.path.exists(file_path)
+                if is_exist:
+                    os.remove(file_path)
+            image.delete()  # 删除数据库记录
+            return JsonResponse({'code': 0, 'data': _('删除成功')})
+        except Exception as e:
+            logger.exception("删除图片异常")
+            return JsonResponse({'code': 4, 'data': _('删除异常')})
+
+
+@superuser_only
+# 后台管理 - 附件管理页面
+def admin_attachment(request):
+    return render(request,'app_admin/admin_attachment.html',locals())
+
+
+# 附件列表接口
+class AdminAttachmentList(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    # 获取附件列表
+    def get(self, request):
+        kw  = request.query_params.get('kw', '')
+        username = request.query_params.get('username', '')
+        page_num = request.query_params.get('page', 1)
+        limit = request.query_params.get('limit', 10)
+        if kw == '' and username == '':
+            attachment_data = Attachment.objects.all().order_by('-create_time')
+        elif kw != '':
+            attachment_data = Attachment.objects.filter(file_name__icontains=kw).order_by('-create_time')
+        elif username != '':
+            user = User.objects.get(id=username)
+            attachment_data = Attachment.objects.filter(user=user).order_by('-create_time')
+        page = PageNumberPagination()  # 实例化一个分页器
+        page.page_size = limit
+        page_attachments = page.paginate_queryset(attachment_data, request, view=self)  # 进行分页查询
+        serializer = AttachmentSerializer(page_attachments, many=True)  # 对分页后的结果进行序列化处理
+        resp = {
+            'code': 0,
+            'data': serializer.data,
+            'count': attachment_data.count()
+        }
+
+        return Response(resp)
+
+    # 批量删除附件
+    def delete(self,request):
+        ids = request.data.get('id','').split(',')
+        try:
+            attachment = Attachment.objects.filter(id__in=ids)  # 查询附件
+            for a in attachment:  # 遍历附件
+                a.file_path.delete()  # 删除文件
+            attachment.delete()  # 删除数据库记录
+            return JsonResponse({'code': 0, 'data': _('删除成功')})
+        except Exception as e:
+            logger.exception("删除附件异常")
+            return JsonResponse({'code': 4, 'data': _('删除异常')})
+
+
+# 附件详情接口
+class AdminAttachmentDetail(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    # 删除图片
+    def delete(self,request,id):
+        try:
+            attachment = Attachment.objects.filter(id=id)  # 查询附件
+            for a in attachment:  # 遍历附件
+                a.file_path.delete()  # 删除文件
+            attachment.delete()  # 删除数据库记录
+            return JsonResponse({'code': 0, 'data': _('删除成功')})
+        except Exception as e:
+            logger.exception("删除图片异常")
+            return JsonResponse({'code': 4, 'data': _('删除异常')})
+
+
 # 后台管理 - 注册邀请码管理
 @superuser_only
 @logger.catch()
@@ -1085,6 +1226,31 @@ def admin_center_menu(request):
             "type": 1,
             "icon": "layui-icon layui-icon-templeate-1",
             "href": reverse('doctemp_manage'),
+        },
+        {
+            "id": "my_fodder",
+            "title": _("素材管理"),
+            "icon": "layui-icon layui-icon-upload-drag",
+            "type": 0,
+            "href": "",
+            "children": [
+                {
+                    "id": "my_img",
+                    "title": _("图片管理"),
+                    "icon": "layui-icon layui-icon-face-smile",
+                    "type": 1,
+                    "openType": "_iframe",
+                    "href": reverse("image_manage")
+                },
+                {
+                    "id": "my_attachment",
+                    "title": _("附件管理"),
+                    "icon": "layui-icon layui-icon-face-cry",
+                    "type": 1,
+                    "openType": "_iframe",
+                    "href": reverse("attachment_manage")
+                },
+            ]
         },
         {
             "id": 5,

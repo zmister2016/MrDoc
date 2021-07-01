@@ -11,6 +11,10 @@ from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
 from django.core.serializers import serialize
 from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
+from rest_framework.views import APIView # 视图
+from rest_framework.response import Response # 响应
+from rest_framework.pagination import PageNumberPagination # 分页
+from rest_framework.authentication import SessionAuthentication # 认证
 from django.db.models import Q
 from django.db import transaction
 from django.utils.html import strip_tags
@@ -19,6 +23,7 @@ from loguru import logger
 from app_doc.report_utils import *
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
+from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
 import datetime
 import traceback
 import re
@@ -3213,3 +3218,28 @@ def get_version(request):
             'data':_('异常')
         }
     return JsonResponse(data)
+
+
+# 用户分组用户列表接口
+class UserGroupUserList(APIView):
+    authentication_classes = [SessionAuthentication, AppMustAuth]
+
+    def get(self,request):
+        user_data = User.objects.filter(is_active=True).values(
+            'id', 'username', 'first_name'
+        )
+        user_list = []
+        for user in user_data:
+            item = {
+                'name':user['username'],
+                'value':user['id']
+            }
+            user_list.append(item)
+        # serializer = UserSerializer(user_data, many=True)  # 对结果进行序列化处理
+        resp = {
+            'code': 0,
+            'data': user_list,
+            'count': user_data.count()
+        }
+
+        return Response(resp)

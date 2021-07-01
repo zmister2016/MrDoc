@@ -24,5 +24,13 @@ urlpatterns = [
     path('admin_center/',views.admin_center,name="admin_center"), # 后台管理
     path('admin/center_menu/',views.admin_center_menu,name="admin_center_menu"), # 后台管理菜单数据
     path('admin_overview/',views.admin_overview,name="admin_overview"), # 后台管理仪表盘
+    # 图片管理及接口
+    path('manage/image/', views.admin_image, name="image_manage"),  # 图片管理页面
+    path('api/imgs/', views.AdminImageList.as_view(), name="api_admin_imgs"),  # 图片列表接口
+    path('api/img/<int:id>/', views.AdminImageDetail.as_view(), name="api_admin_img"),  # 图片详情接口
+    # 附件管理及接口
+    path('manage/attachment/', views.admin_attachment, name="attachment_manage"),  # 附件管理页面
+    path('api/attachments/', views.AdminAttachmentList.as_view(), name="api_admin_attachments"),  # 附件列表接口
+    path('api/attachment/<int:id>/', views.AdminAttachmentDetail.as_view(), name="api_admin_attachment"),  # 附件详情接口
 
 ]

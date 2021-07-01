@@ -48,9 +48,13 @@ class DocTempSerializer(ModelSerializer):
 
 # 图片序列化器
 class ImageSerializer(ModelSerializer):
+    username = serializers.SerializerMethodField(label="用户名")
     class Meta:
         model = Image
         fields = ('__all__')
+
+    def get_username(self,obj):
+        return obj.user.username
 
 # 图片分组序列化器
 class ImageGroupSerializer(ModelSerializer):
