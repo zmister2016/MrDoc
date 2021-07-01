@@ -64,6 +64,11 @@ class ImageGroupSerializer(ModelSerializer):
 
 # 附件序列化器
 class AttachmentSerializer(ModelSerializer):
+    username = serializers.SerializerMethodField(label="用户名")
+
     class Meta:
         model = Attachment
         fields = ('__all__')
+
+    def get_username(self,obj):
+        return obj.user.username
