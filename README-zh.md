@@ -50,7 +50,7 @@
 
 ## 打赏支持
 
-<p align="center">前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
+<p align="center"><a href="https://afdian.net/item?plan_id=0435840cbb6f11ebaeed52540025c377">￥48-觅道文档付费部署服务</a> | 前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
 
 <p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
