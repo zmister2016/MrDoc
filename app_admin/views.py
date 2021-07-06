@@ -958,6 +958,7 @@ def admin_setting(request):
         email_username = email_settings.get(name="username")
         email_ssl = email_settings.get(name="smtp_ssl")
         email_pwd = email_settings.get(name="pwd")
+        email_dec_pwd = dectry(email_settings.get(name="pwd").value)
     if request.method == 'GET':
         return render(request,'app_admin/admin_setting.html',locals())
     elif request.method == 'POST':
