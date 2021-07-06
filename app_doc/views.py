@@ -20,6 +20,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from loguru import logger
+from app_api.serializers_app import *
 from app_doc.report_utils import *
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
@@ -847,6 +848,64 @@ def manage_project_collaborator(request,pro_id):
 def manage_pro_colla_self(request):
     colla_pros = ProjectCollaborator.objects.filter(user=request.user)
     return render(request,'app_doc/manage/manage_project_self_colla.html',locals())
+
+
+# 我协作的文集文档列表接口
+class MyCollaList(APIView):
+    authentication_classes = (AppAuth, SessionAuthentication)
+
+    # 获取列表
+    def get(self,request):
+        pid = request.query_params.get('pid','')
+        page_num = request.query_params.get('page', 1)
+        limit = request.query_params.get('limit', 10)
+        if pid == '':
+            doc_data = ProjectCollaborator.objects.filter(user=request.user).order_by('-create_time')
+        else:
+            project = Project.objects.get(id=pid)
+            doc_data = ProjectCollaborator.objects.filter(user=request.user,project=project).order_by('-create_time')
+        page = PageNumberPagination()  # 实例化一个分页器
+        page.page_size = limit
+        page_docs = page.paginate_queryset(doc_data, request, view=self)  # 进行分页查询
+        serializer = ProjectCollaSerializer(page_docs, many=True)  # 对分页后的结果进行序列化处理
+        colla_doc_list = []
+        for s in serializer.data:
+            item = {
+                "project_id": s['project_id'],
+                "project_name": s['project_name'],
+                'role':s['role'],
+                "top_doc": 0,
+                'type':'project',
+                'create_time':s['create_time'],
+                'username':s['username'],
+                # "checkArr": "0"
+            }
+            colla_doc_list.append(item)
+        for doc in doc_data:
+            doc_list = Doc.objects.filter(
+                top_doc=doc.project.id,
+                create_user=request.user
+            ).defer('content','pre_content')
+            if doc_list.exists():
+                for d in doc_list:
+                    item = {
+                        "project_id": d.id,
+                        "project_name": d.name,
+                        "top_doc": d.top_doc,
+                        'role':None,
+                        'type':'doc',
+                        'create_time':d.create_time,
+                        'username':d.create_user.username,
+                    }
+                    colla_doc_list.append(item)
+        resp = {
+            'code': 0,
+            'data': colla_doc_list,
+            # 'data':a,
+            'count': doc_data.count()
+        }
+
+        return Response(resp)
 
 
 # 转让文集

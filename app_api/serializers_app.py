@@ -25,6 +25,31 @@ class ProjectSerializer(ModelSerializer):
         model = Project
         fields = ('__all__')
 
+# 协作文集序列化器
+class ProjectCollaSerializer(ModelSerializer):
+    project_id = serializers.SerializerMethodField(label="文集ID")
+    project_name = serializers.SerializerMethodField(label="文集名称")
+    username = serializers.SerializerMethodField(label='文集创建人')
+    top_doc = serializers.SerializerMethodField(label="上级")
+
+    class Meta:
+        model = ProjectCollaborator
+        fields = ('__all__')
+
+    def get_project_name(self,obj):
+        return obj.project.name
+
+    def get_project_id(self,obj):
+        return obj.project.id
+
+    def get_username(self,obj):
+        username = obj.project.create_user.username
+        return username
+
+    def get_top_doc(self,obj):
+        return 0
+
+
 # 文档序列化器
 class DocSerializer(ModelSerializer):
 
