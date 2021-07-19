@@ -307,33 +307,47 @@
                 //发布按钮设为禁用
                 $("#create_doc").attr({"disabled":"disabled"});
                 layer.load(); // 加载提示
-                $.post("{% url 'create_doc' %}",data,function(r){
-                    if(r.status){
-                        //创建成功
-                        layer.closeAll("loading"); //关闭加载层
-                        window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
-                        if(status === 1){
-                            layer.msg('发布成功',{time:1000},function(){
-                                md_changed = false;
-                                //跳转到文档修改
-                                window.location.href = "/modify_doc/"+r.data.doc+"/";
-                            });
+                $.ajax({
+                    url:"{% url 'create_doc' %}",
+                    type:'post',
+                    data:data,
+                    success:function(r){
+                        if(r.status){
+                            //创建成功
+                            layer.closeAll("loading"); //关闭加载层
+                            window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
+                            if(status === 1){
+                                layer.msg('发布成功',{time:1000},function(){
+                                    md_changed = false;
+                                    //跳转到文档修改
+                                    window.location.href = "/modify_doc/"+r.data.doc+"/";
+                                });
+                            }else{
+                                layer.msg('保存成功',{time:1000},function(){
+                                    md_changed = false;
+                                    //跳转到文档修改
+                                    window.location.href = "/modify_doc/"+r.data.doc+"/";
+                                });
+                            }
                         }else{
-                            layer.msg('保存成功',{time:1000},function(){
-                                md_changed = false;
-                                //跳转到文档修改
-                                window.location.href = "/modify_doc/"+r.data.doc+"/";
-                            });
+                            //创建失败
+                            layer.closeAll("loading"); //关闭加载层
+                            layer.msg('发布文档失败:'+r.data);
+                            //恢复按钮状态
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
                         }
-                    }else{
-                        //创建失败
-                        layer.closeAll("loading"); //关闭加载层
-                        layer.msg('发布文档失败:'+r.data);
-                        //恢复按钮状态
-                        $('button.layui-btn').attr("disabled",false);
-                        $('button.layui-btn').removeClass('layui-btn-disabled');
+                    },
+                    error:function(){
+                            //创建失败
+                            layer.closeAll("loading"); //关闭加载层
+                            layer.msg('发布文档异常！');
+                            //恢复按钮状态
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
+
                     }
-                });
+                })
             }
         };
 
