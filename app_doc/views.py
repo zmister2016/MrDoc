@@ -946,6 +946,8 @@ def doc(request,pro_id,doc_id):
     try:
         if pro_id != '' and doc_id != '':
             # 获取文集信息
+            doc = Doc.objects.get(id=int(doc_id),status__in=[0,1]) # 文档信息
+            pro_id = doc.top_doc
             project = Project.objects.get(id=int(pro_id))
             # 获取文集的文档目录
             toc_list,toc_cnt = get_pro_toc(pro_id)
