@@ -275,39 +275,52 @@
                 'open_children':$('input:checkbox[name="open-children"]:checked').val(),
                 'show_children':$('input:checkbox[name="show-children"]:checked').val(),
             }
-            $.post("{% url 'modify_doc' doc_id=doc.id %}",data,function(r){
-                layer.closeAll("loading");
-                if(r.status){
-                    //修改成功
-                    window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
-                    if(is_save == undefined){
-                        layer.msg('保存成功',{time:1000},function(){
-                            md_changed = false;
-                            $('button.layui-btn').attr("disabled",false);
-                            $('button.layui-btn').removeClass('layui-btn-disabled');
-                        });
-                    }
-                    else if(status === 1){
-                        layer.msg('发布成功',function(){
-                            md_changed = false;
-                            location.reload()
-                            // window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
-                        });
+            $.ajax({
+                url:"{% url 'modify_doc' doc_id=doc.id %}",
+                type:'post',
+                data:data,
+                success:function(r){
+                    layer.closeAll("loading");
+                    if(r.status){
+                        //修改成功
+                        window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
+                        if(is_save == undefined){
+                            layer.msg('保存成功',{time:1000},function(){
+                                md_changed = false;
+                                $('button.layui-btn').attr("disabled",false);
+                                $('button.layui-btn').removeClass('layui-btn-disabled');
+                            });
+                        }
+                        else if(status === 1){
+                            layer.msg('发布成功',function(){
+                                md_changed = false;
+                                location.reload()
+                                // window.location.href = "{% url 'doc' pro_id=doc.top_doc doc_id=doc.id %}";
+                            });
+                        }else{
+                            layer.msg('保存成功',{time:1000},function(){
+                                md_changed = false;
+                                $('button.layui-btn').attr("disabled",false);
+                                $('button.layui-btn').removeClass('layui-btn-disabled');
+                                location.reload();
+                            });
+                        }
                     }else{
-                        layer.msg('保存成功',{time:1000},function(){
-                            md_changed = false;
-                            $('button.layui-btn').attr("disabled",false);
-                            $('button.layui-btn').removeClass('layui-btn-disabled');
-                            location.reload();
-                        });
+                        //修改失败
+                        layer.msg('保存失败');
+                        $('button.layui-btn').attr("disabled",false);
+                        $('button.layui-btn').removeClass('layui-btn-disabled');
                     }
-                }else{
+                },
+                error:function(r){
                     //修改失败
-                    layer.msg('保存失败');
+                    layer.closeAll("loading");
+                    layer.msg('保存异常');
                     $('button.layui-btn').attr("disabled",false);
                     $('button.layui-btn').removeClass('layui-btn-disabled');
+
                 }
-            });
+            })
         };
         
         // 保存文档 - 只更新内容，不变更状态
