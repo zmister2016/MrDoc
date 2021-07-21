@@ -48,7 +48,18 @@
 <!-- 图片缩略图模板 -->
 <script type="text/html" id="imgShow">
     {% verbatim %}
-    <img src="{{d.file_path}}" style="width:20px;height:20px" />
+    {{#if (d.file_name.endsWith('png')) { }}
+        <img src="/static/icon_img/img_png.svg" style="width:20px;height:20px" />
+    {{# }else if(d.file_name.endsWith('jpg')){ }}
+        <img src="/static/icon_img/img_jpg.svg" style="width:20px;height:20px" />
+    {{# }else if(d.file_name.endsWith('gif')){ }}
+        <img src="/static/icon_img/img_gif.svg" style="width:20px;height:20px" />
+    {{# }else if(d.file_name.endsWith('bmp')){ }}
+        <img src="/static/icon_img/img_bmp.svg" style="width:20px;height:20px" />
+    {{# }else{ }}
+        <img src="/static/icon_img/img_others.svg" style="width:20px;height:20px" />
+    {{# } }}
+    {{d.file_name}}
     {% endverbatim %}
 </script>
 
@@ -69,6 +80,7 @@
 <!-- 用户操作模板 -->
 <script type="text/html" id="userOpera">
     {% verbatim %}
+    <button class="pear-btn pear-btn-normal pear-btn-sm" lay-event="preview" title="预览图片"><i class="pear-icon pear-icon-browse"></i></button>
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
@@ -120,28 +132,14 @@
             toolbar: '#img-toolbar',
             cols: [[
                 {type: 'checkbox',width:20},
-                {field:'file_path',width:60,title:"",templet:'#imgShow'},
-                {field:'file_name',title:'图片名称',},
+                {field:'file_name',title:'图片名称',templet:'#imgShow'},
                 {field:'file_path',title:'图片路径',},
-                {field:'remark',title:'备注',},
-                {field:'username',title:'用户',},
+                {field:'remark',title:'备注',width:100,},
+                {field:'username',title:'用户',width:140,},
                 {field:'create_time',title:'上传时间',width:160,templet:'#registerTime'},
                 {field:'oprate',title:'操作',width:180,templet:'#userOpera'},
             ]],
             skin: 'line',
-            done:function(){
-                //查看图片
-                var options = {
-                    //inline: true,
-                    url: 'data-original',
-                    fullscreen:false,//全屏
-                    rotatable:false,//旋转
-                    scalable:false,//翻转
-                    //zoomable:false,//缩放
-                    button:false,//关闭按钮
-                };
-                var viewer = new Viewer(document.getElementById('img-div'), options);
-            }
         });
         // [文集权限指定用户]渲染用户多选下拉框
         var select_user = xmSelect.render({
@@ -246,11 +244,32 @@
                 }
             });
         };
-        // 侦听文档删除按钮
+        // 侦听文档操作按钮
         table.on("tool(img-table)",function(obj){
             if (obj.event === 'remove') {
                 // console.log(obj)
                 delImg(obj.data.id)
+            }else if(obj.event === 'preview'){
+                let realpath = obj.data.file_path; // url地址
+                let imgHtml = "<img src='"+ realpath +"' />";
+                let img = new Image(); // Image对象
+
+                img.onload = function () { // 重点：要用onload加载
+                    let width = img.width,
+                        height = img.height;
+                    layer.open({
+                        type:1, // 类型是1
+                        shade:0.2,
+                        offset:'auto',
+                        area:[width + 'px', height + 'px'],
+                        shadeClose:true,
+                        scrollbar: false,
+                        title: '', // 这里不要写文字
+                        content:imgHtml,
+                    });
+                };
+
+                img.src = realpath;
             }
         });
         // 侦听表格工具栏
