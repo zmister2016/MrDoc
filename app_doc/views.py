@@ -1290,7 +1290,7 @@ def del_doc(request):
                     chr_doc = Doc.objects.filter(parent_doc=doc_id) # 获取下级文档
                     chr_doc_ids = chr_doc.values_list('id',flat=True) # 提取下级文档的ID
                     chr_doc.update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的状态为删除
-                    Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
+                    Doc.objects.filter(parent_doc__in=list(chr_doc_ids)).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
 
                     return JsonResponse({'status': True, 'data': _('删除完成')})
                 else:
