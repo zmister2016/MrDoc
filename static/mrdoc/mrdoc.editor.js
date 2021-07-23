@@ -493,7 +493,7 @@ upload.render({
         layer.closeAll('loading'); //关闭loading
         layer.msg("系统异常，请稍后再试！")
     },
-    accept: 'images', //允许上传的文件类型
+    accept: 'file', //允许上传的文件类型
     acceptMime:'image/*',
     field:'manage_upload',
 });

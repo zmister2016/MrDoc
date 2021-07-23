@@ -195,7 +195,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # 允许上传的图片后缀
-ALLOWED_IMG = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
+ALLOWED_IMG = ["jpg", "jpeg", "gif", "png", "bmp", "webp","svg"]
 
 
 REST_FRAMEWORK = {

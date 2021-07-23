@@ -51,7 +51,8 @@ def ice_save_file(file_obj,user):
     # 默认保留支持ice单文件上传功能，可以iceEditor中开启
     file_suffix = str(file_obj).split(".")[-1] # 提取图片格式
     # 允许上传文件类型，ice粘贴上传为blob
-    allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp","blob"]
+    # allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp","blob"]
+    allow_suffix = settings.ALLOWED_IMG
     # 判断附件格式
     is_images = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
     if file_suffix.lower() not in allow_suffix:         
@@ -185,7 +186,8 @@ def upload_generation_dir(dir_name=''):
 # 普通图片上传
 def img_upload(files, dir_name, user, group_id=None):
     # 允许上传文件类型
-    allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp"]
+    # allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp","blob"]
+    allow_suffix = settings.ALLOWED_IMG
     file_suffix = files.name.split(".")[-1] # 提取图片格式
     # 判断图片格式
     if file_suffix.lower() not in allow_suffix:
