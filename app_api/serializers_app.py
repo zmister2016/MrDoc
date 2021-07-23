@@ -65,6 +65,18 @@ class DocSerializer(ModelSerializer):
         pro_name = Project.objects.get(id=obj.top_doc).name
         return pro_name
 
+
+# 文档历史序列化器
+class DocHistorySerializer(ModelSerializer):
+    username = serializers.SerializerMethodField(label="用户名")
+    class Meta:
+        model = DocHistory
+        fields = ('__all__')
+
+    def get_username(self,obj):
+        return obj.create_user.username
+
+
 # 文档模板序列化器
 class DocTempSerializer(ModelSerializer):
     class Meta:

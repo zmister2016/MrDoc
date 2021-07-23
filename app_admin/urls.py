@@ -15,6 +15,10 @@ urlpatterns = [
     path('project_del/',views.admin_project_delete,name="admin_project_del"), # 删除文集
 
     path('doc_manage/',views.admin_doc,name='doc_manage'), # 文档管理
+    # 文档历史记录管理及接口
+    path('doc_history_manage/<int:id>/', views.admin_doc_history, name='doc_history_manage'),  # 文档历史记录管理
+    path('api/doc_history/<int:id>/', views.AdminDocHistory.as_view(), name="api_doc_history"),  # 文档历史记录接口
+    path('api/doc_history_detail/', views.AdminDocHistoryDetail.as_view(), name="api_doc_history_detail"),  # 文档历史记录详情接口
     path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文档模板管理
     path('setting/',views.admin_setting,name="sys_setting"), # 应用设置
     path('forget_pwd/',views.forget_pwd,name='forget_pwd'), # 忘记密码

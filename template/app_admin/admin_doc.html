@@ -128,7 +128,7 @@
 <!-- 单个文档操作 -->
 <script type="text/html" id="doc-bar">
     {% verbatim %}
-    <a href="/manage_doc_history/{{d.id}}/" class="pear-btn pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
+    <a href="/admin/doc_history_manage/{{d.id}}/" class="pear-btn pear-btn-sm"><i class="layui-icon layui-icon-log"></i></a>
     <!-- <a href="/modify_doc/{{d.id}}/" title="修改文档" class="layui-btn layui-btn-primary pear-btn-sm" target="_blank"><i class="layui-icon layui-icon-edit"></i></a> -->
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
@@ -148,7 +148,7 @@
         });
         let cols = [
             [
-            {type: 'checkbox',width:20},
+                {type: 'checkbox',width:20},
                 {title: '文档名称',field: 'name',align: 'left',templet:"#doc-name",minWidth:280},
                 {title: '状态',field: 'status',align: 'left',templet:"#doc-status",width:90},
                 {title: '上级',field: 'parent',align: 'left',},
@@ -157,7 +157,8 @@
                 {title: '展开下级',field: 'open_children',align: 'left',width:90, templet:"#open_children"},
                 {title: '文档作者',field: 'create_user',align: 'left',},
                 {title: '最后编辑',field: 'modify_time',align: 'left',templet:"#doc-modify-time"},
-                {title: '操作',toolbar: '#doc-bar',align: 'left',}            ]
+                {title: '操作',toolbar: '#doc-bar',align: 'left',}
+            ]
         ]
         // 渲染表格
         table.render({

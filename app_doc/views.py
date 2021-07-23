@@ -1492,7 +1492,7 @@ def diff_doc(request,doc_id,his_id):
             doc = Doc.objects.get(id=doc_id)  # 查询文档信息
             project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集信息
             pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  # 查询用户的协作文集信息
-            if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+            if (request.user == doc.create_user) or (pro_colla[0].role == 1) or (request.user.is_superuser):
                 history = DocHistory.objects.get(id=his_id)
                 history_list = DocHistory.objects.filter(doc=doc).order_by('-create_time')
                 if history.doc == doc:
@@ -1510,7 +1510,7 @@ def diff_doc(request,doc_id,his_id):
             doc = Doc.objects.get(id=doc_id)  # 查询文档信息
             project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集信息
             pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)  # 查询用户的协作文集信息
-            if (request.user == doc.create_user) or (pro_colla[0].role == 1):
+            if (request.user == doc.create_user) or (pro_colla[0].role == 1) or (request.user.is_superuser):
                 history = DocHistory.objects.get(id=his_id)
                 if history.doc == doc:
                     return JsonResponse({'status':True,'data':history.pre_content})

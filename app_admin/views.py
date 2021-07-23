@@ -689,6 +689,63 @@ def admin_doc(request):
         }
         return JsonResponse(resp_data)
 
+# 后台管理 - 文档管理 - 文档历史管理
+@superuser_only
+def admin_doc_history(request,id):
+    doc = Doc.objects.get(id=id)
+    return render(request,'app_admin/admin_doc_history.html',locals())
+
+
+# 文档历史接口 - 通过文档id
+class AdminDocHistory(APIView):
+    authentication_classes = [SessionAuthentication, AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    def get_object(self, id):
+        try:
+            return Doc.objects.get(id=id)
+        except ObjectDoesNotExist:
+            raise Http404
+
+    # 获取文档的历史记录
+    def get(self,request, id):
+        doc = self.get_object(id=id)
+        page_num = request.query_params.get('page', 1)
+        limit = request.query_params.get('limit', 10)
+
+        history_data = DocHistory.objects.filter(doc=doc).order_by('-create_time')
+        page = PageNumberPagination()  # 实例化一个分页器
+        page.page_size = limit
+        page_historys = page.paginate_queryset(history_data, request, view=self)  # 进行分页查询
+        serializer = DocHistorySerializer(page_historys, many=True)  # 对分页后的结果进行序列化处理
+        resp = {
+            'code': 0,
+            'data': serializer.data,
+            'count': history_data.count()
+        }
+
+        return Response(resp)
+
+    # 删除文档的历史记录
+    def delete(self,request,id):
+        pass
+
+
+# 文档历史详情接口 - 通过文档历史id
+class AdminDocHistoryDetail(APIView):
+    authentication_classes = [SessionAuthentication, AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    def delete(self,request):
+        try:
+            id = request.data.get('id','')
+            his = DocHistory.objects.filter(id=id).delete()
+            return Response({'code':0})
+        except:
+
+            return Response({'code':5,'data':_("系统异常")})
+
+
 
 # 后台管理 - 文档模板管理
 @superuser_only
