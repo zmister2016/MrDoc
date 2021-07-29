@@ -220,7 +220,8 @@
         </script>
         <!-- 标签输入 -->
         <script src="{% static '/tagsInput/tagsinput.js' %}?version={{mrdoc_version}}" type="text/javascript" charset="utf-8"></script>
-
+        <!-- 快捷键 -->
+        <script src="{% static 'shortcut/shortcut.js' %}?version={{mrdoc_version}}" type="text/javascript"></script>
         <!-- 加载编辑器 -->
         {% if editor_mode == 1 %}
             <!-- Editor.MD编辑器 -->

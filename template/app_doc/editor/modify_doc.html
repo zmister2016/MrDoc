@@ -93,9 +93,9 @@
         <div class="layui-row">
             <div class="doc-form-label" style="margin-bottom: 10px;">
                 {% if doc.status == 0 %}
-                <strong>*当前文档状态：<span style="text-decoration:underline">草稿</span></strong>
+                <strong>*当前文档状态：<span style="text-decoration:underline">草稿</span> <a href="{% url 'doc' doc.top_doc doc.id %}">查看</a></strong>
                 {% elif doc.status == 1 %}
-                <strong>*当前文档状态：<span style="text-decoration:underline">已发布</span></strong>
+                <strong>*当前文档状态：<span style="text-decoration:underline">已发布</span> <a href="{% url 'doc' doc.top_doc doc.id %}">查看</a></strong>
                 {% endif %}
             </div>
 
@@ -335,6 +335,10 @@
         $("#modify_doc_to_draft").click(function(){
             modifyDoc(0,false);
         })
+        // Ctrl + S 快捷保存
+        shortcut.add("Ctrl+S",function() {
+            modifyDoc();
+        });
 
         //选择文档模板
         $("#sel-doctemp").click(function(){
