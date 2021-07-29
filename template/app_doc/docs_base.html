@@ -71,6 +71,15 @@
                 <input type="text" name="kw" placeholder="{% trans '在文集内搜索文档' %}" value="" class="layui-input doc-search-input">
             </div>
         </form>
+        <!-- 左上角广告块 -->
+        <!-- 广告代码开始 -->
+        {% if debug %}
+        {% else %}
+            {% if ad_code_4 %}
+                <div class="ad-code" id="ad-code-4"></div>
+            {% endif %}
+        {% endif %}
+        <!-- 广告代码结束 -->
         <!-- 文集名称 -->
         <div class="project-title">
             {% if project.icon %}
@@ -359,10 +368,14 @@
 <div id="ad-3">
     {{ad_code_3|safe}}
 </div>
+<div id="ad-4">
+    {{ad_code_4|safe}}
+</div>
 <script>
     $("#ad-1").appendTo($("#ad-code-1"));
     $("#ad-2").appendTo($("#ad-code-2"));
     $("#ad-3").appendTo($("#ad-code-3"));
+    $("#ad-4").appendTo($("#ad-code-4"));
 </script>
 {% endif %}
 <!-- 广告代码结束 -->

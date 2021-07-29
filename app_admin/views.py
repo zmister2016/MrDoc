@@ -1035,6 +1035,7 @@ def admin_setting(request):
             ad_code = request.POST.get('ad_code',None) # 广告位1
             ad_code_2 = request.POST.get('ad_code_2',None) # 广告位2
             ad_code_3 = request.POST.get('ad_code_3', None)  # 广告位3
+            ad_code_4 = request.POST.get('ad_code_4', None)  # 广告位4
             enbale_email = request.POST.get("enable_email",None) # 启用邮箱
             img_scale = request.POST.get('img_scale',None) # 图片缩略
             enable_register_code = request.POST.get('enable_register_code',None) # 注册邀请码
@@ -1072,6 +1073,10 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name='ad_code_3',
                 defaults={'value': ad_code_3, 'types': 'basic'}
+            )
+            SysSetting.objects.update_or_create(
+                name='ad_code_4',
+                defaults={'value': ad_code_4, 'types': 'basic'}
             )
 
             # 更新备案号
