@@ -96,7 +96,7 @@
                     </div>
                 </div>
                 {% if close_register == 'on' %}
-                {% trans "本站暂不开放注册" %}
+                <a class="register-link">{% trans "本站暂不开放注册" %}</a>&nbsp;
                 {% else %}
                 <a href="{% url 'register' %}" class="register-link">{% trans "注册账号" %}</a>&nbsp;
                 {% endif %}
