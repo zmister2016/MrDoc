@@ -3873,7 +3873,7 @@
             // headingHTML    += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
             headingHTML    += "<a name=\"" + text.replace(/<[^>]*>\s?/g,'') + "\" class=\"reference-link\"></a>";
             headingHTML    += "<span class=\"header-link octicon octicon-link\"></span>";
-            headingHTML    += (hasLinkReg) ? this.atLink(this.mark(this.emoji(text))) : this.mark(this.emoji(text));
+            headingHTML    += (hasLinkReg) ? this.atLink(this.mark(this.emoji(linkText))) : this.mark(this.emoji(text));
             headingHTML    += "</h" + level + ">";
             // console.log(headingHTML)
             return headingHTML;
