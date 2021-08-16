@@ -222,13 +222,26 @@ def img_upload(files, dir_name, user, group_id=None):
     )
     return {"success": 1, "url": file_url,'message':_('上传图片成功')}
 
+# 解析image/png获取扩展名
+def getImageExtensionName(temps):
+    if len(temps) == 2:
+        #image/png
+        temps = temps[0].split('image/')
+        if len(temps) == 2:
+            ## 如果文件传了扩展名，就取扩展名的文件类型
+            if  temps[-1] != '':
+                return "." + temps[-1]
+    return ".png" 
 
 # base64编码图片上传
 def base_img_upload(files,dir_name, user):
-    files_str = files.split(';base64,')[-1] # 截取图片正文
+    temps = files.split(';base64,') # 截取图片正文
+    files_str = temps[-1] # 截取图片正文
+    extensionName = getImageExtensionName(temps)
+
     files_base = base64.b64decode(files_str) # 进行base64编码
     relative_path = upload_generation_dir(dir_name)
-    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').split('.')[0] + '.png' # 日期时间
+    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').replace('.', '_') + extensionName # 日期时间
     path_file = os.path.join(relative_path, file_name)
     path_file = settings.MEDIA_ROOT + path_file
     # print('文件路径：', path_file)

@@ -293,8 +293,9 @@ def upload_img(request):
     # {"success": 1, "url": "图片地址"}
     ##################
     token = request.GET.get('token', '')
-    base64_img = request.POST.get('data','')
+    #base64_img = request.POST.get('data','')
     try:
+        base64_img = json.loads(request.body.decode("ascii"))['data']
         # 验证Token
         token = UserToken.objects.get(token=token)
         # 上传图片
