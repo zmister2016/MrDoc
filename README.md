@@ -159,7 +159,7 @@ Thanks for the development based on the following projects：
 - Viewer.js
 - Sortable.js
 - Vditor
-- iceEditor
+- TinyMCE
 
 ## License
 

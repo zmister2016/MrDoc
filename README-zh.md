@@ -71,7 +71,7 @@
 
 ## 适用场景
 
-个人笔记、产品在线文档、团队内部手册、在线电子教程等私有化部署场景。
+个人云笔记、在线产品手册、团队内部知识库、在线电子教程等私有化部署场景。
 
 ## 功能特性
 
@@ -168,7 +168,7 @@ python manage.py runserver
 - Viewer.js
 - Sortable.js
 - Vditor
-- iceEditor
+- TinyMCE
 
 ## 协议
 
