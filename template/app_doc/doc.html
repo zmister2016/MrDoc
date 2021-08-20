@@ -171,8 +171,8 @@
 <!-- 下载选项卡模板 -->
 <div id="download_div" style="display: none;">
     <div class="layui-row" style="margin: 10px;">
-        <a class="" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
-            <i class="fa fa-download"></i> {% trans "下载Markdown文件" %}
+        <a class="layui-btn layui-btn-primary layui-btn-sm" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
+            {% trans "Markdown文件" %}
         </a>
     </div>
 </div>
