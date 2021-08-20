@@ -1,4 +1,4 @@
-<h1 align="center">觅道文档</h1>
+<h1 align="center">觅思文档</h1>
 
 <p align="center">个人和小型团队的云笔记、云文档、知识管理私有化部署方案</p>
 
@@ -50,7 +50,7 @@
 
 ## 打赏支持
 
-<p align="center"><a href="https://afdian.net/item?plan_id=0435840cbb6f11ebaeed52540025c377">￥48-觅道文档付费部署服务</a> | 前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
+<p align="center"><a href="https://afdian.net/item?plan_id=0435840cbb6f11ebaeed52540025c377">￥48-觅思文档付费部署服务</a> | 前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
 
 <p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
@@ -154,7 +154,7 @@ python manage.py runserver
 
 ## 依赖
 
-觅道文档基于以下项目进行开发，在此表示感谢：
+觅思文档基于以下项目进行开发，在此表示感谢：
 
 - Python
 - Django

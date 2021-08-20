@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta http-equiv="Cache-Control" content="max-age=7200" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>{% trans "用户登录" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</title>
+	<title>{% trans "用户登录" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -63,7 +63,7 @@
                 {% csrf_token %}
                 <div class="layui-form-item">
                     <img src="{% static 'mrdoc_logo_ridus.png' %}" style="width: 60px;height: 60px;margin-bottom: 10px;" />
-                    <h3><strong>{% trans "登录" %} - <a href="/">{% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档" %}{% endif %}</a></strong></h3>
+                    <h3><strong>{% trans "登录" %} - <a href="/">{% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</a></strong></h3>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
@@ -105,7 +105,7 @@
                 {% endif %}
                 <a href="{% url 'pro_list' %}" class="register-link">{% trans "返回首页" %}</a>
                 <hr>
-                <span style="font-size: 12px;color: #666;">觅道文档 - 私有云知识库部署方案</span>
+                <span style="font-size: 12px;color: #666;">觅思文档 - 私有云知识库部署方案</span>
             </form>
         </div>
     </div>

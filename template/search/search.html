@@ -11,7 +11,7 @@
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ query }} - {% trans "觅道搜索" %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
+    <title>{{ query }} - {% trans "觅思搜索" %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-search-result.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -167,7 +167,7 @@
 <!-- 搜索结果提示 -->
 {% if query != '' %}
     <div style="padding: 0 15px;margin-top: 10px;margin-bottom: 10px;color: #999;">
-        {% trans "觅道文档在" %}
+        {% trans "觅思文档在" %}
             {% if date_range == 'recent1' %}
             {% trans "近1天内" %}
             {% elif date_range == 'recent7' %}
