@@ -16,7 +16,7 @@
 <p align="center">
 <a href="https://mrdocapp.com">Home</a> | 
 <a href="http://mrdoc.zmister.com/">Example Site</a> |
-<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ Group</a>
+<a href="https://qm.qq.com/cgi-bin/qm/qr?k=LsgDSw8a6IlrzORBGGyRC6LrlIU_vYON&jump_from=webapi">QQ Group</a>
 
 </p>
 
@@ -137,7 +137,10 @@ Submit questions on the following pages:
 
 ### 2. Join the mrdoc communication group
 
-Join the mrdoc communication Tencent QQ group ，Group number is **735507293**
+Join the mrdoc communication Tencent QQ group ，Group number:
+ 
+ - **735507293**(Full)
+ - **849206042**
 
 ### 3. Contact author
 
