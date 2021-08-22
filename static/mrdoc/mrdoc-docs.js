@@ -412,11 +412,11 @@ function initDocRender(mode){
                 if (outlineElement[0].innerText.trim() !== '') {
                     outlineElement[0].style.display = 'block';
                     var toc_cnt = $(".markdown-toc-list ul").children().length;
-                    if(toc_cnt > 0){
+                    // if(toc_cnt > 0){
                         //console.log('显示文档目录')
-                        $(".tocMenu").show();
-                        initSidebar('.sidebar', '.doc-content', 2);
-                    }
+                        // $(".tocMenu").show();
+                        // initSidebar('.sidebar', '.doc-content', 2);
+                    // }
                 }
                 // 图片放大显示
                 var img_options = {
