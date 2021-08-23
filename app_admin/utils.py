@@ -4,11 +4,13 @@
 # #日期：2019/11/23
 # 博客地址：zmister.com
 
-import smtplib
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from email.mime.text import MIMEText
 from app_admin.models import SysSetting
+from loguru import logger
 import random
+import smtplib
 
 # 生成数字验证码
 def generate_vcode(n=6):
@@ -27,28 +29,31 @@ def send_email(to_email,vcode_str):
         username = SysSetting.objects.get(types='email', name='username').value
         pwd = SysSetting.objects.get(types='email', name='pwd').value
         ssl = SysSetting.objects.get(types='email',name='smtp_ssl').value
-        print(smtp_host,smtp_port,send_emailer,username,pwd)
+        # print(smtp_host,smtp_port,send_emailer,username,pwd)
 
         msg_from = send_emailer  # 发件人邮箱
         passwd = dectry(pwd)  # 发件人邮箱密码
         msg_to = to_email  # 收件人邮箱
-        if ssl:
-            s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
-        else:
-            s = smtplib.SMTP(smtp_host, int(smtp_port))
         subject = "MrDoc - 重置密码验证码"
         content = "你的验证码为：{}，验证码30分钟内有效！".format(vcode_str)
-
         msg = MIMEText(content, _subtype='html', _charset='utf-8')
         msg['Subject'] = subject
         msg['From'] = 'MrDoc助手[{}]'.format(msg_from)
         msg['To'] = msg_to
         try:
+            # print(smtp_host,smtp_port)
+            if ssl:
+                s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
+            else:
+                s = smtplib.SMTP(smtp_host, int(smtp_port))
             s.login(username, passwd)
-            s.sendmail(msg_from, msg_to, msg.as_string())
+            s.sendmail(from_addr=msg_from, to_addrs=msg_to, msg=msg.as_string())
             return True
         except smtplib.SMTPException as e:
-            print(repr(e))
+            logger.error("邮件发送异常:{}".format(repr(e)))
+            return False
+        except Exception as e:
+            logger.error("邮件发送异常:{}".format(repr(e)))
             return False
         finally:
             s.quit()

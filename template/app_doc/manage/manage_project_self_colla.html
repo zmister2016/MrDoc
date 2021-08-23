@@ -12,58 +12,89 @@
           </span>
       </div>
     </div>
-    {% if colla_pros.count != 0 %}
+
     <div class="layui-row">
-        <table class="layui-table">
-            <thead>
-                <tr>
-                    <th>{% trans "文集名称" %}</th>
-                    <th>{% trans "作者" %}</th>
-                    <th>{% trans "权限" %}</th>
-                    <th>{% trans "操作" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for colla in colla_pros %}
-                <tr>
-                    <td>{{ colla.project }}</td>
-                    <td>{{ colla.project.create_user }}</td>
-                    <td>
-                        {% if colla.role == 0 %}
-                        {% trans "初级 - 可新建文档、修改和删除自己创建的文档" %}
-                        {% else %}
-                        {% trans "高级 - 可新建文档、修改所有文档、删除自己创建的文档" %}
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'pro_index' colla.project.id %}" target="_blank" class="layui-btn layui-btn-normal layui-btn-xs">{% trans "查看" %}</a>
-                        {% if colla.role == 1 %}
-                        <a href="{% url 'manage_pro_doc_sort' colla.project.id %}" class="layui-btn layui-btn-normal layui-btn-xs">{% trans "排序" %}</a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="layui-row">
-        {% trans "你还没有成为任何文集的协作者" %}
-    </div>
-    {% endif %}
+        <table id="mycolla-table" lay-filter="mycolla-table"></table>
     </div>
 </div>
 {% endblock %}
 {% block custom_script %}
+<!-- 文档名称 -->
+<script type="text/html" id="colla-name">
+    {% verbatim %}
+        {{# if (d.type == 'doc'){ }}
+        文档
+        {{# }else{ }}
+        文集
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 协作权限 -->
+<script type="text/html" id="colla-role">
+    {% verbatim %}
+        {{# if (d.role == 0){ }}
+        <span>初级权限</span><i class="layui-icon layui-icon-about" title="可新建文档，修改、删除自己创建的文档"></i>
+        {{# }else if(d.role == 1){ }}
+        <span>高级权限</span><i class="layui-icon layui-icon-about" title="可操作所有文档"></i>
+        {{# } }}
+    {% endverbatim %}
+</script>
+
+<!-- 创建时间 -->
+<script type="text/html" id="create-time">
+    {% verbatim %}
+    {{layui.util.toDateString(d.create_time,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 操作栏 -->
+<script type="text/html" id="colla-bar">
+    {% verbatim %}
+        {{# if (d.type == 'doc'){ }}
+        <a class="pear-btn pear-btn-primary pear-btn-sm" href="/modify_doc/{{d.project_id}}/" target="_blank"><i class="layui-icon layui-icon-edit"></i></button>
+        {{# }else{ }}
+        <a class="pear-btn pear-btn-primary pear-btn-sm" href="/create_doc/?pid={{d.project_id}}" target="_blank"><i class="layui-icon layui-icon-add-1"></i></button>
+        {{# } }}
+    {% endverbatim %}
+</script>
+
 <script>
-    layui.use(['table','jquery','form','layer','element'], function() {
+    layui.use(['table','jquery','form','layer','element','treetable'], function() {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let layer = layui.layer;
         let element = layui.element;
+        let treetable = layui.treetable;
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            headers: {"X-CSRFToken":'{{ csrf_token }}'},
+        });
+        let cols =
+        // 渲染表格
+        treetable.render({
+            treeColIndex: 0,
+            treeSpid: 0,
+            treeIdName: 'project_id',
+            treePidName: 'top_doc',
+            skin:'line',
+            method:'get',
+            treeDefaultClose: true,
+            elem: '#mycolla-table',
+            url: "{% url 'my_colla_list' %}",
+            page: true,
+            cols: [
+            [
+                // {type: 'checkbox',width:20},
+                {title: '{% trans "名称" %}',field: 'project_name',align: 'left',minWidth:200},
+                {title: '类型',field: 'type',align: 'left',templet:"#colla-name"},
+                {title: '权限',field: 'role',align: 'left',templet:"#colla-role"},
+                {title: '创建人',field: 'username',align: 'left'},
+                {title: '{% trans "创建时间" %}',field: 'create_time',align: 'left',templet:"#create-time"},
+                {title: '{% trans "操作" %}',toolbar: '#colla-bar',align: 'left',}
+            ]
+        ],
         });
     })
 </script>

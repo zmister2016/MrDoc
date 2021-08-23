@@ -52,7 +52,7 @@
                   <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">站点描述</label>
                     <div class="layui-input-block">
-                      <input name="site_desc" placeholder="请用简短的文字描述你的MrDoc站点" class="layui-input" value="{% if site_desc != None %}{{site_desc}}{% endif %}"></input>
+                      <input name="site_desc" placeholder="请用简短的文字描述你的觅思文档站点" class="layui-input" value="{% if site_desc != None %}{{site_desc}}{% endif %}"></input>
                     </div>
                   </div>
                   <!-- 备案号 -->
@@ -101,6 +101,15 @@
                     </div>
                     <div class="layui-form-mid layui-word-aux">开启此选项，新用户注册将需要填写注册码</div>
                   </div>
+                  <!-- 登录验证码开关 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">登录验证码</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="enable_login_check_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_login_check_code %}checked{% endif %}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项，登录将需要填写验证码</div>
+                  </div>
+                  
                   <!-- 文集导出开关 -->
                    <div class="layui-form-item">
                     <label class="layui-form-label">文集下载</label>
@@ -124,6 +133,15 @@
                       <input type="checkbox" name="img_scale" lay-skin="switch" lay-text="开启|关闭"  {% if img_scale %}checked{% endif %}>
                     </div>
                     <div class="layui-form-mid layui-word-aux">开启后文档中的图片将显示为最大宽度350px的缩略图</div>
+                  </div>
+                  <hr>
+                  <!-- 长代码展开 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">长代码展开</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="long_code" lay-skin="switch" lay-text="开启|关闭"  {% if long_code %}checked{% endif %}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">文档页面代码块默认最高500px，超出将滚动显示，开启后代码块将按原高度显示。</div>
                   </div>
                   <hr>
 
@@ -153,10 +171,16 @@
                       <textarea name="ad_code_3" placeholder="此广告位位于文档左侧目录栏下方，可以包含<script>标签" class="layui-textarea">{{ad_code_3}}</textarea>
                     </div>
                   </div>
+                 <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">广告位4</label>
+                    <div class="layui-input-block">
+                      <textarea name="ad_code_4" placeholder="此广告位位于文档左侧目录栏上方，可以包含<script>标签" class="layui-textarea">{{ad_code_4}}</textarea>
+                    </div>
+                  </div>
 
                   <div class="layui-form-item">
                     <div class="layui-input-block">
-                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="formDemo">保存</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存</button>
                     </div>
                   </div>
                 </form>
@@ -199,7 +223,7 @@
                     <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">SMTP 密码</label>
                     <div class="layui-input-block">
-                      <input type="password" name="smtp_pwd" class="layui-input" required value="{{email_pwd.value}}">
+                      <input type="password" name="smtp_pwd" class="layui-input" required value="{{email_dec_pwd}}">
                     </div>
                   </div>
 
@@ -212,7 +236,7 @@
 
                   <div class="layui-form-item">
                     <div class="layui-input-block">
-                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="formDemo">保存邮箱设置</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存邮箱设置</button>
                     </div>
                   </div>
                 </form>
@@ -266,7 +290,7 @@
     
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="formDemo">保存文档配置</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存文档配置</button>
                     </div>
                 </div>
             </form>
@@ -280,11 +304,16 @@
 {% endblock %}
 {% block custom_script %}
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
+<!-- <script src="{% static 'layui/layui.js' %}"></script> -->
+<script src="{% static '/tagsInput/tagsinput.js' %}?version={{mrdoc_version}}" type="text/javascript" charset="utf-8"></script>
 <script>
   $.ajaxSetup({
       data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
   });
+  layui.use(['jquery','form','element'],function(){
+    var $ = layui.jquery,
+        form = layui.form,
+        element = layui.element;
+  })
 </script>
 {% endblock %}

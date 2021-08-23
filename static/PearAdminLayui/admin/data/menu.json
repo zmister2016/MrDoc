@@ -45,7 +45,8 @@
 			"title": "基础组件",
 			"icon": "layui-icon layui-icon-console",
 			"type": 0,
-			"children": [{
+			"children": [
+			{
 				"id": 2011,
 				"title": "功能按钮",
 				"icon": "layui-icon layui-icon-face-smile",

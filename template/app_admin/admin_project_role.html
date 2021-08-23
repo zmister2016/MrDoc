@@ -3,7 +3,7 @@
 {% load i18n %}
 {% block title %}文集权限管理{% endblock %}
 {% block custom_element %}
-<link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
+<link href="{% static 'tagsInput/tagsinput.css' %}?version={{mrdoc_version}}" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block content %}
 <div class="layui-card">
@@ -82,8 +82,8 @@
 {% endblock %}
 {% block custom_script %}
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
-<script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/tagsInput/tagsinput.js' %}?version={{mrdoc_version}}" type="text/javascript" charset="utf-8"></script>
 <script>
     $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },

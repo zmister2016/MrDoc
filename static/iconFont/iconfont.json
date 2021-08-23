@@ -6,6 +6,27 @@
   "description": "用于觅道文档的文集文档图标",
   "glyphs": [
     {
+      "icon_id": "1099873",
+      "name": "注册",
+      "font_class": "zhuce",
+      "unicode": "e683",
+      "unicode_decimal": 59011
+    },
+    {
+      "icon_id": "4320335",
+      "name": "登录",
+      "font_class": "denglu",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "17162009",
+      "name": "外链",
+      "font_class": "wailian",
+      "unicode": "e7c2",
+      "unicode_decimal": 59330
+    },
+    {
       "icon_id": "1940382",
       "name": "置顶",
       "font_class": "totop",

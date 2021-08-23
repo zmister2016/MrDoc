@@ -23,6 +23,7 @@ urlpatterns = [
     path('manage_project_doc_sort/',views_import.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
     path('manage_project_transfer/<int:pro_id>/',views.manage_project_transfer,name='manage_pro_transfer'), # 文集转让
     path('manage_pro_doc_sort/<int:pro_id>/',views.manage_project_doc_sort,name='manage_pro_doc_sort'), # 文集排序
+    path('api/my_colla_list/', views.MyCollaList.as_view(), name="my_colla_list"),  # 我的协作文集列表
     #################文档相关
     path('project-<int:pro_id>/doc-<int:doc_id>/', views.doc, name='doc'),  # 文档浏览页
     path('create_doc/', views.create_doc, name="create_doc"),  # 新建文档
@@ -67,4 +68,5 @@ urlpatterns = [
     path('my_collect/',views.my_collect,name="my_collect"), # 我的收藏
     path('manage_collect/',views.manage_collect,name="manage_collect"), # 收藏管理
     path('get_version/',views.get_version,name="get_version"), # 获取当前版本
+    path('api/usergroups/userlist', views.UserGroupUserList.as_view(), name="api_usergroups_userlist"),  # 用户分组的用户列表接口
 ]

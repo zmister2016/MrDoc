@@ -22,7 +22,7 @@
         <div class="layui-card-header" style="margin-bottom: 10px;">
             <div class="layui-row">
                 <span style="font-size:18px;">{% trans "文集：" %}{{pro.name}}</span>
-                <button class="layui-btn layui-btn-normal layui-btn-sm" style="float: right;" id="save-sort-btn">{% trans "保存排序" %}</button>
+                <button class="pear-btn pear-btn-primary pear-btn-sm" style="float: right;" id="save-sort-btn">{% trans "保存排序" %}</button>
             </div>
         </div>
 
@@ -30,17 +30,17 @@
             <div id="nested" class="row">
                 <ul id="nestedDemo" class="list-group col nested-sortable">
                     {% for docs in doc_list %}
-                    <li data-sortable-id="{{docs.id}}" class="list-group-item">{{docs.title}}
+                    <li data-sortable-id="{{docs.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{docs.title}}
                         {% if docs.children %}
                         <i class="layui-icon layui-icon-down switch-toc"></i>
                         <ul class="list-group nested-sortable">
                             {% for node in docs.children %}
-                            <li data-sortable-id="{{node.id}}" class="list-group-item">{{node.title}}
+                            <li data-sortable-id="{{node.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{node.title}}
                                 {% if node.children %}
                                 <i class="layui-icon layui-icon-down switch-toc"></i>
                                 <ul class="list-group nested-sortable">
                                     {% for doc in node.children %}
-                                    <li data-sortable-id="{{doc.id}}" class="list-group-item">{{doc.title}}
+                                    <li data-sortable-id="{{doc.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{doc.title}}
                                         <ul class="list-group nested-sortable"></ul>
                                     </li>
                                     {% endfor %}
@@ -135,7 +135,7 @@
     }
 </style>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}"></script>
 <!-- 文档拖拽排序 -->
 <script src="{% static 'sortablejs/Sortable.js' %}"></script>
 <script>
@@ -211,7 +211,7 @@
             if(r.status){
                 layer.closeAll('loading')
                 layer.msg("完成文集排序",function(){
-                    layer.close(index)
+                    layer.close()
                 })
                 
             }else{

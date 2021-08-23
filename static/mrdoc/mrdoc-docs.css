@@ -134,11 +134,12 @@ ul#doc-tree{
 .project-toc-right{
     float: right;
     position: absolute;
-    right: 90px;
+    right: 0px;
     z-index: 100;
     background-color: white;
     color: #bfbfbf;
     padding-left: 40px;
+    padding-right: 90px;
     font-family: Consolas,Menlo,Courier,monospace;
 }
 .project-toc-left a{
@@ -153,10 +154,22 @@ ul#doc-tree{
     /* font-weight: 700; */
     font-family: Consolas,Menlo,Courier,monospace;
 }
+/* 为外部链接添加图标指示 */
+.external::after {
+  content: '\e7c2';
+  font-family: 'iconfont';
+}
 @media screen and (max-width:768px){
     .project-toc-left{
         border-top:1px dashed #d8d8d8;
         width: 0;
         padding-top: 4px;
     }
+}
+/* 覆盖vditor文档目录样式 */
+.vditor-outline{
+    width: 200px;
+}
+.vditor-outline ul{
+    padding-left: 0px;
 }

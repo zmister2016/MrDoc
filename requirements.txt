@@ -1,8 +1,7 @@
-django==2.2.13
+django==2.2.*
 beautifulsoup4==4.8.2
 lxml
 pillow==7.1.0
-pyppeteer==0.0.25
 loguru==0.4.1
 djangorestframework==3.9.1
 requests==2.24.0
@@ -13,3 +12,6 @@ Markdown==3.3.3
 jieba==0.42.1
 mammoth==1.4.13
 markdownify==0.6.0
+selenium==3.141.0
+webdriver_manager==3.3.0
+PyYAML==5.4.1

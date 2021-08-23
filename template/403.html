@@ -4,26 +4,75 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>{% trans "拒绝访问" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档MrDoc" %}{% endif %}</title>
+    <title>{% trans "无权访问" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+    <style>
+        .content {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            text-align: center;
+        }
+        .content>img {
+            height: 300px;
+            max-width: 370px;
+            margin-right: 180px;
+        }
+        .content-r {
+            vertical-align: top;
+        }
+        .content>* {
+            display: inline-block;
+        }
+        .content-r>h1 {
+            font-size: 72px;
+            color: #434e59;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        .content-r>p {
+            font-size: 20px;
+            color: rgba(0, 0, 0, .45);
+            margin-bottom: 16px;
+        }
+        .btn {
+            display: inline-block;
+            line-height: 38px;
+            white-space: nowrap;
+            cursor: pointer;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.1s;
+            font-weight: 500;
+            padding: 0 18px;
+            height: 38px;
+            font-size: 14px;
+            background-color: white;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+        }
+    </style>
 </head>
 <body class="layui-container">
 <!-- 页头 -->
 {% include 'app_doc/head_base.html' %}
 <!-- 页头结束 -->
 
-<div class="layui-main">
-    <div style="text-align: center;margin-top: 40px;">
-        <h1>
-            <strong>{% trans "你无权访问当前页面……" %}</strong>
-        </h1>
-        <p><a href="{% url 'pro_list' %}" >{% trans "返回首页" %}</a></p>
+<div class="content">
+    <img src="{% static 'PearAdminLayui/admin/images/403.svg' %}" alt="">
+    <div class="content-r">
+        <h1>403</h1>
+        <p>抱歉，你无权访问此页面</p>
+        <a class="btn" href="/">返回首页</a>
     </div>
 </div>
 
 <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}"></script>
 </body>
 </html>

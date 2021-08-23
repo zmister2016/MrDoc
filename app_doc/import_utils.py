@@ -5,17 +5,20 @@
 # 博客地址：zmister.com
 # 文集导入相关方法
 
-import shutil
-import os
-import time
-import re
+from django.utils.translation import gettext_lazy as _
 from app_doc.models import Doc,Project,Image
 from app_doc.util_upload_img import upload_generation_dir
 from django.db import transaction
 from django.conf import settings
 from loguru import logger
-import mammoth
 from markdownify import markdownify
+import mammoth
+import shutil
+import os
+import time
+import re
+import yaml
+
 
 # 导入Zip文集
 class ImportZipProject():
@@ -52,36 +55,99 @@ class ImportZipProject():
                 # print(root, new_file)
                 os.rename(os.path.join(root, file), os.path.join(root, new_file))
 
+        # 读取yaml文件
+        try:
+            with open(os.path.join(self.temp_dir ,'mrdoc.yaml'),'r',encoding='utf-8') as yaml_file:
+                yaml_str = yaml.load(yaml_file.read())
+                project_name = yaml_str['project_name'] \
+                    if 'project_name' in yaml_str.keys() else zip_file_path[:-4].split('/')[-1]
+                project_desc = yaml_str['project_desc'] if 'project_desc' in yaml_str.keys() else ''
+                project_role = yaml_str['project_role'] if 'project_role' in yaml_str.keys() else 1
+                editor_mode = yaml_str['editor_mode'] if 'editor_mode' in yaml_str.keys() else 1
+                project_toc = yaml_str['toc']
+                toc_item_list = []
+                for toc in project_toc:
+                    # print(toc)
+                    item = {
+                        'name': toc['name'],
+                        'file': toc['file'],
+                        'parent': 0,
+                    }
+                    toc_item_list.append(item)
+                    if 'children' in toc.keys():
+                        for b in toc['children']:
+                            item = {
+                                'name': b['name'],
+                                'file': b['file'],
+                                'parent': toc['name']
+                            }
+                            toc_item_list.append(item)
+                            if 'children' in b.keys():
+                                for c in b['children']:
+                                    item = {
+                                        'name': c['name'],
+                                        'file': c['file'],
+                                        'parent': b['name']
+                                    }
+                                    toc_item_list.append(item)
+
+
+        except:
+            logger.error(_("未发现yaml文件"))
+            project_name = zip_file_path[:-4].split('/')[-1]
+            project_desc = ''
+            project_role = 1
+            editor_mode = 1
+            project_toc = False
+
         # 开启事务
         with transaction.atomic():
             save_id = transaction.savepoint()
             try:
                 # 新建文集
                 project = Project.objects.create(
-                    name=zip_file_path[:-4].split('/')[-1],
-                    intro='',
-                    role=1,
+                    name=project_name,
+                    intro=project_desc,
+                    role=project_role,
                     create_user=create_user
                 )
-                # 遍历临时文件夹中的所有文件和文件夹
-                for f in os.listdir(self.temp_dir):
-                    # 获取 .md 文件
-                    if f.endswith('.md'):
-                        # print(f)
-                        # 读取 .md 文件文本内容
-                        with open(os.path.join(self.temp_dir,f),'r',encoding='utf-8') as md_file:
+                if project_toc is False:
+                    # 遍历临时文件夹中的所有文件和文件夹
+                    for f in os.listdir(self.temp_dir):
+                        # 获取 .md 文件
+                        if f.endswith('.md'):
+                            # print(f)
+                            # 读取 .md 文件文本内容
+                            with open(os.path.join(self.temp_dir,f),'r',encoding='utf-8') as md_file:
+                                md_content = md_file.read()
+                                md_content = self.operat_md_media(md_content,create_user)
+                                # 新建文档
+                                doc = Doc.objects.create(
+                                    name = f[:-3],
+                                    pre_content = md_content,
+                                    top_doc = project.id,
+                                    status = 0,
+                                    editor_mode = editor_mode,
+                                    create_user = create_user
+                                )
+                else:
+                    for i in toc_item_list:
+                        with open(os.path.join(self.temp_dir,i['file']),'r',encoding='utf-8') as md_file:
                             md_content = md_file.read()
-                            md_content = self.operat_md_media(md_content,create_user)
+                            md_content = self.operat_md_media(md_content, create_user)
                             # 新建文档
                             doc = Doc.objects.create(
-                                name = f[:-3],
-                                pre_content = md_content,
-                                top_doc = project.id,
-                                status = 0,
-                                create_user = create_user
+                                name=i['name'],
+                                pre_content=md_content,
+                                top_doc=project.id,
+                                parent_doc = (Doc.objects.get(top_doc=project.id,name=i['parent'])).id \
+                                    if i['parent'] != 0 else 0,
+                                status=0,
+                                editor_mode=editor_mode,
+                                create_user=create_user
                             )
             except:
-                logger.exception("解析导入文件异常")
+                logger.exception(_("解析导入文件异常"))
                 # 回滚事务
                 transaction.savepoint_rollback(save_id)
 
@@ -91,9 +157,8 @@ class ImportZipProject():
             os.remove(zip_file_path)
             return project.id
         except:
-            logger.exception("删除临时文件异常")
+            logger.exception(_("删除临时文件异常"))
             return None
-
 
     # 处理MD内容中的静态文件
     def operat_md_media(self,md_content,create_user):
@@ -106,16 +171,18 @@ class ImportZipProject():
             for media in media_list:
                 media_filename = media.split("(")[-1].split(")")[0] # 媒体文件的文件名
                 # 存在本地图片路径
-                if media_filename.startswith("./"):
+                if media_filename.startswith("./") or media_filename.startswith("/"):
                     # 获取文件后缀
                     file_suffix = media_filename.split('.')[-1]
                     if file_suffix.lower() not in settings.ALLOWED_IMG:
                         continue
                     # 判断本地图片路径是否存在
-                    temp_media_file_path = os.path.join(self.temp_dir,media_filename[2:])
+                    if media_filename.startswith("./"):
+                        temp_media_file_path = os.path.join(self.temp_dir,media_filename[2:])
+                    else :
+                        temp_media_file_path = os.path.join(self.temp_dir, media_filename[1:])
                     if os.path.exists(temp_media_file_path):
                         # 如果存在，上传本地图片
-                        print(media_filename)
                         dir_name = upload_generation_dir() # 获取当月文件夹名称
 
                         # 复制文件到媒体文件夹
@@ -134,7 +201,7 @@ class ImportZipProject():
                             user=create_user,
                             file_path=new_media_filename,
                             file_name=str(time.time())+'.'+file_suffix,
-                            remark='本地上传',
+                            remark=_('本地上传'),
                         )
                         md_content = md_content.replace(media_filename, new_media_filename)
                 else:
@@ -171,7 +238,7 @@ class ImportDocxDoc():
                 user=self.create_user,
                 file_path=new_media_filename,
                 file_name=file_time_name + '.' + file_suffix,
-                remark='本地上传',
+                remark=_('本地上传'),
             )
             with open(new_media_file_path, 'wb') as f:
                 f.write(image_bytes.read())
@@ -199,7 +266,7 @@ class ImportDocxDoc():
             return {'status':True,'data':result}
         except:
             os.remove(self.docx_file_path)
-            return {'status':False,'data':'读取异常'}
+            return {'status':False,'data':_('读取异常')}
 
 if __name__ == '__main__':
     imp = ImportZipProject()

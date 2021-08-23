@@ -6,11 +6,10 @@
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-row">
-            <button class="layui-btn layui-btn-normal layui-btn-xs" onclick="restoreAll()">
+            <button class="pear-btn pear-btn-primary pear-btn-sm" onclick="restoreAll()">
                 <i class="layui-icon layui-icon-refresh"></i>{% trans "还原所有" %}</button>
-            <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="emptyDoc()">
+            <button class="pear-btn pear-btn-danger pear-btn-sm" onclick="emptyDoc()">
                 <i class="layui-icon layui-icon-delete" ></i>{% trans "清空回收站" %}</button>
-
         </div>
     </div>
 </div>
@@ -40,10 +39,10 @@
                 <td>{{ doc.create_time }}</td>
                 <td>{{ doc.modify_time }}</td>
                 <td>
-                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="restoreDoc('{{doc.id}}')">
+                    <button class="pear-btn pear-btn-xs pear-btn-primary" onclick="restoreDoc('{{doc.id}}')">
                         <i class="layui-icon layui-icon-refresh"></i>{% trans "还原" %}
                     </button>
-                    <button onclick="delDoc('{{doc.id}}');" class="layui-btn layui-btn-xs layui-btn-warm">
+                    <button onclick="delDoc('{{doc.id}}');" class="pear-btn pear-btn-xs pear-btn-danger">
                         <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
                     </button>
                 </td>

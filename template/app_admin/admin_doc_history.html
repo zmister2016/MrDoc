@@ -1,0 +1,122 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "文档历史版本管理" %}{% endblock %}
+{% block content %}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-row" style="padding-left:15px;">
+            <span class="layui-breadcrumb" lay-separator=">">
+            <a href="{% url 'doc_manage' %}">{% trans "文档管理" %}</a>
+            <a><cite>{% trans "历史版本管理" %}</cite></a>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header">
+        <div class="layui-row">
+            <span style="font-size:18px;">{% trans "文档：" %}{{doc.name}} {% trans "的历史版本管理" %}</span>
+        </div>
+        </div>
+        <div class="layui-row" >
+            <table class="layui-table" id="history-table" lay-filter="history-table"></table>
+        </div>
+
+    </div>
+</div>
+
+<!-- 创建时间 -->
+<script type="text/html" id="create-time">
+    {% verbatim %}
+    {{layui.util.toDateString(d.create_time,  "yyyy-MM-dd HH:mm:ss")}}
+    {% endverbatim %}
+</script>
+
+<!-- 单个历史记录操作 -->
+<script type="text/html" id="history-bar">
+    {% verbatim %}
+    <a href="/diff_doc/{{d.doc}}-{{d.id}}/" title="对比查看" class="pear-btn pear-btn-normal pear-btn-sm" target="_blank"><i class="pear-icon pear-icon-browse"></i></a>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" title="删除记录" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    {% endverbatim %}
+</script>
+
+{% endblock %}
+{% block custom_script %}
+<script>
+    layui.use(['table', 'form', 'jquery','layer','element'], function() {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        var layer = layui.layer;
+        let element = layui.element;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            headers: {"X-CSRFToken":'{{ csrf_token }}'},
+        });
+        // 表格列名
+        let cols = [
+            [
+                {type: 'checkbox',width:20},
+                {title: '创建时间',field: 'create_time',align: 'left',templet:"#create-time",minWidth:280},
+                {title: '创建人',field: 'username',align: 'left',width:90},
+                {title: '操作',toolbar: '#history-bar',align: 'left',}            
+            ]
+        ]
+        // 渲染表格
+        table.render({
+            elem: '#history-table',
+            method:'get',
+            url: "/admin/api/doc_history/" + '{{doc.id}}' + '/',
+            page: true,
+            cols: cols,
+            skin: 'line',
+        });
+        // 侦听历史记录操作
+        table.on("tool(history-table)",function(obj){
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                delDocHis(obj.data.id)
+            }
+        });
+        delDocHis = function(history_id){
+            layer.open({
+                type:1,
+                title:'删除历史记录',
+                area:'300px;',
+                id:'delPro',//配置ID
+                content:'<div style="margin-left:10px;">警告：操作将删除此文档历史版本记录！</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    layer.load(1);
+                    data = {
+                        'history_id':history_id,
+                    }
+                    $.ajax({
+                        url:'/admin/api/doc_history_detail/',
+                        type:'delete',
+                        data:{'id':history_id},
+                        success:function(r){
+                            layer.closeAll()
+                            if(r.code == 0){
+                                layer.msg("删除成功",function(){
+                                    table.reload("history-table")
+                                })
+                            }else{
+                                layer.msg("删除失败")
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll()
+                            layer.msg("删除异常")
+                        }
+                    })
+                },
+            });
+        };
+    })
+</script>
+{% endblock %}

@@ -13,14 +13,14 @@
         <div class="layui-row">
             <form action="" method="get">
                 <div class="layui-form-item">
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" id="upload_img">
+                    <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="upload_img">
                         <i class="layui-icon layui-icon-upload"></i>{% trans "上传图片" %}</button>
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" type="button" onclick="createImgGroup()">
+                    <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="createImgGroup()">
                         <i class="layui-icon layui-icon-addition"></i>{% trans "新建分组" %}</button>
-                    <a class="layui-btn layui-btn-normal layui-btn-sm" href="{% url 'manage_img_group' %}">{% trans "分组管理" %}</a>
-                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="select-all-img" type="button">全选</button>
-                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="batch-del-img" type="button">批量删除</button>
-                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="batch-move-img" type="button">批量移动</button>
+                    <a class="pear-btn pear-btn-primary pear-btn-sm" href="{% url 'manage_img_group' %}">{% trans "分组管理" %}</a>
+                    <button class="pear-btn pear-btn-sm" id="select-all-img" type="button">全选</button>
+                    <button class="pear-btn pear-btn-sm" id="batch-del-img" type="button">批量删除</button>
+                    <button class="pear-btn pear-btn-sm" id="batch-move-img" type="button">批量移动</button>
                 </div>
             </form>
 
@@ -235,7 +235,7 @@
                 layer.closeAll('loading'); //关闭loading
                 layer.msg("系统异常，请稍后再试！")
             },
-            accept: 'images', //允许上传的文件类型
+            accept: 'file', //允许上传的文件类型
             acceptMime:'image/*',
             field:'manage_upload',
 

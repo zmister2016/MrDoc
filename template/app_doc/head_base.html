@@ -5,7 +5,7 @@
         <!-- LOGO -->
         <div class="">
             <a class="logo" href="{% url 'pro_list' %}">
-                <img src="{% static 'logo.jpg' %}" style="height: 32px;width: auto;">
+                <img src="{% static 'logo.svg' %}" style="height: 32px;width: auto;">
             </a>
         </div>
         <!-- 搜索框 -->
@@ -34,9 +34,15 @@
                     </a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="{% url 'create_doc' %}" target="_blank">
+                            <a href="{% url 'create_doc' %}">
                                 <img src="{% static 'icon_img/create-doc-icon.svg' %}" height="14px" width="14px"></img>
                                 <span class="layui-hide-xs">{% trans "新建文档" %}</span>
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="{% url 'create_doc' %}?eid=4">
+                                <img src="{% static 'icon_img/create-table-icon.svg' %}" height="14px" width="14px"></img>
+                                <span class="layui-hide-xs">{% trans "新建表格" %}</span>
                             </a>
                         </dd>
                         {% if request.user.is_authenticated %}
@@ -102,10 +108,25 @@
                 </a>
                 <dl class="layui-nav-child">
                     {% if close_register == 'on' %}
-                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
+                    <dd>
+                        <a href="{% url 'login' %}">
+                            <i class="iconfont mrdoc-icon-denglu"></i>
+                            {% trans "登录" %}
+                        </a>
+                    </dd>
                     {% else %}
-                    <dd><a href="{% url 'register' %}">{% trans "注册" %}</a></dd>
-                    <dd><a href="{% url 'login' %}">{% trans "登录" %}</a></dd>
+                    <dd>
+                        <a href="{% url 'register' %}">
+                            <i class="iconfont mrdoc-icon-zhuce"></i>
+                            {% trans "注册" %}
+                        </a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'login' %}">
+                            <i class="iconfont mrdoc-icon-denglu"></i>
+                            {% trans "登录" %}
+                        </a>
+                    </dd>
                     {% endif %}
                 </dl>
             </li>

@@ -4,7 +4,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>{% trans "页面未找到" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档MrDoc" %}{% endif %}</title>
+    <title>{% trans "页面未找到" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -21,6 +21,6 @@
 </div>
 
 <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}"></script>
 </body>
 </html>

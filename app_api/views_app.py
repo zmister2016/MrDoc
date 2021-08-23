@@ -10,10 +10,12 @@ from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 from rest_framework.views import APIView
 from app_api.models import AppUserToken
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.authentication import SessionAuthentication
 from app_doc.models import *
 from app_api.serializers_app import *
 from app_api.auth_app import AppAuth,AppMustAuth
@@ -25,19 +27,20 @@ import os
 
 '''
 响应：
-	code：状态码
-	data：数据
-	
+    code：状态码
+    data：数据
+
 状态码：
-	0：成功
-	1：资源未找到
-	2：无权访问
-	3：需要访问码
-	4：系统异常
-	5：参数不正确
-	6：需要登录
+    0：成功
+    1：资源未找到
+    2：无权访问
+    3：需要访问码
+    4：系统异常
+    5：参数不正确
+    6：需要登录
 
 '''
+
 
 # 生成Token的函数
 def get_token_code(username):
@@ -86,18 +89,18 @@ class LoginView(APIView):
                 res['username'] = username
             else:
                 res['code'] = 2
-                res["error"] = '账号被禁用'
+                res["error"] = _('账号被禁用')
 
         else:
             # 登陆失败
             res["code"] = 1
-            res["error"] = "用户名或密码错误"
+            res["error"] = _("用户名或密码错误")
         return Response(res)
 
 
 # 文集视图
 class ProjectView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
     # 获取文集
     def get(self,request):
         pro_id = request.query_params.get('id',None)
@@ -337,16 +340,16 @@ class ProjectView(APIView):
                     return Response(resp)
                 else:
                     resp['code'] = 5
-                    resp['data'] = '参数不正确'
+                    resp['data'] = _('参数不正确')
                     return Response(resp)
             except Exception as e:
-                logger.exception("创建文集出错")
+                logger.exception(_("创建文集出错"))
                 resp['code'] = 4
-                resp['data'] = '系统异常请稍后再试'
+                resp['data'] = _('系统异常请稍后再试')
                 return Response(resp)
         else:
             resp['code'] = 6
-            resp['data'] = '请登录后操作'
+            resp['data'] = _('请登录后操作')
             return Response(resp)
 
     # 修改文集
@@ -372,14 +375,14 @@ class ProjectView(APIView):
                     # return Response(resp)
                 else:
                     resp['code'] = 2
-                    resp['data'] = '非法请求'
+                    resp['data'] = _('非法请求')
                     # return Response(resp)
             except ObjectDoesNotExist:
                 resp['code'] = 1
-                resp['data'] = '资源未找到'
+                resp['data'] = _('资源未找到')
                 # return Response(resp)
             except Exception as e:
-                logger.exception("修改文集出错")
+                logger.exception(_("修改文集出错"))
                 resp['code'] = 4
                 # return Response(resp)
         else:
@@ -409,14 +412,14 @@ class ProjectView(APIView):
                         # return Response(resp)
                 else:
                     resp['code'] = 5
-                    resp['data'] = '参数错误'
+                    resp['data'] = _('参数错误')
                     # return Response(resp)
             except ObjectDoesNotExist:
                 resp['code'] = 1
-                resp['data'] = '资源未找到'
+                resp['data'] = _('资源未找到')
                 # return Response(resp)
             except Exception as e:
-                logger.exception("API文集删除异常")
+                logger.exception(_("API文集删除异常"))
                 resp['code'] = 4
                 # return Response(resp)
         else:
@@ -427,7 +430,7 @@ class ProjectView(APIView):
 
 # 文档视图
 class DocView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppAuth,SessionAuthentication)
 
     # 获取文档
     def get(self,request):
@@ -481,7 +484,7 @@ class DocView(APIView):
                     resp = {'code':0,'data':serializer.data}
                     return Response(resp)
                 elif doc_format == 'html':
-                    logger.info("返回HTML")
+                    logger.info(_("返回HTML"))
                     # return Response({'status':'html'})
                     return render(request,'app_api/single_doc_detail.html',locals())
                 else:
@@ -532,12 +535,12 @@ class DocView(APIView):
                     )
                     return Response({'code':0,'data':{'pro':project,'doc':doc.id}})
                 else:
-                    return Response({'code':2,'data':'无权操作此文集'})
+                    return Response({'code':2,'data':_('无权操作此文集')})
             else:
-                return Response({'code':5,'data':'请确认文档标题、文集正确'})
+                return Response({'code':5,'data':_('请确认文档标题、文集正确')})
         except Exception as e:
-            logger.exception("api新建文档异常")
-            return Response({'status':4,'data':'请求出错'})
+            logger.exception(_("api新建文档异常"))
+            return Response({'status':4,'data':_('请求出错')})
 
     # 修改文档
     def put(self, request):
@@ -572,14 +575,14 @@ class DocView(APIView):
                         modify_time = datetime.datetime.now(),
                         status = status
                     )
-                    return Response({'code': 0,'data':'修改成功'})
+                    return Response({'code': 0,'data':_('修改成功')})
                 else:
-                    return Response({'code':2,'data':'未授权请求'})
+                    return Response({'code':2,'data':_('未授权请求')})
             else:
-                return Response({'code': 5,'data':'参数错误'})
+                return Response({'code': 5,'data':_('参数错误')})
         except Exception as e:
-            logger.exception("api修改文档出错")
-            return Response({'code':4,'data':'请求出错'})
+            logger.exception(_("api修改文档出错"))
+            return Response({'code':4,'data':_('请求出错')})
 
     # 删除文档
     def delete(self, request):
@@ -611,40 +614,37 @@ class DocView(APIView):
                     Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,
                                                                           modify_time=datetime.datetime.now())  # 修改下级文档的下级文档状态
 
-                    return Response({'code': 0, 'data': '删除完成'})
+                    return Response({'code': 0, 'data': _('删除完成')})
                 else:
-                    return Response({'code': 2, 'data': '非法请求'})
+                    return Response({'code': 2, 'data': _('非法请求')})
             else:
-                return Response({'code': 5, 'data': '参数错误'})
+                return Response({'code': 5, 'data': _('参数错误')})
         except Exception as e:
-            logger.exception("api删除文档出错")
-            return Response({'code': 4, 'data': '请求出错'})
+            logger.exception(_("api删除文档出错"))
+            return Response({'code': 4, 'data': _('请求出错')})
 
 
 # 文档模板视图
 class DocTempView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
     # 获取文档模板
     def get(self, request):
-        if request.auth:
-            temp_id = request.query_params.get('id','')
-            if temp_id != '':
-                doctemp = DocTemp.objects.get(id=int(temp_id))
-                if request.user == doctemp.create_user:
-                    serializer = DocTempSerializer(doctemp)
-                    resp = {'code': 0, 'data': serializer.data}
-                else:
-                    resp = {'code':2,'data':'无权操作'}
+        temp_id = request.query_params.get('id','')
+        if temp_id != '':
+            doctemp = DocTemp.objects.get(id=int(temp_id))
+            if request.user == doctemp.create_user:
+                serializer = DocTempSerializer(doctemp)
+                resp = {'code': 0, 'data': serializer.data}
             else:
-                doctemps = DocTemp.objects.filter(create_user=request.user)
-                page = PageNumberPagination()
-                page_doctemps = page.paginate_queryset(doctemps,request,view=self)
-                serializer = DocTempSerializer(page_doctemps,many=True)
-                resp = {'code':0,'data':serializer.data,'count':doctemps.count()}
-            return Response(resp)
+                resp = {'code':2,'data':_('无权操作')}
         else:
-            return Response({'code': 6, 'data': '请登录'})
+            doctemps = DocTemp.objects.filter(create_user=request.user)
+            page = PageNumberPagination()
+            page_doctemps = page.paginate_queryset(doctemps,request,view=self)
+            serializer = DocTempSerializer(page_doctemps,many=True)
+            resp = {'code':0,'data':serializer.data,'count':doctemps.count()}
+        return Response(resp)
 
     def post(self, request):
         try:
@@ -658,14 +658,14 @@ class DocTempView(APIView):
                         create_user=request.user
                     )
                     doctemp.save()
-                    return Response({'code':0,'data':'创建成功'})
+                    return Response({'code':0,'data':_('创建成功')})
                 else:
-                    return Response({'code':5,'data':'模板标题不能为空'})
+                    return Response({'code':5,'data':_('模板标题不能为空')})
             else:
-                return Response({'code':6,'data':'请登录'})
+                return Response({'code':6,'data':_('请登录')})
         except Exception as e:
-            logger.exception("api创建文档模板出错")
-            return Response({'code':4,'data':'请求出错'})
+            logger.exception(_("api创建文档模板出错"))
+            return Response({'code':4,'data':_('请求出错')})
 
     def put(self, request):
         try:
@@ -679,14 +679,14 @@ class DocTempView(APIView):
                     doctemp.name = name
                     doctemp.content = content
                     doctemp.save()
-                    return Response({'code':0,'data':'修改成功'})
+                    return Response({'code':0,'data':_('修改成功')})
                 else:
-                    return Response({'code':2,'data':'非法操作'})
+                    return Response({'code':2,'data':_('非法操作')})
             else:
-                return Response({'code':5,'data':'参数错误'})
+                return Response({'code':5,'data':_('参数错误')})
         except Exception as e:
-            logger.exception("api修改文档模板出错")
-            return Response({'code':4,'data':'请求出错'})
+            logger.exception(_("api修改文档模板出错"))
+            return Response({'code':4,'data':_('请求出错')})
 
     def delete(self, request):
         try:
@@ -695,36 +695,34 @@ class DocTempView(APIView):
                 doctemp = DocTemp.objects.get(id=doctemp_id)
                 if request.user == doctemp.create_user:
                     doctemp.delete()
-                    return Response({'code': 0, 'data': '删除完成'})
+                    return Response({'code': 0, 'data': _('删除完成')})
                 else:
-                    return Response({'code': 2, 'data': '非法请求'})
+                    return Response({'code': 2, 'data': _('非法请求')})
             else:
-                return Response({'code': 5, 'data': '参数错误'})
+                return Response({'code': 5, 'data': _('参数错误')})
         except Exception as e:
-            logger.exception("api删除文档模板出错")
-            return Response({'code': 4, 'data': '请求出错'})
+            logger.exception(_("api删除文档模板出错"))
+            return Response({'code': 4, 'data': _('请求出错')})
 
 
 # 图片视图
 class ImageView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
+    # 获取
     def get(self, request):
-        if request.auth:
-            g_id = int(request.query_params.get('group', 0))  # 图片分组id
-            if int(g_id) == 0:
-                image_list = Image.objects.filter(user=request.user)  # 查询所有图片
-            elif int(g_id) == -1:
-                image_list = Image.objects.filter(user=request.user, group_id=None)  # 查询指定分组的图片
-            else:
-                image_list = Image.objects.filter(user=request.user, group_id=g_id)  # 查询指定分组的图片
-            page = PageNumberPagination()
-            page_images = page.paginate_queryset(image_list,request,view=self)
-            serializer = ImageSerializer(page_images,many=True)
-            resp = {'code':0,'data':serializer.data,'count':image_list.count()}
-            return Response(resp)
+        g_id = int(request.query_params.get('group', 0))  # 图片分组id
+        if int(g_id) == 0:
+            image_list = Image.objects.filter(user=request.user)  # 查询所有图片
+        elif int(g_id) == -1:
+            image_list = Image.objects.filter(user=request.user, group_id=None)  # 查询指定分组的图片
         else:
-            return Response({'code': 6, 'data': '请登录'})
+            image_list = Image.objects.filter(user=request.user, group_id=g_id)  # 查询指定分组的图片
+        page = PageNumberPagination()
+        page_images = page.paginate_queryset(image_list,request,view=self)
+        serializer = ImageSerializer(page_images,many=True)
+        resp = {'code':0,'data':serializer.data,'count':image_list.count()}
+        return Response(resp)
 
     # 上传
     def post(self, request):
@@ -742,7 +740,7 @@ class ImageView(APIView):
             result = base_img_upload(base_img, dir_name, request.user)
             resp = {'code': 0, 'data': result['url']}
         else:
-            resp = {"code": 5, "message": "出错信息"}
+            resp = {"code": 5, "message": _("出错信息")}
         return Response(resp)
 
     # 删除
@@ -750,7 +748,7 @@ class ImageView(APIView):
         img_id = request.data.get('id', '')
         img = Image.objects.get(id=img_id)
         if img.user != request.user:
-            return Response({'code': 2, 'data': '未授权请求'})
+            return Response({'code': 2, 'data': _('未授权请求')})
         file_path = settings.BASE_DIR + img.file_path
         is_exist = os.path.exists(file_path)
         if is_exist:
@@ -761,15 +759,15 @@ class ImageView(APIView):
 
 # 图片分组视图
 class ImageGroupView(APIView):
-    authentication_classes = (AppMustAuth,)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
     def get(self, request):
         try:
             group_list = []
             all_cnt = Image.objects.filter(user=request.user).count()
             non_group_cnt = Image.objects.filter(group_id=None,user=request.user).count()
-            group_list.append({'group_name': '全部图片', 'group_cnt': all_cnt, 'group_id': 0})
-            group_list.append({'group_name': '未分组', 'group_cnt': non_group_cnt, 'group_id': -1})
+            group_list.append({'group_name': _('全部图片'), 'group_cnt': all_cnt, 'group_id': 0})
+            group_list.append({'group_name': _('未分组'), 'group_cnt': non_group_cnt, 'group_id': -1})
             groups = ImageGroup.objects.filter(user=request.user)  # 查询所有分组
             for group in groups:
                 group_cnt = Image.objects.filter(group_id=group).count()
@@ -781,27 +779,27 @@ class ImageGroupView(APIView):
                 group_list.append(item)
             return Response({'code': 0, 'data': group_list})
         except:
-            return Response({'code': 4, 'data': '出现错误'})
+            return Response({'code': 4, 'data': _('出现错误')})
 
     def post(self, request):
         group_name = request.data.get('group_name', '')
-        if group_name not in ['', '默认分组', '未分组']:
+        if group_name not in ['', _('默认分组'), _('未分组')]:
             ImageGroup.objects.create(
                 user=request.user,
                 group_name=group_name
             )
             return Response({'code': 0, 'data': 'ok'})
         else:
-            return Response({'code': 5, 'data': '名称无效'})
+            return Response({'code': 5, 'data': _('名称无效')})
 
     def put(self, request):
         group_name = request.data.get("group_name", '')
-        if group_name not in ['', '默认分组', '未分组']:
+        if group_name not in ['', _('默认分组'), _('未分组')]:
             group_id = request.POST.get('group_id', '')
             ImageGroup.objects.filter(id=group_id,user=request.user).update(group_name=group_name)
             return Response({'code': 0, 'data': 'ok'})
         else:
-            return Response({'code': 5, 'data': '名称无效'})
+            return Response({'code': 5, 'data': _('名称无效')})
 
     def delete(self, request):
         try:
@@ -811,12 +809,12 @@ class ImageGroupView(APIView):
             group.delete()  # 删除分组
             return Response({'code': 0, 'data': 'ok'})
         except:
-            return Response({'code': 4, 'data': '删除错误'})
+            return Response({'code': 4, 'data': _('删除错误')})
 
 
 # 附件视图
 class AttachmentView(APIView):
-    authentication_classes = (AppAuth,)
+    authentication_classes = (AppMustAuth,SessionAuthentication)
 
     # 文件大小 字节转换
     def sizeFormat(size, is_disk=False, precision=2):
@@ -864,7 +862,7 @@ class AttachmentView(APIView):
             attachment_size = self.sizeFormat(attachment.size)
             # 限制附件大小在50mb以内
             if attachment.size > 52428800:
-                return Response({'code': False, 'data': '文件大小超出限制'})
+                return Response({'code': False, 'data': _('文件大小超出限制')})
             # 限制附件为ZIP格式文件
             if attachment_name.endswith('.zip'):
                 a = Attachment.objects.create(
@@ -875,9 +873,9 @@ class AttachmentView(APIView):
                 )
                 return Response({'code': 0, 'data': {'name': attachment_name, 'url': a.file_path.name}})
             else:
-                return Response({'code': 5, 'data': '不支持的格式'})
+                return Response({'code': 5, 'data': _('不支持的格式')})
         else:
-            return Response({'code': 5, 'data': '无效文件'})
+            return Response({'code': 5, 'data': _('无效文件')})
 
     def delete(self, request):
         attach_id = request.data.get('attach_id', '')

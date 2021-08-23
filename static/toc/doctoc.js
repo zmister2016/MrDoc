@@ -15,70 +15,118 @@
 * @param {string} sidebarQuery - 目录 Element 的 query 字符串 
 * @param {string} contentQuery - 正文 Element 的 query 字符串
 */
-function initSidebar(sidebarQuery, contentQuery) {
+function initSidebar(sidebarQuery, contentQuery, mode=1) {
     addAllStyle();
-    var sidebar = document.querySelector(sidebarQuery)    
-    
-    // 遍历文章中的所有 h1或 h2(取决于最大的 h 是多大) , 编辑为li.h3插入 ul
-    var allHeaders = []
-    var content = document.querySelector(contentQuery)
-    for(var i = 1;i < 7; i++){
-       //console.log(i,content.querySelectorAll('h' + i))
-       allHeaders.push.apply(allHeaders,content.querySelectorAll('h' + i))
-    }
-    // console.log('目录列表：',allHeaders)
-    
-    //增加 click 点击处理,使用 scrollIntoView,增加控制滚动的 flag
-    var scrollFlag = 0
-    var scrollFlagTimer
-    sidebar.addEventListener('click', function (e) {
-        e.preventDefault()
-        // console.log(e.target.dataset.id)
-        if (e.target.href) {
-            scrollFlag = 1
-            clearTimeout(scrollFlagTimer)
-            scrollFlagTimer = setTimeout(() => scrollFlag = 0, 1500)
-            setActive(e.target, sidebar)
-            var target = document.getElementById(e.target.getAttribute('href').slice(1))
-            // console.log(e,target)
-            // console.log(e.target.getAttribute('href').slice(1))
-            target.scrollIntoView({ behavior: 'smooth', block: "start" })
-        }else if(e.target.dataset.id){
-            // console.log('vditor目录')
-            var target = document.getElementById(e.target.dataset.id)
-            target.scrollIntoView({ behavior: 'smooth', block: "start" })
+    var sidebar = document.querySelector(sidebarQuery)   
+    if(mode == 1){
+        // 遍历文章中的所有 h1或 h2(取决于最大的 h 是多大) , 编辑为li.h3插入 ul
+        var allHeaders = []
+        var content = document.querySelector(contentQuery)
+        for(var i = 1;i < 7; i++){
+        //    console.log(i,content.querySelectorAll('h' + i))
+        allHeaders.push.apply(allHeaders,content.querySelectorAll('h' + i))
         }
-    });
-    
-    //监听窗口的滚动和缩放事件
-    //window.addEventListener('scroll', updateSidebar)
-    //window.addEventListener('resize', throttle(updateSidebar))
-    function updateSidebar() {
-        if (scrollFlag) return // 如果存在scrollFlag，直接返回
-        var doc = document.documentElement // 定义doc变量值为页面文档元素
-        var top = doc && doc.scrollTop || document.body.scrollTop // 获取当前页面滚动条纵坐标
-        if (!allHeaders.length) return // 如果allHeaders的列表长度为空，直接返回
-        var last // 定义一个变量last
-        // 按照allHeaders的列表长度进行遍历
-        for (var i = 0; i < allHeaders.length; i++) { 
-            var link = allHeaders[i] // 按索引取出一个目录link
-            console.log("滚动条高度",top,document.body.clientHeight)
-            // link.offsetTop 表示元素距离上方的距离
-            // top 表示当前页面滚动条的纵坐标
-            // document.body.clientHeight 表示页面可视区域高度
-            // if (link.offsetTop > (top + document.body.clientHeight / 2 - 73)) {
-            if (link.offsetTop > (top + document.body.clientHeight / 6)) {
-                if (!last) { last = link }
-                break
-            } else {
-                last = link
+        // console.log('目录列表：',allHeaders)
+        
+        //增加 click 点击处理,使用 scrollIntoView,增加控制滚动的 flag
+        var scrollFlag = 0
+        var scrollFlagTimer
+        sidebar.addEventListener('click', function (e) {
+            e.preventDefault()
+            // console.log(e.target.dataset.id)
+            if (e.target.href) {
+                scrollFlag = 1
+                clearTimeout(scrollFlagTimer)
+                scrollFlagTimer = setTimeout(() => scrollFlag = 0, 1500)
+                setActive(e.target, sidebar)
+                var target = document.getElementById(e.target.getAttribute('href').slice(1))
+                // console.log(e,target)
+                // console.log(e.target.getAttribute('href').slice(1))
+                target.scrollIntoView({ behavior: 'smooth', block: "start" })
+            }else if(e.target.dataset.id){
+                // console.log('vditor目录')
+                var target = document.getElementById(e.target.dataset.id)
+                target.scrollIntoView({ behavior: 'smooth', block: "start" })
+            }
+        });
+        
+        //监听窗口的滚动和缩放事件
+        window.addEventListener('scroll', updateSidebar)
+        // window.addEventListener('resize', throttle(updateSidebar))
+        function updateSidebar() {
+            if (scrollFlag) return // 如果存在scrollFlag，直接返回
+            var doc = document.documentElement // 定义doc变量值为页面文档元素
+            var top = doc && doc.scrollTop || document.body.scrollTop // 获取当前页面滚动条纵坐标
+            if (!allHeaders.length) return // 如果allHeaders的列表长度为空，直接返回
+            var last // 定义一个变量last
+            // console.log(allHeaders)
+            // 按照allHeaders的列表长度进行遍历
+            for (var i = 0; i < allHeaders.length; i++) { 
+                var link = allHeaders[i] // 按索引取出一个目录link
+                // console.log("当前元素：",link)
+                // console.log("页面可视区域高度：",document.body.clientHeight)
+                // console.log("元素距离顶部距离：",link.offsetTop)
+                // console.log("当前页面滚动条纵坐标：",top)
+                // console.log("页面元素距离浏览器工作区顶端的距离：", link.offsetTop - document.documentElement.scrollTop)
+                // link.offsetTop 表示元素距离上方的距离
+                // top 表示当前页面滚动条的纵坐标
+                // document.body.clientHeight 表示页面可视区域高度
+                var link_to_top_offset = link.offsetTop - document.documentElement.scrollTop;
+                // console.log(link_to_top_offset)
+                if(link_to_top_offset > 150){
+                }else if(link_to_top_offset < -150){
+                }else{
+                    if (!last) {last = link }
+                    break
+                }
+            }
+            if (last) {
+                // console.log(last.offsetTop)
+                setActive(last.id, sidebar)
             }
         }
-        if (last) {
-            console.log(last.offsetTop)
-            setActive(last.id, sidebar)
-        }
-    }
+    }else if(mode == 2){
+        const headingElements = []
+        Array.from(document.getElementById('content').children).forEach((item) => {
+            if (item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0) {
+                headingElements.push(item)
+            }
+        })
+
+        let toc = []
+        window.addEventListener('scroll', () => {
+            toc = []
+            headingElements.forEach((item) => {
+                toc.push({
+                    id: item.id,
+                    offsetTop: item.offsetTop,
+                })
+            })
+            var last // 定义一个变量last
+            for (let i = 0, iMax = toc.length; i < iMax; i++) {
+                var link = headingElements[i] // 按索引取出一个目录link
+                var link_to_top_offset = link.offsetTop - document.documentElement.scrollTop;
+                // console.log(link)
+                // console.log(link_to_top_offset)
+                if(link_to_top_offset > 150){
+                }else if(link_to_top_offset < -150){
+                }else{
+                    if (!last) {
+                        last = link
+                        var index = i > 0 ? i : 0 
+                        var previousActives = sidebar.querySelectorAll(`.active`)
+                        ;[].forEach.call(previousActives, function (h) {
+                            h.classList.remove('active')
+                        })
+                        document.querySelector('span[data-target-id="' + toc[index].id + '"]').classList.add('active')
+        
+                    }
+                    break
+                };
+            };
+        });
+    };
+    $("#toc-container").prepend("<strong>文档目录</strong><hr>")
 }
 
 
@@ -106,27 +154,29 @@ function setActive(id, sidebar) {
     var currentActive = typeof id === 'string'
         ? sidebar.querySelector('a[href="#' + id + '"]')
         : id
-    //console.log(currentActive)
+    // console.log(currentActive)
     
-    // h2标题
-    if (currentActive.classList.contains('h2') != -1) {
-        // 添加 active 和 current
-        currentActive.classList.add('active', 'current')
-    }
-    // h3标题
-    if ([].indexOf.call(currentActive.classList, 'h3') != -1) {
-        console.log("H3标题")
-        // 添加 active 且对其父目录添加 current
-        currentActive.classList.add('active')
-        var parent = currentActive
-        while (parent && parent.tagName != 'UL') {
-            parent = parent.parentNode
-        }
-        parent.parentNode.querySelector('.h2-link').classList.add('current', 'active')
+    if(currentActive !== null){
+        // h2标题
+        if (currentActive.classList.contains('h2') != -1) {
+            // 添加 active 和 current
+            currentActive.classList.add('active', 'current')
+        };
+        // h3标题
+        if ([].indexOf.call(currentActive.classList, 'h3') != -1) {
+            console.log("H3标题")
+            // 添加 active 且对其父目录添加 current
+            currentActive.classList.add('active')
+            var parent = currentActive
+            while (parent && parent.tagName != 'UL') {
+                parent = parent.parentNode
+            }
+            parent.parentNode.querySelector('.h2-link').classList.add('current', 'active')
+        };
+        //左侧目录太长时的效果
+        currentActive.scrollIntoView({ behavior: 'smooth' })
     }
     
-    //左侧目录太长时的效果
-    currentActive.scrollIntoView({ behavior: 'smooth' })
 }
 /**
 >增加 sidebar 需要的全部样式

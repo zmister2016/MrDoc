@@ -1,0 +1,63 @@
+.layui-card-body .layui-form{
+	margin-top: 15px;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #ccc;
+}
+.layui-input:hover,
+.layui-textarea:hover,
+.layui-input:focus,
+.layui-textarea:focus {
+  border-color: #eee;
+}
+.layui-input:focus,
+.layui-textarea:focus {
+  border-color: #5FB878!important;
+}
+
+.layui-input[success] {
+	box-shadow: 0px 0px 3px 1px #5FB878 !important;
+	border: #5FB878 1px solid!important;
+}
+
+.layui-input[failure] {
+	box-shadow: 0px 0px 3px 1px #F56C6C;
+	border: #F56C6C 1px solid;
+}
+
+.layui-input,
+.layui-select,
+.layui-textarea {
+  border-radius: 4px;
+  border-color: #eee;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.layui-form-select dl::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+}
+
+.layui-form-select dl::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+.layui-form-select dl::-webkit-scrollbar-track {
+	background: white;
+	border-radius: 3px;
+}
+
+.layui-form-select dl::-webkit-scrollbar-thumb {
+	background: #E6E6E6;
+	border-radius: 3px;
+}
+
+.layui-form-select dl::-webkit-scrollbar-thumb:hover {
+	background: #E6E6E6;
+}
+
+.layui-form-select dl::-webkit-scrollbar-corner {
+	background: #f6f6f6;
+}

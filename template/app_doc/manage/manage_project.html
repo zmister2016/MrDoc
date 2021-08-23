@@ -14,14 +14,17 @@
     <div class="layui-input-inline">
         <input type="text" name="project-search-kw" placeholder="" class="layui-input" >
     </div>
-    <button class="layui-btn layui-btn-primary pear-btn-sm" lay-event="search">
+    <button class="pear-btn pear-btn-sm" lay-event="search">
         <i class="layui-icon layui-icon-search"></i>{% trans "搜索" %}
     </button>
-    <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>{% trans "新增" %}
     </button>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>{% trans "删除" %}
+    </button>
+    <button class="pear-btn pear-btn-normal pear-btn-sm" lay-event="batchReport">
+        <i class="layui-icon layui-icon-util"></i>{% trans "批量导出" %}
     </button>
     
 </script>
@@ -46,9 +49,9 @@
 <!-- 单个文集操作 -->
 <script type="text/html" id="project-bar">
     {% verbatim %}
-    <a href="/manage_pro_doc_sort/{{d.id}}/" title="排序文档" class="layui-btn layui-btn-primary pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a>
-    <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" title="删除文集" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    <a href="/manage_pro_doc_sort/{{d.id}}/" title="排序文档" class="pear-btn pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a>
+    <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="pear-btn pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" title="删除文集" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
 
@@ -137,6 +140,8 @@
                         'type':1,'kw':$('input[name="project-search-kw"]').val()
                     },
                 })
+            }else if(obj.event === 'batchReport'){ // 批量导出文集
+                batchReport(obj)
             }
         });
         //创建文集
@@ -296,6 +301,69 @@
                 }
             });
         };
+        //批量导出文集
+        batchReport = function(obj){
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("{% trans '未选中任何文集' %}", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let pro_id = "";
+            for (let i = 0; i < data.length; i++) {
+                pro_id += data[i].id + ",";
+            }
+            pro_id = pro_id.substr(0, pro_id.length - 1);
+            console.log(pro_id);
+            layer.open({
+                type:1,
+                title:"{% trans '打包文集' %}",
+                area:"300px",
+                id:"reportMd",
+                content:'<div style="margin-left:10px;">确定打包导出所选的文集？</div>',
+                btn:['确定','取消'], //添加按钮
+                btnAlign:'c', //按钮居中
+                yes:function (index,layero) {
+                    var load = layer.load()
+                    data = {
+                        'project_id':pro_id,'type':'multi'
+                    }
+                    $.post("{% url 'report_md' %}",data,function(r){
+                        layer.closeAll('loading'); //关闭loading
+                        if(r.status){
+                            //导出成功
+                            //文件下载提示
+                            downloadMd(r.data)
+                        }else{
+                            //导出失败，提示
+                            // console.log(r)
+                            layer.msg(r.data)
+                        }
+                        layer.close(load)
+                    })
+                },
+            });
+        };
+        //下载文件弹出框
+        downloadMd = function(download_link){
+            layer.open({
+                type:1,
+                title:"{% trans '下载导出文档' %}",
+                area:"300px",
+                id:"downloadMd",
+                content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a>',
+                //btn:['确定','取消'], //添加按钮
+                //btnAlign:'c', //按钮居中
+                success: function (layero, index) {
+                    $(layero).find('.download-md-link').click(function () {
+                        layer.closeAll();
+                    })
+            }
+            })
+        };
+
     })
 </script>
 {% endblock %}

@@ -240,15 +240,20 @@ $("#dashang").click(function(r){
 */
 $(function(){
     // $(".switch-toc").click(SwitchToc);
-    $("body").on('click','.switch-toc',SwitchToc)
+    $("body").on('click','.switch-toc',SwitchToc);
 });
 // 切换文档目录
 function SwitchToc(i){
-    console.log("点击了")
+    // console.log("点击了")
     var $me = $(this);
     $(this).parent().next("ul").toggleClass("toc-close"); //切换展开收起样式
     $(this).toggleClass("layui-icon-left layui-icon-down");//切换图标
 };
+
+// $(".switch-toc-div").click(function(e){
+//     console.log(e)
+//     $(this).children("i").trigger('click')
+// });
 
 // 展开文档树
 function openDocTree(){
@@ -290,10 +295,11 @@ copyUrl = function(){
     window.clipb
     document.execCommand("Copy");
     layer.msg("链接复制成功！")
-}
+};
 $("#copy_doc_url").click(function(){
     copyUrl();
-})
+});
+
 // 生成文档链接二维码
 doc_qrcode = function(){
     new QRCode("url_qrcode", {
@@ -307,7 +313,9 @@ doc_qrcode = function(){
 };
 doc_qrcode();
 
-// 文集水印
+/* 
+    文集水印
+*/
 textBecomeImg = function(text,fontsize,fontcolor){
     var canvas = document.createElement('canvas');
     canvas.height = 180;
@@ -323,6 +331,40 @@ textBecomeImg = function(text,fontsize,fontcolor){
     var dataUrl = canvas.toDataURL('image/png');//注意这里背景透明的话，需要使用png
     return dataUrl;
 }
+
+function initWhterMark(value){
+    var img_base64 = textBecomeImg(value, '14', '#000');
+    document.getElementById("wm").style.background = 'url('+ img_base64 + ')';
+}
+
+// 文集、文档收藏函数
+function collect(id,type){
+    $.ajax({
+        url:'/my_collect/',
+        type:'post',
+        data:{'type':type,'id':id},
+        success:function(r){
+            layer.msg(r.data)
+        },
+        error:function(){
+            layer.msg("操作异常")
+        }
+    });
+
+}
+// 收藏文集
+$("#collect_pro").click(function(e){
+    $(this).toggleClass("layui-icon-star-fill layui-icon-star");
+    $(this).toggleClass("collected");
+    collect(pro_id,2);
+});
+// 收藏文档
+$("#collect_doc").click(function(){
+    $(this).toggleClass("layui-icon-star-fill layui-icon-star");
+    $(this).toggleClass("collected");
+    collect(doc_id,1);
+});
+
 /*
     ########################################################
     ### 文集阅读页面JavaScript函数和变量定义 ###
@@ -336,3 +378,134 @@ textBecomeImg = function(text,fontsize,fontcolor){
     ### 文档阅读页面JavaScript函数和变量定义 ###
     ########################################################
 */
+
+// 初始化文档内容渲染
+function initDocRender(mode){
+    if(mode == 1){
+        editormd.markdownToHTML("content", {
+            emoji           : true,  //emoji表情
+            taskList        : true,  // 任务列表
+            tex             : true,  // 科学公式
+            flowChart       : true,  // 流程图
+            sequenceDiagram : true,  // 时序图
+            tocm            : true, //目录
+            toc             :true,
+            tocContainer : "#toc-container",
+            tocDropdown   : false,
+            atLink    : false,//禁用@链接
+            htmlDecode     : "link,style,base,script", //过滤部分HTML标签
+        });
+    }else if(mode == 2){
+        var md_content = $("#content textarea").val()
+        Vditor.preview(document.getElementById('content'),md_content, 
+        {
+            "cdn":"/static/vditor/",
+            markdown:{mark:true},
+            speech: {enable: true,},
+            anchor: 1,
+            after () {
+                var sub_ele = "<div class='markdown-toc editormd-markdown-toc'></div>"
+                $("#toc-container").append(sub_ele)
+                var outlineElement = $("#toc-container div")
+                Vditor.outlineRender(document.getElementById('content'), outlineElement[0])
+                $('#toc-container div ul').addClass('markdown-toc-list')
+                if (outlineElement[0].innerText.trim() !== '') {
+                    outlineElement[0].style.display = 'block';
+                    var toc_cnt = $(".markdown-toc-list ul").children().length;
+                    // if(toc_cnt > 0){
+                        //console.log('显示文档目录')
+                        // $(".tocMenu").show();
+                        // initSidebar('.sidebar', '.doc-content', 2);
+                    // }
+                }
+                // 图片放大显示
+                var img_options = {
+                    url: 'data-original',
+                    fullscreen:false,//全屏
+                    rotatable:false,//旋转
+                    scalable:false,//翻转
+                    button:false,//关闭按钮
+                    toolbar:false,
+                    title:false,
+                };
+                var img_viewer = new Viewer(document.getElementById('content'), img_options);
+                // 渲染文档目录
+                var toc_cnt = $(".markdown-toc-list").children().length;
+                // console.log(toc_cnt)
+                if(toc_cnt > 0){
+                    // console.log('显示文档目录')
+                    $(".tocMenu").show();
+                    initSidebar('.sidebar', '.doc-content');
+                };
+                // 高亮搜索词
+                keyLight('doc-content',getQueryVariable("highlight"));
+            },
+        })
+    }else if(mode == 4){
+        //配置项
+        var options = {
+            container: 'luckysheet', //luckysheet为容器id
+            lang: 'zh',
+            showGridLines:true,
+            allowEdit:false,
+            showtoolbar:false, // 是否显示顶部工具栏
+            showinfobar: false, // 是否显示顶部信息栏
+            showsheetbar: true, // 是否显示底部sheet页按钮
+            showstatisticBar: true, // 是否显示底部计数栏
+            sheetBottomConfig: false, // sheet页下方的添加行按钮和回到顶部按钮配置
+            userInfo: false, // 右上角的用户信息展示样式
+            enableAddRow:false, // 允许添加行
+            enableAddBackTop:false, // 回到顶部
+            
+            // plugins: ['chart'],
+            showstatisticBarConfig: {
+                count:false,
+                view:false,
+                zoom:false,
+            },
+            showsheetbarConfig: {
+                add: false, //新增sheet
+                // menu: false, //sheet管理菜单
+                // sheet: false, //sheet页显示
+            },
+            data:JSON.parse($("#sheet_table_content").val()),
+
+        }
+        luckysheet.create(options)
+    }
+};
+
+// URL参数解析
+function getQueryVariable(variable)
+{
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+
+// 搜索词高亮
+function keyLight(id, key, bgColor){
+    // console.log(id,key,decodeURI(key))
+    if(key != false){
+        key = decodeURI(key);
+        var oDiv = document.getElementById(id),
+        sText = oDiv.innerHTML,
+        num = -1,
+        rStr = new RegExp(key, "ig"),
+        rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
+        aHtml = sText.match(rHtml), //存放html元素的数组
+        sText = sText.replace(rHtml, '{~}');  //替换html标签
+        sText = sText.replace(rStr,function(text){
+            return "<mark>" + text +"</mark>"
+        }); //替换key
+        sText = sText.replace(/{~}/g,function(){  //恢复html标签
+                num++;
+                return aHtml[num];
+        });
+        oDiv.innerHTML = sText;
+    }
+};

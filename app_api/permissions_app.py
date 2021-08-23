@@ -5,10 +5,19 @@
 # 博客地址：zmister.com
 
 from rest_framework.permissions import BasePermission,SAFE_METHODS
+from django.utils.translation import gettext_lazy as _
+
+
+# 超级管理员权限
+class SuperUserPermission(BasePermission):
+    message = _('无权访问')
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_superuser)
 
 
 class AppPermission(BasePermission):
-    message = '只有VIP才能访问'
+    message = _('只有VIP才能访问')
 
     def has_permission(self, request, view):
         # vip才有访问权限

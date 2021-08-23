@@ -565,6 +565,9 @@
                 })
             })
 
+            // 加载DOMPurify过滤HTML
+            editormd.loadScript(loadPath + 'purify.min',function(){});
+
             editormd.loadCSS(loadPath + "codemirror/lib/codemirror");
             
             if (settings.searchReplace && !settings.readOnly)
@@ -2111,12 +2114,14 @@
             marked.setOptions(markedOptions);
                     
             var newMarkdownDoc = editormd.$marked(cmValue, markedOptions);
+            // console.info("cmValue", cmValue, newMarkdownDoc);
             
-            //console.info("cmValue", cmValue, newMarkdownDoc);
+            // newMarkdownDoc = editormd.filterHTMLTags(newMarkdownDoc, settings.htmlDecode);
+            // 加载DOMPurify过滤HTML
+            newMarkdownDoc = DOMPurify.sanitize(newMarkdownDoc,{ADD_TAGS: ['iframe']})
             
-            newMarkdownDoc = editormd.filterHTMLTags(newMarkdownDoc, settings.htmlDecode);
-            
-            //console.error("cmValue", cmValue, newMarkdownDoc);
+            // console.log(newMarkdownDoc)
+            // console.error("cmValue", cmValue, newMarkdownDoc);
             
             this.markdownTextarea.text(cmValue);
             
@@ -3541,7 +3546,7 @@
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg    = regexs.pageBreak;
 
-	// 增加引用样式解析规则
+	    // 增加引用样式解析规则
         markedRenderer.blockquote = function($quote) {
             var quoteBegin = "";
 
@@ -3568,7 +3573,8 @@
             }
 
             return '<blockquote class="'+$class+'">\n' + quoteBegin + $quote + '</blockquote>\n';
-        };    
+        };
+
         // marked 解析图片
         markedRenderer.image = function(href,title,text) {
             var attr = "";
@@ -3612,30 +3618,34 @@
                         const tedMatch = href.match(/(?:www\.|\/\/)ted\.com\/talks\/(\w+)/);
 
                         if (youtubeMatch && youtubeMatch[1].length === 11) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//www.youtube.com/embed/${youtubeMatch[1] + (youtubeMatch[2] ? "?start=" + youtubeMatch[2] : "")}"></iframe>`
                         } else if (youkuMatch && youkuMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.youku.com/embed/${youkuMatch[1]}"></iframe>`
                         } else if (qqMatch && qqMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://v.qq.com/txp/iframe/player.html?vid=${qqMatch[1]}"></iframe>`
                         } else if (coubMatch && coubMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//coub.com/embed/${coubMatch[1]}?muted=false&autostart=false&originalSize=true&startWithHD=true"></iframe>`
                         } else if (facebookMatch && facebookMatch[0]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(facebookMatch[0])}"></iframe>`
                         } else if (dailymotionMatch && dailymotionMatch[2]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="https://www.dailymotion.com/embed/video/${dailymotionMatch[2]}"></iframe>`
                         } else if (bilibiliMatch && bilibiliMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}"></iframe>`
                         } else if (tedMatch && tedMatch[1]) {
-                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}">`
+                            return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}"></iframe>`
                         }else{
-                            for(var i = 0; i< iframe_whitelist.length; i++){
-                                if(href.match(iframe_whitelist[i])){
-                                    return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                            if(iframe_whitelist.length == 1 && iframe_whitelist[0] == ""){
+                                return href
+                            }else{
+                                for(var i = 0; i< iframe_whitelist.length; i++){
+                                    if(href.match(iframe_whitelist[i])){
+                                        return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                                    }
                                 }
                             }
+
                         }
                         break;
-                        // return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
                 }
             }
 
@@ -3674,7 +3684,7 @@
                     }
                 }
             }
-            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+">" + end;
+            return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+" />" + end;
         };
 
         // marked emoji 解析
@@ -3789,7 +3799,6 @@
 
         // marked 链接解析
         markedRenderer.link = function (href, title, text) {
-
             if (this.options.sanitize) {
                 try {
                     var prot = decodeURIComponent(unescape(href)).replace(/[^\w:]/g,"").toLowerCase();
@@ -3864,9 +3873,9 @@
             // headingHTML    += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
             headingHTML    += "<a name=\"" + text.replace(/<[^>]*>\s?/g,'') + "\" class=\"reference-link\"></a>";
             headingHTML    += "<span class=\"header-link octicon octicon-link\"></span>";
-            headingHTML    += (hasLinkReg) ? this.atLink(this.mark(this.emoji(text))) : this.mark(this.emoji(text));
+            headingHTML    += (hasLinkReg) ? this.atLink(this.mark(this.emoji(linkText))) : this.mark(this.emoji(text));
             headingHTML    += "</h" + level + ">";
-
+            // console.log(headingHTML)
             return headingHTML;
         };
         
@@ -3899,7 +3908,6 @@
             }
             
             var tocHTML = "<div class=\"markdown-toc editormd-markdown-toc\">" + text + "</div>";
-            
             return (isToC) ? ( (isToCMenu) ? "<div class=\"editormd-toc-menu\">" + tocHTML + "</div><br/>" : tocHTML )
                            : ( (pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.mark(this.emoji(text))) + "</p>\n" );
         };
@@ -3979,7 +3987,7 @@
             else if(/^timeline/i.test(lang)){ // 时间线
                 var time_line = '<ul class="layui-timeline">'
                 // console.log(code)
-                var timeline_code = code.split(/[(\r\n)\r\n]+/);
+                var timeline_code = code.split(/(\r\n\t|\n|\r\t)+/);
                 // console.log(timeline_code)
                 timeline_code.forEach(function(item,index){
                     // console.log(item,index)
@@ -4246,7 +4254,8 @@
      */
     
     editormd.filterHTMLTags = function(html, filters) {
-        
+        console.log(html)
+        console.log(filters)
         if (typeof html !== "string") {
             html = new String(html).toString();
         }
@@ -4260,6 +4269,7 @@
         var expression = filters.split("|");
         var filterTags = expression[0].split(",");
         var attrs      = expression[1];
+        console.log(attrs)
 
         if(!filterTags.includes('allowScript') && !filterTags.includes('script'))
          {
@@ -4274,7 +4284,7 @@
             html = html.replace(new RegExp("\<\s*" + tag + "\s*([^\>]*)\>([^\>]*)\<\s*\/" + tag + "\s*\>", "igm"), "");
             html = html.replace(new RegExp("\<\s*" + tag + ".*?/?>", "igm"), "") // 过滤单闭合标签
         }
-        
+
         //return html;
 
         if (typeof attrs === "undefined")
@@ -4300,12 +4310,16 @@
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
                     return "<" + $2 + ">" + $4 + "</" + $5 + ">";
-                });         
+                });  
             }
             // else if (attrs === "on*")
             else if ((attrs === "on*") || filterOn)
             {
                 html = html.replace(htmlTagRegex, function($1, $2, $3, $4, $5) {
+                    console.log($1)
+                    console.log($2)
+                    console.log($4)
+                    console.log($5)
                     var el = $("<" + $2 + ">" + $4 + "</" + $5 + ">");
                     var _attrs = $($1)[0].attributes;
                     var $attrs = {};
@@ -4334,7 +4348,7 @@
                     // var filterAttrs = attrs.split(",");
                     var el = $($1);
                     el.html($4);
-
+                    
                     $.each(filterAttrs, function(i) {
                         el.attr(filterAttrs[i], null);
                     });
@@ -4343,7 +4357,7 @@
                 });
             }
         }
-        
+
         return html;
     };
     
@@ -4379,7 +4393,8 @@
             mindMap              : true, //脑图
             echart               : true, 
             sequenceDiagram      : false,
-            previewCodeHighlight : true
+            previewCodeHighlight : true,
+            plugin_path          : '/static/editor.md/lib/'
         };
         
         editormd.$marked  = marked; // 定义 editormd 的 marked 属性 为 marked
@@ -4430,7 +4445,10 @@
         
         var markdownParsed = marked(markdownDoc, markedOptions);
         
-        markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
+        // markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
+        // 使用DOMPurify过滤HTML
+        markdownParsed = DOMPurify.sanitize(markdownParsed,{ADD_TAGS: ['iframe']});
+        // console.log(markdownParsed)
         
         if (settings.markdownSourceCode) {
             saveTo.text(markdownDoc);
@@ -4465,9 +4483,9 @@
         if (settings.previewCodeHighlight) 
         {
             div.find("pre").addClass("prettyprint linenums");
-            editormd.loadScript('/static/editor.md/lib/raphael.min', function(){
-                editormd.loadScript('/static/editor.md/lib/underscore.min', function(){
-                    editormd.loadScript('/static/editor.md/lib/prettify.min',function(){
+            editormd.loadScript(settings.plugin_path + 'raphael.min', function(){
+                editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+                    editormd.loadScript(settings.plugin_path + 'prettify.min',function(){
                         prettyPrint();
                     })    
                 })
@@ -4484,8 +4502,8 @@
                     has_flowchart = true;
                 })
                 if(has_flowchart){
-                    editormd.loadScript('/static/editor.md/lib/flowchart.min',function(){
-                        editormd.loadScript('/static/editor.md/lib/jquery.flowchart.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'flowchart.min',function(){
+                        editormd.loadScript(settings.plugin_path + 'jquery.flowchart.min',function(){
                             div.find(".flowchart").flowChart(); 
                         })
                     })
@@ -4499,8 +4517,8 @@
                     has_sequence_dia = true;
                 })
                 if(has_sequence_dia){
-                    editormd.loadScript('/static/editor.md/lib/underscore.min', function(){
-                        editormd.loadScript('/static/editor.md/lib/sequence-diagram.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+                        editormd.loadScript(settings.plugin_path + 'sequence-diagram.min',function(){
                             div.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
                         })    
                     })
@@ -4515,12 +4533,22 @@
             var katexHandle = function() {
                 div.find("." + editormd.classNames.tex).each(function(){
                     var tex  = $(this);
-                    editormd.loadKaTeX(function(){
-                        editormd.$katex      = katex;
-                        editormd.kaTeXLoaded = true;
-                        katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
-                        tex.find(".katex").css("font-size", "1.6em");
-                    })                    
+                    // editormd.loadKaTeX(function(){
+                    //     editormd.$katex      = katex;
+                    //     editormd.kaTeXLoaded = true;
+                    //     katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                    //     tex.find(".katex").css("font-size", "1.6em");
+                    // });
+                    editormd.loadCSS(settings.plugin_path + 'katex/katex.min', function(){
+                        editormd.loadScript(settings.plugin_path + 'katex/katex.min', function(){
+                            editormd.$katex      = katex;
+                            editormd.kaTeXLoaded = true;
+                            katex.render(tex.html().replace(/&lt;/g, "<").replace(/&gt;/g, ">"), tex[0]);                    
+                            tex.find(".katex").css("font-size", "1.6em");
+    
+                        });
+                    });
+                                
                 });
             };
             if (settings.autoLoadKaTeX && !editormd.$katex && !editormd.kaTeXLoaded)
@@ -4545,9 +4573,9 @@
                     console.log("存在脑图")
                     var mmap  = $(this);
                     var mmap_id = this.id;
-                    editormd.loadScript('/static/editor.md/lib/mindmap/d3@5',function(){
-                        editormd.loadScript('/static/editor.md/lib/mindmap/transform.min',function(){
-                            editormd.loadScript('/static/editor.md/lib/mindmap/view.min',function(){
+                    editormd.loadScript(settings.plugin_path + 'mindmap/d3@5',function(){
+                        editormd.loadScript(settings.plugin_path + 'mindmap/transform.min',function(){
+                            editormd.loadScript(settings.plugin_path + 'mindmap/view.min',function(){
                                 var md_data = window.markmap.transform(mmap.text().trim());
                                 window.markmap.markmap("svg#"+mmap_id,md_data)
                             })
@@ -4565,18 +4593,16 @@
                 div.find(".echart").each(function(){
                     // console.log("存在echart")
                     var echart  = $(this);
-                    var echart_id = this.id
-                    editormd.loadEcharts(
-                        function(){
-                            if(echart.text() != ''){
-                                // console.log("渲染echarts")
-                                var echart_data = eval("(" + echart.text() + ")");
-                                echart.empty();
-                                var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
-                                myChart.setOption(echart_data);
-                            }
+                    var echart_id = this.id;
+                    editormd.loadScript(settings.plugin_path + 'echarts.min',function(){
+                        if(echart.text() != ''){
+                            // console.log("渲染echarts")
+                            var echart_data = eval("(" + echart.text() + ")");
+                            echart.empty();
+                            var myChart = echarts.init(document.getElementById(echart_id),null,{renderer: 'svg'});
+                            myChart.setOption(echart_data);
                         }
-                    );
+                    });
                     
                 });
             };
@@ -4729,8 +4755,8 @@
     // 使用国外的CDN，加载速度有时会很慢，或者自定义URL
     // You can custom KaTeX load url.
     editormd.katexURL  = {
-        css :   "/static/katex/katex.min",
-        js  :   "/static/katex/katex.min",
+        css :   "/static/editor.md/lib/katex/katex.min",
+        js  :   "/static/editor.md/lib/katex/katex.min",
     };
     
     editormd.kaTeXLoaded = false;
@@ -4746,16 +4772,6 @@
         editormd.loadCSS(editormd.katexURL.css, function(){
             editormd.loadScript(editormd.katexURL.js, callback || function(){});
         });
-    };
-    
-    /**
-     * 加载Echarts文件
-     * 
-     * @param {Function} [callback=function()]  加载成功后执行的回调函数
-     */
-    
-    editormd.loadEcharts = function (callback) {
-        editormd.loadScript("/static/editor.md/lib/echarts.min", callback || function(){});
     };
 
     /**

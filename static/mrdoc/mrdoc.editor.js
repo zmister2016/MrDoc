@@ -477,9 +477,9 @@ upload.render({
         //上传成功
         if(res.success == 1){
             if(editor_mode == 3){
-                editor.addValue('<img src="' + res.url + '" />')
+                editor.addValue('<img src="' + res.url.replace(" ",'%20') + '" />')
             }else{
-                editor.insertValue("\n![](" + res.url + ")");
+                editor.insertValue("\n![](" + res.url.replace(" ",'%20') + ")");
             }
             
             layer.closeAll();
@@ -493,7 +493,7 @@ upload.render({
         layer.closeAll('loading'); //关闭loading
         layer.msg("系统异常，请稍后再试！")
     },
-    accept: 'images', //允许上传的文件类型
+    accept: 'file', //允许上传的文件类型
     acceptMime:'image/*',
     field:'manage_upload',
 });

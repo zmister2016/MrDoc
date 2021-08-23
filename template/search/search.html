@@ -11,12 +11,15 @@
     <meta name="keywords" content="{% if site_keywords != None %}{{site_keywords}}{% endif %}"/>
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ query }} - {% trans "觅道搜索" %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
+    <title>{{ query }} - {% trans "觅思搜索" %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-search-result.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
     <style>
+        .layui-form-switch{
+            margin-top: 0px !important;
+        }
     </style>
 </head>
 <body class="layui-container">
@@ -142,7 +145,10 @@
                     </div>
                 </div>
                 <!-- 筛选结束 -->
-                <div class="layui-input-inline" style="float: right;">
+                <div class="layui-input-inline" style="float: right;display: flex;">
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="switch" lay-filter="search_match" lay-skin="switch" lay-text="全文搜索|精准搜索">
+                    </div>
                     <select name="d_range" lay-verify="sel_recent" id="sel_recent">
                         <option value="">{% trans "时间筛选" %}</option>
                         <option value="all">{% trans "全部时间" %}</option>
@@ -161,7 +167,7 @@
 <!-- 搜索结果提示 -->
 {% if query != '' %}
     <div style="padding: 0 15px;margin-top: 10px;margin-bottom: 10px;color: #999;">
-        {% trans "觅道文档在" %}
+        {% trans "觅思文档在" %}
             {% if date_range == 'recent1' %}
             {% trans "近1天内" %}
             {% elif date_range == 'recent7' %}
@@ -187,7 +193,7 @@
                 <div style="margin-bottom: 18px;">
                     <!-- 标题 -->
                     <h3>
-                        <a href="{{ result.object.get_absolute_url }}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
+                        <a href="{{ result.object.get_absolute_url }}?highlight={{query}}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
                     </h3>
                     <!-- 简介 -->
                     {% highlight result.object.pre_content with query %}
@@ -234,7 +240,7 @@
 <!-- 页脚结束 -->
 
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}"></script>
 {% block custom_script %}
     <script>
         $.ajaxSetup({
@@ -273,8 +279,13 @@
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){
             var filter_data = form.val("filter-time-form");
-            console.log(filter_data)
+            // console.log(filter_data)
             window.location.href = '?q={{query}}&d_range=' + filter_data['d_range']
+        });
+
+        // 切换到匹配搜索
+        form.on('switch(search_match)', function(data){
+            window.location.href = "{% url 'search' %}?kw={{query}}&type=doc&d_range={{d_range}}";
         });
 
         // 当前搜索类型动态设置

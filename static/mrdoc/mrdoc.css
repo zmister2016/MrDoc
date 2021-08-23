@@ -166,6 +166,16 @@
     color: #333;
 }
 
+a.index-add-link{
+    color: #999;
+    float: right;
+    position: absolute;
+    right: 10px;
+}
+a.index-add-link:hover{
+    color: #333;
+}
+
 .layui-card{
     box-shadow:0 0 0 0;
 }
@@ -462,9 +472,9 @@ input#doc-name,input#doctemp-name{
 }
 
 /* 覆盖layUI样式 */
-  .layui-btn{
+  /* .layui-btn{
     border-radius: 4px;
-  }
+  } */
   button.layui-btn-normal,.doctemp-list a.layui-btn-normal{
     background-color: #2176ff !important;
   }
@@ -486,6 +496,9 @@ input#doc-name,input#doctemp-name{
     }
     /* layui单选样式 */
     .layui-form-radio>i:hover, .layui-form-radioed>i{
+        color: #2176ff;
+    }
+    .layui-form-radio:hover *, .layui-form-radioed, .layui-form-radioed>i{
         color: #2176ff;
     }
       /* 开关样式 */
@@ -530,14 +543,15 @@ input#doc-name,input#doctemp-name{
     line-height: 30px !important;
     background-color:#fff;
     border-radius:2px;
-    box-shadow:0 2px 4px rgba(0,0,0,.12);
+    /* box-shadow:0 2px 4px rgba(0,0,0,.12); */
     box-sizing:border-box;
     margin-right: 2px;
     margin-bottom: 2px;
+    margin-top: 10px;
     padding-right: 5px;
 }
 .mrdoc-import-doc-item a{
-    padding: 0 12px !important;
+    /* padding: 0 12px !important; */
 }
 .mrdoc-import-doc-item .layui-nav-more{
     border-top-color:#333;

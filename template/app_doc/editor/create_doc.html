@@ -1,64 +1,80 @@
 {% extends 'app_doc/editor/create_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}新建文档{% endblock %}
+{% block title %}{{editor_type}}{% endblock %}
 
 {% block head_toolbar %}
-    <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-        <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">新建文档</span>
-    </a>
-    <a class="btn pull-left" aria-label="" href="{% url 'manage_doc' %}?pid={{project.id}}" target="_blank">
-        <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理文档</span>
-    </a>
-    <a class="btn pull-left" aria-label="" href="{% url 'manage_project' %}" target="_blank">
-        <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理文集</span>
-    </a>
+    <ul class="layui-nav layui-form">
+        <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+            <i class="fa fa-align-justify"></i>
+        </a>
+        <li class="layui-nav-item mrdoc-import-doc-item">
+            <a href="javascript:;"><i class="fa fa-file-text layui-hide-md"></i><span class="layui-hide-xs">文档</span></a>
+            <dl class="layui-nav-child mrdoc-import-doc-child">
+                <dd><a href="javascript:void(0);" id="doc-tag-set">文档标签</a></dd>
+                <hr>
+                <dd><input type="checkbox" name="open-children" title="展开下级目录" lay-skin="primary"></dd>
+                <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary"></dd>
+            </dl>
+        </li>
+        
+        <li class="layui-nav-item mrdoc-import-doc-item">
+          <a href="javascript:;"><i class="fa fa-upload layui-hide-md"></i><span class="layui-hide-xs">导入</span></a>
+          <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
+            {% if editor_mode == 4 %}
+            <dd><a href="javascript:void(0);" id="import-excel">
+                <svg t="1608814405819" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3399" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M0 0h475.904v335.36H0z" fill="#52adff" p-id="3400"></path><path d="M591.36 667.050667H1024V1024H591.36z" fill="#1892ff" p-id="3401"></path><path d="M0 450.730667h475.904V1024H0z" fill="#83c5fd" p-id="3402"></path><path d="M591.36 0H1024v551.68H591.36z" fill="#52afff" p-id="3403"></path></svg>
+                Excel(.xlsx)</a>
+            </dd>
+            {% else %}
+            <dd><a href="javascript:void(0);" id="sel-doctemp">
+                    <svg t="1608814405819" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3399" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M0 0h475.904v335.36H0z" fill="#52adff" p-id="3400"></path><path d="M591.36 667.050667H1024V1024H591.36z" fill="#1892ff" p-id="3401"></path><path d="M0 450.730667h475.904V1024H0z" fill="#83c5fd" p-id="3402"></path><path d="M591.36 0H1024v551.68H591.36z" fill="#52afff" p-id="3403"></path></svg>
+                    文档模板</a>
+            </dd>
+            <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
+            <dd><a href="javascript:void(0);" id="sel-local" onclick="selectLocalFile()">
+                <svg t="1608814859854" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4936" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M967.610182 280.878545v626.455273a113.361455 113.361455 0 0 1-113.361455 113.384727H173.870545A113.361455 113.361455 0 0 1 60.509091 907.333818V113.594182A113.291636 113.291636 0 0 1 173.847273 0.209455h513.093818l280.669091 280.599272v0.069818z" fill="#2475FE" p-id="4937"></path><path d="M686.964364 167.493818V0.069818l280.669091 280.669091h-167.214546A113.361455 113.361455 0 0 1 687.010909 167.330909l-0.069818 0.139636z" fill="#8AB3F7" p-id="4938"></path><path d="M346.763636 425.402182h311.901091v58.740363H346.786909v-58.740363z m185.134546 58.740363v256.791273h-58.647273V484.212364h58.647273v-0.069819z" fill="#FFFFFF" p-id="4939"></path></svg>
+                文本文件</a></dd>
+            <dd><a href="javascript:void(0);" id="doc-cache-btn">
+                <svg t="1608814983993" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6507" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M0 0h1024v1024H0z" fill="#D8D8D8" fill-opacity="0" p-id="6508"></path><path d="M58.514286 220.7744h819.2a58.514286 58.514286 0 0 1 58.514285 58.514286v367.381943a117.028571 117.028571 0 0 1-117.028571 117.028571H175.542857a117.028571 117.028571 0 0 1-117.028571-117.028571V220.7744z" fill="#005DE8" opacity=".2" p-id="6509"></path><path d="M402.373486 193.653029m29.257143 0l104.360228 0q29.257143 0 29.257143 29.257142l0 22.9376q0 29.257143-29.257143 29.257143l-104.360228 0q-29.257143 0-29.257143-29.257143l0-22.9376q0-29.257143 29.257143-29.257142Z" fill="#FFDB00" p-id="6510"></path><path d="M245.467429 193.653029m29.257142 0l134.582858 0q29.257143 0 29.257142 29.257142l0 22.9376q0 29.257143-29.257142 29.257143l-134.582858 0q-29.257143 0-29.257142-29.257143l0-22.9376q0-29.257143 29.257142-29.257142Z" fill="#3289FF" p-id="6511"></path><path d="M194.852571 175.542857c48.830171 0 90.667886 29.9008 108.222172 72.411429H877.714286a58.514286 58.514286 0 0 1 58.514285 58.514285V732.306286a58.514286 58.514286 0 0 1-58.514285 58.514285H117.028571a58.514286 58.514286 0 0 1-58.514285-58.514285V234.057143a58.514286 58.514286 0 0 1 58.514285-58.514286h77.824z" fill="#005DE8" p-id="6512"></path><path d="M221.827657 617.033143c16.852114 0 33.440914-3.159771 44.763429-7.3728v-44.500114a124.5184 124.5184 0 0 1-42.130286 6.582857c-25.8048 0-37.390629-9.479314-37.390629-48.713143 0-37.390629 10.269257-49.7664 36.600686-49.7664 15.008914 0 28.437943 2.369829 40.813714 6.846171V435.6096c-11.322514-4.213029-27.121371-6.582857-45.026742-6.582857-54.769371 0-89.790171 23.434971-89.790172 94.0032 0 76.624457 36.337371 94.0032 92.16 94.0032z m132.183772-147.192686c-10.269257 0-25.541486 0.526629-36.337372 2.369829v41.866971a172.909714 172.909714 0 0 1 29.227886-2.369828l7.519086 0.146285c14.628571 0.643657 18.666057 3.8912 19.338971 16.442515h-29.227886c-41.340343 0-60.035657 12.112457-60.035657 44.763428 0 30.544457 18.695314 43.973486 48.449829 43.973486 25.014857 0 37.127314-8.689371 41.340343-15.798857l3.949714 13.165714h45.290057v-96.636343c0-33.1776-19.748571-47.9232-69.514971-47.9232z m-5.266286 110.065372c-10.269257 0-15.798857-1.8432-15.798857-9.216 0-7.723886 4.213029-10.357029 17.086171-10.737372l23.727543-0.058514v11.0592c-3.949714 5.002971-12.639086 8.952686-25.014857 8.952686z m174.577371 37.127314c13.165714 0 30.017829-2.106514 38.180572-5.5296v-39.760457a74.986057 74.986057 0 0 1-28.437943 4.739657c-21.855086 0-32.914286-6.582857-32.914286-33.1776 0-26.331429 11.585829-33.704229 31.861029-33.704229 9.742629 0 18.168686 1.053257 27.648 4.476343v-40.5504c-9.479314-2.896457-23.698286-3.949714-36.337372-3.949714-46.343314 0-73.728 15.272229-73.728 73.728s27.384686 73.728 73.728 73.728z m158.5152-147.456c-23.9616 0-37.390629 7.636114-43.973485 17.905371V414.281143h-50.029715V614.4h50.029715v-92.16c1.8432-7.636114 7.3728-13.165714 20.2752-13.165714 15.798857 0 20.2752 2.896457 20.2752 20.538514V614.4h50.029714v-96.109714c0-34.494171-13.165714-48.713143-46.606629-48.713143z m209.334857 64.512c0-43.446857-13.692343-64.512-64.248685-64.512-47.133257 0-74.517943 15.272229-74.517943 73.728s27.384686 73.728 72.148114 73.728c28.174629 0 50.819657-5.266286 59.509029-11.322514v-36.864c-8.426057 5.002971-30.281143 10.269257-49.503086 10.269257-18.168686 0-29.4912-5.002971-32.387657-17.378743l87.420343-5.266286c0.789943-2.106514 1.579886-10.795886 1.579885-22.381714z m-89.263542-6.319543c1.053257-17.642057 8.426057-21.591771 25.278171-21.591771 15.798857 0 19.748571 7.3728 19.748571 18.168685l-45.026742 3.423086z" fill="#FFFFFF" p-id="6513"></path></svg>
+                文档缓存</a></dd>
+            <dd><a href="javascript:void(0);" id="import-doc-docx">
+                <svg t="1608815050013" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7356" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M535.119473 0h69.599248v95.247413C729.226717 96.331138 853.614299 93.92286 977.881468 96.331138a40.459078 40.459078 0 0 1 44.914393 45.516463c2.047037 234.566322 0 469.614299 1.204139 703.819379-1.204139 24.082785 2.287865 50.694262-11.318909 72.248354-16.978363 12.041392-38.893697 10.837253-58.761994 12.041392h-349.200376V1023.518344h-72.248354C354.980245 990.886171 177.490122 960.541863 0 928.752587V95.488241C178.33302 63.578551 356.786453 32.511759 535.119473 0z" fill="#2A5699" p-id="7357"></path><path d="M604.718721 131.010348H988.598307v761.979304H604.718721v-95.247413h302.479774v-48.165569H604.718721v-59.002822h302.479774v-48.16557H604.718721v-59.002822h302.479774v-48.165569H604.718721v-60.206961h302.479774V428.673565H604.718721v-60.206961h302.479774v-46.96143H604.718721v-59.604892h302.479774V214.336783H604.718721zM240.827846 341.373471c22.156162-1.324553 44.19191-2.287865 66.348071-3.492003 15.533396 80.4365 31.30762 160.632173 48.165569 240.827845 13.125118-82.724365 27.695202-165.087488 41.783632-247.571025 23.239887-0.842897 46.479774-2.167451 69.719661-3.612418-26.370649 115.356538-49.369708 231.796802-78.148636 346.430856-19.386642 10.355597-48.165569 0-71.52587 1.204139C301.034807 596.169332 283.093133 517.779868 269.245532 438.667921c-13.606773 76.944497-31.30762 153.16651-46.841016 229.508937-22.39699-1.204139-44.793979-2.528692-67.311383-4.094073-19.266228-104.760113-42.024459-208.918156-60.206962-313.919097 19.868297-0.963311 39.857008-1.806209 60.206962-2.528693 12.041392 75.860771 25.648166 151.360301 36.124177 227.341487 16.135466-77.907808 32.873001-155.695202 49.610536-233.603011z" fill="#FFFFFF" p-id="7358"></path></svg>
+                Word文档(.docx)</a></dd>
+            {% endif %}
+          </dl>
+        </li>
+        
+        <li class="layui-nav-item mrdoc-import-doc-item">
+            <a href="javascript:;"><i class="fa fa-edit layui-hide-md"></i><span class="layui-hide-xs">编辑器</span></a>
+            <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
+              <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+              <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+              <dd><a href="?pid={{pid}}&eid=3">富文本{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+              <dd><a href="?pid={{pid}}&eid=4">在线表格{% if editor_mode == 4 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
+
+            </dl>
+        </li>
+
+        <li class="layui-nav-item mrdoc-import-doc-item">
+            <a href="javascript:;"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
+            <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
+                <dd><a href="{% url 'pro_list' %}" target="_blank">首页</a></dd>
+                <dd><a href="{% url 'user_center' %}" target="_blank">个人中心</a></dd>
+            </dl>  
+        </li>
+
+        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为发布状态" id="pub_doc">发布</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为草稿状态" id="save_doc">存为草稿</button>
+
+    </ul>
+
 {% endblock %}
 
 
 {% block left_opera %}
     <div class="layui-form" style="padding: 0 10px 10px 10px;" lay-filter="left_form">
         <div class="layui-row">
-            <ul class="layui-nav mrdoc-import-doc-list">
-                <li class="layui-nav-item mrdoc-import-doc-item">
-                  <a href="javascript:;">导入</a>
-                  <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
-                    <dd><a href="javascript:void(0);" id="sel-doctemp">
-                            <svg t="1608814405819" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3399" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M0 0h475.904v335.36H0z" fill="#52adff" p-id="3400"></path><path d="M591.36 667.050667H1024V1024H591.36z" fill="#1892ff" p-id="3401"></path><path d="M0 450.730667h475.904V1024H0z" fill="#83c5fd" p-id="3402"></path><path d="M591.36 0H1024v551.68H591.36z" fill="#52afff" p-id="3403"></path></svg>
-                            文档模板</a>
-                    </dd>
-                    <input type="file" id="insert-local-file" onchange="insertLocalFile(this)" style="display:none;">
-                    <dd><a href="javascript:void(0);" id="sel-local" onclick="selectLocalFile()">
-                        <svg t="1608814859854" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4936" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M967.610182 280.878545v626.455273a113.361455 113.361455 0 0 1-113.361455 113.384727H173.870545A113.361455 113.361455 0 0 1 60.509091 907.333818V113.594182A113.291636 113.291636 0 0 1 173.847273 0.209455h513.093818l280.669091 280.599272v0.069818z" fill="#2475FE" p-id="4937"></path><path d="M686.964364 167.493818V0.069818l280.669091 280.669091h-167.214546A113.361455 113.361455 0 0 1 687.010909 167.330909l-0.069818 0.139636z" fill="#8AB3F7" p-id="4938"></path><path d="M346.763636 425.402182h311.901091v58.740363H346.786909v-58.740363z m185.134546 58.740363v256.791273h-58.647273V484.212364h58.647273v-0.069819z" fill="#FFFFFF" p-id="4939"></path></svg>
-                        文本文件</a></dd>
-                    <dd><a href="javascript:void(0);" id="doc-cache-btn">
-                        <svg t="1608814983993" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6507" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M0 0h1024v1024H0z" fill="#D8D8D8" fill-opacity="0" p-id="6508"></path><path d="M58.514286 220.7744h819.2a58.514286 58.514286 0 0 1 58.514285 58.514286v367.381943a117.028571 117.028571 0 0 1-117.028571 117.028571H175.542857a117.028571 117.028571 0 0 1-117.028571-117.028571V220.7744z" fill="#005DE8" opacity=".2" p-id="6509"></path><path d="M402.373486 193.653029m29.257143 0l104.360228 0q29.257143 0 29.257143 29.257142l0 22.9376q0 29.257143-29.257143 29.257143l-104.360228 0q-29.257143 0-29.257143-29.257143l0-22.9376q0-29.257143 29.257143-29.257142Z" fill="#FFDB00" p-id="6510"></path><path d="M245.467429 193.653029m29.257142 0l134.582858 0q29.257143 0 29.257142 29.257142l0 22.9376q0 29.257143-29.257142 29.257143l-134.582858 0q-29.257143 0-29.257142-29.257143l0-22.9376q0-29.257143 29.257142-29.257142Z" fill="#3289FF" p-id="6511"></path><path d="M194.852571 175.542857c48.830171 0 90.667886 29.9008 108.222172 72.411429H877.714286a58.514286 58.514286 0 0 1 58.514285 58.514285V732.306286a58.514286 58.514286 0 0 1-58.514285 58.514285H117.028571a58.514286 58.514286 0 0 1-58.514285-58.514285V234.057143a58.514286 58.514286 0 0 1 58.514285-58.514286h77.824z" fill="#005DE8" p-id="6512"></path><path d="M221.827657 617.033143c16.852114 0 33.440914-3.159771 44.763429-7.3728v-44.500114a124.5184 124.5184 0 0 1-42.130286 6.582857c-25.8048 0-37.390629-9.479314-37.390629-48.713143 0-37.390629 10.269257-49.7664 36.600686-49.7664 15.008914 0 28.437943 2.369829 40.813714 6.846171V435.6096c-11.322514-4.213029-27.121371-6.582857-45.026742-6.582857-54.769371 0-89.790171 23.434971-89.790172 94.0032 0 76.624457 36.337371 94.0032 92.16 94.0032z m132.183772-147.192686c-10.269257 0-25.541486 0.526629-36.337372 2.369829v41.866971a172.909714 172.909714 0 0 1 29.227886-2.369828l7.519086 0.146285c14.628571 0.643657 18.666057 3.8912 19.338971 16.442515h-29.227886c-41.340343 0-60.035657 12.112457-60.035657 44.763428 0 30.544457 18.695314 43.973486 48.449829 43.973486 25.014857 0 37.127314-8.689371 41.340343-15.798857l3.949714 13.165714h45.290057v-96.636343c0-33.1776-19.748571-47.9232-69.514971-47.9232z m-5.266286 110.065372c-10.269257 0-15.798857-1.8432-15.798857-9.216 0-7.723886 4.213029-10.357029 17.086171-10.737372l23.727543-0.058514v11.0592c-3.949714 5.002971-12.639086 8.952686-25.014857 8.952686z m174.577371 37.127314c13.165714 0 30.017829-2.106514 38.180572-5.5296v-39.760457a74.986057 74.986057 0 0 1-28.437943 4.739657c-21.855086 0-32.914286-6.582857-32.914286-33.1776 0-26.331429 11.585829-33.704229 31.861029-33.704229 9.742629 0 18.168686 1.053257 27.648 4.476343v-40.5504c-9.479314-2.896457-23.698286-3.949714-36.337372-3.949714-46.343314 0-73.728 15.272229-73.728 73.728s27.384686 73.728 73.728 73.728z m158.5152-147.456c-23.9616 0-37.390629 7.636114-43.973485 17.905371V414.281143h-50.029715V614.4h50.029715v-92.16c1.8432-7.636114 7.3728-13.165714 20.2752-13.165714 15.798857 0 20.2752 2.896457 20.2752 20.538514V614.4h50.029714v-96.109714c0-34.494171-13.165714-48.713143-46.606629-48.713143z m209.334857 64.512c0-43.446857-13.692343-64.512-64.248685-64.512-47.133257 0-74.517943 15.272229-74.517943 73.728s27.384686 73.728 72.148114 73.728c28.174629 0 50.819657-5.266286 59.509029-11.322514v-36.864c-8.426057 5.002971-30.281143 10.269257-49.503086 10.269257-18.168686 0-29.4912-5.002971-32.387657-17.378743l87.420343-5.266286c0.789943-2.106514 1.579886-10.795886 1.579885-22.381714z m-89.263542-6.319543c1.053257-17.642057 8.426057-21.591771 25.278171-21.591771 15.798857 0 19.748571 7.3728 19.748571 18.168685l-45.026742 3.423086z" fill="#FFFFFF" p-id="6513"></path></svg>
-                        文档缓存</a></dd>
-                    <dd><a href="javascript:void(0);" id="import-doc-docx">
-                        <svg t="1608815050013" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7356" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M535.119473 0h69.599248v95.247413C729.226717 96.331138 853.614299 93.92286 977.881468 96.331138a40.459078 40.459078 0 0 1 44.914393 45.516463c2.047037 234.566322 0 469.614299 1.204139 703.819379-1.204139 24.082785 2.287865 50.694262-11.318909 72.248354-16.978363 12.041392-38.893697 10.837253-58.761994 12.041392h-349.200376V1023.518344h-72.248354C354.980245 990.886171 177.490122 960.541863 0 928.752587V95.488241C178.33302 63.578551 356.786453 32.511759 535.119473 0z" fill="#2A5699" p-id="7357"></path><path d="M604.718721 131.010348H988.598307v761.979304H604.718721v-95.247413h302.479774v-48.165569H604.718721v-59.002822h302.479774v-48.16557H604.718721v-59.002822h302.479774v-48.165569H604.718721v-60.206961h302.479774V428.673565H604.718721v-60.206961h302.479774v-46.96143H604.718721v-59.604892h302.479774V214.336783H604.718721zM240.827846 341.373471c22.156162-1.324553 44.19191-2.287865 66.348071-3.492003 15.533396 80.4365 31.30762 160.632173 48.165569 240.827845 13.125118-82.724365 27.695202-165.087488 41.783632-247.571025 23.239887-0.842897 46.479774-2.167451 69.719661-3.612418-26.370649 115.356538-49.369708 231.796802-78.148636 346.430856-19.386642 10.355597-48.165569 0-71.52587 1.204139C301.034807 596.169332 283.093133 517.779868 269.245532 438.667921c-13.606773 76.944497-31.30762 153.16651-46.841016 229.508937-22.39699-1.204139-44.793979-2.528692-67.311383-4.094073-19.266228-104.760113-42.024459-208.918156-60.206962-313.919097 19.868297-0.963311 39.857008-1.806209 60.206962-2.528693 12.041392 75.860771 25.648166 151.360301 36.124177 227.341487 16.135466-77.907808 32.873001-155.695202 49.610536-233.603011z" fill="#FFFFFF" p-id="7358"></path></svg>
-                        Word文档(.docx)</a></dd>
-                  </dl>
-                </li>
-                <li class="layui-nav-item mrdoc-import-doc-item">
-                    <a href="javascript:;">编辑器</a>
-                    <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
-                      <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"></span>{% endif %}</a></dd>
-                      <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"></span>{% endif %}</a></dd>
-                      <dd><a href="?pid={{pid}}&eid=3">iceEditor{% if editor_mode == 3 %}<span class="layui-badge-dot layui-bg-blue"></span>{% endif %}</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item mrdoc-import-doc-item">
-                    <a href="javascript:;">其他配置</a>
-                    <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
-                      <dd><a href="javascript:void(0);" id="doc-tag-set">
-                        <svg t="1608950408113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4040" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"><defs><style type="text/css"></style></defs><path d="M828.952381 0H195.047619C141.165714 0 97.52381 43.641905 97.52381 97.52381v926.47619l414.47619-170.666667 414.47619 170.666667V97.52381c0-53.881905-43.641905-97.52381-97.523809-97.52381z" fill="#8BAFFF" p-id="4041"></path><path d="M567.832381 191.146667c-91.91619 106.300952-148.72381 257.219048-150.918095 435.931428C415.939048 695.344762 341.333333 828.952381 390.095238 902.095238l121.904762-48.761905 414.47619 170.666667V434.224762c-90.697143-118.979048-221.866667-197.973333-358.643809-243.078095z" fill="#2C6BDB" p-id="4042"></path><path d="M97.52381 170.666667v853.333333l353.523809-146.285714s-36.571429-70.704762-34.133333-250.636191c2.194286-178.712381 59.001905-329.630476 150.918095-435.931428C397.409524 135.070476 217.965714 131.657143 97.52381 170.666667zM926.47619 434.224762V121.904762c0-24.380952 0-73.142857-31.939047-96.548572-128.487619 8.533333-242.346667 68.266667-326.704762 165.790477C704.609524 236.251429 835.779048 315.245714 926.47619 434.224762z" fill="#4480EA" p-id="4043"></path></svg>
-                          文档标签</a></dd>
-                      <dd><input type="checkbox" name="open-children" title="展开下级目录" lay-skin="primary"></dd>
-                      <dd><input type="checkbox" name="show-children" title="显示下级文档" lay-skin="primary"></dd>
-                    </dl>
-                </li>
-            </ul>
-            <hr>
             <!-- 选择文集 -->
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <div class="layui-input-inblock">
@@ -103,32 +119,8 @@
                 </div>    
             </div>
 
-            <!-- 文档结构树 -->
-            <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-                <div class="layui-colla-item">
-                    <h2 class="layui-colla-title">文档结构树</h2>
-                    <div class="layui-colla-content" style="max-height: 400px;overflow: hidden;overflow-y: scroll;overflow-x: scroll;">
-                        <div id="doc-tree"></div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-
-            <!-- 发布按钮 -->
-            <div class="layui-collapse" style="margin-top: 10px;margin-bottom: 10px;">
-                <div class="layui-colla-item">
-                    <h2 class="layui-colla-title">发布</h2>
-                    <div class="layui-colla-content layui-show" style="padding: 10px;background-color: #fff;">
-                        <div class="layui-btn-container">
-                            <button class="layui-btn layui-btn-primary" id="save_doc" title="保存当前内容为草稿文档">
-                                <i class="fa fa-save"></i> 存为草稿
-                            </button>
-                            <button class="layui-btn layui-btn-normal" id="pub_doc" title="发布当前内容">
-                                <i class="layui-icon layui-icon-release"></i> 发布文档
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div class="layui-colla-content layui-show" style="max-height: 100%;overflow: hidden;overflow-y: hidden;overflow-x: scroll;">
+                <div id="doc-tree"></div>
             </div>
         </div>
     </div>
@@ -138,16 +130,20 @@
     <div class="create-doc-form">
         <div class="layui-form">
             <!-- 标题 -->
-            <div style="padding-bottom:10px;">
+            <div style="padding-bottom:0px;">
                 <div class="layui-input-block" style="margin-left:0px;">
-                  <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题……" autocomplete="off" class="layui-input">
+                    <input type="text" name="doc-name" id="doc-name" required lay-verify="required" placeholder="请输入文档标题……" autocomplete="off" class="layui-input">
                 </div>
             </div>
+            <br/>
         </div>
     </div>
-    <div id="editor-md" class="layui-col-xs12">
+
+    <div id="editor-md" class="layui-col-xs12">    
         {% if editor_mode == 1 %}
         <textarea style="display:none;"></textarea>
+        {% elif editor_mode == 4 %}
+        <div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:600px;left: 0px;top: 0px;"></div>
         {% endif %}
     </div>
 {% endblock %}
@@ -181,6 +177,7 @@
                 });
         })
         var tree = layui.tree;
+        var upload = layui.upload;
         //选择文集
         form.on('select(project)', function(data){
             console.log('选择文集：',data.value); //得到被选中的值
@@ -277,7 +274,11 @@
             }else if(editor_mode == 3){
                 var content = editor.getHTML()
                 var pre_content = editor.getText()
+            }else if(editor_mode == 4){
+                var content  = '';
+                var pre_content = JSON.stringify(luckysheet.getAllSheets());
             }
+
             var data = {
                 'project':$("#project").val(),
                 'parent_doc':$("#parent-doc").val(),
@@ -306,33 +307,47 @@
                 //发布按钮设为禁用
                 $("#create_doc").attr({"disabled":"disabled"});
                 layer.load(); // 加载提示
-                $.post("{% url 'create_doc' %}",data,function(r){
-                    if(r.status){
-                        //创建成功
-                        layer.closeAll("loading"); //关闭加载层
-                        window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
-                        if(status === 1){
-                            layer.msg('发布成功',{time:1000},function(){
-                                md_changed = false;
-                                //跳转到文档阅读页面
-                                window.location.href = "/project-" + r.data.pro + "/doc-" + r.data.doc
-                            });
+                $.ajax({
+                    url:"{% url 'create_doc' %}",
+                    type:'post',
+                    data:data,
+                    success:function(r){
+                        if(r.status){
+                            //创建成功
+                            layer.closeAll("loading"); //关闭加载层
+                            window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
+                            if(status === 1){
+                                layer.msg('发布成功',{time:1000},function(){
+                                    md_changed = false;
+                                    //跳转到文档修改
+                                    window.location.href = "/modify_doc/"+r.data.doc+"/";
+                                });
+                            }else{
+                                layer.msg('保存成功',{time:1000},function(){
+                                    md_changed = false;
+                                    //跳转到文档修改
+                                    window.location.href = "/modify_doc/"+r.data.doc+"/";
+                                });
+                            }
                         }else{
-                            layer.msg('保存成功',{time:1000},function(){
-                                md_changed = false;
-                                //跳转到文档修改
-                                window.location.href = "/modify_doc/"+r.data.doc+"/";
-                            });
+                            //创建失败
+                            layer.closeAll("loading"); //关闭加载层
+                            layer.msg('发布文档失败:'+r.data);
+                            //恢复按钮状态
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
                         }
-                    }else{
-                        //创建失败
-                        layer.closeAll("loading"); //关闭加载层
-                        layer.msg('发布文档失败:'+r.data);
-                        //恢复按钮状态
-                        $('button.layui-btn').attr("disabled",false);
-                        $('button.layui-btn').removeClass('layui-btn-disabled');
+                    },
+                    error:function(){
+                            //创建失败
+                            layer.closeAll("loading"); //关闭加载层
+                            layer.msg('发布文档异常！');
+                            //恢复按钮状态
+                            $('button.layui-btn').attr("disabled",false);
+                            $('button.layui-btn').removeClass('layui-btn-disabled');
+
                     }
-                });
+                })
             }
         };
 
@@ -369,7 +384,7 @@
                     if(editor_mode == 1){
                         editor.insertValue(r.data);
                     }else if(editor_mode == 2){
-                        editor.setValue(r.data);
+                        editor.insertValue(r.data);
                     }
                     layer.closeAll()
                 }else{
@@ -422,5 +437,41 @@
         function selectLocalFile(){
             $("#insert-local-file").trigger("click");
         };
+
+        // 导入Excel
+        upload.render({
+            elem:'#import-excel',
+            url:'',
+            auto:false,
+            exts:'xlsx',
+            choose:function(obj){
+                obj.preview(function(index,file,result){
+                    LuckyExcel.transformExcelToLucky(file, function(exportJson, luckysheetfile){            
+                        luckysheet.create({
+                            container: 'luckysheet', // luckysheet is the container id
+                            data:exportJson.sheets,
+                            title:exportJson.info.name,
+                            userInfo:exportJson.info.name.creator,
+                            lang: 'zh',
+                            showGridLines:true,
+                            allowEdit:true,
+                            showinfobar: false, // 是否显示顶部信息栏
+                            showsheetbar: true, // 是否显示底部sheet页按钮
+                            showstatisticBar: true, // 是否显示底部计数栏
+                            sheetBottomConfig: true, // sheet页下方的添加行按钮和回到顶部按钮配置
+                            userInfo: false, // 右上角的用户信息展示样式
+                            // plugins: ['chart'],
+                            showstatisticBarConfig: {
+                                count:false,
+                                view:false,
+                                zoom:false,
+                            },
+
+                        });
+                    });
+                });
+            },
+        })
+
     </script>
 {% endblock %}

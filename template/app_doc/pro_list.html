@@ -4,6 +4,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
+    <meta name=renderer  content=webkit>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
     <meta http-equiv="Cache-Control" content="no-transform" />
     <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -12,7 +13,7 @@
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %} - {% if site_sub_name != None %}{{site_sub_name}} {% else %}{% trans "又一个MrDoc站点" %}{% endif %}</title>
-    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
@@ -64,7 +65,7 @@
         @media screen and (max-width: 768px){
             /* 控制栏样式 */
             .index-control .layui-form-item .layui-inline{
-                display: -webkit-inline-box;
+                display: flex;
             }
             .index-control .layui-form-item .layui-input-inline{
                 display: -webkit-inline-box;
@@ -91,6 +92,9 @@
             <div class="layui-form-item">
                 <!-- 筛选开始 -->
                 <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" name="kw" id="search-project" placeholder="{% trans '搜索文集' %}" value="{{kw}}" class="layui-input">
+                    </div>
                     <div class="layui-input-inline">
                         <select name="role" lay-verify="" id="sel-role">
                             <option value="">{% trans "筛选" %}</option>
@@ -127,22 +131,34 @@
     {% for p in projects %}
         <!-- 网格布局 -->
         <div class="layui-col-md3 layui-col-xs12 project-item">
-            <a href="{% url 'pro_index' p.id %}" target="_blank">
+            <a href="{% url 'pro_index' p.id %}" target="_blank" title="{{p.name}}">
                 <div class="layui-card">
                     <div class="layui-card-header" 
                         {% if p.role == 1 %}
                         style="background: url({% static 'icon_img/simi.svg' %}) no-repeat right bottom;"
+                        {% elif p.role == 3 %}
+                        style="background: url({% static 'icon_img/viewcode.svg' %}) no-repeat right center;"
                         {% endif %}
                         >
-                        {% if p.icon %}
+                        {% if p.icon and p.icon != None %}
                             <p class="layui-elip" style="font-weight: 700;">
                                 {% if p.is_top %}<i class="iconfont mrdoc-icon-totop" title="置顶文集" style="color: red;font-size: 12px;"></i>{% endif %}
                                 <svg class="icon" aria-hidden="true"><use xlink:href="#{{p.icon}}"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span>
+                                {% if p.create_user == request.user %}
+                                <a class="index-add-link" href="{% url 'create_doc' %}?pid={{p.id}}" target="_blank" title="新建此文档的下级文档">
+                                    <i class="layui-icon layui-icon-add-1"></i>
+                                </a>
+                                {% endif %}
                             </p>
                         {% else %}
                             <p class="layui-elip" style="font-weight: 700;">
                                 {% if p.is_top %}<i class="iconfont mrdoc-icon-totop" title="置顶文集" style="color: red;font-size: 12px;"></i>{% endif %}
                                 <svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg> {{ p.name }}&nbsp;&nbsp;<span class="layui-badge-rim">{{p.id|get_doc_count}}</span>
+                                {% if p.create_user == request.user %}
+                                <a class="index-add-link" href="{% url 'create_doc' %}?pid={{p.id}}" target="_blank" title="新建此文档的下级文档">
+                                    <i class="layui-icon layui-icon-add-1"></i>
+                                </a>
+                                {% endif %}
                             </p>
                         {% endif %}
                     </div>
@@ -246,9 +262,9 @@
 </div>
 <!-- 结束新建文集div块 -->
 
-<script src="{% static 'iconFont/iconfont.js' %}"></script>
+<script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
 {% block custom_script %}
     <script>
         $.ajaxSetup({
@@ -290,9 +306,16 @@
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){
             var filter_data = form.val("filter-project-form");
-            console.log(filter_data)
+            // console.log(filter_data)
             window.location.href = '/?sort=' + filter_data['sort'] + '&role=' + filter_data['role'] + '&kw={{kw}}' 
         });
+        // 首页文集搜索框回车事件
+        $("#search-project").keydown(function(e){
+            if(e.keyCode === 13){
+                var filter_data = form.val("filter-project-form");
+                window.location.href = '/?sort=' + filter_data['sort'] + '&role=' + filter_data['role'] + '&kw=' + filter_data['kw'];
+            }
+        })
         
         // 动态生成文集图标列表
         for(var i=1;i<44;i++){
@@ -323,7 +346,7 @@
                 area:'400px;',
                 id:'createPro',//配置ID
                 content: $('#create-project-div'),
-                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "创建并添加文档" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 sucess:function(){
                     form.render();
@@ -345,7 +368,35 @@
                                 window.location.reload();
                             }else{
                                 //创建失败，提示
-                                console.log(r)
+                                // console.log(r)
+                                layer.closeAll('loading')
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading')
+                            layer.msg("创建异常")
+                        }
+                    })
+                },
+                btn2:function(index,layero) {
+                    layer.load(1)
+                    data = {
+                        'picon':$("#picon").val(),
+                        'pname':$("#pname").val(),
+                        'desc':$("#desc").val(),
+                        'role':$("input[name=project-role]:checked").val(),
+                    }
+                    $.ajax({
+                        url:"{% url 'create_project' %}",
+                        type:'post',
+                        data:data,
+                        success:function(r){
+                            if(r.status){
+                                window.location.href = '/create_doc/?pid=' + r.data.id;
+                            }else{
+                                //创建失败，提示
+                                // console.log(r)
                                 layer.closeAll('loading')
                                 layer.msg(r.data)
                             }

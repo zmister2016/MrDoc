@@ -1,0 +1,85 @@
+.input-new-tag {
+	width: 90px;
+}
+
+.input-new-tag input {
+	height: 100%!important;
+	border: none;
+	padding-left: 0px;
+}
+
+.tag .layui-btn .tag-close:hover {
+	border-radius: 2px;
+	color: #fff;
+}
+
+.tag .layui-btn .tag-close {
+	margin-left: 8px;
+	transition: all .2s;
+	-webkit-transition: all .2s;
+}
+.tag-item {
+	background-color: #5FB878;
+	color: white;
+	border: none;
+}
+
+.tag-item:hover {
+
+	color: white;
+
+}
+.tag-item-normal {
+	background-color: #5FB878;
+	color: white;
+	border: none;
+}
+
+.tag-item-warm {
+	background-color: #f6ad55;
+	color: white;
+	border: none;
+}
+
+.tag-item-danger {
+	background-color: #f56c6c;
+	color: white;
+	border: none;
+}
+
+.tag-item-dark {
+	background-color: #525252;
+	color: white;
+	border: none;
+}
+
+.tag-item-primary {
+	background-color: white !important;
+	color: dimgray;
+	border: 1px solid dimgray;
+}
+
+.tag-item-normal:hover {
+
+	color: white !important;
+}
+
+.tag-item-warm:hover {
+
+	color: white;
+}
+
+.tag-item-danger:hover {
+
+	color: white;
+}
+
+.tag-item-dark:hover {
+
+	color: white;
+}
+
+.tag-item-primary:hover {
+	color: dimgray;
+	border: 1px solid dimgray;
+}

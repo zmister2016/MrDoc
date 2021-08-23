@@ -1,17 +1,11 @@
-/**
- * 全局路径引用容错处理
- * */
 window.rootPath = (function(src) {
 	src = document.scripts[document.scripts.length - 1].src;
 	return src.substring(0, src.lastIndexOf("/") + 1);
 })();
 
-/**
- * 核心依赖
- * */
 layui.config({
-	base: rootPath + "modules/",
-	version: "3.5.5.Release"
+	base: rootPath + "module/",
+	version: "3.8.0.Release"
 }).extend({
 	admin: "admin", 	// 框架布局组件
 	menu: "menu",		// 数据菜单组件
@@ -35,7 +29,6 @@ layui.config({
 	topBar: "topBar",		// 置顶组件
 	button: "button",		// 加载按钮
 	design: "design",		// 表单设计
-	dropdown: "dropdown",	// 下拉组件
 	card: "card",			// 数据卡片组件
 	loading: "loading",		// 加载组件
 	cropper:"cropper",		// 裁剪组件
@@ -43,7 +36,8 @@ layui.config({
 	yaml:"yaml",			// yaml 解析组件
 	context: "context",		// 上下文组件
 	http: "http",			// ajax请求组件
-	theme: "theme"			// 主题转换
+	theme: "theme",			// 主题转换
+	message: "message",     // 通知组件
 }).use(['layer', 'theme'], function () {
 	layui.theme.changeTheme(window, false);
 });

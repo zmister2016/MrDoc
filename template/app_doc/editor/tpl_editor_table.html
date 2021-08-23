@@ -1,0 +1,38 @@
+<!-- LuckySheet在线表格 -->
+{% load static %}
+<script>
+    $(function () {
+        //配置项
+        var table_data = ($("#sheet_table_content").length > 0) ? JSON.parse($("#sheet_table_content").val()) : null;
+        var options = {
+            container: 'luckysheet', //luckysheet为容器id
+            lang: 'zh',
+            showGridLines:true,
+            allowEdit:true,
+            showinfobar: false, // 是否显示顶部信息栏
+            showsheetbar: true, // 是否显示底部sheet页按钮
+            showstatisticBar: true, // 是否显示底部计数栏
+            sheetBottomConfig: true, // sheet页下方的添加行按钮和回到顶部按钮配置
+            userInfo: false, // 右上角的用户信息展示样式
+            // plugins: ['chart'],
+            showstatisticBarConfig: {
+                count:false,
+                view:false,
+                zoom:false,
+            },
+            // showsheetbarConfig: {
+            //     add: true, //新增sheet
+            //     menu: false, //sheet管理菜单
+            //     sheet: true, //sheet页显示
+            // },
+            hook: {
+                cellMousedown:this.cellMousedown,
+            },
+            row:20,
+            column:20,
+            // data:JSON.parse($("#sheet_table_content").val()),
+            data:table_data,
+        }
+        luckysheet.create(options)
+    })
+</script>

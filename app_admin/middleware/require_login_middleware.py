@@ -13,7 +13,20 @@ class RequiredLoginMiddleware():
     def __init__(self, get_response):
         self.get_response = get_response
         # 设置排除URL
-        compile_tuple = (r'/user/login(.*)$', r'/user/logout(.*)$', r'/user/register(.*)$',r'/user/check_code(.*)$',r'/static/(.*)$')
+        compile_tuple = (
+            r'/login(.*)$', # 登录
+            r'/logout(.*)$', # 注销
+            r'/register(.*)$', # 注册
+            r'/check_code(.*)$', # 验证码
+            r'/static/(.*)$', # 静态文件
+            r'/api/get_projects/(.*)$', # token api 获取文集列表
+            r'/api/get_docs/(.*)$',  # token api 获取文档列表
+            r'/api/get_doc/(.*)$',  # token api 获取文档
+            r'/api/create_project/(.*)$',  # token api 新建文集
+            r'/api/create_doc/(.*)$',  # token api 新建文档
+            r'/api/modify_doc/(.*)$',  # token api 修改文档
+            r'/api/upload_img/(.*)$',  # token api 粘贴上传图片
+        )
         self.exceptions = tuple(re.compile(url) for url in compile_tuple)
 
     def __call__(self, request):

@@ -26,7 +26,9 @@
         <ul class="layui-tab-title">
             <li class="layui-this">{% trans "基础信息" %}</li>
             <li>{% trans "权限配置" %}</li>
+            {% if enable_project_report %}
             <li>{% trans "下载配置" %}</li>
+            {% endif %}
             <li>{% trans "管理控制" %}</li>
         </ul>
         <div class="layui-tab-content">
@@ -38,7 +40,7 @@
                         <div class="layui-input-inline" style="width: 30px;">
                             <button class="layui-btn layui-btn-primary layui-btn-sm" id="project-icon-select">
                                 {% if pro.icon %}
-                                <svg class="icon" aria-hidden="true"><use xlink:href="#{{pro.icon}}"></use></svg>
+                                <svg class="icon" aria-hidden="true"><use xlink:href="{% if pro.icon %}#{{pro.icon}}{% else %}#mrdoc-icon-pro-2{% endif %}"></use></svg>
                                 {% else %}
                                 <i class="layui-icon layui-icon-addition"></i>
                                 {% endif %}
@@ -117,6 +119,7 @@
                 </div>
             </div>
             <!-- 下载和导出 -->
+            {% if enable_project_report %}
             <div class="layui-tab-item">
                 <div class="layui-form">
                     {% load project_filter %}
@@ -130,19 +133,17 @@
                                {% if pro.id|report_status_epub == 1 %} checked {% endif %}
                                lay-skin="switch" lay-text="{% trans '允许|禁止' %}">
                                <!-- 判断后台是否开启导出，如果开启，则显示 -->
-                               {% if enable_project_report %}
-                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')"><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新EPUB文件" %}</u></a>
-                                    {% if project_files %}
-                                        {% for file in project_files %}
-                                            {% if file.file_type == 'epub' %}
-                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集EPUB文件" %}</u></a>
-                                            {% else %}
-                                                
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                    | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
-                                    {% endif %}
+                                <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','epub')"><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新EPUB文件" %}</u></a>
+                                {% if project_files %}
+                                    {% for file in project_files %}
+                                        {% if file.file_type == 'epub' %}
+                                            | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集EPUB文件" %}</u></a>
+                                        {% else %}
+                                            
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
                                 {% endif %}
                         </div>
                     </div>
@@ -154,19 +155,17 @@
                                {% if pro.id|report_status_pdf == 1 %} checked {%endif%}
                                lay-skin="switch" lay-text="{% trans '允许|禁止' %}">
                                <!-- 判断后台是否开启导出，如果开启，则显示 -->
-                               {% if enable_project_report %}
-                                    <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新PDF文件" %}</u></a>
-                                    {% if project_files %}
-                                        {% for file in project_files %}
-                                            {% if file.file_type == 'pdf' %}
-                                                | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集PDF文件" %}</u></a>
-                                            {% else %}
-                                                
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                    | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
-                                    {% endif %}
+                                <a href="javascript:void(0);" onclick="reportFile('{{pro.id}}','pdf')" style=""><i class="layui-icon layui-icon-refresh"></i><u>{% trans "生成或更新PDF文件" %}</u></a>
+                                {% if project_files %}
+                                    {% for file in project_files %}
+                                        {% if file.file_type == 'pdf' %}
+                                            | <a href="{{file.file_path}}" target="_blank"><i class="layui-icon layui-icon-download-circle"></i><u>{% trans "下载文集PDF文件" %}</u></a>
+                                        {% else %}
+                                            
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                | <span style="color: #ff213b;">{% trans "未生成文集导出文件" %}</span>
                                 {% endif %}
                         </div>
                     </div>
@@ -179,6 +178,7 @@
                     
                 </div>
             </div>
+            {% endif %}
             <!-- 文集删除和转让 -->
             <div class="layui-tab-item">
                 <div class="layui-row">
@@ -214,7 +214,7 @@
 {% block custom_script %}
 <script src="{% static 'iconFont/iconfont.js' %}"></script>
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}"></script>
 <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
 <script>
     $.ajaxSetup({
@@ -544,6 +544,7 @@
         sequenceDiagram : true, //开启序列图
         imageUpload    : true, //开启图片上传
         codeFold       :true, //代码折叠
+        autoFocus       : false,
         htmlDecode     : "link,style,base,script,iframe", //过滤部分HTML标签
         imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL : "{% url 'upload_doc_img' %}",

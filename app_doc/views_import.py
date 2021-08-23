@@ -17,15 +17,17 @@ from app_doc.models import Project,Doc,DocTemp
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from loguru import logger
+from app_doc.report_utils import *
+from app_admin.decorators import check_headers,allow_report_file
+from app_doc.import_utils import *
 import datetime
 import traceback
 import re
-from app_doc.report_utils import *
-from app_admin.decorators import check_headers,allow_report_file
 import os.path
 import json
-from app_doc.import_utils import *
+
 
 # 导入文集
 @login_required()
@@ -42,7 +44,7 @@ def import_project(request):
                 file_name = import_file.name
                 # 限制文件大小在50mb以内
                 if import_file.size > 52428800:
-                    return JsonResponse({'status': False, 'data': '文件大小超出限制'})
+                    return JsonResponse({'status': False, 'data': _('文件大小超出限制')})
                 # 限制文件格式为.zip
                 if file_name.endswith('.zip'):
                     if os.path.exists(os.path.join(settings.MEDIA_ROOT,'import_temp')) is False:
@@ -54,21 +56,81 @@ def import_project(request):
                             zip_file.write(chunk)
                     if os.path.exists(temp_file_path):
                         import_file = ImportZipProject()
-                        project = import_file.read_zip(temp_file_path,request.user)
+                        project = import_file.read_zip(temp_file_path,request.user) # 返回文集id或None
                         if project:
+                            pro = Project.objects.get(id=project)
                             docs = Doc.objects.filter(top_doc=project).values_list('id','name')
-                            doc_list = [doc for doc in docs]
-                            return JsonResponse({'status':True,'data':doc_list,'id':project})
+                            # 查询存在上级文档的文档
+                            parent_id_list = Doc.objects.filter(top_doc=project).exclude(
+                                parent_doc=0).values_list('parent_doc', flat=True)
+                            # 获取存在上级文档的上级文档ID
+                            doc_list = []
+                            # 获取一级文档
+                            top_docs = Doc.objects.filter(
+                                top_doc=project,
+                                parent_doc=0).values('id','name').order_by('sort')
+                            for doc in top_docs:
+                                top_item = {
+                                    'id': doc['id'],
+                                    'field': doc['name'],
+                                    'title': doc['name'],
+                                    'spread': True,
+                                    'level': 1
+                                }
+                                # 如果一级文档存在下级文档，查询其二级文档
+                                if doc['id'] in parent_id_list:
+                                    sec_docs = Doc.objects.filter(
+                                        top_doc=project,
+                                        parent_doc=doc['id']).values('id','name').order_by('sort')
+                                    top_item['children'] = []
+                                    for doc in sec_docs:
+                                        sec_item = {
+                                            'id': doc['id'],
+                                            'field': doc['name'],
+                                            'title': doc['name'],
+                                            'level': 2
+                                        }
+                                        # 如果二级文档存在下级文档，查询第三级文档
+                                        if doc['id'] in parent_id_list:
+                                            thr_docs = Doc.objects.filter(
+                                                top_doc=project,
+                                                parent_doc=doc['id'],).values('id','name').order_by('sort')
+                                            sec_item['children'] = []
+                                            for doc in thr_docs:
+                                                item = {
+                                                    'id': doc['id'],
+                                                    'field': doc['name'],
+                                                    'title': doc['name'],
+                                                    'level': 3
+                                                }
+                                                sec_item['children'].append(item)
+                                            top_item['children'].append(sec_item)
+                                        else:
+                                            top_item['children'].append(sec_item)
+                                    doc_list.append(top_item)
+                                # 如果一级文档没有下级文档，直接保存
+                                else:
+                                    doc_list.append(top_item)
+
+                            return JsonResponse({
+                                'status':True,
+                                'data':doc_list,
+                                'project':{
+                                    'id':project,
+                                    'name':pro.name,
+                                    'desc':pro.intro
+                                }
+                            })
                         else:
-                            return JsonResponse({'status':False,'data':'上传失败'})
+                            return JsonResponse({'status':False,'data':_('上传失败')})
                     else:
-                        return JsonResponse({'status':False,'data':'上传失败'})
+                        return JsonResponse({'status':False,'data':_('上传失败')})
                 else:
-                    return JsonResponse({'status':False,'data':'仅支持.zip格式'})
+                    return JsonResponse({'status':False,'data':_('仅支持.zip格式')})
             else:
-                return JsonResponse({'status':False,'data':'无有效文件'})
+                return JsonResponse({'status':False,'data':_('无有效文件')})
         else:
-            return JsonResponse({'status':False,'data':'参数错误'})
+            return JsonResponse({'status':False,'data':_('参数错误')})
 
 
 # 文集文档排序
@@ -85,12 +147,12 @@ def project_doc_sort(request):
     try:
         sort_data = json.loads(sort_data)
     except Exception:
-        return JsonResponse({'status':False,'data':'文档参数错误'})
+        return JsonResponse({'status':False,'data':_('文档参数错误')})
 
     try:
         Project.objects.get(id=project_id,create_user=request.user)
     except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':'没有匹配的文集'})
+        return JsonResponse({'status':False,'data':_('没有匹配的文集')})
 
     # 修改文集信息
     Project.objects.filter(id=project_id).update(
@@ -133,7 +195,7 @@ def import_doc_docx(request):
             file_name = import_file.name
             # 限制文件大小在50mb以内
             if import_file.size > 52428800:
-                return JsonResponse({'status': False, 'data': '文件大小超出限制'})
+                return JsonResponse({'status': False, 'data': _('文件大小超出限制')})
             # 限制文件格式为.zip
             if file_name.endswith('.docx'):
                 if os.path.exists(os.path.join(settings.MEDIA_ROOT, 'import_temp')) is False:
@@ -152,10 +214,10 @@ def import_doc_docx(request):
                     ).run()
                     return JsonResponse(import_file)
                 else:
-                    return JsonResponse({'status': False, 'data': '上传失败'})
+                    return JsonResponse({'status': False, 'data': _('上传失败')})
             else:
-                return JsonResponse({'status': False, 'data': '仅支持.docx格式'})
+                return JsonResponse({'status': False, 'data': _('仅支持.docx格式')})
         else:
-            return JsonResponse({'status': False, 'data': '无有效文件'})
+            return JsonResponse({'status': False, 'data': _('无有效文件')})
     else:
-        return JsonResponse({'status': False, 'data': '参数错误'})
+        return JsonResponse({'status': False, 'data': _('参数错误')})

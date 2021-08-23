@@ -14,13 +14,13 @@
     <div class="layui-input-inline">
         <input type="text" name="project-search-kw" placeholder="" class="layui-input" >
     </div>
-    <button class="layui-btn layui-btn-primary pear-btn-sm" lay-event="search">
+    <button class="pear-btn pear-btn-sm" lay-event="search">
         <i class="layui-icon layui-icon-search"></i>搜索
     </button>
-    <button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="add">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>新增
     </button>
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="batchRemove">
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>删除
     </button>
     
@@ -48,7 +48,7 @@
     {% verbatim %}
     <!-- <a href="/manage_pro_doc_sort/{{d.id}}/" class="layui-btn layui-btn-primary pear-btn-sm" lay-event="sort"><i class="layui-icon layui-icon-cols"></i></a> -->
     <!-- <a href="/modify_pro/?pro_id={{d.id}}" title="修改文集配置" class="layui-btn layui-btn-primary pear-btn-sm"><i class="layui-icon layui-icon-set"></i></a> -->
-    <button class="layui-btn layui-btn-warm pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     {% endverbatim %}
 </script>
 
@@ -262,7 +262,7 @@
                         data = {
                             'pro_id':pro_id,
                         }
-                        $.post("{% url 'del_project' %}",data,function(r){
+                        $.post("{% url 'admin_project_del' %}",data,function(r){
                             layer.closeAll(); //关闭loading
                             if(r.status){
                                 layer.msg("{% trans '删除成功' %}", {
@@ -312,7 +312,7 @@
                     if(confirm_delete === 'DELETE'){
                         let loading = layer.load();
                         $.ajax({
-                            url: "{% url 'del_project' %}",
+                            url: "{% url 'admin_project_del' %}",
                             dataType: 'json',
                             type: 'post',
                             data:{'pro_id':pro_id,'range':'multi'},

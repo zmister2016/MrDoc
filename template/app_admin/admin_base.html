@@ -8,7 +8,7 @@
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
+        <link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}?version={{mrdoc_version}}" />
         <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         {% block custom_element %}
         {% endblock %}
@@ -17,57 +17,44 @@
 		{% if debug %}
 		<div class="layui-card">
 			<div class="layui-card-body">
-				<div class="layui-card-header" style="margin-bottom: 10px;">
-					<blockquote class="layui-elem-quote">{% trans "当前站点处于Debug调试模式" %}</blockquote>
+				<div class="layui-card-header" style="margin-bottom: 10px;font-weight: 700;color: red;">
+					<i class="layui-icon layui-icon-tips"></i> {% trans "当前站点处于Debug调试模式" %}
 				</div>
 			</div>
 		</div>
 		{% endif %}
-		<div class="layui-card" style="display: none;">
-			<div class="layui-card-body">
-				<div class="layui-card-header" style="margin-bottom: 10px;">
-					<blockquote id="check_update_div" class="layui-elem-quote" style="border-left: 5px solid #ff213b !important;">{% trans "检测到新版本发布，请及时更新！下载地址：" %}<a href="https://github.com/zmister2016/MrDoc" target="_blank">GitHub</a>、<a href="https://gitee.com/zmister/MrDoc" target="_blank">码云</a></blockquote>
-
-				</div>
-			</div>
-		</div>
 		{% block content %}
         {% endblock %}
-		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
-		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
+		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}?version={{mrdoc_version}}"></script>
+		<script src="{% static 'xm-select/dist/xm-select.js' %}"></script>
 		<script async>
-			layui.use(['jquery'], function() {
+			layui.use(['jquery','layer'], function() {
 				let $ = layui.jquery;
+				let layer = layui.layer;
 				// 检测版本更新
-				checkUpdate = function(){
+				checkUpdate = function(silence=false){
 					$.get("{% url 'check_update' %}",function(r){
-						console.log(r)
+						// console.log(r)
 						if(r.status){
-						var new_version = r.data.name.slice(1,5)
-						var current_version = '{{mrdoc_version}}'
-						// 如果存在新版本，顶部提示div
-						if(new_version > current_version){
-							$("#check_update_div").show()
-						}
+							var new_version = r.data.name.slice(1,6)
+							var current_version = '{{mrdoc_version}}'
+							console.log(new_version,current_version)
+							if(new_version > current_version){
+								console.log("发现新版本")
+								layer.open({
+									title:"{% trans '版本更新' %}",
+									content:"{% trans '觅思文档已发布新版本，请及时更新' %}",
+								})
+							}else{
+								if(silence == false){
+									layer.msg("当前已是最新版本！")
+								}
+							}
 						}      
 					})
 				}
-				
-				var check_update = window.localStorage.getItem('check_update')
-				// console.log(check_update)
-				// 如果没有检测过，立即检测
-				if(check_update == null){
-				checkUpdate();
-				window.localStorage.setItem('check_update',new Date().getTime())
-				}else{
-				// 如果上次检测时间距今超过5天，再次检测
-				var time_diff = (new Date().getTime() - check_update)/86400000
-				// console.log(time_diff)
-				if(time_diff > 5){
-					checkUpdate()
-					window.localStorage.setItem('check_update',new Date().getTime())
-				}
-				}
+				checkUpdate(silence=true);
 			})
 		  </script>
         {% block custom_script %}

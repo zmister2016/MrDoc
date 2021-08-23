@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
-	<title>{% trans "忘记密码" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅道文档MrDoc" %}{% endif %}</title>
+	<title>{% trans "忘记密码" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</title>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" crossorigin="anonymous">
@@ -32,7 +32,7 @@
         }
     </style>
 </head>
-<body>
+<body background="{% static 'PearAdminLayui/admin/images/background.svg' %}">
     <div class="container">
         <div></div>
         <div></div>
@@ -40,7 +40,7 @@
             <form class="layui-form" action="{% url 'forget_pwd' %}"  method='POST'>
                 {% csrf_token %}
                 <div class="layui-form-item">
-                    <h2><strong>{% trans "忘记密码" %} - {% trans "觅道文档" %}</strong></h2>
+                    <h2><strong>{% trans "忘记密码" %} - {% trans "觅思文档" %}</strong></h2>
                 </div>
                 <span style='color:red;margin-bottom: 10px;'>{{ errormsg }}</span>
                 <div class="layui-form-item">
@@ -67,7 +67,7 @@
     </div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-<script src="{% static 'layui/layui.all.js' %}"></script>
+<script src="{% static 'layui/layui.js' %}"></script>
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },

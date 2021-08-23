@@ -4,11 +4,12 @@
 <html lang="zh-cn">
     <head>
         <meta charset="UTF-8">
+        <meta name=renderer  content=webkit>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
         <meta http-equiv="Cache-Control" content="no-transform" />
         <meta http-equiv="Cache-Control" content="no-siteapp" />
         <meta http-equiv="Cache-Control" content="max-age=7200" />
-        <meta name="referrer" content="no-referrer">
+        <!-- <meta name="referrer" content="no-referrer"> -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
         <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
@@ -19,8 +20,14 @@
         {% elif editor_mode == 2 %}
         <!-- Vditor编辑器样式表 -->
         <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+        {% elif editor_mode == 4 %}
+        <!-- 在线表格 -->
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/css/pluginsCss.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/plugins.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/css/luckysheet.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
         {% endif %}
-        <link rel="icon" href="{% static 'favicon_16.png' %}"/>
+        <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
         <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <link href="{% static 'mrdoc/mrdoc-editor.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
@@ -49,16 +56,10 @@
             <!-- 右侧编辑器栏 -->
             <div class="doc-body">
                 <!-- 文档导航 -->
-                <div class="doc-header" role="navigation">
-                    <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
-                        <i class="fa fa-align-justify"></i>
-                    </a>
+                <div class="doc-header page-editor-header layui-row" role="navigation" style="z-index: 999;">
                     <!-- 顶部工具栏 -->
                     {% block head_toolbar %}
                     {% endblock %}
-                    <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                        <i class="fa fa-home"></i> <span class="layui-hide-xs">首页</span>
-                    </a>
                 </div>
                 <!-- 文档主体 -->
                 <div class="doc-body-content" style="padding-left: 15px;">
@@ -206,11 +207,8 @@
         </div>
 
         <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>
-        <script src="{% static 'layui/layui.all.js' %}"></script>
+        <script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
         <script>
-            $.ajaxSetup({
-                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-            });
             var tree = layui.tree;
             var layer = layui.layer;
             var form = layui.form;
@@ -221,8 +219,9 @@
             var editor_mode = {{ editor_mode }};
         </script>
         <!-- 标签输入 -->
-        <script src="{% static '/tagsInput/tagsinput.js' %}" type="text/javascript" charset="utf-8"></script>
-
+        <script src="{% static '/tagsInput/tagsinput.js' %}?version={{mrdoc_version}}" type="text/javascript" charset="utf-8"></script>
+        <!-- 快捷键 -->
+        <script src="{% static 'shortcut/shortcut.js' %}?version={{mrdoc_version}}" type="text/javascript"></script>
         <!-- 加载编辑器 -->
         {% if editor_mode == 1 %}
             <!-- Editor.MD编辑器 -->
@@ -236,8 +235,18 @@
             <!-- iceEditor富文本编辑器 -->
             <script src="{% static 'iceEditor/src/iceEditor.min.js' %}?version={{mrdoc_version}}"></script>
             {% include 'app_doc/editor/tpl_editor_ice.html' %}
+        {% elif editor_mode == 4 %}
+            <!-- 在线表格 -->
+            <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
+            <script src="{% static 'luckysheet/dist/luckysheet.umd.js' %}?version={{mrdoc_version}}"></script>
+            <script src="{% static 'luckysheet/dist/luckyexcel.umd.js' %}?version={{mrdoc_version}}"></script>
+            {% include 'app_doc/editor/tpl_editor_table.html' %}
         {% endif %}
-        <script>    
+        <script>
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+    
             //未保存离开提示
             window.onbeforeunload =function() {
             　　 if(md_changed){

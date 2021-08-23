@@ -4,8 +4,9 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<meta name=renderer  content=webkit>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>后台管理{% if site_name != None and site_name != '' %} - {{site_name}} {% endif %} - 觅道文档MrDoc</title>
+        <title>后台管理{% if site_name != None and site_name != '' %} - {{site_name}} {% endif %} - 觅思文档</title>
 		<link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
 		<!-- 依 赖 样 式 -->
 		<link rel="stylesheet" href="{% static 'PearAdminLayui/component/pear/css/pear.css' %}" />
@@ -13,9 +14,6 @@
 		<link rel="stylesheet" href="{% static 'PearAdminLayui/admin/css/load.css' %}" />
 		<!-- 布 局 样 式 -->
 		<link rel="stylesheet" href="{% static 'PearAdminLayui/admin/css/admin.css' %}" />
-		<!-- 主 题 更 换 -->
-		<style id="pearadmin-bg-color"></style>
-		<!-- 头 部 结 束 -->
 	</head>
 	<!-- 结 构 代 码 -->
 	<body class="layui-layout-body pear-admin">
@@ -42,10 +40,11 @@
 							{% if request.user.is_superuser %}
 							<dd><a href="{% url 'user_center' %}">个人中心</a></dd>
 							{% endif %}
-							<dd><a href="{% url 'pro_list' %}" target="_blank">站点首页</a></dd>
-						  <dd><a href="{% url 'logout' %}">注销登录</a></dd>
+							<dd><a href="{% url 'pro_list' %}">返回首页</a></dd>
+						  <dd><a href="{% url 'logout' %}">退出登录</a></dd>
 						</dl>
 					</li>
+					<!-- 主 题 配 置 -->
 					<li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
 				</ul>
 			</div>
@@ -65,19 +64,27 @@
 			<div class="layui-body">
 				<div id="content"></div>
 			</div>
+			<!-- 遮 盖 层 -->
+			<div class="pear-cover"></div>
+			<!-- 加 载 动 画-->
+			<div class="loader-main">
+				<div class="loader"></div>
+			</div>
 		</div>
-		<!-- 遮 盖 层 -->
-		<div class="pear-cover"></div>
-		<!-- 加 载 动 画-->
-		<div class="loader-main">
-			<div class="loader"></div>
+		<!-- 移 动 端 便 捷 操 作 -->
+		<div class="pear-collasped-pe collaspe">
+			<a href="#" class="layui-icon layui-icon-shrink-right"></a>
 		</div>
 		<!-- 依 赖 脚 本 -->
-		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}"></script>
-		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}"></script>
+		<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
+		<script src="{% static 'PearAdminLayui/component/pear/pear.js' %}?version={{mrdoc_version}}"></script>
 		<!-- 框 架 初 始 化 -->
 		<script>
-			layui.use(['admin'], function() {
+			layui.use(['admin','jquery','convert','popup'], function() {
+				var admin = layui.admin;
+				var $ = layui.jquery;
+				var convert = layui.convert;
+				var popup = layui.popup;
                 var pear_admin_config = {
                     "logo": {
                         "title": "站点管理",
@@ -105,29 +112,28 @@
                         "allowCustom": true
                     },
                     "colors": [{
-                            "id": "1",
-                            "color": "#FF5722"
-                        },
-                        {
-                            "id": "2",
-                            "color": "#5FB878"
-                        },
-                        {
-                            "id": "3",
-                            // "color": "#1E9FFF"
-							"color":"#2176ff"
-                        }, {
-                            "id": "4",
-                            "color": "#FFB800"
-                        }, {
-                            "id": "5",
-                            "color": "darkgray"
-                        }
-                    ],
+							"id": "1",
+							"color": "#2d8cf0"
+						},
+						{
+							"id": "2",
+							"color": "#5FB878"
+						},
+						{
+							"id": "3",
+							"color": "#1E9FFF"
+						}, {
+							"id": "4",
+							"color": "#FFB800"
+						}, {
+							"id": "5",
+							"color": "darkgray"
+						}
+					],
                     "links": [{
                             "icon": "layui-icon layui-icon-website",
                             "title": "官方网站",
-                            "href": "http://zmister.com/mrdoc/"
+                            "href": "https://mrdoc.pro"
                         },
                         {
                             "icon": "layui-icon layui-icon-read",
@@ -152,9 +158,12 @@
                     ],
                     "other": {
                         "keepLoad": 100
-                    }
+					},
+					"header": {
+						"message": []
+					}
                 }
-				var admin = layui.admin;
+				admin.setConfigType("json");
 				admin.render(pear_admin_config);
 			})
 		</script>
