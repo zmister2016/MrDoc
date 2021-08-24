@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths-ignore:
-      - "README-cn.md"
+      - "README-zh.md"
  
 jobs:
   build:
