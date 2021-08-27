@@ -1,4 +1,4 @@
-<h1 align="center">觅思文档</h1>
+<h1 align="center">觅思文档开源版</h1>
 
 <p align="center">个人和小型团队的云笔记、云文档、知识管理私有化部署方案</p>
 
@@ -17,7 +17,7 @@
 <p align="center">
 <a href="https://zmister.com/mrdoc/">官网</a> | 
 <a href="http://mrdoc.zmister.com/">演示站点</a> |
-<a href="https://qm.qq.com/cgi-bin/qm/qr?k=LsgDSw8a6IlrzORBGGyRC6LrlIU_vYON&jump_from=webapi">QQ群</a>
+<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a>
 </p>
 
 <p align="center">
@@ -150,7 +150,7 @@ python manage.py runserver
 <p>微信公众号：州的先生（ID：zmister2016）</p>
 <img src="http://mrdoc.zmister.com/media//202010/2020-10-29_213550.png" height=150 />
 
-<p>QQ群：735507293（已满） <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
+<p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
 <p>QQ群2：849206042 <a href="https://qm.qq.com/cgi-bin/qm/qr?k=LsgDSw8a6IlrzORBGGyRC6LrlIU_vYON&jump_from=webapi"><img src="//pub.idqqimg.com/wpa/images/group.png" /></a></p>
 
 ## 依赖
