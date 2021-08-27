@@ -38,7 +38,7 @@ logger.add(os.path.join(LOG_DIR,'error.log'),rotation='1 days',retention='30 day
 SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = CONFIG.getboolean('site','debug')
+DEBUG = CONFIG.getboolean('site','debug',fallback=False)
 
 VERSIONS = '0.6.9'
 
@@ -117,7 +117,7 @@ db_engine = CONFIG.get('database','engine',fallback='sqlite')
 if db_engine == 'sqlite':
     DATABASES = {
         'default': {
-            'ENGINE': DATABASE_MAP[CONFIG['database']['engine']],
+            'ENGINE': DATABASE_MAP[db_engine],
             'NAME': os.path.join(CONFIG_DIR, 'db.sqlite3'),
             'OPTIONS':{
                 'timeout':20,
@@ -195,7 +195,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # 允许上传的图片后缀
-ALLOWED_IMG = ["jpg", "jpeg", "gif", "png", "bmp", "webp","svg"]
+ALLOWED_IMG = CONFIG.get("image_upload","suffix_name",fallback="jpg,jpeg,gif,png,bmp,webp,svg").split(",")
 
 
 REST_FRAMEWORK = {
