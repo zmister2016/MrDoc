@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-<a href="https://zmister.com/mrdoc/">官网</a> | 
+<a href="https://mrdoc.pro">官网</a> | 
 <a href="http://mrdoc.zmister.com/">演示站点</a> |
 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a>
 </p>
