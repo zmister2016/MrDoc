@@ -9,7 +9,7 @@
 
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.6.9-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.7.0-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.5+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
@@ -183,4 +183,4 @@ python manage.py runserver
 
 <a href="./LICENSE">GPL-3.0</a>
 
-商业授权请联系QQ：3280350050
+商业授权（专业版）请联系QQ咨询：3280350050
