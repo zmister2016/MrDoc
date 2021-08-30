@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-<a href="http://mrdoc.zmister.com/project-7/">安装手册</a> | 
+<a href="https://doc.mrdoc.pro/project-7/">安装手册</a> | 
 <a href="http://mrdoc.zmister.com/project-54/">使用手册</a> |
 <a href="http://mrdoc.zmister.com/project-20/">文档效果</a>
 </p>
@@ -34,13 +34,21 @@
 
 `MrDoc` 是基于`Python`开发的在线文档系统，适合作为个人和小型团队的私有云文档、云笔记和知识管理工具。致力于成为优秀的私有化在线文档部署方案。
 
-目前涵盖：
+目前涵盖终端：
 
-- Web端，[安装手册](http://mrdoc.zmister.com/project-7/)，[使用手册](http://mrdoc.zmister.com/project-54/)；
+- Web端
 - Chrome扩展：
     - [MrDoc官方插件](https://gitee.com/zmister/mrdoc-webclipper)：[使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
     - [简悦扩展](https://github.com/Kenshin/simpread)：[使用说明](https://github.com/Kenshin/simpread/issues/893)
-- App端（开发中）
+
+开发中的终端：
+
+- 手机APP
+
+计划中的终端：
+
+- 桌面客户端
+
 
 ## 演示站点
 
@@ -50,7 +58,7 @@
 
 ## 打赏支持
 
-<p align="center"><a href="https://afdian.net/item?plan_id=0435840cbb6f11ebaeed52540025c377">￥48-觅思文档付费部署服务</a> | 前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
+<p align="center"><a href="https://afdian.net/item?plan_id=0435840cbb6f11ebaeed52540025c377">￥98-觅思文档付费部署服务</a> | 前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
 
 <p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
@@ -174,3 +182,5 @@ python manage.py runserver
 ## 协议
 
 <a href="./LICENSE">GPL-3.0</a>
+
+商业授权请联系QQ：3280350050
