@@ -1451,7 +1451,7 @@ def manage_doc(request):
             "code": 0,
             "msg": "ok",
             "count": doc_list.count(),
-            "data": table_data
+            "data": jsonXssFilter(table_data)
         }
         return JsonResponse(resp_data)
 

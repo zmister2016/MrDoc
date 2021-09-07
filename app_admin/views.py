@@ -20,6 +20,7 @@ from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
 from app_api.permissions_app import SuperUserPermission # 自定义权限
 from app_admin.decorators import superuser_only,open_register
 from app_doc.models import *
+from app_doc.views import jsonXssFilter
 from app_admin.models import *
 from app_admin.utils import *
 from loguru import logger
@@ -685,7 +686,7 @@ def admin_doc(request):
             "code": 0,
             "msg": "ok",
             "count": doc_list.count(),
-            "data": table_data
+            "data": jsonXssFilter(table_data)
         }
         return JsonResponse(resp_data)
 
