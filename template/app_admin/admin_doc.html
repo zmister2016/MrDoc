@@ -66,11 +66,11 @@
     {% verbatim %}
         {{#if (d.status == 1) { }}
             <span class="layui-badge-dot layui-bg-blue"></span>
-            <a href="/project-{{d.project_id}}/doc-{{d.id}}" target="_blank">{{d.name}}</a>
+            <a href="/project-{{d.project_id}}/doc-{{d.id}}" target="_blank">{{=d.name}}</a>
         {{# }else if(d.status == 0){ }}
             <!-- <i class="layui-icon layui-icon-release" style="cursor: pointer;" onclick="fastPubDoc('{{d.id}}')" title="草稿状态，点击一键发布"></i>&nbsp; -->
             <span class="layui-badge-dot layui-bg-orange"></span>
-            <a href="/modify_doc/{{d.id}}/" target="_blank" title="修改文档：{{d.name}}">{{ d.name }} </a>
+            <a href="/modify_doc/{{d.id}}/" target="_blank" title="修改文档：{{=d.name}}">{{=d.name}} </a>
         {{# } }}
         {{#if (d.editor_mode in [1,2,3]) { }}
             <i class="layui-icon layui-icon-form" title="普通文档"</i>
