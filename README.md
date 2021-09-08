@@ -21,9 +21,9 @@
 </p>
 
 <p align="center">
-<a href="http://mrdoc.zmister.com/project-7/">Installation Manual</a> | 
-<a href="http://mrdoc.zmister.com/project-54/">User Manual</a> |
-<a href="http://mrdoc.zmister.com/project-20/">Document Example</a>
+<a href="https://doc.mrdoc.pro/project-7/">Installation Manual</a> | 
+<a href="https://doc.mrdoc.pro/project-54/">User Manual</a> |
+<a href="https://doc.mrdoc.pro/project-20/">Document Example</a>
 </p>
 
 

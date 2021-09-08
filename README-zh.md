@@ -22,8 +22,8 @@
 
 <p align="center">
 <a href="https://doc.mrdoc.pro/project-7/">安装手册</a> | 
-<a href="http://mrdoc.zmister.com/project-54/">使用手册</a> |
-<a href="http://mrdoc.zmister.com/project-20/">文档效果</a>
+<a href="https://doc.mrdoc.pro/project-54/">使用手册</a> |
+<a href="https://doc.mrdoc.pro/project-20/">文档效果</a>
 </p>
 
 <p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">码云</a> | 
@@ -182,5 +182,9 @@ python manage.py runserver
 ## 协议
 
 <a href="./LICENSE">GPL-3.0</a>
+
+开源版的使用者必须保留 MrDoc 和觅思文档相关版权标识，禁止对 MrDoc 和 觅思文档相关版权标识进行修改和删除。
+
+如果违反，开发者保留对侵权者追究责任的权利。
 
 商业授权（专业版）请联系QQ咨询：3280350050
