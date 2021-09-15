@@ -52,7 +52,9 @@
 
 ## 演示站点
 
-[http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+开源版 - [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+
+专业版 - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 
 用户名：test1  密码：123456
 

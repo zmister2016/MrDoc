@@ -46,7 +46,9 @@ Current Platform：
 
 ## Example Site
 
-[http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+Open Source Edition -  [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+
+Professional Edition - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 
 username:test1  password:123456
 
