@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-<a href="https://mrdoc.pro">Home</a> | 
+<a href="https://mrdoc.pro/en.html">Home</a> | 
 <a href="http://mrdoc.zmister.com/">Example Site</a> |
 <a href="https://qm.qq.com/cgi-bin/qm/qr?k=LsgDSw8a6IlrzORBGGyRC6LrlIU_vYON&jump_from=webapi">QQ Group</a>
 
