@@ -770,6 +770,7 @@ def manage_project_doc_sort(request,pro_id):
                             n2 = 10
                             for c2 in c1['children']:
                                 Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'])
+                                n2 += 10
 
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
