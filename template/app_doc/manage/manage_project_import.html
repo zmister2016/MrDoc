@@ -97,6 +97,7 @@
                     doc_ele += li
                 }
                 doc_ele += '</li>'
+                $("#nestedDemo").empty(); // 清空原文档排序内容
                 $("#nestedDemo").append(doc_ele)
             });
             docSort();// 动态添加元素之后，调用一次
