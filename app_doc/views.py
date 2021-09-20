@@ -3265,7 +3265,7 @@ def manage_collect(request):
             item = {
                 'id': collect.id,
                 'item_id':item_id,
-                'item_name': item_name,
+                'item_name': html_filter(item_name),
                 'type': collect.collect_type,
                 'item_project_id':item_project_id,
                 'item_project_name':item_project_name,
