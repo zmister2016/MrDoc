@@ -192,7 +192,7 @@ def user_center_menu(request):
             "icon": "layui-icon layui-icon-template-1",
             "type": 1,
             "openType": "_blank",
-            "href": "http://mrdoc.zmister.com/project-54/",
+            "href": "https://doc.mrdoc.pro/project-54/",
         }
         # {
         #     "id": "common",

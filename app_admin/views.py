@@ -1349,14 +1349,14 @@ def admin_center_menu(request):
                 "icon": "layui-icon layui-icon-face-smile",
                 "type": 1,
                 "openType": "_blank",
-                "href": "http://mrdoc.zmister.com/project-7/"
+                "href": "https://doc.mrdoc.pro/project-7/"
             }, {
                 "id": 702,
                 "title": _("使用说明"),
                 "icon": "layui-icon layui-icon-face-smile",
                 "type": 1,
                 "openType": "_blank",
-                "href": "http://mrdoc.zmister.com/project-54/"
+                "href": "https://doc.mrdoc.pro/project-54/"
             }]
         }
     ]
