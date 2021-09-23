@@ -49,7 +49,7 @@ def import_project(request):
                 if file_name.endswith('.zip'):
                     if os.path.exists(os.path.join(settings.MEDIA_ROOT,'import_temp')) is False:
                         os.mkdir(os.path.join(settings.MEDIA_ROOT,'import_temp'))
-                    temp_file_name = str(time.time())+'.zip'
+                    temp_file_name = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') +'.zip'
                     temp_file_path = os.path.join(settings.MEDIA_ROOT,'import_temp/'+temp_file_name)
                     with open(temp_file_path,'wb+') as zip_file:
                         for chunk in import_file:
