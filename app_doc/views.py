@@ -1474,9 +1474,17 @@ def move_doc(request):
             return JsonResponse({'status':False,'data':_('文集无权限')})
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('文集不存在')})
-    # 判断文档是否存在
+    # 判断源文档是否存在且有操作权限
     try:
-        doc = Doc.objects.get(id=int(doc_id),create_user=request.user)
+        doc = Doc.objects.get(id=int(doc_id)) # 查询源文档
+        source_project = Project.objects.get(id=doc.top_doc) # 查询源文档所属的文集
+        # 查询源文档所属文集的协作者
+        source_colla = ProjectCollaborator.objects.filter(project=source_project, user=request.user,role=1)
+        # 如果请求者既不是文档的创建者，又不是文档所属文集的创建者，也不是文档所属文集的高级协作成员
+        if  (doc.create_user != request.user) and \
+                (source_project.create_user != request.user) and \
+                (source_colla.count() == 0):
+            return JsonResponse({'status':False,'data':_("无权操作文档")})
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('文档不存在')})
     # 判断上级文档是否存在
