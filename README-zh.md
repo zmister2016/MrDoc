@@ -56,6 +56,8 @@
 
 专业版 - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 
+开源版与专业版差异 - [https://doc.mrdoc.pro/project-7/doc-3441/](https://doc.mrdoc.pro/project-7/doc-3441/)
+
 用户名：test1  密码：123456
 
 ## 打赏支持
