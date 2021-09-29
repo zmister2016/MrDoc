@@ -179,6 +179,8 @@ class WhooshSearchBackend(BaseSearchBackend):
                 self.index = self.storage.open_index(schema=self.schema)
             except index.EmptyIndexError:
                 self.index = self.storage.create_index(self.schema)
+            except:
+                self.index = self.storage.create_index(self.schema)
 
         self.setup_complete = True
 
