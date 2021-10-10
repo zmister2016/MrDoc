@@ -20,12 +20,15 @@ urlpatterns = [
     path('manage_project_colla/<int:pro_id>/',views.manage_project_collaborator,name="manage_pro_colla"), # 管理文集协作
     path('manage_pro_colla_self/',views.manage_pro_colla_self,name="manage_pro_colla_self"), # 我协作的文集
     path('manage_project_import/',views_import.import_project,name="import_project"), # 导入文集
+    path('import_doc_to_project/', views_import.import_local_doc_to_project, name="import_doc_to_project"),  # 导入本地文档到文集
     path('manage_project_doc_sort/',views_import.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
     path('manage_project_transfer/<int:pro_id>/',views.manage_project_transfer,name='manage_pro_transfer'), # 文集转让
     path('manage_pro_doc_sort/<int:pro_id>/',views.manage_project_doc_sort,name='manage_pro_doc_sort'), # 文集排序
     path('api/my_colla_list/', views.MyCollaList.as_view(), name="my_colla_list"),  # 我的协作文集列表
+    path('api/import_local_doc/', views_import.ImportLocalDoc.as_view(), name="import_local_doc_api"),  # 导入本地文档API
     #################文档相关
     path('project-<int:pro_id>/doc-<int:doc_id>/', views.doc, name='doc'),  # 文档浏览页
+    path('doc/<int:doc_id>/', views.doc_id, name="doc_id"),  # 文档浏览页(通过文档ID)
     path('create_doc/', views.create_doc, name="create_doc"),  # 新建文档
     path('modify_doc/<int:doc_id>/', views.modify_doc, name="modify_doc"),  # 修改文档
     path('del_doc/',views.del_doc,name="del_doc"), # 删除文档

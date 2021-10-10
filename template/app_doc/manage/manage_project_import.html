@@ -40,6 +40,26 @@
         </div>
     </div>
 </div>
+
+<!-- 导入本地文档到文集 -->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-card-header" style="margin-bottom: 10px;">
+            <span style="font-size:18px;">{% trans "导入本地文档到文集" %}</span>
+        </div>
+        <div>
+            <a style="width: 142px;cursor: pointer;display: inline-block;" href="{% url 'import_doc_to_project' %}">
+                <div style="width: 70px;height: 70px;margin: 0 auto;">
+                    <img src="{% static 'icon_img/file-doc.svg' %}">
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: #262626;font-size:14px;">本地文本文档</div>
+                    <div style="color: #8c8c8c;font-size:12px;">支持Markdown、TXT、Word等格式文件</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
 {% block custom_script %}
 <script src="{% static 'jquery/3.1.1/jquery.min.js' %}"></script>

@@ -18,10 +18,17 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from rest_framework.views import APIView # 视图
+from rest_framework.response import Response # 响应
+from rest_framework.pagination import PageNumberPagination # 分页
+from rest_framework.authentication import SessionAuthentication # 认证
+from rest_framework.permissions import IsAdminUser # 权限
 from loguru import logger
 from app_doc.report_utils import *
 from app_admin.decorators import check_headers,allow_report_file
 from app_doc.import_utils import *
+from app_doc.views import get_pro_toc,html_filter,jsonXssFilter
+from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
 import datetime
 import traceback
 import re
@@ -131,6 +138,144 @@ def import_project(request):
                 return JsonResponse({'status':False,'data':_('无有效文件')})
         else:
             return JsonResponse({'status':False,'data':_('参数错误')})
+
+
+# 导入本地文档到文集
+@login_required()
+@require_http_methods(['GET','POST'])
+def import_local_doc_to_project(request):
+    if request.method == 'GET':
+        project_list = Project.objects.filter(create_user=request.user)  # 自己创建的文集列表
+        colla_project_list = ProjectCollaborator.objects.filter(user=request.user)  # 协作的文集列表
+        return render(request,'app_doc/manage/import_local_doc_to_project.html',locals())
+
+
+# 导入文档到文集API
+class ImportLocalDoc(APIView):
+    authentication_classes = [SessionAuthentication, AppMustAuth]
+
+    # 上传文件
+    def post(self,request):
+        project = request.data.get("project",'')
+        editor_mode = request.data.get("editor_mode",0)
+        file = request.data.get("local_doc",None)
+        try:
+            project = int(project)
+            editor_mode = int(editor_mode)
+        except:
+            resp = {
+                'code':5,
+                'data':'必须选择文集'
+            }
+            return Response(resp)
+        if file is None:
+            resp = {
+                'code':5,
+                'data':'文件未选择'
+            }
+        file_name = file.name
+        # Markdown 文件和 TXT 文件
+        if file_name.endswith('.md') or file_name.endswith(".txt"):
+            doc_content = file.read().decode('utf-8')
+            if editor_mode == 3:
+                doc_content_html = markdown.markdown(text=doc_content)
+            else:
+                doc_content_html = None
+            doc = Doc.objects.create(
+                name = html_filter(file_name[:-3]),
+                pre_content = doc_content,
+                content = doc_content_html,
+                top_doc = project,
+                editor_mode = 1 if editor_mode == 0 else editor_mode,
+                create_user = request.user,
+                status = 0
+            )
+            doc.save()
+            resp = {
+                'code':0,
+                'data':{
+                    'doc_id':doc.id,
+                    'doc_name':doc.name
+                }
+            }
+        # Word 文件
+        elif file_name.endswith('.docx'):
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, 'import_temp')) is False:
+                os.mkdir(os.path.join(settings.MEDIA_ROOT, 'import_temp'))
+
+            temp_file_name = str(time.time()) + '.docx'
+            temp_file_path = os.path.join(settings.MEDIA_ROOT, 'import_temp/' + temp_file_name)
+            with open(temp_file_path, 'wb+') as docx_file:
+                for chunk in file:
+                    docx_file.write(chunk)
+            if os.path.exists(temp_file_path):
+                docx_file_content = ImportDocxDoc(
+                    docx_file_path=temp_file_path,
+                    editor_mode=editor_mode,
+                    create_user=request.user
+                ).run()
+                if docx_file_content['status']:
+                    doc = Doc.objects.create(
+                        name=html_filter(file_name[:-5]),
+                        pre_content=docx_file_content['data'],
+                        content=docx_file_content['data'],
+                        top_doc=project,
+                        editor_mode=1 if editor_mode == 0 else editor_mode,
+                        create_user=request.user,
+                        status=0
+                    )
+                    doc.save()
+                    resp = {
+                        'code': 0,
+                        'data': {
+                            'doc_id': doc.id,
+                            'doc_name': doc.name
+                        }
+                    }
+                else:
+                    resp = {
+                        'code':4,
+                        'data': '{}读取失败'.format(file_name)
+                    }
+            else:
+                resp = {
+                    'code': 4,
+                    'data': '{}上传失败'.format(file_name)
+                }
+        else:
+            resp = {
+                'code':5,
+                'data':'文件格式不支持'
+            }
+        return Response(resp)
+
+    # 发布文档
+    def put(self,request):
+        sort_data = request.data.get('sort_data', '[]')  # 文档排序列表
+        try:
+            sort_data = json.loads(sort_data)
+        except Exception:
+            return JsonResponse({'code': 5, 'data': _('文档参数错误')})
+        # 文档排序
+        n = 10
+        # 第一级文档
+        for data in sort_data:
+            Doc.objects.filter(id=data['id']).update(sort=n, status=1)
+            n += 10
+            # 存在第二级文档
+            if 'children' in data.keys():
+                n1 = 10
+                for c1 in data['children']:
+                    Doc.objects.filter(id=c1['id']).update(sort=n1, parent_doc=data['id'], status=1)
+                    n1 += 10
+                    # 存在第三级文档
+                    if 'children' in c1.keys():
+                        n2 = 10
+                        for c2 in c1['children']:
+                            Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'], status=1)
+
+        return Response({'code':0,'data':'ok'})
+
 
 
 # 文集文档排序

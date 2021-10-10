@@ -57,6 +57,17 @@
     color:red;
 }
 
+/* 表格列中的链接样式 */
+.table-col-link{
+    color:#2D8CF0;
+    font-weight: 700;
+}
+.table-col-link:hover{
+    color:#2D8CF0;
+    text-decoration: underline;
+    font-weight: 700;
+}
+
 /* 覆盖layUI样式 */
 .layui-layout-admin .layui-body{
     /* background-color: #f0f2f5; */

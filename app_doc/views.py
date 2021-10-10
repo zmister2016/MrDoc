@@ -1071,6 +1071,95 @@ def doc(request,pro_id,doc_id):
         return render(request,'404.html')
 
 
+# 文档浏览页，可通过文档ID 或文集ID+文档ID访问
+@require_http_methods(['GET'])
+def doc_id(request,doc_id):
+    try:
+        # 获取文档内容
+        try:
+            doc = Doc.objects.get(id=int(doc_id),status__in=[0,1]) # 文档信息
+            doc_tags = DocTag.objects.filter(doc=doc) # 文档标签信息
+            pro_id = doc.top_doc
+            if doc.status == 0 and doc.create_user != request.user:
+                raise ObjectDoesNotExist
+            elif doc.status == 0 and doc.create_user == request.user:
+                doc.name  = _('【预览草稿】')+ doc.name
+
+        except ObjectDoesNotExist:
+            return render(request, '404.html')
+
+        # 获取文集信息
+        project = Project.objects.get(id=int(pro_id))
+        # 获取文集的文档目录
+        toc_list,toc_cnt = get_pro_toc(pro_id)
+        # 获取文集的协作用户信息
+        if request.user.is_authenticated:
+            colla_user = ProjectCollaborator.objects.filter(project=project,user=request.user)
+            if colla_user.exists():
+                colla_user_role = colla_user[0].role
+                colla_user = colla_user.count()
+            else:
+                colla_user = colla_user.count()
+        else:
+            colla_user = 0
+
+        # 获取文集收藏状态
+        if request.user.is_authenticated:
+            is_collect_pro = MyCollect.objects.filter(collect_type=2, collect_id=pro_id,
+                                                      create_user=request.user).exists()
+            # 获取文档收藏状态
+            is_collect_doc = MyCollect.objects.filter(collect_type=1, collect_id=doc_id,
+                                                      create_user=request.user).exists()
+        else:
+            is_collect_pro,is_collect_doc = False,False
+
+        # 私密文集且访问者非创建者、协作者 - 不能访问
+        if (project.role == 1) and (request.user != project.create_user) and (colla_user == 0):
+            return render(request, '404.html')
+        # 指定用户可见文集
+        elif project.role == 2:
+            user_list = project.role_value
+            if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
+                if (request.user.username not in user_list) and \
+                        (request.user != project.create_user) and \
+                        (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
+                    return render(request, '404.html')
+            else:  # 游客直接返回404
+                return render(request, '404.html')
+        # 访问码可见
+        elif project.role == 3:
+            # 浏览用户不为创建者和协作者 - 需要访问码
+            if (request.user != project.create_user) and (colla_user == 0):
+                viewcode = project.role_value
+                viewcode_name = 'viewcode-{}'.format(project.id)
+                r_viewcode = request.COOKIES[
+                    viewcode_name] if viewcode_name in request.COOKIES.keys() else 0  # 从cookie中获取访问码
+                if viewcode != r_viewcode:  # cookie中的访问码不等于文集访问码，跳转到访问码认证界面
+                    return redirect('/check_viewcode/?to={}'.format(request.path))
+
+        # 获取文档内容
+        try:
+            doc = Doc.objects.get(id=int(doc_id),status__in=[0,1]) # 文档信息
+            doc_tags = DocTag.objects.filter(doc=doc) # 文档标签信息
+            if doc.status == 0 and doc.create_user != request.user:
+                raise ObjectDoesNotExist
+            elif doc.status == 0 and doc.create_user == request.user:
+                doc.name  = _('【预览草稿】')+ doc.name
+
+        except ObjectDoesNotExist:
+            return render(request, '404.html')
+        # 获取文档分享信息
+        try:
+            doc_share = DocShare.objects.get(doc=doc)
+            is_share = True
+        except ObjectDoesNotExist:
+            is_share = False
+        return render(request,'app_doc/doc.html',locals())
+    except Exception as e:
+        logger.exception(_("文集浏览出错"))
+        return render(request,'404.html')
+
+
 # 创建文档
 @login_required()
 @require_http_methods(['GET',"POST"])
