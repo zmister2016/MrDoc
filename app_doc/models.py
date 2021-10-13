@@ -70,7 +70,7 @@ class Doc(models.Model):
     content = models.TextField(verbose_name="文档内容",null=True,blank=True)
     parent_doc = models.IntegerField(default=0,verbose_name="上级文档")
     top_doc = models.IntegerField(default=0,verbose_name="所属项目")
-    sort = models.IntegerField(verbose_name='排序',default=99)
+    sort = models.IntegerField(verbose_name='排序',default=9999)
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)
