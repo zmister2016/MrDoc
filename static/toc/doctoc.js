@@ -213,6 +213,7 @@ function addAllStyle(highlightColor) {
         overflow-y: auto;
         padding: 20px 20px 20px 20px;
         width:200px;
+        height: min-content;
         max-height:400px;
         background-color:white;
         border-left:2px solid #dddddd;
