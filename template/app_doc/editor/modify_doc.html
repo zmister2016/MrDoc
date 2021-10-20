@@ -249,7 +249,7 @@
                 var content = editor.getHTML()
                 var pre_content = editor.getValue()
             }else if(editor_mode == 3){
-                var content = editor.getHTML()
+                var content = DOMPurify.sanitize(editor.getHTML(),{ADD_TAGS: ['iframe']})
                 var pre_content = editor.getText()
             }else if(editor_mode == 4){
                 var content  = '';

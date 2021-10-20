@@ -393,7 +393,8 @@ insertImg = function(e){
 // 按钮点击插入输入框图片链接
 insertImgUrl = function(){
     if(editor_mode == 3){
-        editor.addValue('<img src="' + $("#img_url_input").val() + '" />')
+        img_str = DOMPurify.sanitize('<img src="' + $("#img_url_input").val() + '" />',{ADD_TAGS: ['iframe']})
+        editor.addValue(img_str)
     }else{
         editor.insertValue("\n![](" + $("#img_url_input").val() + ")");
         editor.focus()
