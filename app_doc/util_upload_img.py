@@ -228,8 +228,8 @@ def getImageExtensionName(temps):
         #image/png
         temps = temps[0].split('image/')
         if len(temps) == 2:
-            ## 如果文件传了扩展名，就取扩展名的文件类型
-            if  temps[-1] != '':
+            ## 如果文件传了扩展名，就取扩展名的文件类型，判断图片格式是否允许上传
+            if temps[-1] in settings.ALLOWED_IMG:
                 return "." + temps[-1]
     return ".png" 
 
