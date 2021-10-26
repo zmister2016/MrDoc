@@ -193,6 +193,8 @@ else:
 # 媒体文件
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+if os.path.exists(MEDIA_ROOT) is False:
+    os.mkdir(MEDIA_ROOT)
 
 # 允许上传的图片后缀
 ALLOWED_IMG = CONFIG.get("image_upload","suffix_name",fallback="jpg,jpeg,gif,png,bmp,webp").split(",")
