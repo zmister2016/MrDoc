@@ -63,7 +63,7 @@ def log_in(request):
             require_login_check_code = SysSetting.objects.filter(types="basic",name="enable_login_check_code")
             if (len(require_login_check_code) > 0) and (require_login_check_code[0].value == 'on'):
                 checkcode = request.POST.get("check_code", None)
-                if checkcode != request.session['CheckCode'].lower():
+                if checkcode.lower() != request.session['CheckCode'].lower():
                     errormsg = _('验证码错误！')
                     return render(request, 'login.html', locals())
             if username != '' and pwd != '':
@@ -129,7 +129,7 @@ def register(request):
                     elif len(password) < 6: # 验证密码长度
                         errormsg = _('密码必须大于等于6位！')
                         return render(request, 'register.html', locals())
-                    elif checkcode != request.session['CheckCode'].lower(): # 验证验证码
+                    elif checkcode.lower() != request.session['CheckCode'].lower(): # 验证验证码
                         errormsg = _("验证码错误")
                         return render(request, 'register.html', locals())
                     else:
