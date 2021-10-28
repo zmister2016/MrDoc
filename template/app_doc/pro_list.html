@@ -447,24 +447,34 @@
                 title:'{% trans "修改密码" %}',
                 area:'300px;',
                 id:'changePwd',
-                content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
+                content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="oldPwd" style="margin-bottom:10px;" placeholder="输入原密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
                 btn:['{% trans "确认修改" %}','{% trans "取消" %}'],
                 yes:function (index,layero) {
                     layer.load(1);
                     data = {
+                        'old_pwd':$("#oldPwd").val(),
                         'password':$("#newPwd1").val(),
                         'password2':$("#newPwd2").val(),
                     }
-                    $.post("{% url 'modify_pwd' %}",data,function(r){
-                        layer.closeAll("loading");
-                        if(r.status){
-                            //修改成功
-                            window.location.reload();
-                            //layer.close(index)
-                        }else{
-                            //修改失败，提示
-                            //console.log(r)
-                            layer.msg(r.data)
+                    $.ajax({
+                        url:"{% url 'modify_pwd' %}",
+                        type:"post",
+                        data:data,
+                        success:function(r){
+                            layer.closeAll('loading');
+                            if(r.status){
+                                //修改成功
+                                window.location.reload();
+                                //layer.close(index)
+                            }else{
+                                //修改失败，提示
+                                //console.log(r)
+                                layer.msg(r.data,{icon:2})
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading');
+                            layer.msg("修改异常",{icon:2})
                         }
                     })
                 },

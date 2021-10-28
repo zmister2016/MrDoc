@@ -1009,9 +1009,13 @@ def admin_register_code(request):
 def change_pwd(request):
     if request.method == 'POST':
         try:
+            old_pwd = request.POST.get('old_pwd', None)
             password = request.POST.get('password',None)
             password2 = request.POST.get('password2',None)
-            print(password, password2)
+            # print(password, password2)
+            user = request.user.check_password(old_pwd)
+            if user is False:
+                return JsonResponse({'status':False,'data':_('密码错误！')})
             if password and password== password2:
                 if len(password) >= 6:
                     user = User.objects.get(id=request.user.id)
