@@ -49,6 +49,11 @@
     {% elif doc.editor_mode == 2 %}
         <textarea style="display: none;">{{ doc.pre_content }}</textarea>
     {% elif doc.editor_mode == 4 %}
+        <style>
+            .big-page .doc-content,.big-page .doc-body-content-div{
+                max-width: 100%;
+            }
+        </style>
         <div id="luckysheet" style="margin:0px;padding:0px;width:100%;min-height:500px;left: 0px;top: 0px;"></div>
         <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
     {% else %}
@@ -230,6 +235,7 @@
 <script>
     var layer = layui.layer;
     var form = layui.form;
+    var doc_editor_mode = '{{doc.editor_mode}}';
     // Ajax默认配置
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },

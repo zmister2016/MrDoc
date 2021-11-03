@@ -125,8 +125,14 @@ function toggleSidebar(){
     $("body").toggleClass("big-page");
     if(window.localStorage.getItem('bgpage') === '1'){
         window.localStorage.setItem('bgpage','0')
+        if(doc_editor_mode == '4'){
+            luckysheet.resize();
+        }
     }else{
         window.localStorage.setItem('bgpage','1')
+        if(doc_editor_mode == '4'){
+            luckysheet.resize();
+        }
     }
     return false;
 }
