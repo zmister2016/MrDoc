@@ -128,6 +128,13 @@ In the test environment, you can use the server provided by Django to run mrdoc.
 python manage.py runserver
 ```
 
+
+## Third party deployment tools
+
+- [Docker Image](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
+- [Linux Deployment Script](https://gitee.com/jonnyan404/oh-my-mrdoc)
+- [Windows Deployment Pannel](https://gitee.com/debj031634/win-django)
+
 ## Feedback
 
 ### 1. Commit Issue
@@ -141,7 +148,7 @@ Submit questions on the following pages:
 
 Join the mrdoc communication Tencent QQ group ，Group number:
  
- - **735507293**(Full)
+ - **735507293**
  - **849206042**
 
 ### 3. Contact author

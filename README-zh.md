@@ -62,7 +62,7 @@
 
 ## 打赏支持
 
-<p align="center"><a href="https://afdian.net/item?plan_id=0435840cbb6f11ebaeed52540025c377">￥98-觅思文档付费部署服务</a> | 前往<a href="https://afdian.net/@zmister">「爱发电」</a>支持作者。</p>
+<p align="center">「付费部署服务」请添加作者QQ：3280350050</p>
 
 <p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
@@ -156,6 +156,12 @@ python manage.py createsuperuser
 ```
 python manage.py runserver
 ```
+
+## 第三方部署工具
+
+- [Docker镜像](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
+- [Linux一键部署脚本](https://gitee.com/jonnyan404/oh-my-mrdoc)
+- [Windows部署面板](https://gitee.com/debj031634/win-django)
 
 ## 交流
 
