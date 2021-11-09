@@ -89,7 +89,7 @@
             // 遍历文集的文档
             var doc_ele = ""
             layui.each(res.data,function(index,item){ // 遍历一级文档
-                console.log(index,item)
+                // console.log(index,item)
                 // var doc_ele = '<li data-sortable-id="'+ item[0] +'" class="list-group-item">'+item[1]+'<ul class="list-group nested-sortable"></ul></li>'
                 doc_ele += '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title']
                 if(item['children'] != undefined){
@@ -119,7 +119,7 @@
                 }
                 doc_ele += '</li>'
             });
-            console.log(doc_ele)
+            // console.log(doc_ele)
             $("#nestedDemo").empty(); // 清空原文档排序内容
             $("#nestedDemo").append(doc_ele);
             docSort();// 动态添加元素之后，调用一次
@@ -148,7 +148,7 @@
                                 layer.close(index)
                                 // window.location.href = "{% url 'manage_project' %}"
                             })
-                            
+
                         }else{
                             layer.msg("修改导入文集出错")
                         }
@@ -168,9 +168,12 @@
                     console.log(sort_data)
                     $.post('{% url "project_doc_sort" %}',sort_data,function(r){
                         if(r.status){
-                            layer.msg("完成文集导入",function(){
-                                layer.close(index)
-                                // window.location.href = "{% url 'manage_project' %}"
+                            layer.open({
+                                title:"完成Markdown文集导入",
+                                btn:['好的','查看文集'],
+                                btn2:function(){
+                                    window.open('/project-'+sort_data['pid']+'/')
+                                }
                             })
                         }else{
                             layer.msg("修改导入文集出错")
