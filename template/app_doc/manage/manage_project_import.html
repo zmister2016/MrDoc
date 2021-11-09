@@ -87,10 +87,11 @@
             $('input[name="project-name"]').val(res.project.name)
             $('input[name="project-desc"]').val(res.project.desc)
             // 遍历文集的文档
+            var doc_ele = ""
             layui.each(res.data,function(index,item){ // 遍历一级文档
-                // console.log(index,item)
+                console.log(index,item)
                 // var doc_ele = '<li data-sortable-id="'+ item[0] +'" class="list-group-item">'+item[1]+'<ul class="list-group nested-sortable"></ul></li>'
-                var doc_ele = '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title']
+                doc_ele += '<li data-sortable-id="'+ item['id'] + '" class="list-group-item">'+item['title']
                 if(item['children'] != undefined){
                     let li = '<i class="layui-icon layui-icon-down switch-toc"></i><ul class="list-group nested-sortable">';
                     doc_ele += li;
@@ -117,9 +118,10 @@
                     doc_ele += li
                 }
                 doc_ele += '</li>'
-                $("#nestedDemo").empty(); // 清空原文档排序内容
-                $("#nestedDemo").append(doc_ele)
             });
+            console.log(doc_ele)
+            $("#nestedDemo").empty(); // 清空原文档排序内容
+            $("#nestedDemo").append(doc_ele);
             docSort();// 动态添加元素之后，调用一次
             // 打开排序弹出框
             var editor_import = layer.open({
