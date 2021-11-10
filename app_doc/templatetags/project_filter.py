@@ -10,7 +10,7 @@ register = template.Library()
 # 获取文集下的文档数量
 @register.filter(name='get_doc_count')
 def get_doc_count(value):
-    return Doc.objects.filter(top_doc=int(value),status__in=[0,1]).count()
+    return Doc.objects.filter(top_doc=int(value),status=1).count()
 
 # 获取文集下最新的文档及其修改时间
 @register.filter(name='get_new_doc')
