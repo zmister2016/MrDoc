@@ -3558,16 +3558,16 @@
             }
             var $class = "default";
 
-            if($quote.indexOf("i") === 0){
+            if($quote.indexOf("i ") === 0){
                 $class = "info";
                 $quote = $quote.substr(1);
-            }else if($quote.indexOf("w") === 0){
+            }else if($quote.indexOf("w ") === 0){
                 $class = "warning";
                 $quote = $quote.substr(1);
-            }else if($quote.indexOf("s") === 0){
+            }else if($quote.indexOf("s ") === 0){
                 $class = "success";
                 $quote = $quote.substr(1);
-            }else if($quote.indexOf("d") === 0){
+            }else if($quote.indexOf("d ") === 0){
                 $class = "danger";
                 $quote = $quote.substr(1);
             }
