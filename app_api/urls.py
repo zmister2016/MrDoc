@@ -15,6 +15,7 @@ urlpatterns = [
     path('create_doc/',views.create_doc,name="api_create_doc"), # 新建文档
     path('modify_doc/', views.modify_doc, name="api_modify_doc"),  # 修改文档
     path('upload_img/',views.upload_img,name="api_upload_img"), # 粘贴上传文件
+    path('upload_img_url/',views.upload_img_url,name="api_upload_img_url"), # 上传url图片
     # 跳转登录使用
     path('get_timestamp/',views.get_timestamp,name="get_timestamp"), # 获取服务器时间
     path('oauth0/',views.oauth0,name="oauth0"), # Token验证登录，非完整oauth

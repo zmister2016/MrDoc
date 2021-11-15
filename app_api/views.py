@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
-from app_doc.util_upload_img import upload_generation_dir,base_img_upload
+from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload
 from app_api.models import UserToken
 from app_doc.models import Project,Doc,DocHistory,Image
 from loguru import logger
@@ -305,4 +305,28 @@ def upload_img(request):
         return JsonResponse({'success': 0, 'data': _('token无效')})
     except:
         logger.exception(_("token上传图片异常"))
+        return JsonResponse({'success':0,'data':_('上传出错')})
+
+# 上传URL图片
+@csrf_exempt
+@require_http_methods(['GET','POST'])
+def upload_img_url(request):
+    token = request.GET.get('token', '')
+    url_img = request.POST.get('url','')
+    try:
+        # 验证Token
+        token = UserToken.objects.get(token=token)
+        if token.user.is_writer:
+            # 上传图片
+            if url_img.startswith("data:image"):  # 以URL形式上传的BASE64编码图片
+                result = base_img_upload(url_img, '', token.user)
+            else:
+                result = url_img_upload(url_img, '', token.user)
+            return JsonResponse(result)
+        else:
+            return JsonResponse({'status': False, 'data': _('用户无权限操作')})
+    except ObjectDoesNotExist:
+        return JsonResponse({'success': 0, 'data': _('token无效')})
+    except:
+        logger.error(_("token上传url图片异常"))
         return JsonResponse({'success':0,'data':_('上传出错')})
