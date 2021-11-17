@@ -41,7 +41,7 @@ def user_center_menu(request):
     menu_data = [
         {
             "id": 1,
-            "title": _("仪表盘"),
+            "title": _("我的概览"),
             "type": 1,
             "icon": "layui-icon layui-icon-console",
             "href": reverse('manage_overview'),
