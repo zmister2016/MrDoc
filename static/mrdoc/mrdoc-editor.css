@@ -124,3 +124,8 @@ del,s{
 #doc-tree{
     margin-bottom: 5px;
 }
+
+/* 编辑器插入图片弹出框图片分组按钮样式 */
+div#select-img-group > .layui-btn{
+    margin-bottom: 5px;
+}
