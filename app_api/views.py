@@ -197,6 +197,8 @@ def create_project(request):
     project_name = request.POST.get('name','')
     project_desc = request.POST.get('desc','')
     project_role = request.POST.get('role',1)
+    if project_name == '':
+        return JsonResponse({'status': False, 'data': _('文集名称不能为空！')})
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
