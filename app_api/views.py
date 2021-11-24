@@ -115,9 +115,14 @@ def manage_token(request):
 @require_GET
 def get_projects(request):
     token = request.GET.get('token','')
+    sort = request.GET.get('sort',0)
+    if sort == '1':
+        sort = '-'
+    else:
+        sort = ''
     try:
         token = UserToken.objects.get(token=token)
-        projects = Project.objects.filter(create_user=token.user) # 查询文集
+        projects = Project.objects.filter(create_user=token.user).order_by('{}create_time'.format(sort)) # 查询文集
         project_list =  []
         for project in projects:
             item = {
@@ -137,10 +142,15 @@ def get_projects(request):
 # 获取文集下的文档列表
 def get_docs(request):
     token = request.GET.get('token', '')
+    sort = request.GET.get('sort',0)
+    if sort == '1':
+        sort = '-'
+    else:
+        sort = ''
     try:
         token = UserToken.objects.get(token=token)
         pid = request.GET.get('pid','')
-        docs = Doc.objects.filter(create_user=token.user,top_doc=pid)  # 查询文集下的文档
+        docs = Doc.objects.filter(create_user=token.user,top_doc=pid).order_by('{}create_time'.format(sort))  # 查询文集下的文档
         doc_list = []
         for doc in docs:
             item = {
