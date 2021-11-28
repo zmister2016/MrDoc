@@ -242,14 +242,14 @@ def create_doc(request):
         is_project = Project.objects.filter(create_user=token.user,id=project_id)
         # 新建文档
         if is_project.exists():
-            Doc.objects.create(
+            doc = Doc.objects.create(
                 name = doc_title, # 文档内容
                 pre_content = doc_content, # 文档的编辑内容，意即编辑框输入的内容
                 top_doc = project_id, # 所属文集
                 editor_mode = editor_mode, # 编辑器模式
                 create_user = token.user # 创建的用户
             )
-            return JsonResponse({'status': True, 'data': 'ok'})
+            return JsonResponse({'status': True, 'data': doc.id})
         else:
             return JsonResponse({'status':False,'data':_('非法请求')})
     except ObjectDoesNotExist:
