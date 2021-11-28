@@ -44,10 +44,10 @@ MrDoc 目前涵盖终端：
 - Chrome扩展：
     - MrDoc官方插件：[Gitee](https://gitee.com/zmister/mrdoc-webclipper) | [使用说明](http://mrdoc.zmister.com/project-7/doc-243/)；
     - 简悦扩展：[GitHub](https://github.com/Kenshin/simpread) | [使用说明](https://github.com/Kenshin/simpread/issues/893)
+- 桌面客户端：[Gitee](https://gitee.com/zmister/mrdoc-desktop)
 
 开发中的终端：
 
-- 桌面客户端：[Gitee](https://gitee.com/zmister/mrdoc-desktop)
 - 微信小程序（专业版）
 - 手机速记APP
 

@@ -42,7 +42,7 @@ Current Platform：
 - Chrome Extends:
     - [instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
     - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
-- Mobile App(developing)
+- Desktop [github](https://github.com/zmister2016/mrdoc-desktop)
 
 ## Example Site
 
