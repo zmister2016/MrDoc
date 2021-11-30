@@ -40,7 +40,7 @@ Current Platform：
 
 - Web，[instructions](http://mrdoc.zmister.com/project-7/)；
 - Chrome Extends:
-    - [instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
+    - MrDoc速记:[MicroSoft Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [instructions](http://mrdoc.zmister.com/project-7/doc-243/)；
     - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
 - Desktop [github](https://github.com/zmister2016/mrdoc-desktop)
 
