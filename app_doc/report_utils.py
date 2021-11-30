@@ -157,8 +157,10 @@ class ReportMD():
         # 存在静态文件,进行遍历
         if len(media_list) > 0:
             for media in media_list:
-                media_filename = media.replace('//','/').split("(")[-1].split(")")[0] # 媒体文件的文件名
-                # 对本地静态文件进行复制
+                try:
+                    media_filename = media.replace('//','/').split("(")[-1].split(")")[0] # 媒体文件的文件名
+                except:
+                    continue                # 对本地静态文件进行复制
                 if media_filename.startswith("/media"):
                     # print(media_filename)
                     sub_folder = "/" + media_filename.split("/")[2] # 获取子文件夹的名称
