@@ -1273,7 +1273,7 @@ def check_update(request):
     github_url = 'https://api.github.com/repos/zmister2016/MrDoc/tags'
     gitee_resp = requests.get(gitee_url,timeout=5)
     if gitee_resp.status_code == 200:
-        return JsonResponse({'status':True,'data':gitee_resp.json()[-1]})
+        return JsonResponse({'status':True,'data':gitee_resp.json()[0]})
     else:
         github_resp = requests.get(github_url,timeout=5)
         if github_resp.status_code == 200:
