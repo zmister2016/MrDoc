@@ -42,7 +42,7 @@ Current Platform：
 - Chrome Extends:
     - MrDoc速记:[MicroSoft Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
     - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
-- Desktop [github](https://github.com/zmister2016/mrdoc-desktop)
+- Desktop: supportd Windows,Linux [Download](https://github.com/zmister2016/mrdoc-desktop/releases/)
 
 ## Example Site
 
