@@ -66,17 +66,40 @@ def log_in(request):
                 if checkcode.lower() != request.session['CheckCode'].lower():
                     errormsg = _('验证码错误！')
                     return render(request, 'login.html', locals())
+            # 验证登录次数
+            if 'LoginLock' not in request.session.keys():
+                request.session['LoginNum'] = 1 # 重试次数
+                request.session['LoginLock'] = False # 是否锁定
+                request.session['LoginTime'] = datetime.datetime.now().timestamp() # 解除锁定时间
+            verify_num = request.session['LoginNum']
+            if verify_num > 5:
+                request.session['LoginLock'] = True
+                request.session['LoginTime'] = (datetime.datetime.now() + datetime.timedelta(minutes=10)).timestamp()
+            verify_lock = request.session['LoginLock']
+            verify_time = request.session['LoginTime']
+
+            # 验证是否锁定
+            # print(datetime.datetime.now().timestamp(),verify_time)
+            if verify_lock is True and datetime.datetime.now().timestamp() < verify_time:
+                errormsg = _("操作过于频繁，请10分钟后再试！")
+                request.session['LoginNum'] = 0  # 重试次数清零
+                return render(request, 'login.html', locals())
+
             if username != '' and pwd != '':
                 user = authenticate(username=username,password=pwd)
                 if user is not None:
                     if user.is_active:
                         login(request,user)
+                        request.session['LoginNum'] = 0  # 重试次数
+                        request.session['LoginLock'] = False  # 是否锁定
+                        request.session['LoginTime'] = datetime.datetime.now().timestamp()  # 解除锁定时间
                         return redirect('/')
                     else:
                         errormsg = _('用户被禁用！')
                         return render(request, 'login.html', locals())
                 else:
                     errormsg = _('用户名或密码错误！')
+                    request.session['LoginNum'] += 1
                     return render(request, 'login.html', locals())
             else:
                 errormsg = _('用户名或密码未输入！')
