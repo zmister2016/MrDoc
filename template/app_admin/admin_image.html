@@ -251,12 +251,12 @@
                 delImg(obj.data.id)
             }else if(obj.event === 'preview'){
                 let realpath = obj.data.file_path; // url地址
-                let imgHtml = "<img src='"+ realpath +"' />";
                 let img = new Image(); // Image对象
 
                 img.onload = function () { // 重点：要用onload加载
-                    let width = img.width,
-                        height = img.height;
+                    let width = img.width > 600?600:img.width,
+                        height = img.height > 600?600:img.height;
+                    let imgHtml = "<img src='"+ realpath +"' style='width:" + width +"px;height:auto;' />";
                     layer.open({
                         type:1, // 类型是1
                         shade:0.2,
