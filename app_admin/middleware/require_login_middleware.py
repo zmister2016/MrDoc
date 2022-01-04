@@ -18,7 +18,9 @@ class RequiredLoginMiddleware():
             r'/logout(.*)$', # 注销
             r'/register(.*)$', # 注册
             r'/check_code(.*)$', # 验证码
+            r'/admin/forget_pwd(.*)$',  # 忘记密码
             r'/static/(.*)$', # 静态文件
+            r'/share_doc(.*)$',  # 文档分享
             r'/api/get_projects/(.*)$', # token api 获取文集列表
             r'/api/get_docs/(.*)$',  # token api 获取文档列表
             r'/api/get_doc/(.*)$',  # token api 获取文档
