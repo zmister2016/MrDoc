@@ -715,7 +715,7 @@ class ReportPDF():
             </head>
             <body>
                 <div style="position: fixed;font-size:8px; bottom: 5px;padding: 5px; right: 10px; color: white;background: black; z-index: 10000">
-                    本文件由MrDoc觅道文档生成
+                    本文件由MrDoc觅思文档生成
                 </div>
                 <div style="text-align:center;margin-top:400px;">
                     <h1>{project_name}</h1>
