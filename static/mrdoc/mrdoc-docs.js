@@ -73,7 +73,12 @@ function changeSidebar(){
         console.log('小屏幕')
         $("body").addClass("big-page");
     }else{
-        $("body").removeClass("big-page");
+        bgpage_status = window.localStorage.getItem('bgpage')
+        if(bgpage_status === '1'){
+            $("body").addClass("big-page");
+        }else{
+            $("body").removeClass("big-page");
+        }
     }
 };
 // 监听文档div点击

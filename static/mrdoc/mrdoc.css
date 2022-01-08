@@ -217,7 +217,7 @@ body, html {
     /*height: calc(100% - 20px);*/
     height: calc(100%);
     background-color: #fafafa;
-    border-right: 1px solid #e6e6e6;
+    /* border-right: 1px solid #e6e6e6; */
     width:300px;
     overflow: auto;
 }
