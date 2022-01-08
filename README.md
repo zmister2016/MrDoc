@@ -129,11 +129,12 @@ python manage.py runserver
 ```
 
 
-## Third party deployment tools
+## Third deployment tools
 
-- [Docker Image](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
+- [Docker Image](https://hub.docker.com/r/zmister/mrdoc)
+- [Docker Image By jonnyan404](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
 - [Linux Deployment Script](https://gitee.com/jonnyan404/oh-my-mrdoc)
-- [Windows Deployment Pannel](https://gitee.com/debj031634/win-django)
+- [Windows Deployment Pannel By 小肥羊](https://gitee.com/debj031634/win-django)
 
 ## Feedback
 

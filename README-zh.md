@@ -158,11 +158,12 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## 第三方部署工具
+## 部署工具
 
-- [Docker镜像](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
+- [Docker 官方镜像](https://hub.docker.com/r/zmister/mrdoc)
+- [Docker镜像 By jonnyan404 ](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
 - [Linux一键部署脚本](https://gitee.com/jonnyan404/oh-my-mrdoc)
-- [Windows部署面板](https://gitee.com/debj031634/win-django)
+- [Windows部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
 
 ## 交流
 
