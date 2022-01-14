@@ -162,20 +162,16 @@ python manage.py runserver
 
 - [Docker 官方镜像](https://hub.docker.com/r/zmister/mrdoc)
 - [Docker镜像 By jonnyan404 ](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
-- [Linux一键部署脚本](https://gitee.com/jonnyan404/oh-my-mrdoc)
-- [Windows部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
+- [Linux 一键部署脚本 By jonnyan404](https://gitee.com/jonnyan404/oh-my-mrdoc)
+- [Windows 部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
 
 ## 交流
 
-<p>微信公众号：州的先生（ID：zmister2016）</p>
-<img src="http://mrdoc.zmister.com/media//202010/2020-10-29_213550.png" height=150 />
-
 <p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
-<p>QQ群2：849206042 <a href="https://qm.qq.com/cgi-bin/qm/qr?k=LsgDSw8a6IlrzORBGGyRC6LrlIU_vYON&jump_from=webapi"><img src="//pub.idqqimg.com/wpa/images/group.png" /></a></p>
 
 ## 依赖
 
-觅思文档基于以下项目进行开发，在此表示感谢：
+觅思文档基于以下开源项目进行开发，在此表示感谢：
 
 - Python
 - Django
