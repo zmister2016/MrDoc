@@ -581,6 +581,74 @@ def admin_project_role(request,pro_id):
         else:
             return Http404
 
+# 后台管理 - 修改文集协作成员页面
+@superuser_only
+def admin_project_colla_config(request,pro_id):
+    project = Project.objects.filter(id=pro_id)
+    if project.exists() is False:
+        return render(request, '404.html')
+    if request.method == 'GET':
+        user_list = User.objects.filter(~Q(username=request.user.username)) # 获取用户列表
+        pro = project[0]
+        collaborator = ProjectCollaborator.objects.filter(project=pro) # 获取文集的协作者
+        colla_user_list = [i.user for i in collaborator] # 文集协作用户的ID
+        colla_docs = Doc.objects.filter(top_doc=pro.id,create_user__in=colla_user_list) # 获取文集协作用户创建的文档
+        return render(request, 'app_admin/admin_project_colla_config.html', locals())
+
+    elif request.method == 'POST':
+        # type类型：0表示新增协作者、1表示删除协作者、2表示修改协作者
+        types = request.POST.get('types','')
+        try:
+            types = int(types)
+        except:
+            return JsonResponse({'status':False,'data':_('参数错误')})
+        # 添加文集协作者
+        if int(types) == 0:
+            colla_user = request.POST.get('username','').split(',') # 获取用户列表，形如1,2,3
+            role = request.POST.get('role',0)
+            for user in colla_user:
+                user = User.objects.filter(id=user)
+                if user.exists():
+                    if user[0] == project[0].create_user: # 用户为文集的创建者
+                        return JsonResponse({'status':False,'data':_('文集创建者无需添加')})
+                    elif ProjectCollaborator.objects.filter(user=user[0],project=project[0]).exists():
+                        return JsonResponse({'status':False,'data':_('用户已存在')})
+                    else:
+                        ProjectCollaborator.objects.create(
+                            project = project[0],
+                            user = user[0],
+                            role = role if role in ['1',1] else 0
+                        )
+                else:
+                    return JsonResponse({'status':False,'data':_('用户不存在')})
+            return JsonResponse({'status': True, 'data': _('添加成功')})
+        # 删除文集协作者
+        elif int(types) == 1:
+            username = request.POST.get('username','')
+            try:
+                user = User.objects.get(username=username)
+                pro_colla = ProjectCollaborator.objects.get(project=project[0],user=user)
+                pro_colla.delete()
+                return JsonResponse({'status':True,'data':_('删除成功')})
+            except:
+                logger.exception(_("删除协作者出错"))
+                return JsonResponse({'status':False,'data':_('删除出错')})
+        # 修改协作权限
+        elif int(types) == 2:
+            username = request.POST.get('username', '')
+            role = request.POST.get('role','')
+            try:
+                user = User.objects.get(username=username)
+                pro_colla = ProjectCollaborator.objects.filter(project=project[0], user=user)
+                pro_colla.update(role=role)
+                return JsonResponse({'status':True,'data':_('修改成功')})
+            except:
+                logger.exception(_("修改协作权限出错"))
+                return JsonResponse({'status':False,'data':_('修改失败')})
+
+        else:
+            return JsonResponse({'status':False,'data':_('无效的类型')})
+
 # 后台管理 - 删除文集
 @superuser_only
 @require_POST

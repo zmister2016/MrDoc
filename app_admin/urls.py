@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('project_manage/',views.admin_project,name='project_manage'), # 文集管理
     path('project_role_manage/<int:pro_id>/',views.admin_project_role,name="admin_project_role"), # 管理文集权限
+    path('project_colla_config/<int:pro_id>/', views.admin_project_colla_config, name="admin_project_colla_config"),# 修改文集成员信息
     path('project_manage_istop',views.admin_project_istop,name="admin_project_istop"), # 修改文集置顶状态
     path('project_del/',views.admin_project_delete,name="admin_project_del"), # 删除文集
 
