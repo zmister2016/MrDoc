@@ -44,22 +44,22 @@ def upload_ice_img(request):
         file_obj = request.FILES.get('file[]')
         result = ice_save_file(file_obj,request.user)           
         res_dic = {0:result,"length":1,'other_msg':iceEditor_img}         #一个文件，直接把文件数量固定了
-    return HttpResponse(json.dumps(res_dic), content_type="application/json")
+    return JsonResponse(res_dic)
 
 
 def ice_save_file(file_obj,user):   
     # 默认保留支持ice单文件上传功能，可以iceEditor中开启
     file_suffix = str(file_obj).split(".")[-1] # 提取图片格式
     # 允许上传文件类型，ice粘贴上传为blob
+    if file_suffix.lower() == 'blob':
+        # 粘贴上传直接默认变更为png就行
+        file_suffix = 'png' 
     # allow_suffix =["jpg", "jpeg", "gif", "png", "bmp", "webp","blob"]
     allow_suffix = settings.ALLOWED_IMG
     # 判断附件格式
     is_images = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
     if file_suffix.lower() not in allow_suffix:         
-        return {"error": _("文件格式不允许")}
-    if file_suffix.lower() == 'blob':
-        # 粘贴上传直接默认为png就行
-        file_suffix = 'png' 
+        return {"error": _("文件格式不允许")}    
     # 接下来构造一个文件名，时间和随机10位字符串构成
     relative_path = upload_generation_dir()
     name_time = time.strftime("%Y-%m-%d_%H%M%S_")
