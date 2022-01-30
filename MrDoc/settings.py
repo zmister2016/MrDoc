@@ -40,7 +40,7 @@ SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug',fallback=False)
 
-VERSIONS = '0.7.4'
+VERSIONS = '0.7.5'
 
 ALLOWED_HOSTS = ['*']
 
@@ -244,3 +244,10 @@ except ImportError:
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
+
+# 跨域请求配置
+cors_str = CONFIG.get("cors_origin","allow",fallback=[])
+if cors_str == []:
+    CORS_ALLOWED_ORIGINS = cors_str
+else:
+    CORS_ALLOWED_ORIGINS = cors_str.split(',')
