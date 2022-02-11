@@ -164,6 +164,7 @@ python manage.py runserver
 - [Docker镜像 By jonnyan404 ](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
 - [Linux 一键部署脚本 By jonnyan404](https://gitee.com/jonnyan404/oh-my-mrdoc)
 - [Windows 部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
+- [VirtualBox/VmWare 虚拟机镜像 By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
 ## 交流
 
