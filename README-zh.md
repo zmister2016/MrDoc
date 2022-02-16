@@ -38,18 +38,13 @@ MrDoc 适合作为个人和中小型团队的私有云文档、云笔记和知�
 
 你可以简单粗暴地将 MrDoc 视为「可私有部署的语雀」和「可在线编辑文档的GitBook」。
 
-MrDoc 目前涵盖终端：
+MrDoc 全系产品目前涵盖以下终端：
 
 - Web端
-- Chrome扩展：
-    - MrDoc官方插件：[Gitee](https://gitee.com/zmister/mrdoc-webclipper) | [MicroSoft Edge 应用商店](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
-    - 简悦扩展：[GitHub](https://github.com/Kenshin/simpread) | [使用说明](https://github.com/Kenshin/simpread/issues/893)
+- Chrome 浏览器扩展：[Gitee](https://gitee.com/zmister/mrdoc-webclipper) | [MicroSoft Edge 应用商店](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
 - 桌面客户端：支持 Windows、Linux，[下载链接](https://gitee.com/zmister/mrdoc-desktop/releases/)
-
-开发中的终端：
-
-- 微信小程序（专业版）
-- 手机速记APP
+- 移动客户端APP：[Gitee](https://gitee.com/zmister/mrdoc-app-release)
+- 微信小程序（开发中）
 
 ## 演示站点
 

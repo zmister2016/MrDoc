@@ -38,11 +38,10 @@
 
 Current Platform：
 
-- Web，[instructions](http://mrdoc.zmister.com/project-7/)；
-- Chrome Extends:
-    - MrDoc速记:[MicroSoft Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
-    - [simpread](https://github.com/Kenshin/simpread)：[instructions](https://github.com/Kenshin/simpread/issues/893)
+- Web:[instructions](http://mrdoc.zmister.com/project-7/)；
+- Chrome Extends:[MicroSoft Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
 - Desktop: supportd Windows,Linux [Download](https://github.com/zmister2016/mrdoc-desktop/releases/)
+- Mobile APP:[Gitee](https://gitee.com/zmister/mrdoc-app-release)
 
 ## Example Site
 
