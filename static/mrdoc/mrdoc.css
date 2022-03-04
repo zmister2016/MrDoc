@@ -455,7 +455,7 @@ li.active > a,li.active > div > a{
     border: none;
     background-color: #fff;
     line-height: 14px;
-    height: 14px;
+    /* height: 14px; */
     color: rgba(0,0,0,.65);
 }
 
