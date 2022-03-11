@@ -65,7 +65,7 @@ class ProjectToc(models.Model):
 
 # 文档模型
 class Doc(models.Model):
-    name = models.CharField(verbose_name="文档标题",max_length=50)
+    name = models.CharField(verbose_name="文档标题",max_length=255)
     pre_content = models.TextField(verbose_name="编辑内容",null=True,blank=True)
     content = models.TextField(verbose_name="文档内容",null=True,blank=True)
     parent_doc = models.IntegerField(default=0,verbose_name="上级文档")
