@@ -41,7 +41,7 @@ class ImportZipProject():
         for root, dirs, files in os.walk(self.temp_dir):
             for dir in dirs:
                 try:
-                    new_dir = dir.encode('cp437').decode('utf-8')
+                    new_dir = dir.encode('cp437').decode('gbk')
                 except:
                     new_dir = dir.encode('utf-8').decode('utf-8')
                 # print(new_dir)
@@ -49,7 +49,7 @@ class ImportZipProject():
 
             for file in files:
                 try:
-                    new_file = file.encode('cp437').decode('utf-8')
+                    new_file = file.encode('cp437').decode('gbk')
                 except:
                     new_file = file.encode('utf-8').decode('utf-8')
                 # print(root, new_file)
