@@ -187,6 +187,7 @@ def get_doc(request):
             'parent_doc':doc.parent_doc, # 上级文档
             'top_doc':doc.top_doc, # 所属文集
             'status':doc.status, # 文档状态
+            "editor_mode": doc.editor_mode,  # 文档编辑模式
             'create_time': doc.create_time,  # 文档创建时间
             'modify_time': doc.modify_time,  # 文档的修改时间
             'create_user': doc.create_user.username  # 文档的创建者
