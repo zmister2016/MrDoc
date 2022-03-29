@@ -150,8 +150,8 @@ ul#doc-tree{
     background: #fff;
     z-index: 1;
     min-width: 0;
+    height: 24px;
     color: #666;
-    /* font-weight: 700; */
     font-family: Consolas,Menlo,Courier,monospace;
 }
 /* 为外部链接添加图标指示 */
