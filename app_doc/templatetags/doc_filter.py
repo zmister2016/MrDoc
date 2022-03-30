@@ -142,7 +142,7 @@ def get_doc_previous(value):
 def get_key_context(value,args):
     # print(value,args)
     # re_result = re.findall(args, value, flags=re.IGNORECASE)
-    value = value.replace('\n','')
+    value = value.replace('\n','') if value is not None else ''
     p = re.compile(args,flags=re.IGNORECASE)
     value_list = []
     for m in p.finditer(value):
