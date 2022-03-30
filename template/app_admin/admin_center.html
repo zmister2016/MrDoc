@@ -42,7 +42,7 @@
 							<dd><a href="{% url 'user_center' %}">个人中心</a></dd>
 							{% endif %}
 							<dd><a href="{% url 'pro_list' %}">返回首页</a></dd>
-						  <dd><a href="{% url 'logout' %}">退出登录</a></dd>
+						  <dd><a href="javascript:void(0)" title="退出登录" onclick="Logout()">退出登录</a></dd>
 						</dl>
 					</li>
 					<!-- 主 题 配 置 -->
@@ -167,6 +167,26 @@
 				admin.setConfigType("json");
 				admin.render(pear_admin_config);
 			})
+		</script>
+		<script>
+			var $ = layui.jquery;
+			function Logout(){
+				$.ajax({
+					url:"{% url 'logout' %}",
+					method:'post',
+					headers: {"X-CSRFToken":'{{ csrf_token }}'},
+					success:function(r){
+						if(r.status){
+							window.location.href = '/'
+						}else{
+							layer.msg("注销失败")
+						}
+					},
+					error:function(){
+						layer.msg("注销失败")
+					}
+				})
+			}
 		</script>
 	</body>
 </html>

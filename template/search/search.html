@@ -74,7 +74,7 @@
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'logout' %}">
+                        <a href="javascript:void(0)" title="退出登录" onclick="Logout()">
                             <i class="layui-icon layui-icon-release layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
@@ -305,7 +305,22 @@
             }
         }
         tagCurrentSearchType();
-
+        function Logout(){
+            $.ajax({
+                url:"{% url 'logout' %}",
+                method:'post',
+                success:function(r){
+                    if(r.status){
+                        window.location.href = r.data
+                    }else{
+                        layer.msg("注销失败")
+                    }
+                },
+                error:function(){
+                    layer.msg("注销失败")
+                }
+            })
+        }
     </script>
     <!-- 统计代码开始 -->
         {% if debug %}

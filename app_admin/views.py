@@ -192,6 +192,7 @@ def register(request):
 
 
 # 注销
+@require_POST
 def log_out(request):
     try:
         logout(request)
@@ -199,13 +200,13 @@ def log_out(request):
         for c in list(request.COOKIES.keys()):
             if c.startswith('viewcode-'):
                 project_viewcode_list.append(c)
-        resp = redirect(request.META['HTTP_REFERER'])
+        resp = request.META['HTTP_REFERER']
         for c in project_viewcode_list:
             resp.delete_cookie(c)
-        return resp
+        return JsonResponse({'status': True, 'data': resp})
     except Exception as e:
         logger.exception(_("注销异常"))
-        return redirect(request.META['HTTP_REFERER'])
+        return JsonResponse({'status':False})
 
 
 # 忘记密码
