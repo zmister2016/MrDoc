@@ -2235,7 +2235,8 @@ def report_md(request):
     user = request.user
     if types == 'single':
         try:
-            Project.objects.get(id=int(pro_id),create_user=user)
+            if user.is_superuser is False:
+                Project.objects.get(id=int(pro_id),create_user=user)
             project_md = ReportMD(
                 project_id=int(pro_id)
             )
