@@ -257,7 +257,8 @@
         for(var i = 0;i < sel_pro_list.length; i++){
             if(sel_pro_list[i].getAttribute('lay-value') == '{{pid}}'){
                 var sel_pro = 'dd[lay-value=' + sel_pro_list[i].getAttribute('lay-value') + ']';
-                $('#project').siblings("div.layui-form-select").find('dl').find(sel_pro).click();
+                $('#project').siblings("div.layui-form-select").find('dl').find(sel_pro)[0].click();
+                break;
             }
         };
 
