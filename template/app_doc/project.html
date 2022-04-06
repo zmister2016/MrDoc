@@ -56,6 +56,15 @@
                 {% for doc in new_docs %}
                 <div>
                     <h3><a style="color:#333;" href="{% url 'doc' project.id doc.id %}">{{doc.name}}</a></h3>
+                    {% if doc.editor_mode == 3 %}
+                    <p style="color:#999;font-size:12px;">
+                        {% if doc.content|length > 200 %}
+                            {{ doc.content|truncatechars:200 }}……
+                        {% else %}
+                            {{ doc.content }}
+                        {% endif %}
+                    </p>
+                    {% else %}
                     <p style="color:#999;font-size:12px;">
                         {% if doc.pre_content|length > 200 %}
                             {{ doc.pre_content|truncatechars:200 }}……
@@ -63,6 +72,7 @@
                             {{ doc.pre_content }}
                         {% endif %}
                     </p>
+                    {% endif %}
                     <p style="color:#999;font-size:12px;"><i class="fa fa-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user}}{% endif %} - <i class="fa fa-clock-o"></i> {{doc.modify_time}}</p>
                 </div>
                 <hr>

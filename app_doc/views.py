@@ -89,11 +89,14 @@ def validateTitle(title):
   new_title = re.sub(rstr, "_", title) # 替换为下划线
   return new_title
 
-# markdown文本生成摘要（不带markdown标记）
+# 文档文本生成摘要（不带markdown标记和html标签）
 def remove_markdown_tag(docs):
     for doc in docs:
         try:
-            doc.pre_content = strip_tags(markdown.markdown(doc.pre_content))
+            if doc.editor_mode == 3: # 富文本文档
+                doc.content = strip_tags(doc.content)
+            else: # 其他文档
+                doc.pre_content = strip_tags(markdown.markdown(doc.pre_content))
         except Exception as e:
             doc.pre_content = doc.pre_content
 
