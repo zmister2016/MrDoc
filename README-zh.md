@@ -166,7 +166,7 @@ python manage.py runserver
 <p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
 
 <p align="center">
-<img src="https://doc.mrdoc.pro/media/202203/20220331121926_20220331122015390193.png" height="50%">
+<img src="https://doc.mrdoc.pro/media/202203/20220331121926_20220331122015390193.png" width="50%">
 </p>
 
 ## 依赖
