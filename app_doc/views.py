@@ -1438,8 +1438,13 @@ def del_doc(request):
             elif range == 'multi':
                 docs = doc_id.split(",")
                 try:
-                    Doc.objects.filter(id__in=docs,create_user=request.user).update(status=3,modify_time=datetime.datetime.now())
-                    Doc.objects.filter(parent_doc__in=docs).update(status=3,modify_time=datetime.datetime.now())
+                    # 管理员无需验证权限
+                    if request.user.is_superuser:
+                        Doc.objects.filter(id__in=docs).update(status=3,modify_time=datetime.datetime.now())
+                        Doc.objects.filter(parent_doc__in=docs).update(status=3, modify_time=datetime.datetime.now())
+                    else:
+                        Doc.objects.filter(id__in=docs,create_user=request.user).update(status=3,modify_time=datetime.datetime.now())
+                        Doc.objects.filter(parent_doc__in=docs).update(status=3,modify_time=datetime.datetime.now())
                     return JsonResponse({'status': True, 'data': _('删除完成')})
                 except:
                     return JsonResponse({'status': False, 'data': _('非法请求')})
