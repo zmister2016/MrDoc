@@ -50,6 +50,7 @@
                 <input type="radio" name="status" title="全部({{all_cnt}})" value="-1" lay-skin="primary" checked lay-filter="doc_status">
                 <input type="radio" name="status" title="草稿({{draft_doc_cnt}})" value="0"  lay-skin="primary" lay-filter="doc_status">
                 <input type="radio" name="status" title="已发布({{published_doc_cnt}})" value="1" lay-skin="primary" lay-filter="doc_status">
+                <input type="radio" name="status" title="已删除({{recycle_doc_cnt}})" value="3" lay-skin="primary" lay-filter="doc_status">
               </div>
             </div>
         </div>
@@ -286,11 +287,15 @@
         // 监听状态筛选
         form.on('radio(doc_status)', function(data){
             console.log(data.value); //被点击的radio的value值
-            table.reload('doc-table',{
+            if(data.value == '3'){
+                top.layui.tab.addTabOnlyByElem("content",{id:"doc_recycle",title:"文档回收站",url:"{% url 'doc_recycle' %}",close:"true"})
+            }else{
+                table.reload('doc-table',{
                     where:{
-                    'type':1,'status':data.value,
-                },
-            })
+                        'type':1,'status':data.value,
+                    },
+                })
+            }
         });
         // 监听搜索按钮
         $("#search").click(function(){

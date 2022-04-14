@@ -1471,8 +1471,10 @@ def manage_doc(request):
         published_doc_cnt = Doc.objects.filter(create_user=request.user, status=1).count()
         # 草稿文档数量
         draft_doc_cnt = Doc.objects.filter(create_user=request.user, status=0).count()
+        # 回收站文档数量
+        recycle_doc_cnt = Doc.objects.filter(create_user=request.user, status=3).count()
         # 所有文档数量
-        all_cnt = published_doc_cnt + draft_doc_cnt
+        all_cnt = published_doc_cnt + draft_doc_cnt + recycle_doc_cnt
         return render(request,'app_doc/manage/manage_doc.html',locals())
     else:
         kw = request.POST.get('kw', '')
