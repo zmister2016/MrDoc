@@ -144,7 +144,7 @@ def register(request):
                         errormsg = _('用户名已被使用！')
                         return render(request, 'register.html', locals())
                     elif re.match('^[0-9a-z]+$',username) is None:
-                        errormsg = _('用户名只能为英文数字组合')
+                        errormsg = _('用户名只能为小写英文+数字组合')
                         return render(request, 'register.html', locals())
                     elif len(username) < 5:
                         errormsg = _('用户名必须大于等于5位！')
