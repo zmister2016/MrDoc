@@ -63,7 +63,7 @@
                             <tbody>
                                 {% for colla in collaborator %}
                                 <tr>
-                                    <td>{{ colla.user }}</td>
+                                    <td>{{ colla.user }}({{colla.user.first_name}})</td>
                                     <td>
                                         {% if colla.role == 0 %}
                                         {% trans "新建文档，修改、删除新建的文档" %}
