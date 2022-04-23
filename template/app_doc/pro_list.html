@@ -351,6 +351,9 @@
                 sucess:function(){
                     form.render();
                 },
+                end:function(){
+                    $("li.layui-nav-item dd.layui-this").removeClass("layui-this")
+                },
                 yes:function (index,layero) {
                     layer.load(1)
                     data = {
