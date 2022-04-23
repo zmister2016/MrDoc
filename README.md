@@ -40,8 +40,8 @@ Current Platform：
 
 - Web:[instructions](http://mrdoc.zmister.com/project-7/)；
 - Chrome Extends:[MicroSoft Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
-- Desktop: supportd Windows,Linux [Download](https://github.com/zmister2016/mrdoc-desktop/releases/)
-- Mobile APP:[Gitee](https://gitee.com/zmister/mrdoc-app-release)
+- Desktop: supportd Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
+- Mobile APP:supportd Android [Download](https://gitee.com/zmister/mrdoc-app-release)
 
 ## Example Site
 
