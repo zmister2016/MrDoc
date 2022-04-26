@@ -18,6 +18,7 @@ import os
 import time
 import re
 import yaml
+import sys
 
 
 # 导入Zip文集
@@ -38,20 +39,21 @@ class ImportZipProject():
         shutil.unpack_archive(zip_file_path, extract_dir=self.temp_dir)
 
         # 处理文件夹和文件名的中文乱码
+        sys_encoding = sys.getdefaultencoding()
         for root, dirs, files in os.walk(self.temp_dir):
             for dir in dirs:
                 try:
-                    new_dir = dir.encode('cp437').decode('gbk')
+                    new_dir = dir.encode('cp437').decode(sys_encoding)
                 except:
-                    new_dir = dir.encode('utf-8').decode('utf-8')
+                    new_dir = dir.encode('utf-8').decode(sys_encoding)
                 # print(new_dir)
                 os.rename(os.path.join(root, dir), os.path.join(root, new_dir))
 
             for file in files:
                 try:
-                    new_file = file.encode('cp437').decode('gbk')
+                    new_file = file.encode('cp437').decode(sys_encoding)
                 except:
-                    new_file = file.encode('utf-8').decode('utf-8')
+                    new_file = file.encode('utf-8').decode(sys_encoding)
                 # print(root, new_file)
                 os.rename(os.path.join(root, file), os.path.join(root, new_file))
 
