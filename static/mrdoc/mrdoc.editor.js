@@ -442,9 +442,9 @@ switchImgGroup = function(e){
 // 插入选择的附件到编辑器
 insertAttach = function(e){
     if(editor_mode == 3){ // ice富文本编辑器
-        editor.addValue('<a href= "/media/' + $(e).data('path') + '" download="' + $(e).data('name') + '">' + '[附件]' + $(e).data('name') + '</a>')
+        editor.addValue('<a href= "/media/' + encodeURI($(e).data('path')) + '" download="' + $(e).data('name') + '">' + '[附件]' + $(e).data('name') + '</a>')
     }else{
-        editor.insertValue("\n[【附件】"+ $(e).data('name') + "](/media/" + $(e).data('path') + ")");
+        editor.insertValue("\n[【附件】"+ encodeURI($(e).data('name')) + "](/media/" + $(e).data('path') + ")");
     }
     layer.closeAll();
     
@@ -512,9 +512,9 @@ upload_attach.render({
         //上传成功，刷新页面
         if(res.status){
             if(editor_mode == 3){
-                editor.addValue('<a href= "/media/' + res.data.url + '" download="' + res.data.name + '">' + '[附件]' + res.data.name + '</a>')
+                editor.addValue('<a href= "/media/' + encodeURI(res.data.url) + '" download="' + res.data.name + '">' + '[附件]' + res.data.name + '</a>')
             }else{
-                editor.insertValue("\n[【附件】"+ res.data.name + "](/media/" + res.data.url + ")");
+                editor.insertValue("\n[【附件】"+ res.data.name + "](/media/" + encodeURI(res.data.url) + ")");
             }
             layer.closeAll();
             layer.msg("上传成功");
