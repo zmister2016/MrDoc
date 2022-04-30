@@ -247,7 +247,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 # 跨域请求配置
 cors_str = CONFIG.get("cors_origin","allow",fallback=[])
+capacitor_origins = ['http://localhost','capacitor://localhost']
 if cors_str == []:
-    CORS_ALLOWED_ORIGINS = cors_str
+    CORS_ALLOWED_ORIGINS = capacitor_origins
 else:
-    CORS_ALLOWED_ORIGINS = cors_str.split(',')
+    CORS_ALLOWED_ORIGINS = capacitor_origins + cors_str.split(',')
