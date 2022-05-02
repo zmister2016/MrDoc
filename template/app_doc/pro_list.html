@@ -85,7 +85,7 @@
 <!-- 页头结束 -->
 
 <!-- 筛选栏 -->
-<div class="layui-container" style="margin-top: 10px;">
+<div class="layui-container index-filter" style="margin-top: 10px;">
     <!-- 表单风格开始 -->
     <div class="layui-row">
         <form class="index-control layui-form" style="float: right;" lay-filter="filter-project-form">
@@ -276,13 +276,13 @@
             // 获取页脚的高度
             footerHeight = $(".layui-footer").height();
             // 获取页脚的高度
-            footerTop = ($(window).scrollTop() + $(window).height() - footerHeight - 20)+"px";
+            footerTop = ($(window).scrollTop() + $(window).height() - footerHeight - 30)+"px";
             // console.log("页脚高度：",footerHeight)
             // console.log(footerTop)
             // console.log($(".layui-header").height()+$(".layui-container").height())
             // console.log("窗口高度：",$(window).height())
             //如果页面内容高度小于屏幕高度，div#footer将绝对定位到屏幕底部，否则div#footer保留它的正常静态定位
-            if(($(".layui-header").height() + $(".index-control").height() + $(".project-list-content").height() + $(".project-list-page").height() + 16) < $(window).height()) {
+            if(($(".layui-header").height() + $(".index-filter").height() + $(".project-list-content").height() + $(".project-list-page").height() + 16) < $(window).height()) {
                 console.log("页脚置底")
                 $(".layui-footer").css({ position: "absolute",left:"0" }).stop().css({top:footerTop});
             }else{
