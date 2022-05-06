@@ -35,7 +35,11 @@ def is_colla_pro(pro,user):
 @register.filter(name='get_doc_parent')
 def get_doc_parent(value):
     if int(value) != 0:
-        return Doc.objects.get(id=int(value))
+        try:
+            data = Doc.objects.get(id=int(value))
+        except:
+            data = _('无上级文档')
+        return data
     else:
         return _('无上级文档')
 
