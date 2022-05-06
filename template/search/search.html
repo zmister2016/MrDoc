@@ -196,7 +196,11 @@
                         <a href="{{ result.object.get_absolute_url }}?highlight={{query}}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
                     </h3>
                     <!-- 简介 -->
-                    {% highlight result.object.pre_content with query %}
+                    {% if result.object.editor_mode == 3 %}
+                        {% highlight result.object.content with query %}
+                    {% else %}
+                        {% highlight result.object.pre_content with query %}
+                    {% endif %}
                     <!-- 所属文集 -->
                     <p class="search_result_info">
                         <a href="{% url 'pro_index' pro_id=result.object.top_doc %}" target="_blank">{{ result.object.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.object.modify_time}}</span></p>
