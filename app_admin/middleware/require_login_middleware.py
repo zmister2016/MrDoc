@@ -20,6 +20,7 @@ class RequiredLoginMiddleware():
             r'/check_code(.*)$', # 验证码
             r'/admin/forget_pwd(.*)$',  # 忘记密码
             r'/static/(.*)$', # 静态文件
+            r'/media/(.*)$',  # 媒体文件
             r'/share_doc(.*)$',  # 文档分享
             r'/api/get_projects/(.*)$', # token api 获取文集列表
             r'/api/get_docs/(.*)$',  # token api 获取文档列表
