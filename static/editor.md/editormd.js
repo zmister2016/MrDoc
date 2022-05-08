@@ -172,6 +172,7 @@
         sequenceDiagram      : false,          // sequenceDiagram.js only support IE9+
         mindMap              : true,           // 脑图
         echart               : true,           // echart 图表
+        mermaid              : true,            // mermaid图表
         previewCodeHighlight : true,
                 
         toolbar              : true,           // show/hide toolbar
@@ -555,6 +556,11 @@
             editormd.loadScript(loadPath + "echarts.min", function() {
                 // _this.loadedDisplay();
             });
+
+            // 加载 mermaid
+            // editormd.loadScript(loadPath + "mermaid.min", function() {
+            //     // _this.loadedDisplay();
+            // });
 
             // 加载 mindmap 相关js
             editormd.loadScript(loadPath + 'mindmap/d3@5',function(){
@@ -1603,6 +1609,29 @@
             return this;
         },
 
+        /**
+         * 解析mermaid - 2022-05-08
+         *
+         * @returns {editormd}             返回editormd的实例对象
+         */
+        mermaidRender:function(){
+            if(typeof(mermaid) == 'undefined'){
+                // console.log("加载mermaid")
+                editormd.loadScript('/static/editor.md/lib/' + "mermaid.min", function() {
+                    mermaid.initialize({
+                        startOnload:false,
+                    })
+                    mermaid.init(undefined,$(".mermaid"))
+                });
+            }else{
+                mermaid.initialize({
+                    startOnload:false,
+                })
+                mermaid.init(undefined,$(".mermaid"))
+            }
+            return this;
+        },
+
         
         /**
          * 解析和渲染流程图及时序图
@@ -2097,6 +2126,7 @@
                 sequenceDiagram      : settings.sequenceDiagram,
                 mindMap              : settings.mindMap,
                 echart               : settings.echart,
+                mermaid              : settings.mermaid,
                 previewCodeHighlight : settings.previewCodeHighlight,
             };
             
@@ -2194,6 +2224,14 @@
                         _this.echartRender();
                     },10)                    
                    
+                }
+
+                // 渲染 mermaid
+                if(settings.mermaid){
+                    setTimeout(function(){
+                        _this.mermaidRender();
+                    },10)
+
                 }
                 
                 // 渲染流程图和时序图
@@ -3944,6 +3982,9 @@
             {
                 return "<p class=\"" + editormd.classNames.tex + "\">" + code + "</p>";
             }
+            else if( lang === 'mermaid') {
+                return '<div class="mermaid">' + code + '</div>'
+            }
             else if (/^mindmap/i.test(lang)){ // 思维导图
             　　var len = 9 || 32;
             　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 
@@ -4391,7 +4432,8 @@
             emoji                : false,
             flowChart            : false,
             mindMap              : true, //脑图
-            echart               : true, 
+            echart               : true,
+            mermaid              : true,
             sequenceDiagram      : false,
             previewCodeHighlight : true,
             plugin_path          : '/static/editor.md/lib/'
@@ -4427,6 +4469,7 @@
             sequenceDiagram      : settings.sequenceDiagram, // 序列图
             mindMap              : settings.mindMap, // 思维导图
             echart              : settings.echart, // 思维导图
+            mermaid              : settings.mermaid, // mermaid 图表
             previewCodeHighlight : settings.previewCodeHighlight, // 预览代码高度
         };
 
@@ -4607,6 +4650,28 @@
                 });
             };
             echartHandle();
+
+        }
+
+        // 前台渲染mermaid图表
+        if(settings.mermaid){
+            // console.log("解析mermaid")
+            var mermaidHandle = function(){
+                var has_mermaid = false;
+                div.find(".mermaid").each(function(){
+                    // console.log("存在mermaid图表")
+                    has_mermaid = true;
+                })
+                if(has_mermaid){
+                    editormd.loadScript(settings.plugin_path + 'mermaid.min',function(){
+                        mermaid.initialize({
+                            startOnload:false,
+                        })
+                        mermaid.init(undefined,$(".mermaid"))
+                    })
+                }
+            };
+            mermaidHandle();
 
         }
         
