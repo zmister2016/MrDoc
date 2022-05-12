@@ -150,7 +150,7 @@ def get_docs(request):
     try:
         token = UserToken.objects.get(token=token)
         pid = request.GET.get('pid','')
-        docs = Doc.objects.filter(create_user=token.user,top_doc=pid).order_by('{}create_time'.format(sort))  # 查询文集下的文档
+        docs = Doc.objects.filter(create_user=token.user,top_doc=pid,status=1).order_by('{}create_time'.format(sort))  # 查询文集下的文档
         doc_list = []
         for doc in docs:
             item = {
