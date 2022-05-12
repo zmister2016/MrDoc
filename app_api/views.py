@@ -128,6 +128,7 @@ def get_projects(request):
             item = {
                 'id':project.id, # 文集ID
                 'name':project.name, # 文集名称
+                'icon': project.icon,  # 文集图标
                 'type':project.role # 文集状态
             }
             project_list.append(item)
