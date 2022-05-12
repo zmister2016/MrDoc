@@ -398,7 +398,7 @@ $("#collect_doc").click(function(){
 function initDocRender(mode){
     if(mode == 1){
         editormd.markdownToHTML("content", {
-            emoji           : true,  //emoji表情
+            emoji           : false,  //emoji表情
             taskList        : true,  // 任务列表
             tex             : true,  // 科学公式
             flowChart       : true,  // 流程图
