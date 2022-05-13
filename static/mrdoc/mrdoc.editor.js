@@ -444,7 +444,7 @@ insertAttach = function(e){
     if(editor_mode == 3){ // ice富文本编辑器
         editor.addValue('<a href= "/media/' + encodeURI($(e).data('path')) + '" download="' + $(e).data('name') + '">' + '[附件]' + $(e).data('name') + '</a>')
     }else{
-        editor.insertValue("\n[【附件】"+ encodeURI($(e).data('name')) + "](/media/" + $(e).data('path') + ")");
+        editor.insertValue("\n[【附件】"+ $(e).data('name') + "](/media/" + encodeURI($(e).data('path')) + ")");
     }
     layer.closeAll();
     
