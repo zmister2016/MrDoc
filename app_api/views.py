@@ -350,7 +350,7 @@ def upload_img_url(request):
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
-        if token.user.is_writer:
+        if token.user:
             # 上传图片
             if url_img.startswith("data:image"):  # 以URL形式上传的BASE64编码图片
                 result = base_img_upload(url_img, '', token.user)
