@@ -216,13 +216,13 @@ def create_project(request):
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
-        Project.objects.create(
+        p = Project.objects.create(
             name = project_name, # 文集名称
             intro = project_desc, # 文集简介
             role = project_role, # 文集权限
             create_user = token.user # 创建的用户
         )
-        return JsonResponse({'status': True, 'data': 'ok'})
+        return JsonResponse({'status': True, 'data': p.id})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
