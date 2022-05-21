@@ -32,7 +32,7 @@ urlpatterns = [
     path('admin/',include('app_admin.urls'),), # admin应用
     path('api/',include('app_api.urls')), # 用户 Token API 接口
     path('api_app/',include('app_api.urls_app')), # RESTFUL API 接口
-    re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
+    # re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
     re_path('^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
     path('sitemap.xml', views.index, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap-index.xml'},name='sitemap',), # 站点地图索引
     path('sitemap-<section>.xml', views.sitemap, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap.xml'},
@@ -40,8 +40,15 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    urlpatterns.append(
+        re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATICFILES_DIR}),# 静态文件
+    )
     try:
         import debug_toolbar
         urlpatterns.append(path('__debug__/', include(debug_toolbar.urls)))
     except ImportError:
         pass
+else:
+    urlpatterns.append(
+        re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
+    )
