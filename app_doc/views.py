@@ -94,11 +94,13 @@ def remove_markdown_tag(docs):
     for doc in docs:
         try:
             if doc.editor_mode == 3: # 富文本文档
-                doc.content = strip_tags(doc.content)
+                doc.content = strip_tags(doc.content)[:201]
+            elif doc.editor_mode == 4:
+                doc.pre_content = "此为表格文档，进入文档查看详细内容"
             else: # 其他文档
-                doc.pre_content = strip_tags(markdown.markdown(doc.pre_content))
+                doc.pre_content = strip_tags(markdown.markdown(doc.pre_content))[:201]
         except Exception as e:
-            doc.pre_content = doc.pre_content
+            doc.pre_content = doc.pre_content[:201]
 
 # 获取文集的文档目录
 def get_pro_toc(pro_id):
