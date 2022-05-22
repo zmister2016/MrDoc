@@ -475,4 +475,11 @@
         })
 
     </script>
+    <!-- 在线表格文档根据窗口高度调整表格高度 -->
+    {% if editor_mode == 4 %}
+    <script>
+        var lucksheet_height = $(window).height() - $(".doc-header").height() - $(".doc-info").height() - 70;
+        $("#luckysheet").height(lucksheet_height);
+    </script>
+    {% endif %}
 {% endblock %}
