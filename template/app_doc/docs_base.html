@@ -338,9 +338,81 @@
 <script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'editor.md/lib/purify.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
     var layer = layui.layer;
     {% if toc_cnt > 999 %}
         // 如果文集的文档数量大于999，使用异步加载左侧文集大纲
+        getProjectToc = function(){
+            $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
+                $("#loading-project-toc").hide();
+                if(r.status){
+                    var toc_str = ""
+                    layui.each(r.data,function(index,item){
+                        toc_str += "<li>"
+                        if(item['children'] != undefined){ // 存在二级文档
+                            li = '<div style="display:flex;justify-content:space-between;">' +
+                                '<a href="/project-'+'{{project.id}}'+
+                                '/doc-'+item.id +
+                                '/" title="' +
+                                item.title +
+                                '">' +
+                                '<i class="iconfont mrdoc-icon-wendang"></i>&nbsp' +
+                                item.title+'</a>' +
+                                '<i class="layui-icon layui-icon-left switch-toc" style="padding:15px;"></i>'+
+                            '</div>'+
+                            '<ul class="sub-menu toc-close">'
+                            toc_str += li
+                            layui.each(item['children'],function(index,item){// 遍历二级文档
+                                toc_str += '<li>'
+                                if(item['children'] != undefined){ //存在三级文档
+                                    li = '<div style="display:flex;justify-content:space-between;">' +
+                                        '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+
+                                        '<i class="iconfont mrdoc-icon-wendang"></i>&nbsp' +
+                                        item.title+'</a>' +
+                                        '<i class="layui-icon layui-icon-left switch-toc" style="padding:15px;"></i>'+
+                                    '</div>'+'<ul class="sub-menu toc-close">'
+                                    toc_str += li
+                                    layui.each(item['children'],function(index,item){ // 遍历三级文档
+                                       if(item.editor_mode == 4){
+                                           li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
+                                       }else{
+                                           li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
+                                       }
+
+                                        toc_str += li
+                                    })
+                                    toc_str += '</ul>'
+                                }else{// 不存在三级文档
+                                   if(item.editor_mode == 4){
+                                       li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
+                                   }else{
+                                       li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
+                                   }
+                                    toc_str += li
+                                }
+                                toc_str += '</li>'
+                            })
+                            toc_str += '</ul>'
+                        }else{//不存在二级文档
+                           if(item.editor_mode == 4){
+                               li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
+                           }else{
+                               li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
+                           }
+
+                           toc_str += li
+                        }
+                        toc_str += '</li>'
+                    });
+                    $('#project-toc').append(toc_str)
+                    tagCurrentDoc();
+                }else{
+                    layer.msg("获取文集目录失败！")
+                }
+            });
+        };
         getProjectToc();
     {% endif %}
 </script>
