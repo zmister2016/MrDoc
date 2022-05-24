@@ -15,3 +15,4 @@ markdownify==0.6.0
 selenium==3.141.0
 webdriver_manager==3.3.0
 PyYAML==5.4.1
+django-cors-headers>=3.10.0
