@@ -1,9 +1,11 @@
-/* Background */ .highlight-chroma { color: #f8f8f2; background-color: #000000 }
+/* Background */ .highlight-bg { color: #f8f8f2; background-color: #000000 }
+/* PreWrapper */ .highlight-chroma { color: #f8f8f2; background-color: #000000; }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #191919 }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7c7c79 }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7c7c79 }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #191919 }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7c7c79 }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7c7c79 }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #ff0000 }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #ff0000 }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #ff0000 }
@@ -42,7 +44,6 @@
 /* CommentSpecial */ .highlight-chroma .highlight-cs { color: #00ff00 }
 /* CommentPreproc */ .highlight-chroma .highlight-cp { color: #e5e5e5 }
 /* CommentPreprocFile */ .highlight-chroma .highlight-cpf { color: #e5e5e5 }
-
 /*
 
 ISBL Editor style dark color scheme (c) Dmitriy Tarasov <dimatar@gmail.com>

@@ -1,10 +1,12 @@
-/* Background */ .highlight-chroma { color: #cccccc; background-color: #000000 }
+/* Background */ .highlight-bg { color: #cccccc; background-color: #000000 }
+/* PreWrapper */ .highlight-chroma { color: #cccccc; background-color: #000000; }
 /* Error */ .highlight-chroma .highlight-err {  }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #191919 }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #666666 }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #666666 }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #191919 }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #666666 }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #666666 }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #cdcd00 }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #cdcd00 }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #00cd00 }
@@ -57,7 +59,6 @@
 /* GenericSubheading */ .highlight-chroma .highlight-gu { color: #800080; font-weight: bold }
 /* GenericTraceback */ .highlight-chroma .highlight-gt { color: #0044dd }
 /* GenericUnderline */ .highlight-chroma .highlight-gl { text-decoration: underline }
-
 /*
 
 Qt Creator dark color scheme

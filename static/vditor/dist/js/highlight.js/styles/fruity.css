@@ -1,9 +1,11 @@
-/* Background */ .highlight-chroma { color: #ffffff; background-color: #111111 }
+/* Background */ .highlight-bg { color: #ffffff; background-color: #111111 }
+/* PreWrapper */ .highlight-chroma { color: #ffffff; background-color: #111111; }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #282828 }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #282828 }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #fb660a; font-weight: bold }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #fb660a; font-weight: bold }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #fb660a; font-weight: bold }

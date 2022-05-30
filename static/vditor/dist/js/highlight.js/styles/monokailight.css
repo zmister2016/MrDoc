@@ -1,10 +1,12 @@
-/* Background */ .highlight-chroma { color: #272822; background-color: #fafafa }
+/* Background */ .highlight-bg { color: #272822; background-color: #fafafa }
+/* PreWrapper */ .highlight-chroma { color: #272822; background-color: #fafafa; }
 /* Error */ .highlight-chroma .highlight-err { color: #960050; background-color: #1e0010 }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #e1e1e1 }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #e1e1e1 }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #00a8c8 }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #00a8c8 }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #00a8c8 }
@@ -68,7 +70,6 @@
 /* CommentPreprocFile */ .highlight-chroma .highlight-cpf { color: #75715e }
 /* GenericEmph */ .highlight-chroma .highlight-ge { font-style: italic }
 /* GenericStrong */ .highlight-chroma .highlight-gs { font-weight: bold }
-
 /*
 
 Gruvbox style (light) (c) Pavel Pertsev (original style at https://github.com/morhetz/gruvbox)

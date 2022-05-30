@@ -1,10 +1,12 @@
-/* Background */ .highlight-chroma { color: #93a1a1; background-color: #002b36 }
+/* Background */ .highlight-bg { color: #93a1a1; background-color: #002b36 }
+/* PreWrapper */ .highlight-chroma { color: #93a1a1; background-color: #002b36; }
 /* Other */ .highlight-chroma .highlight-x { color: #cb4b16 }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #19404a }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #495050 }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #495050 }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #19404a }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #495050 }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #495050 }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #719e07 }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #cb4b16 }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #268bd2 }
@@ -57,7 +59,6 @@
 /* GenericInserted */ .highlight-chroma .highlight-gi { color: #719e07 }
 /* GenericStrong */ .highlight-chroma .highlight-gs { font-weight: bold }
 /* GenericSubheading */ .highlight-chroma .highlight-gu { color: #268bd2 }
-
 /*
 
 Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>

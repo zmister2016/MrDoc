@@ -1,10 +1,12 @@
-/* Background */ .highlight-chroma { color: #e7e9db; background-color: #2f1e2e }
+/* Background */ .highlight-bg { color: #e7e9db; background-color: #2f1e2e }
+/* PreWrapper */ .highlight-chroma { color: #e7e9db; background-color: #2f1e2e; }
 /* Error */ .highlight-chroma .highlight-err { color: #ef6155 }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #433442 }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #433442 }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #815ba4 }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #815ba4 }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #815ba4 }
@@ -60,7 +62,6 @@
 /* GenericPrompt */ .highlight-chroma .highlight-gp { color: #776e71; font-weight: bold }
 /* GenericStrong */ .highlight-chroma .highlight-gs { font-weight: bold }
 /* GenericSubheading */ .highlight-chroma .highlight-gu { color: #5bc4bf; font-weight: bold }
-
 /*
 Paraíso (dark)
 Created by Jan T. Sott (http://github.com/idleberg)

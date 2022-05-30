@@ -1,10 +1,12 @@
-/* Background */ .highlight-chroma { color: #8a8a8a; background-color: #1c1c1c }
+/* Background */ .highlight-bg { color: #8a8a8a; background-color: #1c1c1c }
+/* PreWrapper */ .highlight-chroma { color: #8a8a8a; background-color: #1c1c1c; }
 /* Other */ .highlight-chroma .highlight-x { color: #d75f00 }
 /* LineTableTD */ .highlight-chroma .highlight-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .highlight-chroma .highlight-hl { display: block; width: 100%;background-color: #323232 }
-/* LineNumbersTable */ .highlight-chroma .highlight-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #454545 }
-/* LineNumbers */ .highlight-chroma .highlight-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #454545 }
+/* LineTable */ .highlight-chroma .highlight-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .highlight-chroma .highlight-hl { background-color: #323232 }
+/* LineNumbersTable */ .highlight-chroma .highlight-lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #454545 }
+/* LineNumbers */ .highlight-chroma .highlight-ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #454545 }
+/* Line */ .highlight-chroma .highlight-line { display: flex; }
 /* Keyword */ .highlight-chroma .highlight-k { color: #5f8700 }
 /* KeywordConstant */ .highlight-chroma .highlight-kc { color: #d75f00 }
 /* KeywordDeclaration */ .highlight-chroma .highlight-kd { color: #0087ff }
@@ -58,7 +60,6 @@
 /* GenericInserted */ .highlight-chroma .highlight-gi { color: #5f8700 }
 /* GenericStrong */ .highlight-chroma .highlight-gs { font-weight: bold }
 /* GenericSubheading */ .highlight-chroma .highlight-gu { color: #0087ff }
-
 /* Base16 Atelier Cave Dark - Theme */
 /* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/cave) */
 /* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
