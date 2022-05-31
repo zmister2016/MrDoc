@@ -9,7 +9,7 @@
 
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.7.8-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.7.9-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.6+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
