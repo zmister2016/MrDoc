@@ -60,7 +60,8 @@
             <a href="javascript:;"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
                 <dd><a href="{% url 'pro_list' %}" target="_blank">首页</a></dd>
-                <dd><a href="{% url 'user_center' %}" target="_blank">个人中心</a></dd>
+                <dd><a href="{% url 'user_center' %}?tab=manage_project" target="_blank">文集管理</a></dd>
+                <dd><a href="{% url 'user_center' %}?tab=manage_doc" target="_blank">文档管理</a></dd>
             </dl>  
         </li>
 

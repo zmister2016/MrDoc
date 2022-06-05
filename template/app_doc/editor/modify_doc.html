@@ -71,12 +71,11 @@
         {% endif %}
 
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
-            <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
-                <dd><a href="{% url 'pro_list' %}" target="_blank">首页</a></dd>
-                <dd><a href="{% url 'user_center' %}" target="_blank">个人中心</a></dd>
-            </dl>  
-        </li>        
+            <a href="{% url 'user_center' %}?tab=manage_doc"><span class="layui-hide-xs">文档管理</span></a>
+        </li>
+        <li class="layui-nav-item mrdoc-import-doc-item">
+            <a href="{% url 'pro_list' %}"><span class="layui-hide-xs">返回首页</span></a>
+        </li>
         {% if doc.status == 0 %}
         <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档" id="modify_save_doc">保存</button>
         <button class="layui-btn layui-btn-sm layui-btn-primary layui-btn-radius pull-right" style="margin-top:10px;" title="保存文档为发布状态" id="modify_doc_to_pub">转为发布</button>

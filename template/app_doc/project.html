@@ -18,7 +18,7 @@
         </a>
     {% endif %}
     {% if request.user == project.create_user %}
-        <a class="btn pull-left" href="{% url 'user_center' %}">
+        <a class="btn pull-left" href="{% url 'user_center' %}?tab=manage_project">
             <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% endif %}

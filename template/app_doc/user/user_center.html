@@ -165,6 +165,31 @@
                 }
 				admin.setConfigType("json");
 				admin.render(pear_admin_config);
+				// URL参数解析
+				function getQueryVariable(variable)
+				{
+					var query = window.location.search.substring(1);
+					var vars = query.split("&");
+					for (var i=0;i<vars.length;i++) {
+							var pair = vars[i].split("=");
+							if(pair[0] == variable){return pair[1];}
+					}
+					return(false);
+				};
+				// 选项卡跳转
+				function tabRedict(){
+					var tabKw = getQueryVariable('tab')
+					console.log("选项卡跳转",tabKw)
+					switch(tabKw){
+						case 'manage_project':
+							layui.tab.addTabOnlyByElem("content",{id:"manage_project",title:"文集管理",url:"{% url 'manage_project' %}",close:"true"})
+							break;
+						case 'manage_doc':
+							layui.tab.addTabOnlyByElem("content",{id:"doc_manage",title:"文档管理",url:"{% url 'manage_doc' %}",close:"true"})
+							break;
+					}
+				}
+				setTimeout(tabRedict,100)
 			})
 		</script>
 		<script>
