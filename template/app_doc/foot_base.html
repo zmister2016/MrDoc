@@ -1,8 +1,7 @@
 {% load i18n %}
 <div class="layui-footer" style="border-top: 1px #e6e6e6 solid;text-align:center;margin-top:28px;width:100%;">
     <div style="margin-top:10px;padding-bottom: 10px;">
-        © <a href="https://mrdoc.pro">MrDoc 2019-2021</a>&nbsp;|&nbsp;
-        <a href="https://zmister.com" target="_blank">州的先生</a>出品 |
+        Powered By <a href="https://mrdoc.pro">MrDoc</a>&nbsp;|&nbsp;
         <a href="{% url 'sitemap' %}" target="_blank">{% trans "网站地图" %}</a>
         {% if beian_code != None and beian_code != '' %}
             | <a href="http://beian.miit.gov.cn/" target="_blank">{{beian_code}}</a>
