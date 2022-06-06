@@ -10,10 +10,10 @@
     <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
         <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">新建模板</span>
     </a>
-    <a class="btn pull-left" aria-label="" href="{% url 'manage_doctemp' %}?pid={{project.id}}" target="_blank">
+    <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}?tab=manage_doctemp" target="_blank">
         <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理模板</span>
     </a>
-    <a class="btn pull-left" aria-label="" href="{% url 'manage_project' %}" target="_blank">
+    <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}?tab=manage_project" target="_blank">
         <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理文集</span>
     </a>
 {% endblock %}
