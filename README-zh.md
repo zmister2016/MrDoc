@@ -17,7 +17,8 @@
 <p align="center">
 <a href="https://mrdoc.pro">官网</a> | 
 <a href="http://mrdoc.zmister.com/">演示站点</a> |
-<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a>
+<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a> |
+<a href="https://www.bilibili.com/video/BV1LF411u7NM/">零基础视频教程</a>
 </p>
 
 <p align="center">
