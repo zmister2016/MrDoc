@@ -3955,7 +3955,17 @@
                     }else if(/^[=]{4,}$/.test(item)){
                         time_line += '</div></li>'
                     }else{
-                        time_line += marked(item)
+                        var markedOptions = { // marked 选项
+                            renderer    : editormd.markedRenderer(), // 渲染器
+                            gfm         : settings.gfm, // 风格
+                            tables      : true, // 表格
+                            breaks      : true, //
+                            pedantic    : false,
+                            sanitize    : (settings.htmlDecode) ? false : true, // 是否忽略HTML标签，即是否开启HTML标签解析，为了安全性，默认不开启
+                            smartLists  : true,
+                            smartypants : true
+                        };
+                        time_line += marked(item,markedOptions)
                     }
                 })
 
