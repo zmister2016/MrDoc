@@ -288,7 +288,7 @@ def modify_doc(request):
         # 修改现有文档
         if is_project.exists():
             # 将现有文档内容写入到文档历史中
-            doc = Doc.objects.get(id=doc_id)
+            doc = Doc.objects.get(id=doc_id,top_doc=project_id)
             DocHistory.objects.create(
                 doc=doc,
                 pre_content=doc.pre_content,
@@ -296,13 +296,13 @@ def modify_doc(request):
             )
             # 更新修改现有文档
             if doc.editor_mode == 1 or doc.editor_mode == 2: # markdown文档
-                Doc.objects.filter(id=int(doc_id)).update(
+                Doc.objects.filter(id=int(doc_id),top_doc=project_id).update(
                     name=doc_title,
                     pre_content=doc_content,
                     modify_time=datetime.datetime.now(),
                 )
             elif doc.editor_mode == 3: # 富文本文档
-                Doc.objects.filter(id=int(doc_id)).update(
+                Doc.objects.filter(id=int(doc_id),top_doc=project_id).update(
                     name=doc_title,
                     content=doc_content,
                     modify_time=datetime.datetime.now(),
