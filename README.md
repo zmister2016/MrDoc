@@ -39,8 +39,8 @@
 Current Platform：
 
 - Web:[instructions](http://mrdoc.zmister.com/project-7/)；
-- Chrome Extends:[MicroSoft Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic) | [Chrome](https://chrome.google.com/webstore/detail/jefmnpfkhhmmnfbhaegnggffbdplijje)
-- Desktop: supportd Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
+- Browser Extensions:Supported Chromium Browser,Firefox Browser [Download](https://gitee.com/zmister/mrdoc-webclipper)
+- Desktop: Supported Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
 - Mobile APP:supportd Android [Download](https://gitee.com/zmister/mrdoc-app-release)
 
 ## Example Site
