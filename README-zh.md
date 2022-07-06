@@ -17,7 +17,6 @@
 <p align="center">
 <a href="https://mrdoc.pro">官网</a> | 
 <a href="http://mrdoc.zmister.com/">演示站点</a> |
-<a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba">QQ群</a> |
 <a href="https://www.bilibili.com/video/BV1LF411u7NM/">零基础视频教程</a>
 </p>
 
@@ -163,8 +162,6 @@ python manage.py runserver
 - [VirtualBox/VmWare 虚拟机镜像 By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
 ## 交流
-
-<p>QQ群：735507293 <a href="http://shang.qq.com/wpa/qunwpa?idkey=143c23a4ffbd0ba9137d2bce3ee86c83532c05259a0542a69527e36615e64dba"><img src="http://pub.idqqimg.com/wpa/images/group.png" /></a></p>
 
 <p align="center">
 <img src="https://doc.mrdoc.pro/media/202203/20220331121926_20220331122015390193.png" width="50%">
