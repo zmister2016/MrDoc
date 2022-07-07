@@ -187,34 +187,52 @@ def user_center_menu(request):
             ]
         },
         {
-            "id": "user_manual",
-            "title": _("使用手册"),
+            "id": "download",
+            "title": _("客户端下载"),
             "icon": "layui-icon layui-icon-template-1",
-            "type": 1,
-            "openType": "_blank",
-            "href": "https://doc.mrdoc.pro/project-54/",
+            "type": 0,
+            "href": "",
+            "children": [
+                {
+                    "id": 702,
+                    "title": _("浏览器扩展"),
+                    "icon": "layui-icon layui-icon-face-cry",
+                    "type": 1,
+                    "openType": "_blank",
+                    "href": "https://gitee.com/zmister/mrdoc-webclipper"
+                },
+                {
+                    "id": 703,
+                    "title": _("桌面客户端"),
+                    "icon": "layui-icon layui-icon-face-cry",
+                    "type": 1,
+                    "openType": "_blank",
+                    "href": "https://gitee.com/zmister/mrdoc-desktop-release"
+                },
+                {
+                    "id": 704,
+                    "title": _("移动端APP"),
+                    "icon": "layui-icon layui-icon-face-cry",
+                    "type": 1,
+                    "openType": "_blank",
+                    "href": "https://gitee.com/zmister/mrdoc-app-release"
+                },
+            ]
+        },
+        {
+            "id": "common",
+            "title": "使用帮助",
+            "icon": "layui-icon layui-icon-template-1",
+            "type": 0,
+            "href": "",
+            "children": [{
+                "id": 802,
+                "title": "使用手册",
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "https://doc.mrdoc.pro/project/54/"
+            }]
         }
-        # {
-        #     "id": "common",
-        #     "title": "使用帮助",
-        #     "icon": "layui-icon layui-icon-template-1",
-        #     "type": 0,
-        #     "href": "",
-        #     "children": [{
-        #         "id": 701,
-        #         "title": "安装说明",
-        #         "icon": "layui-icon layui-icon-face-smile",
-        #         "type": 1,
-        #         "openType": "_iframe",
-        #         "href": "http://mrdoc.zmister.com/project-7/"
-        #     }, {
-        #         "id": 702,
-        #         "title": "使用说明",
-        #         "icon": "layui-icon layui-icon-face-smile",
-        #         "type": 1,
-        #         "openType": "_iframe",
-        #         "href": "http://mrdoc.zmister.com/project-54/"
-        #     }]
-        # }
     ]
     return JsonResponse(menu_data,safe=False)
