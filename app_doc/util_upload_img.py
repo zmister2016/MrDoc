@@ -251,7 +251,7 @@ def base_img_upload(files,dir_name, user):
 
     files_base = base64.b64decode(files_str) # 进行base64编码
     relative_path = upload_generation_dir(dir_name)
-    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').replace('.', '_') + extensionName # 日期时间
+    file_name = str(datetime.datetime.today()).replace(':', '').replace(' ', '_').replace('.', '_') + str(random.random()) +  extensionName # 日期时间
     path_file = os.path.join(relative_path, file_name)
     path_file = settings.MEDIA_ROOT + path_file
     # print('文件路径：', path_file)
