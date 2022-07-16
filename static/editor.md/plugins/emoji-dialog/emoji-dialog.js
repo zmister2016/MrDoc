@@ -126,14 +126,14 @@
 				});
 			}
 			
-			var category = ["Github emoji", "Twemoji", "Font awesome", "Unicode emoji"];
+			var category = ["Unicode emoji"];
 			var tab      = dialog.find("." + classPrefix + "tab");
 
 			if (tab.html() === "") 
 			{
 				var head = "<ul class=\"" + classPrefix + "tab-head\">";
 
-				for (var i = 0; i<4; i++) {
+				for (var i = 0; i<1; i++) {
 					var active = (i === 0) ? " class=\"active\"" : "";
 					head += "<li" + active + "><a href=\"javascript:;\">" + category[i] + "</a></li>";
 				}
@@ -156,7 +156,7 @@
 			}
             
 			var tabBoxs = tab.find("." + classPrefix + "tab-box");
-            var emojiCategories = ["github-emoji", "twemoji", "font-awesome", "unicode-emoji"];
+            var emojiCategories = ["unicode-emoji"];
 
 			var drawTable = function() {
                 var cname = emojiCategories[emojiTabIndex];
@@ -229,12 +229,13 @@
                 
                 if (emojiTabIndex === 0)
                 {
-                    for (var i = 0, len = $data.length; i < len; i++)
-                    {
-                        var h4Style = (i === 0) ? " style=\"margin: 0 0 10px;\"" : " style=\"margin: 10px 0;\"";
-                        $tab.append("<h4" + h4Style + ">" + $data[i].category + "</h4>");
-                        $tab.append(pagination($data[i].list, cname));
-                    }
+                    // for (var i = 0, len = $data.length; i < len; i++)
+                    // {
+                    //     var h4Style = (i === 0) ? " style=\"margin: 0 0 10px;\"" : " style=\"margin: 10px 0;\"";
+                    //     $tab.append("<h4" + h4Style + ">" + $data[i].category + "</h4>");
+                    //     $tab.append(pagination($data[i].list, cname));
+                    // }
+					$tab.append(pagination($data, cname));
                 }
                 else
                 {
