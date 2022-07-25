@@ -880,4 +880,7 @@ input#doc-name,input#doctemp-name{
     .markdown-body{
         width: 100%;
     }
+    .markdown-body iframe{
+        width: 100% !important;
+    }
 }
