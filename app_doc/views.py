@@ -61,8 +61,8 @@ def jsonXssFilter(data):
     elif type(data) ==bytes:
         new = data
     else:
-        print('>>> unknown type:')
-        print(type(data))
+        # print('>>> unknown type:')
+        # print(type(data))
         new = data
     return new
 
