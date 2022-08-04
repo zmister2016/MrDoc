@@ -104,6 +104,11 @@
                         {% elif doc.editor_mode == 2 %}
                             <textarea style="display: none;">{{ doc.pre_content }}</textarea>
                         {% elif doc.editor_mode == 4 %}
+                            <style>
+                                .doc-content,.doc-body-content-div{
+                                    max-width: 100%;
+                                }
+                            </style>
                             <div id="luckysheet" style="margin:0px;padding:0px;width:100%;min-height:500px;left: 0px;top: 0px;"></div>
                             <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
                         {% else %}
@@ -271,6 +276,14 @@
     // 文档分享默认收起侧边栏
     toggleSidebar()
 </script>
+
+<!-- 在线表格文档根据窗口高度调整表格高度 -->
+{% if doc.editor_mode == 4 %}
+<script>
+    var lucksheet_height = $(window).height() - $(".doc-header").height() - $(".doc-info").height() - 30;
+    $("#luckysheet").height(lucksheet_height);
+</script>
+{% endif %}
 
 <!-- 动态添加广告代码 -->
 {% if debug %}
