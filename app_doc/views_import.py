@@ -182,7 +182,7 @@ class ImportLocalDoc(APIView):
             else:
                 doc_content_html = None
             doc = Doc.objects.create(
-                name = html_filter(file_name[:-3]),
+                name = html_filter('.'.join(file_name.split('.')[:-1])),
                 pre_content = doc_content,
                 content = doc_content_html,
                 top_doc = project,
