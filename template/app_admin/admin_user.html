@@ -118,16 +118,25 @@
                         'password':$("#password").val(),
                         'email':$("#email").val()
                     }
-                    $.post("{% url 'api_admin_users' %}",data,function(r){
-                        layer.closeAll();
-                        if(r.code === 0){
-                            //创建成功，刷新页面
-                            table.reload('user-list');
-                        }else{
-                            //创建失败，提示
-                            // console.log(r)
+                    $.ajax({
+                        url:"{% url 'api_admin_users' %}",
+                        method:'post',
+                        data:data,
+                        success:function(r){
+                            layer.closeAll('loading');
+                            if(r.code === 0){
+                                //创建成功，刷新页面
+                                layer.closeAll();
+                                table.reload('user-list');
+                            }else{
+                                //创建失败，提示
+                                // console.log(r)
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading');
                             layer.msg("请检查输入信息是否正确")
-
                         }
                     })
                 },
@@ -150,15 +159,25 @@
                         'email':$("#email2").val(),
                         'user_type':1,
                     }
-                    $.post("{% url 'api_admin_users' %}",data,function(r){
-                        layer.closeAll();
-                        if(r.code === 0){
-                            //创建成功，刷新页面
-                            table.reload('user-list');
-                        }else{
-                            //创建失败，提示
-                            // console.log(r)
-                            layer.msg(r.data)
+                    $.ajax({
+                        url:"{% url 'api_admin_users' %}",
+                        method:'post',
+                        data:data,
+                        success:function(r){
+                            layer.closeAll('loading');
+                            if(r.code === 0){
+                                //创建成功，刷新页面
+                                layer.closeAll();
+                                table.reload('user-list');
+                            }else{
+                                //创建失败，提示
+                                // console.log(r)
+                                layer.msg(r.data)
+                            }
+                        },
+                        error:function(){
+                            layer.closeAll('loading');
+                            layer.msg("请检查输入信息是否正确")
                         }
                     })
                 },
