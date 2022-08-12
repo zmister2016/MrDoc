@@ -4448,14 +4448,15 @@
             
         if (settings.previewCodeHighlight) 
         {
-            div.find("pre").addClass("prettyprint linenums");
-            editormd.loadScript(settings.plugin_path + 'raphael.min', function(){
-                editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
-                    editormd.loadScript(settings.plugin_path + 'prettify.min',function(){
-                        prettyPrint();
-                    })    
-                })
-            })
+//            div.find("pre").addClass("prettyprint linenums");
+//            editormd.loadScript(settings.plugin_path + 'raphael.min', function(){
+//                editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
+//                    editormd.loadScript(settings.plugin_path + 'prettify.min',function(){
+//                        prettyPrint();
+//                    })
+//                })
+//            })
+            div.find("pre").addClass("line-numbers");
         }
         
         if (!editormd.isIE8) 

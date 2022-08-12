@@ -3888,7 +3888,7 @@
   font-size: 14px;
 }
 .editormd-preview-container pre, .editormd-html-preview pre {
-  border: 1px solid #ddd;
+  border: 0px solid #ddd;
   background: #f6f6f6;
   padding: 10px;
   -webkit-border-radius: 3px;
