@@ -21,7 +21,7 @@
 {% block page_content %}
     {% for result in search_result %}
         <div>
-            <p><a href="{% url 'doc' pro_id=project.id doc_id=result.id %}" target="_blank">{{ result.name }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
+            <p><a href="{% url 'doc_id' doc_id=result.id %}" target="_blank">{{ result.name }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
             <p>{{ result.pre_content|truncatechars:300 }}</p>
         </div>
         <hr>
