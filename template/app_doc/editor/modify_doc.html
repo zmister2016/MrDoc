@@ -541,7 +541,7 @@
             $.post("{% url 'move_doc' %}",data,function(r){
                 layer.closeAll('loading')
                 if(r.status){
-                    window.location.href = '/project-'+r.data.pro_id + '/doc-' + r.data.doc_id + '/'
+                    window.location.href = '/doc/' + r.data.doc_id + '/'
                 }else{
                     layer.msg(r.data)
                 }
