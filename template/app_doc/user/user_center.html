@@ -190,6 +190,9 @@
 						case 'manage_doctemp':
 							layui.tab.addTabOnlyByElem("content",{id:"doc_template",title:"文档模板管理",url:"{% url 'manage_doctemp' %}",close:"true"})
 							break;
+						case 'manage_attachment':
+							layui.tab.addTabOnlyByElem("content",{id:"my_attachment",title:"我的附件",url:"{% url 'manage_attachment' %}",close:"true"})
+							break;
 					}
 				}
 				setTimeout(tabRedict,100)
