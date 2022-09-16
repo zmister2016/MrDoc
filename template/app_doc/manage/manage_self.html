@@ -33,7 +33,7 @@
             <div class="layui-form-item">
             <label class="layui-form-label">{% trans "编辑器" %}</label>
             <div class="layui-input-block">
-                <input type="radio" name="editor_mode" value="1" title="EditorMD(Markdown)" {% if user_opt.editor_mode == 1 %}checked{% endif %}>
+                <input type="radio" name="editor_mode" value="1" title="EditorMD(Markdown)" {% if user_opt.editor_mode == 1 or user_opt.editor_mode is None %}checked{% endif %}>
                 <input type="radio" name="editor_mode" value="2" title="Vditor(Markdown)" {% if user_opt.editor_mode == 2 %}checked{% endif %}>
                 <input type="radio" name="editor_mode" value="3" title="iceEditor(富文本)" {% if user_opt.editor_mode == 3 %}checked{% endif %}>
             </div>
