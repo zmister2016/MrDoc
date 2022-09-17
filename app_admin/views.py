@@ -49,10 +49,11 @@ def check_code(request):
 
 # 登录视图
 def log_in(request):
+    to = request.GET.get('next', '/')
     if request.method == 'GET':
         # 登录用户访问登录页面自动跳转到首页
         if request.user.is_authenticated:
-            return redirect('/')
+            return redirect(to)
         else:
             return render(request,'login.html',locals())
     elif request.method == 'POST':
@@ -93,7 +94,7 @@ def log_in(request):
                         request.session['LoginNum'] = 0  # 重试次数
                         request.session['LoginLock'] = False  # 是否锁定
                         request.session['LoginTime'] = datetime.datetime.now().timestamp()  # 解除锁定时间
-                        return redirect('/')
+                        return redirect(to)
                     else:
                         errormsg = _('用户被禁用！')
                         return render(request, 'login.html', locals())
