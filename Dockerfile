@@ -9,7 +9,6 @@ COPY . /app/MrDoc/
 WORKDIR /app/MrDoc
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-
 RUN  set -x \
     && apk add --no-cache --virtual .build-deps build-base g++ gcc libxslt-dev python2-dev linux-headers \
     && apk add --no-cache pwgen git tzdata zlib-dev freetype-dev jpeg-dev  mariadb-dev postgresql-dev \
@@ -17,6 +16,7 @@ RUN  set -x \
     && python -m pip install --upgrade pip \
     && pip --no-cache-dir install -r requirements.txt \
     && pip --no-cache-dir install mysqlclient \
+    && pip --no-cache-dir install uwsgi \
     && chmod +x docker_mrdoc.sh \
     && apk del .build-deps \
     && rm -rf /var/cache/apk/* 
