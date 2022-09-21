@@ -39,7 +39,7 @@ class ImportZipProject():
         shutil.unpack_archive(zip_file_path, extract_dir=self.temp_dir)
 
         # 处理文件夹和文件名的中文乱码
-        sys_encoding = sys.getdefaultencoding()
+        sys_encoding = 'gbk'
         for root, dirs, files in os.walk(self.temp_dir):
             for dir in dirs:
                 try:
