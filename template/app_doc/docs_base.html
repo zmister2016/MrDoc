@@ -124,7 +124,7 @@
                 <li>
                     {% if docs.children %}
                         <div style="display:flex;justify-content:space-between;">
-                            <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}">{% if docs.editor_mode == 4 %}<i class="layui-icon layui-icon-table"></i>{% else %}<i class="iconfont mrdoc-icon-wendang"></i>{% endif %} {{ docs.name }}</a>
+                            <a href="{% url 'doc_id' doc_id=docs.id %}" title="{{docs.name}}">{% if docs.editor_mode == 4 %}<i class="layui-icon layui-icon-table"></i>{% else %}<i class="iconfont mrdoc-icon-wendang"></i>{% endif %} {{ docs.name }}</a>
                             {% if docs.open_children %}
                                 <i class="layui-icon layui-icon-down switch-toc"></i>
                             {% else %}
@@ -142,7 +142,7 @@
                             <li>
                                 {% if node.id|get_next_doc %}
                                     <div style="display:flex;justify-content:space-between;">
-                                        <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}"><i class="{% if node.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ node.name }}</a>
+                                        <a href="{% url 'doc_id' doc_id=node.id %}" title="{{node.name}}"><i class="{% if node.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ node.name }}</a>
                                         {% if node.open_children %}
                                             <i class="layui-icon layui-icon-down switch-toc"></i>
                                         {% else %}
@@ -157,17 +157,17 @@
 
                                     <!-- 三级目录 -->
                                     {% for doc in node.children %}
-                                        <li><a href="{% url 'doc' pro_id=pro_id doc_id=doc.id %}" title="{{doc.name}}"><i class="{% if doc.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ doc.name }}</a></li>
+                                        <li><a href="{% url 'doc_id' doc_id=doc.id %}" title="{{doc.name}}"><i class="{% if doc.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ doc.name }}</a></li>
                                     {% endfor %}
                                     </ul>
                                 {% else %}
-                                    <a href="{% url 'doc' pro_id=pro_id doc_id=node.id %}" title="{{node.name}}"><i class="{% if node.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ node.name }}</a>
+                                    <a href="{% url 'doc_id' doc_id=node.id %}" title="{{node.name}}"><i class="{% if node.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ node.name }}</a>
                                 {% endif %}
                             </li>
                         {% endfor %}
                         </ul>
                     {% else %}
-                        <a href="{% url 'doc' pro_id=pro_id doc_id=docs.id %}" title="{{docs.name}}"><i class="{% if docs.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ docs.name }}</a>
+                        <a href="{% url 'doc_id' doc_id=docs.id %}" title="{{docs.name}}"><i class="{% if docs.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ docs.name }}</a>
                     {% endif %}
                 </li>
             {% endfor %}

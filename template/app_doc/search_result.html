@@ -197,7 +197,7 @@
             <div style="margin-bottom: 18px;">
                 <!-- 标题 -->
                 <h3>
-                    <a href="{% url 'doc' pro_id=result.top_doc doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
+                    <a href="{% url 'doc_id' doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
                 </h3>
                 <!-- 简介 -->
                 <div class="search_result_pre">{{ result.pre_content|get_key_context:kw }}</div>
@@ -229,7 +229,7 @@
             <div style="margin-bottom: 18px;">
                 <!-- 标题 -->
                 <h3>
-                    <a href="{% url 'doc' pro_id=result.top_doc doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
+                    <a href="{% url 'doc_id' doc_id=result.id %}" target="_blank" class="search_result_title">{{ result.name }}</a>
                 </h3>
                 <!-- 简介 -->
                 <div class="search_result_pre">{{ result.pre_content|get_key_context:kw }}</div>

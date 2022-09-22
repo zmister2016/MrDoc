@@ -193,7 +193,7 @@
                 <div style="margin-bottom: 18px;">
                     <!-- 标题 -->
                     <h3>
-                        <a href="{{ result.object.get_absolute_url }}?highlight={{query}}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
+                        <a href="{% url 'doc_id' doc_id=result.object.id %}?highlight={{query}}" target="_blank" class="search_result_title">{% highlight result.object.name with query %}</a>
                     </h3>
                     <!-- 简介 -->
                     {% if result.object.editor_mode == 3 %}

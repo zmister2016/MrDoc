@@ -174,7 +174,7 @@
                       </p>
                       {% for new_doc in p.id|get_new_doc %}
                         <p class="layui-word-aux" style="line-height: 18px;">
-                          <a href="{% url 'doc' new_doc.top_doc new_doc.id %}" target="_blank" class="index-doc-link"><span class="layui-elip" style="display: inline-block;;width: 250px;"><i class="layui-icon layui-icon-form"></i> {{new_doc.name}}</span></a>
+                          <a href="{% url 'doc_id' doc_id=new_doc.id %}" target="_blank" class="index-doc-link"><span class="layui-elip" style="display: inline-block;;width: 250px;"><i class="layui-icon layui-icon-form"></i> {{new_doc.name}}</span></a>
                           <span style="float: right;">{{new_doc.modify_time|date:"n-d"}}</span>
                         </p>
                       {% endfor %}
