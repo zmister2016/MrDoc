@@ -150,9 +150,10 @@
                 </div>
                 <!-- 筛选结束 -->
                 <div class="layui-input-inline" style="float: right;display: flex;">
-                    <div class="layui-input-inline">
-                        <input type="checkbox" name="switch" lay-filter="search_match" lay-skin="switch" lay-text="精准搜索|全文搜索">
-                    </div>
+                    <select name="switch" lay-verify="search_match" id="search_match">
+                        <option value="match_search">{% trans "精准搜索" %}</option>
+                        <option value="full_search">{% trans "全文搜索" %}</option>
+                    </select>
                     <select name="d_range" lay-verify="sel_recent" id="sel_recent">
                         <option value="">{% trans "时间筛选" %}</option>
                         <option value="all">{% trans "全部时间" %}</option>
@@ -334,14 +335,15 @@
 
         // 侦听Select下拉框的选择事件
         form.on('select()', function(data){
-            var filter_data = form.val("filter-time-form");
-            // console.log(filter_data)
-            window.location.href = '{% url "search" %}?kw={{kw}}&type={{search_type}}' + '&d_range=' + filter_data['d_range']
-        });
-
-        // 切换到匹配搜索
-        form.on('switch(search_match)', function(data){
-            window.location.href = "{% url 'doc_search' %}?q={{kw}}&d_range={{d_range}}";
+            if(data.value == 'full_search'){ // 切换到全文搜索
+                window.location.href = "{% url 'doc_search' %}?q={{kw}}&d_range={{d_range}}";
+            }else if(data.value == 'match_search'){ // 匹配搜索
+                window.location.reload();
+            }else{
+                var filter_data = form.val("filter-time-form");
+                // console.log(filter_data)
+                window.location.href = '{% url "search" %}?kw={{kw}}&type={{search_type}}' + '&d_range=' + filter_data['d_range']
+            }
         });
 
         // 当前搜索类型动态设置
