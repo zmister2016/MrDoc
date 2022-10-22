@@ -244,7 +244,7 @@ try:
 except ImportError:
     pass
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+X_FRAME_OPTIONS = CONFIG.get("x_frame","option",fallback='SAMEORIGIN')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
