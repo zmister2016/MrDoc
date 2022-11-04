@@ -189,7 +189,7 @@
 
               <!-- 邮箱设置 -->
             <div class="layui-tab-item">
-                <form class="layui-form" action="" method="post">
+                <form class="layui-form" lay-filter="emailConfig" action="" method="post">
                    {% csrf_token %}
                     <input type="text" name="type" hidden value="email">
                   <div class="layui-form-item">
@@ -237,6 +237,7 @@
                   <div class="layui-form-item">
                     <div class="layui-input-block">
                       <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存邮箱设置</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="checkEmail">验证邮箱设置</button>
                     </div>
                   </div>
                 </form>
@@ -310,10 +311,50 @@
   $.ajaxSetup({
       data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
   });
-  layui.use(['jquery','form','element'],function(){
-    var $ = layui.jquery,
-        form = layui.form,
-        element = layui.element;
+  var form = layui.form;
+  var element = layui.element;
+  var layer = layui.layer;
+
+  // 验证邮箱配置
+  function checkEmailConfig(){
+    layer.open({
+      type:1,
+      title:"验证邮箱配置",
+      content:"<div style='padding:10px;'>将以现有配置发送一封测试邮件给发件邮箱，以检测邮箱配置是否正确！</div>",
+      btn:['发送','取消'],
+      yes:function(){
+        sendEmailTest();
+      },
+      btn2:function(){
+        layer.closeAll();
+      }
+    })
+  };
+  // 发送测试邮件
+  function sendEmailTest(){
+    var emailData = form.val("emailConfig");
+    // console.log(emailData)
+    layer.load()
+    $.ajax({
+      url:'{% url "send_email_test" %}',
+      method:'post',
+      data:emailData,
+      success:function(r){
+        layer.closeAll()
+        if(r.status){
+          layer.msg("测试邮件发送成功",{icon:1})
+        }else{
+          layer.msg("测试邮件发送失败"+r.data,{icon:2})
+        }
+      },
+      error:function(){
+        layer.closeAll()
+        layer.msg("测试邮件发送异常",{icon:2})
+      }
+    })
+  };
+  $("#checkEmail").click(function(){
+    checkEmailConfig()
   })
 </script>
 {% endblock %}

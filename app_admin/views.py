@@ -297,6 +297,47 @@ def send_email_vcode(request):
         return JsonResponse({'status':False,'data':_('方法错误')})
 
 
+# 测试电子邮箱配置
+@superuser_only
+@require_http_methods(['POST'])
+def send_email_test(request):
+    smtp_host = request.POST.get('smtp_host','')
+    send_emailer = request.POST.get('send_emailer','')
+    smtp_port = request.POST.get('smtp_port','')
+    username = request.POST.get('smtp_username','')
+    pwd = request.POST.get('smtp_pwd','')
+    ssl = True if request.POST.get('smtp_ssl','') == 'on' else False
+    # print(smtp_host,smtp_port,send_emailer,username,pwd)
+
+    msg_from = send_emailer  # 发件人邮箱
+    msg_to = send_emailer  # 收件人邮箱
+    try:
+        sitename = SysSetting.objects.get(types="basic", name="site_name").value
+    except:
+        sitename = "MrDoc"
+    subject = "{sitename} - 邮箱配置测试".format(sitename=sitename)
+    content = "此邮件由管理员配置【{sitename}】邮箱信息时发出！".format(sitename=sitename)
+    msg = MIMEText(content, _subtype='html', _charset='utf-8')
+    msg['Subject'] = subject
+    msg['From'] = '{}[{}]'.format(sitename, msg_from)
+    msg['To'] = msg_to
+    try:
+        # print(smtp_host,smtp_port)
+        if ssl:
+            s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
+        else:
+            s = smtplib.SMTP(smtp_host, int(smtp_port))
+        s.login(username, pwd)
+        s.sendmail(from_addr=msg_from, to_addrs=msg_to, msg=msg.as_string())
+        s.quit()
+        return JsonResponse({'status':True,'data':_('发送成功')})
+    except smtplib.SMTPException as e:
+        logger.error("邮件发送异常:{}".format(repr(e)))
+        return JsonResponse({'status':False,'data':repr(e)})
+    except Exception as e:
+        logger.error("邮件发送异常:{}".format(repr(e)))
+        return JsonResponse({'status':False,'data':repr(e)})
+
 # 后台管理 - 仪表盘
 @superuser_only
 def admin_overview(request):
