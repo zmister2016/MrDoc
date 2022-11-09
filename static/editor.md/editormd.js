@@ -3624,26 +3624,10 @@
                 // console.log(text)
                 switch(text){
                     case '=video':
-                        if(href.match(/^.+.(mp4|m4v|ogg|ogv|webm)$/)){
-                            return "<video src='"+ href + "' controls='controls' preload width=500></video>"
-                        }else{
-                            for(var i = 0; i< iframe_whitelist.length; i++){
-                                if(href.match(iframe_whitelist[i])){
-                                    return "<video src='"+ href + "' controls='controls' preload width=500></video>"
-                                }
-                            }
-                        }
+                        return "<video src='"+ href + "' controls='controls' preload width=500></video>"
                         break;
                     case '=audio':
-                        if(href.match(/^.+.(mp3|wav|flac|m4a)$/)){
-                            return "<audio src='"+ href + "' controls='controls'></audio>"
-                        }else{
-                            for(var i = 0; i< iframe_whitelist.length; i++){
-                                if(href.match(iframe_whitelist[i])){
-                                    return "<audio src='"+ href + "' controls='controls'></audio>"
-                                }
-                            }
-                        }
+                        return "<audio src='"+ href + "' controls='controls'></audio>"
                         break;
                     case '=video_iframe':                      
                         const youtubeMatch = href.match(/\/\/(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w|-]{11})(?:(?:[\?&]t=)(\S+))?/);
@@ -3672,16 +3656,7 @@
                         } else if (tedMatch && tedMatch[1]) {
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}"></iframe>`
                         }else{
-                            if(iframe_whitelist.length == 1 && iframe_whitelist[0] == ""){
-                                return href
-                            }else{
-                                for(var i = 0; i< iframe_whitelist.length; i++){
-                                    if(href.match(iframe_whitelist[i])){
-                                        return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
-                                    }
-                                }
-                            }
-
+                            return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
                         }
                         break;
                 }

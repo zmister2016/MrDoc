@@ -250,16 +250,6 @@
                 {% csrf_token %}
                 <input type="text" name="type" hidden value="doc">
                 <div class="layui-form-item" style="" id="role-user">
-                    <label class="layui-form-label">ifrme白名单</label>
-                    <div class="layui-input-inline">
-                        <div class="tagsinput-primary form-group">
-                            <input name="iframe_whitelist" id="iframe_whitelist" class="tagsinput" data-role="tagsinput" value="{% if iframe_whitelist != '' %}{{iframe_whitelist}}{% endif %}" placeholder="请输入域名">
-                        </div>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">默认支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站，仅用于EditorMD编辑器模式</div>
-                </div>
-
-                <div class="layui-form-item" style="" id="role-user">
                   <label class="layui-form-label">图片大小</label>
                   <div class="layui-input-inline">
                       <div class="tagsinput-primary form-group">

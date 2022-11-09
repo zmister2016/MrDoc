@@ -1357,12 +1357,6 @@ def admin_setting(request):
             return render(request, 'app_admin/admin_setting.html',locals())
         # 文档全局设置
         elif types == 'doc':
-            # iframe白名单
-            iframe_whitelist = request.POST.get('iframe_whitelist','')
-            SysSetting.objects.update_or_create(
-                name = 'iframe_whitelist',
-                defaults = {'value':iframe_whitelist,'types':'doc'}
-            )
             # 上传图片大小
             img_size = request.POST.get('img_size', 10)
             try:
