@@ -3996,8 +3996,10 @@
                 return hr;
             }
             else if(/^card/i.test(lang)){ // 卡片面板
-                var color = lang.split(' ')[1];
-                var ccolor = custom_color(color);
+                var color1 = lang.split(' ')[1];
+                var ccolor = custom_color(color1);
+                var color2 = lang.split(' ')[2];
+                var dcolor = custom_color(color2);
                 var card = '<div class="layui-card">'
                 // console.log(code)
                 var card_code = code.split(/[(\r\n)\r\n]+/);
@@ -4008,13 +4010,13 @@
                         card += '<div class="layui-card-header ' + ccolor + '">'
                         card += item.replace('# ','')
                         card += '</div>'
-                        card += '<div class="layui-card-body">'
+                        card += '<div class="layui-card-body ' + dcolor + '">'
                     }else{
                         card += marked(item)
                     }
                 })
 
-                card += '</div>'
+                card += '</div><br>'
                 return card;
             }
             else 
