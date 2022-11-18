@@ -10,9 +10,9 @@ WORKDIR /app/MrDoc
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 RUN  set -x \
-    && apk add --no-cache --virtual .build-deps build-base g++ gcc libxslt-dev python2-dev linux-headers \
+    && apk add --no-cache --virtual .build-deps build-base g++ gcc libxslt-dev python3-dev linux-headers \
     && apk add --no-cache pwgen git tzdata zlib-dev freetype-dev jpeg-dev  mariadb-dev postgresql-dev \
-    &&  && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
+    && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
     && python -m pip install --upgrade pip \
     && pip --no-cache-dir install -r requirements.txt \
     && pip --no-cache-dir install mysqlclient \
