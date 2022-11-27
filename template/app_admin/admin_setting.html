@@ -144,6 +144,15 @@
                     <div class="layui-form-mid layui-word-aux">文档页面代码块默认最高500px，超出将滚动显示，开启后代码块将按原高度显示。</div>
                   </div>
                   <hr>
+                   <!-- 版本更新检测 -->
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">禁止更新检测</label>
+                      <div class="layui-input-inline">
+                        <input type="checkbox" name="disable_update_check" lay-skin="switch" lay-text="开启|关闭"  {% if disable_update_check %}checked{% endif %}>
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">开启后，后台将不会主动检测应用是否存在新的版本，默认关闭。</div>
+                    </div>
+                    <hr>
 
                   <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">统计代码</label>

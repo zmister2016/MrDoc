@@ -73,7 +73,10 @@
 						}      
 					})
 				}
+				{% if disable_update_check %}
+				{% else %}
 				checkUpdate(silence=true);
+				{% endif %}
 			})
 		  </script>
         {% block custom_script %}

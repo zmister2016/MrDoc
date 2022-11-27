@@ -1194,6 +1194,7 @@ def admin_setting(request):
             close_register = request.POST.get('close_register',None) # 禁止注册
             require_login = request.POST.get('require_login',None) # 全站登录
             long_code = request.POST.get('long_code', None)  # 长代码显示
+            disable_update_check = request.POST.get('disable_update_check', None)  # 关闭更新检测
             static_code = request.POST.get('static_code',None) # 统计代码
             ad_code = request.POST.get('ad_code',None) # 广告位1
             ad_code_2 = request.POST.get('ad_code_2',None) # 广告位2
@@ -1277,6 +1278,11 @@ def admin_setting(request):
             SysSetting.objects.update_or_create(
                 name='long_code',
                 defaults={'value': long_code, 'types': 'basic'}
+            )
+            # 更新关闭更新检测状态
+            SysSetting.objects.update_or_create(
+                name='disable_update_check',
+                defaults={'value': disable_update_check, 'types': 'basic'}
             )
             # 更新邮箱启用状态
             SysSetting.objects.update_or_create(
