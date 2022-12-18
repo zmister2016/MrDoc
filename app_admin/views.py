@@ -520,6 +520,9 @@ class AdminUserDetail(APIView):
     def delete(self, request, id):
         try:
             user = self.get_object(id)  # 获取用户
+            projects = Project.objeects.filter(create_user=user) # 获取用户自己的文集
+            for p in projects:
+                Doc.objects.filter(top_doc=p.id).delete()
             colloas = ProjectCollaborator.objects.filter(user=user)  # 获取参与协作的文集
             # 遍历用户参与协作的文集
             for colloa in colloas:
