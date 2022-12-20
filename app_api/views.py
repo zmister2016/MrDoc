@@ -129,7 +129,8 @@ def get_projects(request):
                 'id':project.id, # 文集ID
                 'name':project.name, # 文集名称
                 'icon': project.icon,  # 文集图标
-                'type':project.role # 文集状态
+                'type':project.role, # 文集状态
+                'create_time': project.create_time
             }
             project_list.append(item)
         return JsonResponse({'status':True,'data':project_list})
