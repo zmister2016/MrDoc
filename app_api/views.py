@@ -130,6 +130,7 @@ def get_projects(request):
                 'name':project.name, # 文集名称
                 'icon': project.icon,  # 文集图标
                 'type':project.role, # 文集状态
+                'total': Doc.objects.filter(top_doc=project.id, status=1).count(),
                 'create_time': project.create_time
             }
             project_list.append(item)
