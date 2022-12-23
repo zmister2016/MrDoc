@@ -34,10 +34,14 @@ urlpatterns = [
     path('api_app/',include('app_api.urls_app')), # RESTFUL API 接口
     # re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
     re_path('^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
-    path('sitemap.xml', views.index, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap-index.xml'},name='sitemap',), # 站点地图索引
-    path('sitemap-<section>.xml', views.sitemap, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap.xml'},
-         name='django.contrib.sitemaps.views.sitemap')  # 站点地图
 ]
+
+if settings.SITEMAP:
+    urlpatterns.extend([
+        path('sitemap.xml', views.index, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap-index.xml'},name='sitemap',), # 站点地图索引
+        path('sitemap-<section>.xml', views.sitemap, {'sitemaps': sitemaps,'template_name':'sitemap/sitemap.xml'},
+             name='django.contrib.sitemaps.views.sitemap'),  # 站点地图
+    ])
 
 if settings.DEBUG:
     urlpatterns.append(

@@ -13,6 +13,8 @@ def sys_setting(request):
     setting_dict['mrdoc_version'] = settings.VERSIONS
     # 设置debug状态
     setting_dict['debug'] = settings.DEBUG
+    # 站点地图状态
+    setting_dict['sitemap'] = settings.SITEMAP
     # 获取系统设置状态
     datas = SysSetting.objects.filter(types__in=["basic","doc"])
     for data in datas:
