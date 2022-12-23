@@ -149,16 +149,9 @@ Submit questions on the following pages:
 - [https://gitee.com/zmister/MrDoc/issues](https://gitee.com/zmister/MrDoc/issues)
 - [https://github.com/zmister2016/MrDoc/issues](https://github.com/zmister2016/MrDoc/issues)
 
-### 2. Join the mrdoc communication group
-
-Join the mrdoc communication Tencent QQ group ，Group number:
- 
- - **735507293**
- - **849206042**
-
 ### 3. Contact author
 
-WeChat Subscription : **zmister2016**
+WeChat Subscription : **mrdocpro**
 
 <p align="center">
 <img src="https://doc.mrdoc.pro/media/202203/20220331121926_20220331122015390193.png" height="50%">

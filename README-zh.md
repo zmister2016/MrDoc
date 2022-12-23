@@ -58,8 +58,6 @@ MrDoc 全系产品目前涵盖以下终端：
 
 ## 打赏支持
 
-<p align="center">「付费部署服务」请添加作者QQ：3280350050</p>
-
 <p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
 
 <p align="center">
@@ -197,4 +195,6 @@ python manage.py runserver
 
 如果违反，开发者保留对侵权者追究责任的权利。
 
-商业授权（专业版）请联系QQ咨询：3280350050
+商业授权（专业版）请微信咨询：
+
+<img src="https://doc.mrdoc.pro/media/202212/wechatwork_qrcode_20221201165203490192.png" width="200px" />
