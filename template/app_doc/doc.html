@@ -107,7 +107,7 @@
         {% endif %}
     </span>
 
-    {% if request.user == doc.create_user or request.user.is_superuser %}
+    {% if request.user == doc.create_user or request.user.is_superuser or request.user == project.create_user %}
     <button class="doc-bottom-btn" tooltip="{% trans '下载文档' %}" id="download_doc">
         <i class="fa fa-download"></i> {% trans "下载文档" %}
     </button>

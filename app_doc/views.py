@@ -2979,9 +2979,12 @@ def download_doc_md(request,doc_id):
                 return JsonResponse({'status':False,'data':_('文档不存在')})
         else:
             try:
-                doc = Doc.objects.get(id=doc_id,create_user = request.user)
+                doc = Doc.objects.get(id=doc_id)
+                project = Project.objects.get(id=doc.top_doc)
             except ObjectDoesNotExist:
-                return JsonResponse({'status':False,'data':_('文档不存在')})
+                return JsonResponse({'status':False,'data':_('数据不存在')})
+            if request.user != project.create_user and request.user != doc.create_user:
+                return JsonResponse({'status':False,'data':_('无权限')})
     else:
         return render(request,'404.html')
 
