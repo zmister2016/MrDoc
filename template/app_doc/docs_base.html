@@ -449,7 +449,9 @@
     });
     // 高亮搜索词
     {% if doc.editor_mode != 2 %}
-    keyLight('doc-content',getQueryVariable("highlight"))
+    setTimeout(function(){
+        keyLight('doc-content',getQueryVariable("highlight"))
+    },1000)
     {% endif %}
 </script>
 </body>
