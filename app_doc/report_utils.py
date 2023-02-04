@@ -154,13 +154,17 @@ class ReportMD():
         pattern = r"\!\[.*?\]\(.*?\)"
         media_list = re.findall(pattern, md_content)
         # print(media_list)
+        # 查找<img>标签形式的静态图片
+        img_pattern = r'<img[^>]*/>'
+        img_list = re.findall(img_pattern, md_content)
         # 存在静态文件,进行遍历
         if len(media_list) > 0:
             for media in media_list:
                 try:
                     media_filename = media.replace('//','/').split("(")[-1].split(")")[0] # 媒体文件的文件名
                 except:
-                    continue                # 对本地静态文件进行复制
+                    continue
+                # 对本地静态文件进行复制
                 if media_filename.startswith("/media"):
                     # print(media_filename)
                     sub_folder = "/" + media_filename.split("/")[2] # 获取子文件夹的名称
@@ -177,11 +181,30 @@ class ReportMD():
                         shutil.copy(new_file_path, self.media_path + sub_folder)
                     except FileNotFoundError:
                         pass
-
-            return md_content
-        # 不存在静态文件，直接返回MD内容
-        else:
-            return md_content
+        if len(img_list) > 0:
+            for media in img_list:
+                try:
+                    media_filename = re.findall('src="([^"]+)"', media)[0]
+                except:
+                    continue
+                # 对本地静态文件进行复制
+                if media_filename.startswith("/media"):
+                    # print(media_filename)
+                    sub_folder = "/" + media_filename.split("/")[2]  # 获取子文件夹的名称
+                    # print(sub_folder)
+                    is_sub_folder = os.path.exists(self.media_path + sub_folder)
+                    # 创建子文件夹
+                    if is_sub_folder is False:
+                        os.mkdir(self.media_path + sub_folder)
+                    # 替换MD内容的静态文件链接
+                    md_content = md_content.replace(media_filename, "." + media_filename)
+                    # 复制静态文件到指定文件夹
+                    try:
+                        new_file_path = pathlib.Path(settings.BASE_DIR,unquote(media_filename)[1:])
+                        shutil.copy(new_file_path, self.media_path + sub_folder)
+                    except FileNotFoundError:
+                        pass
+        return md_content
 
 
 # 批量导出文集Markdown压缩包
