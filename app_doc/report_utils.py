@@ -29,8 +29,8 @@ import traceback
 import time
 import markdown
 import yaml
-# import PyPDF2
-# from pdfminer import high_level
+import pathlib
+from urllib.parse import unquote
 
 
 # 替换前端传来的非法字符
@@ -173,7 +173,8 @@ class ReportMD():
                     md_content = md_content.replace(media_filename, "." + media_filename)
                     # 复制静态文件到指定文件夹
                     try:
-                        shutil.copy(settings.BASE_DIR + media_filename, self.media_path+sub_folder)
+                        new_file_path = pathlib.Path(settings.BASE_DIR,unquote(media_filename)[1:])
+                        shutil.copy(new_file_path, self.media_path + sub_folder)
                     except FileNotFoundError:
                         pass
 
