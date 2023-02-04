@@ -73,9 +73,9 @@
             <a href="/modify_doc/{{d.id}}/" target="_blank" title="修改文档：{{=d.name}}">{{=d.name}} </a>
         {{# } }}
         {{#if (d.editor_mode in [1,2,3]) { }}
-            <i class="layui-icon layui-icon-form" title="普通文档"</i>
+            <i class="layui-icon layui-icon-form" title="普通文档"></i>
         {{# }else if(d.editor_mode == 4){ }}
-            <i class="layui-icon layui-icon-table" title="表格文档"</i>
+            <i class="layui-icon layui-icon-table" title="表格文档"></i>
         {{# } }}
     {% endverbatim %}
 </script>
