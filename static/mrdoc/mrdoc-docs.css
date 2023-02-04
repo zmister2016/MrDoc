@@ -1,3 +1,7 @@
+/* 文档夜间模式 */
+html.theme-dark{
+    filter: invert(1) hue-rotate(180deg);
+}
 /*一级无序li显示实心圆点*/
 .doc-content ul li{
     list-style:disc;

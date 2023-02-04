@@ -75,6 +75,9 @@
             <a class="btn pull-left font-switch" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
                 <i class="fa fa-text-height"></i>
             </a>
+            <a class="btn pull-left theme-switch" href="javascript:void(0);" title="{% trans '切换至夜间模式' %}">
+                <i class="fa fa-moon-o"></i>
+            </a>
             <!-- 顶部工具栏 -->
             {% block head_toolbar %}
             <!-- 文档目录 -->
@@ -176,6 +179,7 @@
 <script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'darkmode-js/darkmode-js.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'editor.md/lib/purify.min.js' %}?version={{mrdoc_version}}"></script>

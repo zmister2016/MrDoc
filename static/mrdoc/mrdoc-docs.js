@@ -146,6 +146,49 @@ function toggleSidebar(){
     return false;
 }
 
+const darkmode =  new Darkmode({
+    autoMatchOsTheme:false,
+
+});
+
+// 页面初始化夜间模式
+initTheme = function(){
+    themeDarkStatus = window.localStorage.getItem("theme-dark")
+    // 如果本地存储为夜间模式
+    if(themeDarkStatus == '1' && $("html").hasClass("theme-dark") == false){
+        $("html").toggleClass("theme-dark")
+        $(".theme-switch i").removeClass("fa-moon-o")
+        $(".theme-switch i").addClass("fa-sun-o")
+    }
+    console.log(darkmode.isActivated())
+    if(darkmode.isActivated()){
+        darkmode.toggle()
+    }
+}
+initTheme();
+// 切换日/夜间模式
+$(function(){
+    $(".theme-switch").click(toggleDark);
+});
+function toggleDark(){
+    if($("html").hasClass("theme-dark")){
+        window.localStorage.removeItem("theme-dark")
+        $(".theme-switch i").removeClass("fa-sun-o")
+        $(".theme-switch i").addClass("fa-moon-o")
+        $("a.theme-switch").attr("title","切换至夜间模式")
+    }else{
+        window.localStorage.setItem("theme-dark","1")
+        $(".theme-switch i").removeClass("fa-moon-o")
+        $(".theme-switch i").addClass("fa-sun-o")
+        $("a.theme-switch").attr("title","切换至日间模式")
+    }
+    $("html").toggleClass("theme-dark");
+    console.log(darkmode.isActivated())
+    if(darkmode.isActivated()){
+        darkmode.toggle();
+    }
+}
+
 /*
     页面初始化字体设置
 */
