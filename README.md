@@ -50,20 +50,6 @@ Professional Edition - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 
 username:test1  password:123456
 
-## Donate
-
-<p align="center">Donate a can of Coffee to the author to speed up the development.</p>
-<p>    
-<a href="https://ko-fi.com/zmister">Ko-Fi</a> |
-<a href="https://paypal.me/zmister">PayPal</a>
-</p>
-
-<p align="center">
-<img src="http://mrdoc.zmister.com/media/202106/dashang_wxwebp_1622762424.jpg" height=200>
-<img src="http://mrdoc.zmister.com/media/202106/dashang_alipaywebp_1622762435.jpg" height=200>
-<img src="http://mrdoc.zmister.com/media/202106/dashang_qqwebp_1622762444.jpg" height=200>
-</p>
-
 ## Feature
 
 - **Site Manage & User Manage**

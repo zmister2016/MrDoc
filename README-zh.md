@@ -56,25 +56,6 @@ MrDoc 全系产品目前涵盖以下终端：
 
 用户名：test1  密码：123456
 
-## 打赏支持
-
-<p align="center">请作者喝一罐红牛，助他天天能迭代，日日可更新。<a href="http://mrdoc.zmister.com/project-7/doc-1366/">打赏赞助鸣谢榜</a></p>
-
-<p align="center">
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">微信</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">支付宝</a>|
-<a href="http://mrdoc.zmister.com/project-7/doc-434/">QQ</a>|
-<a href="https://paypal.me/zmister">PayPal</a> |
-<a href="https://ko-fi.com/zmister">Ko-Fi</a>
-</p>
-
-<p align="center">
-<img src="http://mrdoc.zmister.com/media/202106/dashang_wxwebp_1622762424.jpg" height=200>
-<img src="http://mrdoc.zmister.com/media/202106/dashang_alipaywebp_1622762435.jpg" height=200>
-<img src="http://mrdoc.zmister.com/media/202106/dashang_qqwebp_1622762444.jpg" height=200>
-</p>
-
-
 ## 适用场景
 
 个人云笔记、在线产品手册、团队内部知识库、在线电子教程等私有化部署场景。
@@ -103,11 +84,17 @@ MrDoc 全系产品目前涵盖以下终端：
 
 - **文档阅读**
 	- 两栏式布局，三级目录层级显示，左侧文集大纲，右侧文档正文；
-	- 文档阅读字体缩放、字体类型切换、页面社交分享、移动端阅读优化；
+	- 文档阅读字体缩放、字体类型切换、日间夜间模式切换、页面社交分享、移动端阅读优化；
 	- 文集EPUB、PDF文件下载，文档Markdown文件下载；
 	- 标签关系网络图；
 	- 文档全文搜索；
-	- 私密文档分享码分享
+	- 私密文档分享码分享；
+	
+- **其他特性**
+    - 搜索引擎收录支持；
+    - sitemap站点地图；
+    - 无限用户限制；
+    - 无限空间限制；
 
 完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
