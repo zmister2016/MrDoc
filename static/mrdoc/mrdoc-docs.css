@@ -69,7 +69,7 @@ ul.markdown-toc-list a{
 ol.linenums li{ 
     width: max-content;
 }
-pre.linenums{
+pre.linenums,pre.line-numbers{
     max-height: 500px;
 }
 li.L1, li.L3, li.L5, li.L7, li.L9 {
