@@ -4433,7 +4433,7 @@
 //                    })
                 })
             })
-            div.find("pre").addClass("line-numbers");
+            div.find("pre").addClass("line-numbers language-bash");
         }
         
         if (!editormd.isIE8) 
