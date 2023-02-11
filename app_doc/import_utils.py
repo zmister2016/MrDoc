@@ -33,7 +33,7 @@ class ImportZipProject():
         # 5、上传图片，写入数据库，修改.md文件里面的url路径
 
         # 新建一个临时文件夹，用于存放解压的文件
-        self.temp_dir = zip_file_path[:-3]
+        self.temp_dir = zip_file_path[:-4]
         os.mkdir(self.temp_dir)
         # 解压 zip 文件到指定临时文件夹
         shutil.unpack_archive(zip_file_path, extract_dir=self.temp_dir)
@@ -45,7 +45,7 @@ class ImportZipProject():
                 try:
                     new_dir = dir.encode('cp437').decode(sys_encoding)
                 except:
-                    new_dir = dir.encode('utf-8').decode(sys_encoding)
+                    new_dir = dir.encode('utf-8').decode('utf-8')
                 # print(new_dir)
                 os.rename(os.path.join(root, dir), os.path.join(root, new_dir))
 
@@ -53,7 +53,7 @@ class ImportZipProject():
                 try:
                     new_file = file.encode('cp437').decode(sys_encoding)
                 except:
-                    new_file = file.encode('utf-8').decode(sys_encoding)
+                    new_file = file.encode('utf-8').decode('utf-8')
                 # print(root, new_file)
                 os.rename(os.path.join(root, file), os.path.join(root, new_file))
 
