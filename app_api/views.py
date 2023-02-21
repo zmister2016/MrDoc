@@ -241,6 +241,7 @@ def create_doc(request):
     doc_title = request.POST.get('title','')
     doc_content = request.POST.get('doc','')
     editor_mode = request.POST.get('editor_mode',1)
+    parent_doc = request.POST.get('parent_doc', 0)
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
@@ -254,6 +255,7 @@ def create_doc(request):
                     pre_content=doc_content,  # 文档的编辑内容，意即编辑框输入的内容
                     top_doc=project_id,  # 所属文集
                     editor_mode=editor_mode,  # 编辑器模式
+                    parent_doc=parent_doc,  # 上级文档
                     create_user=token.user  # 创建的用户
                 )
             elif int(editor_mode) == 3:
@@ -262,6 +264,7 @@ def create_doc(request):
                     content=doc_content,  # 文档的编辑内容，意即编辑框输入的内容
                     top_doc=project_id,  # 所属文集
                     editor_mode=editor_mode,  # 编辑器模式
+                    parent_doc=parent_doc,  # 上级文档
                     create_user=token.user  # 创建的用户
                 )
             return JsonResponse({'status': True, 'data': doc.id})
