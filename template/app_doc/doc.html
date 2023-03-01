@@ -67,7 +67,7 @@
     {% if doc.show_children %}
     {% load doc_filter %}
     {% for children in doc.id|get_next_doc %}
-        <li style="list-style: disc;font-size: 15px;"><a href="{% url 'doc' pro_id=pro_id doc_id=children.id %}" title="{{children.name}}">{{ children.name }}</a></li>
+        <li style="list-style: disc;font-size: 15px;"><a href="{% url 'doc_id' doc_id=children.id %}" title="{{children.name}}">{{ children.name }}</a></li>
     {% endfor %}
     {% endif %}
     
