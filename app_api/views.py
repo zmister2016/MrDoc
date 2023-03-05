@@ -179,6 +179,76 @@ def get_docs(request):
         return JsonResponse({'status': False, 'data': _('系统异常')})
 
 
+# 获取文集的文档层级列表
+def get_level_docs(request):
+    token = request.GET.get('token', '')
+    try:
+        token = UserToken.objects.get(token=token)
+        pid = request.GET.get('pid', '')
+
+        # 用户有浏览和新增权限的文集列表
+        view_list = read_add_projects(token.user)
+        if int(pid) not in view_list:
+            return JsonResponse({'status': False, 'data': _('无文集权限')})
+
+        # 查询存在上级文档的文档
+        parent_id_list = Doc.objects.filter(top_doc=pid,status=1).exclude(parent_doc=0).values_list('parent_doc',flat=True)
+        # 获取存在上级文档的上级文档ID
+        # print(parent_id_list)
+        doc_list = []
+        # 获取一级文档
+        top_docs = Doc.objects.filter(top_doc=pid,parent_doc=0,status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
+        # 遍历一级文档
+        for doc in top_docs:
+            top_item = {
+                'id':doc['id'],
+                'name':doc['name'],
+                'editor_mode':doc['editor_mode'],
+                'parent_doc':doc['parent_doc'],
+                'top_doc':pid,
+            }
+            # 如果一级文档存在下级文档，查询其二级文档
+            if doc['id'] in parent_id_list:
+                # 获取二级文档
+                sec_docs = Doc.objects.filter(top_doc=pid,parent_doc=doc['id'],status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
+                top_item['sub'] = []
+                for doc in sec_docs:
+                    sec_item = {
+                        'id': doc['id'],
+                        'name': doc['name'],
+                        'editor_mode':doc['editor_mode'],
+                        'parent_doc': doc['parent_doc'],
+                        'top_doc':pid,
+                    }
+                    # 如果二级文档存在下级文档，查询第三级文档
+                    if doc['id'] in parent_id_list:
+                        # 获取三级文档
+                        thr_docs = Doc.objects.filter(top_doc=pid,parent_doc=doc['id'],status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
+                        sec_item['sub'] = []
+                        for doc in thr_docs:
+                            item = {
+                                'id': doc['id'],
+                                'name': doc['name'],
+                                'editor_mode': doc['editor_mode'],
+                                'parent_doc': doc['parent_doc'],
+                                'top_doc':pid,
+                            }
+                            sec_item['sub'].append(item)
+                        top_item['sub'].append(sec_item)
+                    else:
+                        top_item['sub'].append(sec_item)
+                doc_list.append(top_item)
+            # 如果一级文档没有下级文档，直接保存
+            else:
+                doc_list.append(top_item)
+
+        return JsonResponse({'status': True, 'data': doc_list})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': _('token无效')})
+    except:
+        logger.exception(_("token获取文集异常"))
+        return JsonResponse({'status': False, 'data': _('系统异常')})
+
 # 获取个人所有文档列表
 def get_self_docs(request):
     token = request.GET.get('token', '')

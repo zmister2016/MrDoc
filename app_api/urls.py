@@ -10,6 +10,7 @@ urlpatterns = [
     path('manage_token/',views.manage_token,name='manage_token'),# 用户Token管理
     path('get_projects/',views.get_projects,name="api_get_projects"), # 获取文集列表
     path('get_docs/',views.get_docs,name="api_get_docs"), # 获取文集的文档列表
+    path('get_level_docs/',views.get_level_docs,name="api_get_level_docs"), # 获取文集的文档列表
     path('get_self_docs/',views.get_self_docs,name="get_self_docs"), # 获取自己的文档列表
     path('get_doc/',views.get_doc,name="api_get_doc"), # 获取单篇文档
     path('get_doc_previous_next/', views.get_doc_previous_next, name="api_get_doc_previous_next"),  # 获取文档上下篇文档
