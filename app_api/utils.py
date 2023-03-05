@@ -1,4 +1,6 @@
 from app_doc.models import Project,ProjectCollaborator
+from django.utils.html import strip_tags
+import markdown
 
 # 用户有浏览和、新增权限的文集列表
 def read_add_projects(user):
@@ -30,3 +32,17 @@ def read_add_edit_projects(user):
             .union(set(colla_list))
     )
     return view_list
+
+# 摘取文档部分正文
+def remove_doc_tag(doc):
+    try:
+        if doc.editor_mode == 3: # 富文本文档
+            result = strip_tags(doc.content)[:100]
+        elif doc.editor_mode == 4:
+            result = "此为表格文档，进入文档查看详细内容"
+        else: # 其他文档
+            result = strip_tags(markdown.markdown(doc.pre_content))[:100]
+    except Exception as e:
+        result = doc.pre_content[:100]
+    result = result.replace("&nbsp;",'')
+    return result

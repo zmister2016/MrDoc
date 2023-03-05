@@ -7,13 +7,14 @@ from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
+from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload
 from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
 from app_doc.models import Project,Doc,DocHistory,Image
-from app_api.utils import read_add_projects
+from app_api.utils import read_add_projects,remove_doc_tag
 from loguru import logger
 import time,hashlib
 import traceback,json
@@ -176,6 +177,64 @@ def get_docs(request):
     except:
         logger.exception(_("token获取文集异常"))
         return JsonResponse({'status': False, 'data': _('系统异常')})
+
+
+# 获取个人所有文档列表
+def get_self_docs(request):
+    token = request.GET.get('token', '')
+    sort = request.GET.get('sort',0)
+    kw = request.GET.get('kw','')
+    if sort == '1':
+        sort = '-'
+    else:
+        sort = ''
+    try:
+        token = UserToken.objects.get(token=token)
+        # 按文档修改时间进行排序
+        if kw == '':
+            docs = Doc.objects.filter(create_user=token.user,status=1).order_by('{}modify_time'.format(sort))
+        else:
+            # kw_list = jieba.cut(kw, cut_all=True)
+            # reduce(operator.or_,(Q(name__icontains=x) for x in kw_list))
+            docs = Doc.objects.filter(create_user=token.user,status=1,name__icontains=kw).order_by('{}modify_time'.format(sort))
+
+        # 分页处理
+        paginator = Paginator(docs, 10)
+        page = request.GET.get('page', 1)
+        try:
+            docs_page = paginator.page(page)
+        except PageNotAnInteger:
+            docs_page = paginator.page(1)
+        except EmptyPage:
+            # docs_page = paginator.page(paginator.num_pages)
+            return JsonResponse({'status': True, 'data': []})
+
+        doc_list = []
+        for doc in docs_page:
+            project = Project.objects.get(id=doc.top_doc)
+            item = {
+                'id': doc.id,  # 文档ID
+                'name': doc.name,  # 文档名称
+                'summary': remove_doc_tag(doc),
+                'parent_doc':doc.parent_doc, # 上级文档
+                'top_doc':doc.top_doc, # 所属文集
+                'project_name':project.name,
+                'project_role':project.role,
+                'project_icon':project.icon,
+                'editor_mode':doc.editor_mode,
+                'status':doc.status, # 文档状态
+                'create_time': doc.create_time,  # 文档创建时间
+                'modify_time': doc.modify_time,  # 文档的修改时间
+                'create_user': doc.create_user.username  # 文档的创建者
+            }
+            doc_list.append(item)
+        return JsonResponse({'status': True, 'data': doc_list})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': _('token无效')})
+    except:
+        logger.exception("token获取文档列表异常")
+        return JsonResponse({'status': False, 'data': _('系统异常')})
+
 
 
 # 获取单篇文档
