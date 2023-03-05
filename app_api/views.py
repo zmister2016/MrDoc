@@ -10,8 +10,10 @@ from django.contrib.auth.models import User # Django默认用户模型
 from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload
+from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
 from app_doc.models import Project,Doc,DocHistory,Image
+from app_api.utils import read_add_projects
 from loguru import logger
 import time,hashlib
 import traceback,json
@@ -203,6 +205,37 @@ def get_doc(request):
     except:
         logger.exception("token获取文集异常")
         return JsonResponse({'status': False, 'data': _('系统异常')})
+
+
+# 获取文档上下篇文档
+def get_doc_previous_next(request):
+    token = request.GET.get('token', '')
+    try:
+        token = UserToken.objects.get(token=token)
+        did = request.GET.get('did', '')
+        doc = Doc.objects.get(id=did)  # 查询文档
+        project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
+        # 用户有浏览和新增权限的文集列表
+        view_list = read_add_projects(token.user)
+
+        if project.id not in view_list:
+            return JsonResponse({'status': False, 'data': _('无权限')})
+
+        try:
+            previous_doc = find_doc_previous(did)
+            previous_doc_id = previous_doc.id
+        except Exception as e:
+            previous_doc_id = None
+        try:
+            next_doc = find_doc_next(did)
+            next_doc_id = next_doc.id
+        except Exception as e:
+            next_doc_id = None
+        return JsonResponse({'status': True, 'data': {'next':next_doc_id,'previous':previous_doc_id}})
+    except Exception as e:
+        logger.exception("获取文档上下篇文档异常")
+        return JsonResponse({'status':False,'data':'系统异常'})
+
 
 
 # 新建文集
