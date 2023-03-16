@@ -24,6 +24,9 @@ class RequiredLoginMiddleware():
             r'/share_doc(.*)$',  # 文档分享
             r'/api/get_projects/(.*)$', # token api 获取文集列表
             r'/api/get_docs/(.*)$',  # token api 获取文档列表
+            r'/api/get_self_docs/(.*)$',  # token api 获取个人文档列表
+            r'/api/get_level_docs/(.*)$',  # token api 获取文集目录
+            r'/api/get_doc_previous_next/(.*)$',  # token api 获取文档上下篇文档
             r'/api/get_doc/(.*)$',  # token api 获取文档
             r'/api/create_project/(.*)$',  # token api 新建文集
             r'/api/create_doc/(.*)$',  # token api 新建文档
