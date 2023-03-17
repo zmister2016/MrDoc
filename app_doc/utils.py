@@ -3,26 +3,17 @@ from app_doc.models import Doc,Project
 # 查找文档的下级文档
 def find_doc_next(doc_id):
     doc = Doc.objects.get(id=int(doc_id))  # 当前文档
-    # 获取文集的文档默认排序方式
-    sort = Project.objects.get(id=doc.top_doc).sort_value
 
     # 获取文档的下级文档
     subdoc = Doc.objects.filter(parent_doc=doc.id,top_doc=doc.top_doc, status=1)
 
     # 如果存在子级文档，那么下一篇文档为第一篇子级文档
     if subdoc.count() != 0:
-        if sort == 1:
-            next_doc = subdoc.order_by('-create_time')[0]
-        else:
-            next_doc = subdoc.order_by('sort')[0]
+        next_doc = subdoc.order_by('sort')[0]
 
-    # 如果不存在子级文档
+    # 如果不存在子级文档，获取兄弟文档
     else:
-        # 获取兄弟文档
-        if sort == 1:
-            sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc,top_doc=doc.top_doc, status=1).order_by('-create_time')
-        else:
-            sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc,top_doc=doc.top_doc, status=1).order_by('sort','create_time')
+        sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc,top_doc=doc.top_doc, status=1).order_by('sort','create_time')
         sibling_list = [d.id for d in sibling_docs]
         # 如果当前文档不是兄弟文档中的最后一个，那么下一篇文档是当前文档的下一个兄弟文档
         if sibling_list.index(doc.id) != len(sibling_list) - 1:
@@ -34,21 +25,17 @@ def find_doc_next(doc_id):
             if doc.parent_doc == 0:
                 next_doc = None
             else:
-                next_doc = find_doc_parent_sibling(doc.parent_doc,sort=sort)
+                next_doc = find_doc_parent_sibling(doc.parent_doc)
 
     return next_doc
 
 
 # 查找文档的上级文档的同级文档（用于遍历获取文档的下一篇文档）
-def find_doc_parent_sibling(doc_id,sort):
+def find_doc_parent_sibling(doc_id):
     doc = Doc.objects.get(id=int(doc_id))  # 当前文档
 
     # 获取兄弟文档
-    if sort == 1:
-        sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by(
-            '-create_time')
-    else:
-        sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by('sort',
+    sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by('sort',
                                                                                                              'create_time')
     sibling_list = [d.id for d in sibling_docs]
     # 如果当前文档不是兄弟文档中的最后一个，那么下一篇文档是当前文档的下一个兄弟文档
@@ -69,14 +56,10 @@ def find_doc_parent_sibling(doc_id,sort):
 def find_doc_previous(doc_id):
     doc = Doc.objects.get(id=int(doc_id))  # 当前文档
     # 获取文集的文档默认排序方式
-    sort = Project.objects.get(id=doc.top_doc).sort_value
+    sort = Project.objects.get(id=doc.top_doc)
     # 获取文档的兄弟文档
     # 获取兄弟文档
-    if sort == 1:
-        sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by(
-            '-create_time')
-    else:
-        sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by('sort',
+    sibling_docs = Doc.objects.filter(parent_doc=doc.parent_doc, top_doc=doc.top_doc, status=1).order_by('sort',
                                                                                                              'create_time')
     sibling_list = [d.id for d in sibling_docs]
 

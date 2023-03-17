@@ -354,11 +354,13 @@ def get_doc_previous_next(request):
             previous_doc = find_doc_previous(did)
             previous_doc_id = previous_doc.id
         except Exception as e:
+            logger.error("获取上一篇文档异常")
             previous_doc_id = None
         try:
             next_doc = find_doc_next(did)
             next_doc_id = next_doc.id
         except Exception as e:
+            logger.error("获取下一篇文档异常")
             next_doc_id = None
         return JsonResponse({'status': True, 'data': {'next':next_doc_id,'previous':previous_doc_id}})
     except Exception as e:
