@@ -3,8 +3,10 @@
 
 from django import template
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import strip_tags
 from app_doc.models import *
 import re
+import markdown
 
 register = template.Library()
 
@@ -167,3 +169,16 @@ def get_key_context(value,args):
     else:
         r = value[0:200]
     return r
+
+# 摘取文档部分正文
+@register.filter(name='remove_doc_tag')
+def remove_doc_tag(doc):
+    try:
+        if doc.editor_mode == 3: # 富文本文档
+            result = strip_tags(doc.content)[:300]
+        else: # 其他文档
+            result = strip_tags(markdown.markdown(doc.pre_content))[:300]
+    except Exception as e:
+        result = doc.pre_content[:300]
+    result = result.replace("&nbsp;",'')
+    return result

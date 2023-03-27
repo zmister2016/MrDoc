@@ -3,6 +3,7 @@
 <!-- 引入静态文件 -->
 {% load static %}
 {% load i18n %}
+{% load doc_filter %}
 
 {% block title %}{% trans "搜索" %} {{kw}} {% trans "的结果" %} - {{ project.name }}{% endblock %}
 
@@ -22,7 +23,7 @@
     {% for result in search_result %}
         <div>
             <p><a href="{% url 'doc_id' doc_id=result.id %}" target="_blank">{{ result.name }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
-            <p>{{ result.pre_content|truncatechars:300 }}</p>
+            <p>{{ result|remove_doc_tag }}</p>
         </div>
         <hr>
     {% endfor %}
