@@ -146,6 +146,12 @@ python manage.py runserver
 - [Windows 部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
 - [VirtualBox/VmWare 虚拟机镜像 By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
+## 文档导入工具
+
+- [觅思文档导入工具箱](https://gitee.com/zmister/mrdoc-import-toolbox)
+    - 支持觅思文档导出的文集；
+    - 支持语雀知识库；
+
 ## 其他工具
 
 - [本地文档同步工具 By Atyin](https://gitee.com/atyin/mrdocTools)
