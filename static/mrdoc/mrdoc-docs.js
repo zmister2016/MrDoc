@@ -550,20 +550,7 @@ function keyLight(id, key, bgColor){
     // console.log(id,key,decodeURI(key))
     if(key != false){
         key = decodeURI(key);
-        var oDiv = document.getElementById(id),
-        sText = oDiv.innerHTML,
-        num = -1,
-        rStr = new RegExp(key, "ig"),
-        rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
-        aHtml = sText.match(rHtml), //存放html元素的数组
-        sText = sText.replace(rHtml, '{~}');  //替换html标签
-        sText = sText.replace(rStr,function(text){
-            return "<mark>" + text +"</mark>"
-        }); //替换key
-        sText = sText.replace(/{~}/g,function(){  //恢复html标签
-                num++;
-                return aHtml[num];
-        });
-        oDiv.innerHTML = sText;
+        var markInstance = new Mark(document.getElementById(id));
+        markInstance.mark(key);
     }
 };

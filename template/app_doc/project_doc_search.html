@@ -22,7 +22,7 @@
 {% block page_content %}
     {% for result in search_result %}
         <div>
-            <p><a href="{% url 'doc_id' doc_id=result.id %}" target="_blank">{{ result.name }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
+            <p><a href="{% url 'doc_id' doc_id=result.id %}?highlight={{kw}}" target="_blank">{{ result.name }}</a> - <span style="font-size: 14px;color: #999;">{{result.modify_time}}</span></p>
             <p>{{ result|remove_doc_tag }}</p>
         </div>
         <hr>
@@ -31,6 +31,8 @@
 
 {% block custom_script %}
 <script>
-    keyLight('doc-content','{{kw}}')
+    setTimeout(function(){
+        keyLight('doc-content','{{kw}}')
+    },500)
 </script>
 {% endblock %}
