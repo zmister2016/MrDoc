@@ -372,6 +372,7 @@ li.active > a,li.active > div > a{
     display: block;
     padding: 0;
     min-width: 0;
+    padding-left: 20px;
 }
 .doc-info{
     text-align: center;
@@ -438,9 +439,11 @@ li.active > a,li.active > div > a{
     display:none;
 }
 
-/* 文档字体颜色 */
+/* 文档主体样式 */
 .markdown-body{
     color:#333;
+    padding-top: 5px;
+    padding-left: 0px;
 }
 
 /* 文档行内代码样式 */
