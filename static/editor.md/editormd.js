@@ -611,17 +611,8 @@
                         editormd.loadScript(loadPath + "marked.min", function() {
 
                             editormd.$marked = marked;
-                                
-                            if (settings.previewCodeHighlight) 
-                            {
-                                editormd.loadScript(loadPath + "prettify.min", function() {
-                                    loadFlowChartOrSequenceDiagram();
-                                });
-                            } 
-                            else
-                            {                  
-                                loadFlowChartOrSequenceDiagram();
-                            }
+
+                            loadFlowChartOrSequenceDiagram();
                         });
                         
                     });
@@ -1539,12 +1530,12 @@
             
             if (settings.previewCodeHighlight) 
             {
-                previewContainer.find("pre").addClass("prettyprint linenums");
-                
-                if (typeof prettyPrint !== "undefined")
-                {                    
-                    prettyPrint();
-                }
+                previewContainer.find("pre").addClass("line-numbers language-bash");
+                previewContainer.find("pre").attr('data-prismjs-copy','复制');
+                previewContainer.find("pre").attr('data-prismjs-copy-error','按Ctrl+C复制');
+                previewContainer.find("pre").attr('data-prismjs-copy-success','代码已复制！');
+                let preCodes = Array.from(previewContainer.find("pre code"))
+                preCodes.forEach(block => Prism.highlightElement(block));
             }
 
             return this;
@@ -4425,7 +4416,6 @@
             
         if (settings.previewCodeHighlight) 
         {
-//            div.find("pre").addClass("prettyprint linenums");
             editormd.loadScript(settings.plugin_path + 'raphael.min', function(){
                 editormd.loadScript(settings.plugin_path + 'underscore.min', function(){
 //                    editormd.loadScript(settings.plugin_path + 'prettify.min',function(){
