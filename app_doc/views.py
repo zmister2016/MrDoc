@@ -1218,8 +1218,8 @@ def create_doc(request):
                 colla_project = ProjectCollaborator.objects.filter(project=project,user=request.user)
                 if check_project.count() > 0 or colla_project.count() > 0:
                     # 判断文集下是否存在同名文档
-                    if Doc.objects.filter(name=doc_name,top_doc=int(project)).exists():
-                        return JsonResponse({'status':False,'data':_('文集内不允许同名文档')})
+                    # if Doc.objects.filter(name=doc_name,top_doc=int(project)).exists():
+                    #     return JsonResponse({'status':False,'data':_('文集内不允许同名文档')})
                     # 开启事务
                     with transaction.atomic():
                         save_id = transaction.savepoint()
