@@ -48,11 +48,7 @@
 <!-- 附件名 -->
 <script type="text/html" id="fileName">
     {% verbatim %}
-        {{#if (d.file_path.startsWith('attachment')) { }}
-            <a href="/media/{{d.file_path}}" target="_blank">{{d.file_name}}</a>
-        {{# }else{ }}
-            <a href="{{decodeURI(d.file_path.replace('/media/',''))}}" target="_blank" >{{ d.file_name }} </a>
-        {{# } }}
+        <a href="/media/{{decodeURI(d.file_path)}}" target="_blank" >{{ d.file_name }} </a>
     {% endverbatim %}
 </script>
 
