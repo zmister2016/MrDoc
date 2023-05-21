@@ -3688,6 +3688,7 @@
                     }
                 }
             }
+            if(!text.trim()){text="invalid image(图片无法加载)";}
             return begin + "<img src=\""+href+"\" title=\""+title+"\" alt=\""+text+"\" "+attr+" />" + end;
         };
 
