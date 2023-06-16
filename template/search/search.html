@@ -207,7 +207,7 @@
                         <a href="{% url 'pro_index' pro_id=result.object.top_doc %}" target="_blank">{{ result.object.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.object.modify_time}}</span></p>
                 </div>
             {% empty %}
-                <p>{% trans "没有搜索结果。" %}</p>
+                <p>{% trans "没有搜索结果。" %}试试<a href="{% url 'search' %}?kw={{query}}&type=doc&d_range={{d_range}}">精准搜索？</a></p>
             {% endfor %}
         {% else %}
             {# Show some example queries to run, maybe query syntax, something else? #}
