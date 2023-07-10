@@ -1591,7 +1591,7 @@ def move_doc(request):
     # 判断上级文档是否存在
     try:
         if parent_id != '0':
-            parent = Doc.objects.get(id=int(parent_id),create_user=request.user)
+            parent = Doc.objects.get(id=int(parent_id), top_doc=pro_id, status=1)
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('上级文档不存在')})
     # 复制文档
