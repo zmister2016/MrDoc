@@ -60,6 +60,9 @@ def log_in(request):
         try:
             username = request.POST.get('username','')
             pwd = request.POST.get('password','')
+            if len(pwd) > 50:
+                errormsg = _('密码长度不符！')
+                return render(request, 'login.html', locals())
             # 判断是否需要验证码
             require_login_check_code = SysSetting.objects.filter(types="basic",name="enable_login_check_code")
             if (len(require_login_check_code) > 0) and (require_login_check_code[0].value == 'on'):
@@ -126,6 +129,9 @@ def register(request):
             password = request.POST.get('password',None)
             checkcode = request.POST.get("check_code",None)
             register_code = request.POST.get("register_code",None)
+            if len(password) > 50:
+                errormsg = _('密码长度不符！')
+                return render(request, 'register.html', locals())
             is_register_code = SysSetting.objects.filter(types='basic', name='enable_register_code', value='on')
             if is_register_code.count() > 0: # 开启了注册码设置
                 try:
