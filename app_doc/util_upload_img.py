@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required # 登录需求装饰�
 from django.utils.translation import gettext_lazy as _
 import datetime,time,json,base64,os,uuid
 from app_doc.models import Image,ImageGroup,Attachment
+from app_doc.utils import validate_url
 from app_admin.models import SysSetting
 from loguru import logger
 import requests
@@ -148,6 +149,9 @@ def upload_img(request):
     manage_upload = request.FILES.get('manage_upload',None) # 图片管理上传
     try:
         url_img = json.loads(request.body.decode())['url']
+        url_img = validate_url(url_img)
+        if url_img is False:
+            return JsonResponse({"success": 0, "message": _("无效的URL！")})
     except:
         url_img = None
     dir_name = request.POST.get('dirname','')

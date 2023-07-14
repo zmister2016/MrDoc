@@ -1,4 +1,7 @@
 from app_doc.models import Doc,Project
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from urllib.parse import urlparse
 
 # 查找文档的下级文档
 def find_doc_next(doc_id):
@@ -97,3 +100,16 @@ def find_doc_sibling_sub(doc_id,sort):
         previous_doc = find_doc_sibling_sub(subdoc_list[len(subdoc) - 1],sort)
 
     return previous_doc
+
+
+# 验证URL的有效性，以及排除本地URL
+def validate_url(url):
+    try:
+        validate = URLValidator()
+        validate(url)
+        parsed_url = urlparse(url)
+        if parsed_url.hostname in ['localhost', '127.0.0.1']:
+            return False
+        return url
+    except:
+        return False
