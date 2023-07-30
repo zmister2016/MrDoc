@@ -37,10 +37,10 @@
 
 Current Platform：
 
-- Web:[instructions](https://doc.mrdoc.pro/p/deploy/)；
-- Browser Extensions:Supported Chromium Browser,Firefox Browser [Download](https://gitee.com/zmister/mrdoc-webclipper)
-- Desktop: Supported Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
-- Mobile APP:supportd Android [Download](https://gitee.com/zmister/mrdoc-app-release)
+- 🌐Web:[instructions](https://doc.mrdoc.pro/p/deploy/)；
+- 💻Browser Extensions:Supported Chromium Browser,Firefox Browser [Download](https://gitee.com/zmister/mrdoc-webclipper)
+- 🗔Desktop: Supported Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
+- 📱Mobile APP:supportd Android [Download](https://gitee.com/zmister/mrdoc-app-release)
 
 ## Example Site
 

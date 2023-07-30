@@ -40,10 +40,10 @@ MrDoc 适合作为个人和中小型团队的私有云文档、云笔记和知�
 
 MrDoc 全系产品目前涵盖以下终端：
 
-- Web端：开源版、专业版，[版本对比](https://doc.mrdoc.pro/doc/3441/)
-- 浏览器扩展：支持 Chromium 系列浏览器、Firefox 浏览器，[下载地址](https://gitee.com/zmister/mrdoc-webclipper)
-- 桌面客户端：支持 Windows、macOS、Linux，[下载地址](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
-- 移动客户端：支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
+- 🌐Web端：开源版、专业版，[版本对比](https://doc.mrdoc.pro/doc/3441/)
+- 💻浏览器扩展：支持 Chromium 系列浏览器、Firefox 浏览器，[下载地址](https://gitee.com/zmister/mrdoc-webclipper)
+- 🗔桌面客户端：支持 Windows、macOS、Linux，[下载地址](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
+- 📱移动客户端：支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
 - 微信小程序（开发中）
 
 ## 演示站点
