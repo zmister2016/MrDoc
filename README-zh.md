@@ -21,9 +21,9 @@
 </p>
 
 <p align="center">
-<a href="https://doc.mrdoc.pro/project-7/">安装手册</a> | 
-<a href="https://doc.mrdoc.pro/project-54/">使用手册</a> |
-<a href="https://doc.mrdoc.pro/project-20/">文档效果</a>
+<a href="https://doc.mrdoc.pro/p/deploy/">安装手册</a> | 
+<a href="https://doc.mrdoc.pro/p/user-guide/">使用手册</a> |
+<a href="https://doc.mrdoc.pro/p/example/">文档效果</a>
 </p>
 
 <p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">码云</a> | 
@@ -40,7 +40,7 @@ MrDoc 适合作为个人和中小型团队的私有云文档、云笔记和知�
 
 MrDoc 全系产品目前涵盖以下终端：
 
-- Web端：开源版、专业版，[版本差异](https://doc.mrdoc.pro/project-7/doc-3441/)
+- Web端：开源版、专业版，[版本对比](https://doc.mrdoc.pro/doc/3441/)
 - 浏览器扩展：支持 Chromium 系列浏览器、Firefox 浏览器，[下载地址](https://gitee.com/zmister/mrdoc-webclipper)
 - 桌面客户端：支持 Windows、macOS、Linux，[下载地址](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
 - 移动客户端：支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
@@ -52,7 +52,7 @@ MrDoc 全系产品目前涵盖以下终端：
 
 专业版 - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 
-开源版与专业版差异 - [https://doc.mrdoc.pro/project-7/doc-3441/](https://doc.mrdoc.pro/project-7/doc-3441/)
+开源版与专业版对比 - [https://doc.mrdoc.pro/doc/3441/](https://doc.mrdoc.pro/doc/3441/)
 
 用户名：test1  密码：123456
 
