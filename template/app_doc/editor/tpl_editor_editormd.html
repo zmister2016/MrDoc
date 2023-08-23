@@ -168,9 +168,12 @@
             },
             // 添加思维导图
             mindmap:function(cm,icon,cursor,selection){
-                cm.replaceSelection('```mindmap\n' + selection + "\n```");
                 if(selection === "") {
+                    let mindmap_example = "# 主题\n### 一级主题1\n### 一级主题2\n### 一级主题3"
+                    cm.replaceSelection('```mindmap\n' + mindmap_example + "\n```");
                     cm.setCursor(cursor.line+1, cursor.ch);
+                }else{
+                    cm.replaceSelection('```mindmap\n' + selection + "\n```");
                 }
             },
             // 添加echart图
