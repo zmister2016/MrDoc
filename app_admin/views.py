@@ -24,6 +24,7 @@ from app_doc.views import jsonXssFilter
 from app_admin.models import *
 from app_admin.utils import *
 from loguru import logger
+from urllib.parse import quote
 import re
 import datetime
 import requests
@@ -961,7 +962,21 @@ class AdminImageList(APIView):
         username = request.query_params.get('username', '')
         page_num = request.query_params.get('page', 1)
         limit = request.query_params.get('limit', 10)
-        if kw == '' and username == '':
+        mode = request.query_params.get('mode', '')
+        if mode == 'scan':
+            img_data = Image.objects.all()
+            img_list = []
+            for img in img_data:
+                quote_path = quote(img.file_path)
+                if quote_path == img.file_path:
+                    used_img_doc = Doc.objects.filter(pre_content__icontains=img.file_path).exists()
+                else:
+                    query = Q(pre_content__icontains=img.file_path) | Q(pre_content__icontains=quote_path)
+                    used_img_doc = Doc.objects.filter(query).exists()
+                if not used_img_doc:
+                    img_list.append(img.file_path)
+            img_data = img_data.filter(file_path__in=img_list).order_by('-create_time')
+        elif kw == '' and username == '':
             img_data = Image.objects.all().order_by('-create_time')
         elif kw != '':
             img_data = Image.objects.filter(file_name__icontains=kw).order_by('-create_time')

@@ -40,6 +40,9 @@
 
 <!-- 表格工具栏 -->
 <script type="text/html" id="img-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="scanImg">
+        扫描未使用图片
+    </button>
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i> 批量删除
     </button>
@@ -154,6 +157,22 @@
             data:[]
         });
         getUserList();
+        // 扫描未使用图片
+        scanImg = function(obj){
+            layer.open({
+                title:"扫描未使用图片",
+                content:"扫描站点已上传但未在文档中引用的图片，此操作可能会花费一些时间，请耐心等待扫描完成。",
+                yes:function(){
+                    // layer.load();
+                    table.reload('img-list',{
+                        where:{
+                            'mode':'scan',
+                        },
+                    })
+                    layer.closeAll()
+                }
+            })
+        };
         // 删除图片
         delImg = function(id){
             layer.open({
@@ -276,6 +295,8 @@
         table.on("toolbar(img-table)",function(obj){
             if(obj.event === 'batchRemove'){ // 批量删除图片
                 batchRemove(obj)
+            }else if(obj.event === 'scanImg'){ // 扫描未使用图片
+                scanImg(obj)
             }else if(obj.event === 'search'){ // 搜索图片
                 table.reload('img-list',{
                     where:{'kw':$('input[name="project-search-kw"]').val()
