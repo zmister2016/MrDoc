@@ -168,8 +168,8 @@
                         {% if p.intro == "" %}
                         <span class="">{% trans "此文集没有填写简介" %}</span>
                         {% else %}
-                        <span class="">{{ p.intro | slice:'20' }}…</span>
-                        <span class="tooltip-content clearfix">{{ p.intro | slice:'100' }}</span>
+                        <span class="">{{ p.intro | project_desc | slice:'20' }}…</span>
+                        <span class="tooltip-content clearfix">{{ p.intro | project_desc | slice:'100' }}</span>
                         {% endif %}
                       </p>
                       {% for new_doc in p.id|get_new_doc %}

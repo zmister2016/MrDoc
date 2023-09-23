@@ -3,6 +3,8 @@
 from app_doc.models import *
 from django import template
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import strip_tags
+import markdown
 
 register = template.Library()
 
@@ -59,3 +61,9 @@ def get_project_collaborator_cnt(value):
 def get_img_group_cnt(value):
     cnt = DocTag.objects.filter(tag=value).count()
     return cnt
+
+# 获取文集简介的纯文本
+@register.filter(name='project_desc')
+def get_project_desc(value):
+    value = strip_tags(markdown.markdown(value))[:201]
+    return value
