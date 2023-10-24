@@ -16,6 +16,12 @@
     border-radius: 0;
 }
 
+/* 外边距 */
+.mrdoc-margin-1{
+    margin-left:10px;
+    margin-right:10px;
+}
+
 /* 页头下边框线 */
 .layui-header{
     border-bottom:1px solid #ddd;
