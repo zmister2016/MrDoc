@@ -3647,7 +3647,7 @@
                         } else if (tedMatch && tedMatch[1]) {
                             return `<iframe height=400 width=500 frameborder=0 allowfullscreen src="//embed.ted.com/talks/${tedMatch[1]}"></iframe>`
                         }else{
-                            return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen />'
+                            return '<iframe height=400 width=500 src="' + href +'" frameborder=0 allowfullscreen ></iframe>'
                         }
                         break;
                 }
