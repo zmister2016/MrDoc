@@ -114,6 +114,18 @@ def manage_token(request):
             return JsonResponse({'status':False,'data':_('生成出错，请重试！')})
 
 
+# 检查用户Token
+def check_token(request):
+    token = request.GET.get('token', '')
+    try:
+        token = UserToken.objects.get(token=token)
+        data = {
+            'is_writer':True,
+        }
+        return JsonResponse({'status':True,'data':data})
+    except:
+        return JsonResponse({'status':False})
+
 # 获取文集
 @require_GET
 def get_projects(request):
