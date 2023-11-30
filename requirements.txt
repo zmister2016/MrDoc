@@ -5,7 +5,7 @@ pillow>=7.1.0,<10.0
 loguru==0.4.1
 importlib-metadata==4.7.1
 djangorestframework==3.11.2
-requests==2.24.0
+requests==2.31.0
 setuptools-scm
 whoosh==2.7.4
 django-haystack==3.1.1
