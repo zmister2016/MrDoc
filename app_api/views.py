@@ -545,3 +545,29 @@ def upload_img_url(request):
     except:
         logger.error(_("token上传url图片异常"))
         return JsonResponse({'success':0,'data':_('上传出错')})
+
+# 删除文档（软删除）
+@csrf_exempt
+@require_http_methods(['GET','POST'])
+def delete_doc(request):
+    token = request.GET.get('token', '')
+    doc_id = request.POST.get('did', '')
+    try:
+        # 验证Token
+        token = UserToken.objects.get(token=token)
+        doc = Doc.objects.get(id=doc_id)
+
+        # 验证权限
+        if doc.create_user == token.user:
+            Doc.objects.filter(id=int(doc_id)).update(
+                status=3,
+                modify_time=datetime.datetime.now(),
+            )
+            return JsonResponse({'status': True, 'data': 'ok'})
+        else:
+            return JsonResponse({'status':False,'data':'非法请求'})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': 'token无效'})
+    except:
+        logger.exception("token修改文档异常")
+        return JsonResponse({'status':False,'data':'系统异常'})
