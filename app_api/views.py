@@ -461,6 +461,7 @@ def modify_doc(request):
     doc_id = request.POST.get('did', '')
     doc_title = request.POST.get('title','')
     doc_content = request.POST.get('doc','')
+    parent_doc = request.POST.get('parent_doc', '')
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
@@ -470,6 +471,7 @@ def modify_doc(request):
         if is_project.exists():
             # 将现有文档内容写入到文档历史中
             doc = Doc.objects.get(id=doc_id,top_doc=project_id)
+            parent_id = doc.parent_doc if parent_doc == '' else parent_doc
             DocHistory.objects.create(
                 doc=doc,
                 pre_content=doc.pre_content,
@@ -480,12 +482,14 @@ def modify_doc(request):
                 Doc.objects.filter(id=int(doc_id),top_doc=project_id).update(
                     name=doc_title,
                     pre_content=doc_content,
+                    parent_doc=parent_id,
                     modify_time=datetime.datetime.now(),
                 )
             elif doc.editor_mode == 3: # 富文本文档
                 Doc.objects.filter(id=int(doc_id),top_doc=project_id).update(
                     name=doc_title,
                     content=doc_content,
+                    parent_doc=parent_id,
                     modify_time=datetime.datetime.now(),
                 )
             elif doc.editor_mode == 4: # 在线表格
