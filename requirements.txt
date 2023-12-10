@@ -6,7 +6,6 @@ loguru==0.4.1
 importlib-metadata==4.7.1
 djangorestframework==3.11.2
 requests==2.24.0
-setuptools-scm
 whoosh==2.7.4
 django-haystack==3.1.1
 Markdown==3.3.3
@@ -15,5 +14,5 @@ mammoth==1.4.13
 markdownify==0.6.0
 selenium==3.141.0
 webdriver_manager==3.3.0
-PyYAML==5.4.1
+PyYAML==6.0.1
 django-cors-headers>=3.10.0
