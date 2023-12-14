@@ -208,6 +208,7 @@ def get_level_docs(request):
         # 获取存在上级文档的上级文档ID
         # print(parent_id_list)
         doc_list = []
+        doc_cnt = 0
         # 获取一级文档
         top_docs = Doc.objects.filter(top_doc=pid,parent_doc=0,status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
         # 遍历一级文档
@@ -219,6 +220,7 @@ def get_level_docs(request):
                 'parent_doc':doc['parent_doc'],
                 'top_doc':pid,
             }
+            doc_cnt += 1
             # 如果一级文档存在下级文档，查询其二级文档
             if doc['id'] in parent_id_list:
                 # 获取二级文档
@@ -232,6 +234,7 @@ def get_level_docs(request):
                         'parent_doc': doc['parent_doc'],
                         'top_doc':pid,
                     }
+                    doc_cnt += 1
                     # 如果二级文档存在下级文档，查询第三级文档
                     if doc['id'] in parent_id_list:
                         # 获取三级文档
@@ -245,6 +248,7 @@ def get_level_docs(request):
                                 'parent_doc': doc['parent_doc'],
                                 'top_doc':pid,
                             }
+                            doc_cnt += 1
                             sec_item['sub'].append(item)
                         top_item['sub'].append(sec_item)
                     else:
@@ -254,7 +258,7 @@ def get_level_docs(request):
             else:
                 doc_list.append(top_item)
 
-        return JsonResponse({'status': True, 'data': doc_list})
+        return JsonResponse({'status': True, 'data': doc_list,'total':doc_cnt})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
