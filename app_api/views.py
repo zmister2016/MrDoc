@@ -10,7 +10,7 @@ from django.contrib.auth.models import User # Django默认用户模型
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
-from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload
+from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload,img_upload
 from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
 from app_doc.models import Project,Doc,DocHistory,Image
@@ -219,13 +219,13 @@ def get_level_docs(request):
                 'editor_mode':doc['editor_mode'],
                 'parent_doc':doc['parent_doc'],
                 'top_doc':pid,
+                'sub':[]
             }
             doc_cnt += 1
             # 如果一级文档存在下级文档，查询其二级文档
             if doc['id'] in parent_id_list:
                 # 获取二级文档
                 sec_docs = Doc.objects.filter(top_doc=pid,parent_doc=doc['id'],status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
-                top_item['sub'] = []
                 for doc in sec_docs:
                     sec_item = {
                         'id': doc['id'],
@@ -233,13 +233,13 @@ def get_level_docs(request):
                         'editor_mode':doc['editor_mode'],
                         'parent_doc': doc['parent_doc'],
                         'top_doc':pid,
+                        'sub': []
                     }
                     doc_cnt += 1
                     # 如果二级文档存在下级文档，查询第三级文档
                     if doc['id'] in parent_id_list:
                         # 获取三级文档
                         thr_docs = Doc.objects.filter(top_doc=pid,parent_doc=doc['id'],status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
-                        sec_item['sub'] = []
                         for doc in thr_docs:
                             item = {
                                 'id': doc['id'],
@@ -247,6 +247,7 @@ def get_level_docs(request):
                                 'editor_mode': doc['editor_mode'],
                                 'parent_doc': doc['parent_doc'],
                                 'top_doc':pid,
+                                'sub': []
                             }
                             doc_cnt += 1
                             sec_item['sub'].append(item)
@@ -516,12 +517,16 @@ def upload_img(request):
     # {"success": 1, "url": "图片地址"}
     ##################
     token = request.GET.get('token', '')
-    base64_img = request.POST.get('data','')
+    base64_img = request.POST.get('data',None)
+    commom_img = request.FILES.get('image', None)  # 普通图片上传
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
         # 上传图片
-        result = base_img_upload(base64_img, '', token.user)
+        if base64_img:
+            result = base_img_upload(base64_img, '', token.user)
+        elif commom_img:
+            result = img_upload(commom_img, '', token.user)
         return JsonResponse(result)
         # return HttpResponse(json.dumps(result), content_type="application/json")
     except ObjectDoesNotExist:
