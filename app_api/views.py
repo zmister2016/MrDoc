@@ -391,9 +391,19 @@ def get_doc_previous_next(request):
 @csrf_exempt
 def create_project(request):
     token = request.GET.get('token', '')
-    project_name = request.POST.get('name','')
-    project_desc = request.POST.get('desc','')
-    project_role = request.POST.get('role',1)
+    content_type = request.headers.get('Content-Type', '').lower()
+    if 'json' in content_type:
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+            project_name = json_data.get('name', '')
+            project_desc = json_data.get('desc', '')
+            project_role = json_data.get('role', 1)
+        except json.JSONDecodeError:
+            return JsonResponse({'data': 'Invalid JSON data', 'status': False})
+    else:
+        project_name = request.POST.get('name', '')
+        project_desc = request.POST.get('desc', '')
+        project_role = request.POST.get('role', 1)
     if project_name == '':
         return JsonResponse({'status': False, 'data': _('文集名称不能为空！')})
     try:
@@ -418,11 +428,23 @@ def create_project(request):
 @csrf_exempt
 def create_doc(request):
     token = request.GET.get('token', '')
-    project_id = request.POST.get('pid','')
-    doc_title = request.POST.get('title','')
-    doc_content = request.POST.get('doc','')
-    editor_mode = request.POST.get('editor_mode',1)
-    parent_doc = request.POST.get('parent_doc', 0)
+    content_type = request.headers.get('Content-Type', '').lower()
+    if 'json' in content_type:
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+            project_id = json_data.get('pid', '')
+            doc_title = json_data.get('title', '')
+            doc_content = json_data.get('doc', '')
+            parent_doc = json_data.get('parent_doc', 0)
+            editor_mode = json_data.get('editor_mode', 1)
+        except json.JSONDecodeError:
+            return JsonResponse({'data': 'Invalid JSON data', 'status': False})
+    else:
+        project_id = request.POST.get('pid', '')
+        doc_title = request.POST.get('title', '')
+        doc_content = request.POST.get('doc', '')
+        editor_mode = request.POST.get('editor_mode', 1)
+        parent_doc = request.POST.get('parent_doc', 0)
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
@@ -462,11 +484,23 @@ def create_doc(request):
 @csrf_exempt
 def modify_doc(request):
     token = request.GET.get('token', '')
-    project_id = request.POST.get('pid','')
-    doc_id = request.POST.get('did', '')
-    doc_title = request.POST.get('title','')
-    doc_content = request.POST.get('doc','')
-    parent_doc = request.POST.get('parent_doc', '')
+    content_type = request.headers.get('Content-Type', '').lower()
+    if 'json' in content_type:
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+            project_id = json_data.get('pid', '')
+            doc_id = json_data.get('did', '')
+            doc_title = json_data.get('title', '')
+            doc_content = json_data.get('doc', '')
+            parent_doc = json_data.get('parent_doc', '')
+        except json.JSONDecodeError:
+            return JsonResponse({'data': 'Invalid JSON data', 'status': False})
+    else:
+        project_id = request.POST.get('pid', '')
+        doc_id = request.POST.get('did', '')
+        doc_title = request.POST.get('title', '')
+        doc_content = request.POST.get('doc', '')
+        parent_doc = request.POST.get('parent_doc', '')
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
@@ -517,8 +551,17 @@ def upload_img(request):
     # {"success": 1, "url": "图片地址"}
     ##################
     token = request.GET.get('token', '')
-    base64_img = request.POST.get('data',None)
-    commom_img = request.FILES.get('image', None)  # 普通图片上传
+    content_type = request.headers.get('Content-Type', '').lower()
+    if 'json' in content_type:
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+            base64_img = json_data.get('base64', None)
+            commom_img = json_data.get('image', None)
+        except json.JSONDecodeError:
+            return JsonResponse({'data': 'Invalid JSON data', 'status': False})
+    else:
+        base64_img = request.POST.get('data', None)
+        commom_img = request.FILES.get('image', None)  # 普通图片上传
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
@@ -527,6 +570,8 @@ def upload_img(request):
             result = base_img_upload(base64_img, '', token.user)
         elif commom_img:
             result = img_upload(commom_img, '', token.user)
+        else:
+            return JsonResponse({'status': False, 'data': _('无有效图片')})
         return JsonResponse(result)
         # return HttpResponse(json.dumps(result), content_type="application/json")
     except ObjectDoesNotExist:
