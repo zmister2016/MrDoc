@@ -41,6 +41,7 @@ Current Platform：
 - 💻Browser Extensions:Supported Chromium Browser,Firefox Browser [Download](https://gitee.com/zmister/mrdoc-webclipper)
 - 🗔Desktop: Supported Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
 - 📱Mobile APP:supportd Android [Download](https://gitee.com/zmister/mrdoc-app-release)
+- Obsidian Plugin：[Instructions](https://doc.mrdoc.pro/doc/45650/)
 
 ## Example Site
 
