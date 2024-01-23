@@ -9,7 +9,7 @@
 
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.9.1-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.9.2-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.6+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
 </p>
@@ -44,7 +44,7 @@ MrDoc 全系产品目前涵盖以下终端：
 - 💻浏览器扩展：支持 Chromium 系列浏览器、Firefox 浏览器，[下载地址](https://gitee.com/zmister/mrdoc-webclipper)
 - 🗔桌面客户端：支持 Windows、macOS、Linux，[下载地址](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
 - 📱移动客户端：支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
-- Obsidian 插件：[使用教程](https://doc.mrdoc.pro/doc/45650/)
+- Obsidian 同步插件：[使用教程](https://doc.mrdoc.pro/doc/45650/)
 - 微信小程序（开发中）
 
 ## 演示站点
