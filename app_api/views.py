@@ -609,7 +609,15 @@ def upload_img_url(request):
 @require_http_methods(['GET','POST'])
 def delete_doc(request):
     token = request.GET.get('token', '')
-    doc_id = request.POST.get('did', '')
+    content_type = request.headers.get('Content-Type', '').lower()
+    if 'json' in content_type:
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+            doc_id = json_data.get('did', '')
+        except json.JSONDecodeError:
+            return JsonResponse({'data': 'Invalid JSON data', 'status': False})
+    else:
+        doc_id = request.POST.get('did', '')
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
