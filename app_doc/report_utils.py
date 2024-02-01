@@ -166,6 +166,13 @@ class ReportMD():
                     continue
                 # 对本地静态文件进行复制
                 if media_filename.startswith("/media"):
+                    # 安全拼接路径
+                    target_path = os.path.join(settings.BASE_DIR, media_filename[1:])
+                    abs_path = os.path.abspath(target_path)
+                    # 检查目标路径是否在允许范围内
+                    if (not abs_path.startswith(settings.MEDIA_ROOT)) \
+                            or '..' in os.path.relpath(abs_path,settings.MEDIA_ROOT):
+                        continue
                     # print(media_filename)
                     sub_folder = "/" + media_filename.split("/")[2] # 获取子文件夹的名称
                     # print(sub_folder)
@@ -189,6 +196,13 @@ class ReportMD():
                     continue
                 # 对本地静态文件进行复制
                 if media_filename.startswith("/media"):
+                    # 安全拼接路径
+                    target_path = os.path.join(settings.BASE_DIR, media_filename[1:])
+                    abs_path = os.path.abspath(target_path)
+                    # 检查目标路径是否在允许范围内
+                    if (not abs_path.startswith(settings.MEDIA_ROOT)) \
+                            or '..' in os.path.relpath(abs_path, settings.MEDIA_ROOT):
+                        continue
                     # print(media_filename)
                     sub_folder = "/" + media_filename.split("/")[2]  # 获取子文件夹的名称
                     # print(sub_folder)
