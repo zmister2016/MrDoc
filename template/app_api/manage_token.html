@@ -19,7 +19,11 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">操作</label>
                         <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="copy-token" onclick="copyToken()">复制</button>
+                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="qrcode-token"><i class="pear-icon pear-icon-scanning"></i> 二维码</button>
                         <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="generaToken()">重新生成Token</button>
+                    </div>
+                    <div class="layui-form-item">
+                        <div id="token_qrcode" style="display: none;margin-left: 110px;"></div>
                     </div>
                 </form>
             </div>
@@ -27,6 +31,7 @@
 </div>
 {% endblock %}
 {% block custom_script %}
+<script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
     layui.use(['table', 'form', 'jquery', 'dtree'], function() {
         let table = layui.table;
@@ -62,6 +67,7 @@
                             //window.location.reload();
                             $('#token').val(r.data);
                             layer.close(index)
+                            doc_qrcode();
                             layer.msg("生成成功！",{offset: 't'})
                         }else{
                             //生成失败，提示
@@ -73,6 +79,25 @@
                 },
             });
         };
+        // 生成文档链接二维码
+        doc_qrcode = function(){
+            $("#token_qrcode").empty();
+            new QRCode("token_qrcode", {
+                text: JSON.stringify({'url':window.location.origin,'token':$("#token").val()}) ,
+                width: 150,
+                height: 150,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        };
+        doc_qrcode();
+        $("#qrcode-token").hover(function(){
+            $("#token_qrcode").show()
+        },function(){
+            $("#token_qrcode").hide()
+        })
+
     })
 </script>
 {% endblock %}
