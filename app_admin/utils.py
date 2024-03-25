@@ -6,6 +6,7 @@
 
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.urls import resolve,Resolver404
 from email.mime.text import MIMEText
 from email.header import Header
 from app_admin.models import SysSetting
@@ -85,3 +86,11 @@ def dectry(p):
         temp = chr(int(i) - ord(j)) # 解密字符 = (加密Unicode码字符 - 秘钥字符的Unicode码)的单字节字符
         dec_str = dec_str+temp
     return dec_str
+
+# 判断是否内部链接
+def is_internal_path(path):
+    try:
+        resolve(path)
+        return True
+    except Resolver404:
+        return False

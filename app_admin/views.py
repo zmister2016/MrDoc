@@ -51,6 +51,9 @@ def check_code(request):
 # 登录视图
 def log_in(request):
     to = request.GET.get('next', '/')
+    safe_to = is_internal_path(to)
+    if safe_to is False:
+        to = '/'
     if request.method == 'GET':
         # 登录用户访问登录页面自动跳转到首页
         if request.user.is_authenticated:
