@@ -1,7 +1,9 @@
-from app_doc.models import Doc,Project
+from app_doc.models import Doc,Project,ProjectCollaborator
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 from urllib.parse import urlparse
+from loguru import logger
 
 # 查找文档的下级文档
 def find_doc_next(doc_id):
@@ -100,6 +102,27 @@ def find_doc_sibling_sub(doc_id,sort):
         previous_doc = find_doc_sibling_sub(subdoc_list[len(subdoc) - 1],sort)
 
     return previous_doc
+
+# 验证用户是否有文集的协作权限
+def check_user_project_writer_role(user_id,project_id):
+    if user_id == '' or project_id == '':
+        return False
+    try:
+        user = User.objects.get(id=user_id)
+
+        # 验证请求者是否有文集的权限
+        project = Project.objects.filter(id=project_id, create_user=user)
+        if project.exists():
+            return True
+
+        # 协作用户
+        colla_project = ProjectCollaborator.objects.filter(project__id=project_id, user=user)
+        if colla_project.exists():
+            return True
+        return False
+    except Exception as e:
+        logger.error(e)
+        return False
 
 
 # 验证URL的有效性，以及排除本地URL

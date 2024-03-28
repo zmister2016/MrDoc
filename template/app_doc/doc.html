@@ -145,7 +145,7 @@
 <!-- 目录 -->
 <div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
 <!-- 分享按钮 -->
-{% if project.role != 0 and request.user == doc.create_user %}
+{% if request.user == doc.create_user or request.user == project.create_user or colla_user > 0 %}
     <div class="shareDoc" id="shareDoc"><i class="fa fa-share"></i></div>
 {% endif %}
 {% endblock %}

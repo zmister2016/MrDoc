@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from app_api.serializers_app import *
 from app_doc.report_utils import *
+from app_doc.utils import check_user_project_writer_role
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
@@ -1847,7 +1848,10 @@ def share_doc(request):
         doc_id = request.POST.get('id')
         try:
             # 获取请求参数
-            doc = Doc.objects.get(id=doc_id,create_user=request.user)
+            doc = Doc.objects.get(id=doc_id)
+            has_role = check_user_project_writer_role(request.user.id, doc.top_doc)
+            if has_role is False:
+                return JsonResponse({'status': False, 'data': _('无操作权限')})
             share_type = request.POST.get('share_type',0)
             share_value = request.POST.get('share_value',0)
             is_enable = request.POST.get('is_enable',True)
