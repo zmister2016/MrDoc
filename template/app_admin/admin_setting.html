@@ -24,127 +24,119 @@
           <div class="layui-tab-content">
               <!-- 网站设置 -->
             <div class="layui-tab-item layui-show">
-               <form class="layui-form" action="{% url 'sys_setting' %}" method="post">
-                   {% csrf_token %}
-                  <input type="text" name="type" hidden value="basic">
-                  <!-- 站点名称 -->
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">站点名称</label>
-                    <div class="layui-input-inline">
-                      <input name="site_name" placeholder="请输入站点标题" class="layui-input" value="{% if site_name != None %}{{site_name}}{% endif %}"></input>
+               <form class="layui-form" lay-filter="meta_config">
+                   <div class="layui-card settings-card">
+                    <div class="layui-card-header">站点元信息</div>
+                    <div class="layui-card-body">
+                      <!-- 站点名称 -->
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">站点名称</label>
+                        <div class="layui-input-inline">
+                          <input name="site_name" placeholder="请输入站点标题" class="layui-input" value="{% if site_name != None %}{{site_name}}{% endif %}"></input>
+                        </div>
+                      </div>
+                      <!-- 站点子标题 -->
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">子标题</label>
+                        <div class="layui-input-block">
+                          <input name="site_sub_name" placeholder="请输入站点的子标题" class="layui-input" value="{% if site_sub_name != None %}{{site_sub_name}}{% endif %}"></input>
+                        </div>
+                      </div>
+                      <!-- 站点关键词 -->
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">关键词</label>
+                        <div class="layui-input-block">
+                          <input name="site_keywords" placeholder="多个关键词请使用使用英文逗号,进行分隔" class="layui-input" value="{% if site_keywords != None %}{{site_keywords}}{% endif %}"></input>
+                        </div>
+                      </div>
+                      <!-- 站点描述 -->
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">站点描述</label>
+                        <div class="layui-input-block">
+                          <input name="site_desc" placeholder="请用简短的文字描述你的觅思文档站点" class="layui-input" value="{% if site_desc != None %}{{site_desc}}{% endif %}"></input>
+                        </div>
+                      </div>
+                      <!-- 备案号 -->
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">备案号</label>
+                        <div class="layui-input-inline">
+                          <input name="beian_code" placeholder="请输入网站的备案号" class="layui-input" value="{% if beian_code != None %}{{beian_code}}{% endif %}"></input>
+                        </div>
+                      </div>
+                        <div><button id="updateMetaBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                    </div>
+                   </div>
+               </form>
+                <!-- 首页模式 -->
+                <form class="layui-form" lay-filter="index_mode_config">
+                  <div class="layui-card settings-card">
+                    <div class="layui-card-header">首页模板</div>
+                    <div class="layui-card-body">
+                      <!-- 首页文集排序 -->
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">首页排序</label>
+                        <div class="layui-input-inline">
+                          {% if index_project_sort == '-1' %}
+                          <input type="radio" name="index_project_sort"" value="1" title="升序" >
+                          <input type="radio" name="index_project_sort" value="-1" title="降序" checked>
+                          {% else %}
+                          <input type="radio" name="index_project_sort"" value="1" title="升序" checked>
+                          <input type="radio" name="index_project_sort" value="-1" title="降序" >
+                          {% endif %}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">首页文集列表的排序方式</div>
+                      </div>
+                      <div><button id="updateIndexModeBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
                     </div>
                   </div>
-                  <!-- 站点子标题 -->
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">子标题</label>
-                    <div class="layui-input-block">
-                      <input name="site_sub_name" placeholder="请输入站点的子标题" class="layui-input" value="{% if site_sub_name != None %}{{site_sub_name}}{% endif %}"></input>
+                </form>
+
+                <form class="layui-form" lay-filter="siteCtrlConfig">
+                   <div class="layui-card settings-card">
+                    <div class="layui-card-header">站点管控</div>
+                    <div class="layui-card-body">
+                      <!-- 站点注册开关 -->
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">禁止注册</label>
+                        <div class="layui-input-inline">
+                          <input type="checkbox" name="close_register" lay-skin="switch" lay-text="开启|关闭"  {% if close_register %}checked{% endif %}>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">开启此选项将禁止新用户注册</div>
+                      </div>
+                      <!-- 站点强制登录开关 -->
+                       <div class="layui-form-item">
+                        <label class="layui-form-label">全站登录</label>
+                        <div class="layui-input-inline">
+                          <input type="checkbox" name="require_login" lay-skin="switch" lay-text="开启|关闭"  {% if require_login %}checked{% endif %}>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">开启此选项，除注册、登录页面外的所有页面的访问都需要登录</div>
+                      </div>
+                      <!-- 站点注册码开关 -->
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">启用注册码</label>
+                        <div class="layui-input-inline">
+                          <input type="checkbox" name="enable_register_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_register_code %}checked{% endif %}>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">开启此选项，新用户注册将需要填写注册码</div>
+                      </div>
+                      <!-- 登录验证码开关 -->
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">登录验证码</label>
+                        <div class="layui-input-inline">
+                          <input type="checkbox" name="enable_login_check_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_login_check_code %}checked{% endif %}>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">开启此选项，登录将需要填写验证码</div>
+                      </div>
+                        <div><button id="updateCtrlBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
                     </div>
-                  </div>
-                  <!-- 站点关键词 -->
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">关键词</label>
-                    <div class="layui-input-block">
-                      <input name="site_keywords" placeholder="多个关键词请使用使用英文逗号,进行分隔" class="layui-input" value="{% if site_keywords != None %}{{site_keywords}}{% endif %}"></input>
-                    </div>
-                  </div>
-                  <!-- 站点描述 -->
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">站点描述</label>
-                    <div class="layui-input-block">
-                      <input name="site_desc" placeholder="请用简短的文字描述你的觅思文档站点" class="layui-input" value="{% if site_desc != None %}{{site_desc}}{% endif %}"></input>
-                    </div>
-                  </div>
-                  <!-- 备案号 -->
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">备案号</label>
-                    <div class="layui-input-inline">
-                      <input name="beian_code" placeholder="请输入网站的备案号" class="layui-input" value="{% if beian_code != None %}{{beian_code}}{% endif %}"></input>
-                    </div>
-                  </div>
-                  <hr>
-                  <!-- 首页文集排序 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">首页排序</label>
-                    <div class="layui-input-inline">
-                      {% if index_project_sort == '-1' %}
-                      <input type="radio" name="index_project_sort"" value="1" title="升序" >
-                      <input type="radio" name="index_project_sort" value="-1" title="降序" checked>
-                      {% else %}
-                      <input type="radio" name="index_project_sort"" value="1" title="升序" checked>
-                      <input type="radio" name="index_project_sort" value="-1" title="降序" >
-                      {% endif %}
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">首页文集列表的排序方式</div>
-                  </div>
-                  <!-- 站点注册开关 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">禁止注册</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="close_register" lay-skin="switch" lay-text="开启|关闭"  {% if close_register %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项将禁止新用户注册</div>
-                  </div>
-                  <!-- 站点强制登录开关 -->
-                   <div class="layui-form-item">
-                    <label class="layui-form-label">全站登录</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="require_login" lay-skin="switch" lay-text="开启|关闭"  {% if require_login %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，除注册、登录页面外的所有页面的访问都需要登录</div>
-                  </div>
-                  <!-- 站点注册码开关 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">启用注册码</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_register_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_register_code %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，新用户注册将需要填写注册码</div>
-                  </div>
-                  <!-- 登录验证码开关 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">登录验证码</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_login_check_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_login_check_code %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，登录将需要填写验证码</div>
-                  </div>
-                  
-                  <!-- 文集导出开关 -->
-                   <div class="layui-form-item">
-                    <label class="layui-form-label">文集下载</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_project_report" lay-skin="switch" lay-text="开启|关闭"  {% if enable_project_report %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，文集允许导出为EPUB和DOCX等格式文件以供下载，文集拥有者可进行进一步控制特定文集是否开放导出</div>
-                  </div>
-                  <!-- 邮箱开关 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">启用邮箱</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_email" lay-skin="switch" lay-text="开启|关闭"  {% if enable_email %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项后还需进行邮箱信息配置</div>
-                  </div>
-                  <!-- 图片缩略开关 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">图片缩略</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="img_scale" lay-skin="switch" lay-text="开启|关闭"  {% if img_scale %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">开启后文档中的图片将显示为最大宽度350px的缩略图</div>
-                  </div>
-                  <hr>
-                  <!-- 长代码展开 -->
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">长代码展开</label>
-                    <div class="layui-input-inline">
-                      <input type="checkbox" name="long_code" lay-skin="switch" lay-text="开启|关闭"  {% if long_code %}checked{% endif %}>
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">文档页面代码块默认最高500px，超出将滚动显示，开启后代码块将按原高度显示。</div>
-                  </div>
-                  <hr>
-                   <!-- 版本更新检测 -->
+                   </div>
+                </form>
+
+                <!-- 版本更新检测 -->
+                <form class="layui-form" lay-filter="version_check_config">
+                  <div class="layui-card settings-card">
+                    <div class="layui-card-header">版本更新检测</div>
+                    <div class="layui-card-body">
                     <div class="layui-form-item">
                       <label class="layui-form-label">禁止更新检测</label>
                       <div class="layui-input-inline">
@@ -152,44 +144,47 @@
                       </div>
                       <div class="layui-form-mid layui-word-aux">开启后，后台将不会主动检测应用是否存在新的版本，默认关闭。</div>
                     </div>
-                    <hr>
+                    <div><button id="updateVersionCheckBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                    </div>
+                  </div>
+                </form>
+                <form class="layui-form" lay-filter="ad_config">
+                  <div class="layui-card settings-card">
+                    <div class="layui-card-header">页面信息块配置</div>
+                    <div class="layui-card-body">
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">统计代码</label>
+                        <div class="layui-input-block">
+                          <textarea name="static_code" placeholder="如果需要调用第三方的统计功能，请将第三方统计工具代码输入至此，可以包含<script>标签" class="layui-textarea">{{static_code}}</textarea>
+                        </div>
+                      </div>
 
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">统计代码</label>
-                    <div class="layui-input-block">
-                      <textarea name="static_code" placeholder="如果需要调用第三方的统计功能，请将第三方统计工具代码输入至此，可以包含<script>标签" class="layui-textarea">{{static_code}}</textarea>
-                    </div>
-                  </div>
+                       <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">广告位1</label>
+                        <div class="layui-input-block">
+                          <textarea name="ad_code" placeholder="如果需要在文档正文上方添加广告，请将广告相关代码输入至此，可以包含<script>标签" class="layui-textarea">{{ad_code}}</textarea>
+                        </div>
+                      </div>
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">广告位2</label>
+                        <div class="layui-input-block">
+                          <textarea name="ad_code_2" placeholder="此广告位位于文档下方、分享按钮上方，可以包含<script>标签" class="layui-textarea">{{ad_code_2}}</textarea>
+                        </div>
+                      </div>
 
-                   <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">广告位1</label>
-                    <div class="layui-input-block">
-                      <textarea name="ad_code" placeholder="如果需要在文档正文上方添加广告，请将广告相关代码输入至此，可以包含<script>标签" class="layui-textarea">{{ad_code}}</textarea>
-                    </div>
-                  </div>
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">广告位2</label>
-                    <div class="layui-input-block">
-                      <textarea name="ad_code_2" placeholder="此广告位位于文档下方、分享按钮上方，可以包含<script>标签" class="layui-textarea">{{ad_code_2}}</textarea>
-                    </div>
-                  </div>
-
-                  <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">广告位3</label>
-                    <div class="layui-input-block">
-                      <textarea name="ad_code_3" placeholder="此广告位位于文档左侧目录栏下方，可以包含<script>标签" class="layui-textarea">{{ad_code_3}}</textarea>
-                    </div>
-                  </div>
-                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">广告位4</label>
-                    <div class="layui-input-block">
-                      <textarea name="ad_code_4" placeholder="此广告位位于文档左侧目录栏上方，可以包含<script>标签" class="layui-textarea">{{ad_code_4}}</textarea>
-                    </div>
-                  </div>
-
-                  <div class="layui-form-item">
-                    <div class="layui-input-block">
-                      <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存</button>
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">广告位3</label>
+                        <div class="layui-input-block">
+                          <textarea name="ad_code_3" placeholder="此广告位位于文档左侧目录栏下方，可以包含<script>标签" class="layui-textarea">{{ad_code_3}}</textarea>
+                        </div>
+                      </div>
+                     <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">广告位4</label>
+                        <div class="layui-input-block">
+                          <textarea name="ad_code_4" placeholder="此广告位位于文档左侧目录栏上方，可以包含<script>标签" class="layui-textarea">{{ad_code_4}}</textarea>
+                        </div>
+                      </div>
+                      <div><button id="updateAdBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
                     </div>
                   </div>
                 </form>
@@ -220,9 +215,15 @@
 
               <!-- 邮箱设置 -->
             <div class="layui-tab-item">
-                <form class="layui-form" lay-filter="emailConfig" action="" method="post">
-                   {% csrf_token %}
-                    <input type="text" name="type" hidden value="email">
+                <form class="layui-form" lay-filter="emailConfig">
+                  <!-- 邮箱开关 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">启用邮箱</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="enable_email" lay-skin="switch" lay-text="开启|关闭"  {% if enable_email %}checked{% endif %}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项后还需进行邮箱信息配置</div>
+                  </div>
                   <div class="layui-form-item">
                     <label class="layui-form-label">发件邮箱</label>
                     <div class="layui-input-block">
@@ -247,14 +248,14 @@
                    <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">SMTP 用户名</label>
                     <div class="layui-input-block">
-                      <input type="text" name="smtp_username" class="layui-input" required value="{{email_username.value}}">
+                      <input type="text" name="username" class="layui-input" required value="{{email_username.value}}">
                     </div>
                   </div>
 
                     <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">SMTP 密码</label>
                     <div class="layui-input-block">
-                      <input type="password" name="smtp_pwd" class="layui-input" required value="{{email_dec_pwd}}">
+                      <input type="password" name="pwd" class="layui-input" required value="{{email_dec_pwd}}">
                     </div>
                   </div>
 
@@ -267,7 +268,7 @@
 
                   <div class="layui-form-item">
                     <div class="layui-input-block">
-                      <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存邮箱设置</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="updateEmailBtn">保存邮箱设置</button>
                       <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="checkEmail">验证邮箱设置</button>
                     </div>
                   </div>
@@ -277,47 +278,79 @@
 
               <!-- 全局文档设置 -->
             <div class="layui-tab-item">
-              <form action="" method="post" class="layui-form">
-                {% csrf_token %}
-                <input type="text" name="type" hidden value="doc">
-                <div class="layui-form-item" style="" id="role-user">
-                  <label class="layui-form-label">图片大小</label>
-                  <div class="layui-input-inline">
-                      <div class="tagsinput-primary form-group">
-                          <input class="layui-input" type="number" name="img_size" id="img_size" value="{% if img_size != '' %}{{img_size}}{% endif %}" placeholder="">
-                      </div>
-                  </div>
-                  <div class="layui-form-mid layui-word-aux">默认限制图片大小10MB，单位MB</div>
-                </div>
-
-                <div class="layui-form-item" style="" id="role-user">
-                  <label class="layui-form-label">附件格式</label>
-                  <div class="layui-input-inline">
-                      <div class="tagsinput-primary form-group">
-                          <input name="attachment_suffix" id="attachment_suffix" class="tagsinput" data-role="tagsinput" value="{% if attachment_suffix != '' %}{{attachment_suffix}}{% endif %}" placeholder="不带.号的格式后缀">
-                      </div>
-                  </div>
-                  <div class="layui-form-mid layui-word-aux">默认支持zip文件格式</div>
-                </div>
-
-                <div class="layui-form-item" style="" id="role-user">
-                  <label class="layui-form-label">附件大小</label>
-                  <div class="layui-input-inline">
-                      <div class="tagsinput-primary form-group">
-                          <input class="layui-input" type="number" name="attachment_size" id="attachment_size" value="{% if attachment_size != '' %}{{attachment_size}}{% endif %}" placeholder="">
-                      </div>
-                  </div>
-                  <div class="layui-form-mid layui-word-aux">默认限制附件文件大小50MB，单位MB</div>
-                </div>
-    
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                      <button class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter="formDemo">保存文档配置</button>
+                <form class="layui-form" lay-filter="global_doc_config">
+                <div class="layui-card settings-card">
+                  <div class="layui-card-header">文集、文档配置</div>
+                  <div class="layui-card-body">
+                    <!-- 文集导出开关 -->
+                   <div class="layui-form-item">
+                    <label class="layui-form-label">文集下载</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="enable_project_report" lay-skin="switch" lay-text="开启|关闭"  {% if enable_project_report %}checked{% endif %}>
                     </div>
+                    <div class="layui-form-mid layui-word-aux">开启此选项，文集允许导出为EPUB和DOCX等格式文件以供下载，文集拥有者可进行进一步控制特定文集是否开放导出</div>
+                  </div>
+
+                  <!-- 图片缩略开关 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">图片缩略</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="img_scale" lay-skin="switch" lay-text="开启|关闭"  {% if img_scale %}checked{% endif %}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">开启后文档中的图片将显示为最大宽度350px的缩略图</div>
+                  </div>
+                  <hr>
+                  <!-- 长代码展开 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">长代码展开</label>
+                    <div class="layui-input-inline">
+                      <input type="checkbox" name="long_code" lay-skin="switch" lay-text="开启|关闭"  {% if long_code %}checked{% endif %}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">文档页面代码块默认最高500px，超出将滚动显示，开启后代码块将按原高度显示。</div>
+                  </div>
+                  <div><button id="updateDocBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                  </div>
                 </div>
-            </form>
+                </form>
+
+              <form class="layui-form" lay-filter="media_config">
+                <div class="layui-card settings-card">
+                  <div class="layui-card-header">素材配置</div>
+                  <div class="layui-card-body">
+                    <div class="layui-form-item" style="" id="role-user">
+                      <label class="layui-form-label">图片大小</label>
+                      <div class="layui-input-inline">
+                          <div class="tagsinput-primary form-group">
+                              <input class="layui-input" type="number" name="img_size" id="img_size" value="{% if img_size != '' %}{{img_size}}{% endif %}" placeholder="">
+                          </div>
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">默认限制图片大小10MB，单位MB</div>
+                    </div>
+
+                    <div class="layui-form-item" style="" id="role-user">
+                      <label class="layui-form-label">附件格式</label>
+                      <div class="layui-input-inline">
+                          <div class="tagsinput-primary form-group">
+                              <input name="attachment_suffix" id="attachment_suffix" class="tagsinput" data-role="tagsinput" value="{% if attachment_suffix != '' %}{{attachment_suffix}}{% endif %}" placeholder="不带.号的格式后缀">
+                          </div>
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">默认支持zip文件格式</div>
+                    </div>
+
+                    <div class="layui-form-item" style="" id="role-user">
+                      <label class="layui-form-label">附件大小</label>
+                      <div class="layui-input-inline">
+                          <div class="tagsinput-primary form-group">
+                              <input class="layui-input" type="number" name="attachment_size" id="attachment_size" value="{% if attachment_size != '' %}{{attachment_size}}{% endif %}" placeholder="">
+                          </div>
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">默认限制附件文件大小50MB，单位MB</div>
+                    </div>
+                    <div><button id="updateMediaBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                  </div>
+                </div>
+                </form>
             </div>
-              <!-- 全局文档设置结束 -->
           </div>
         </div>
     </div>
@@ -368,9 +401,94 @@
     updateConfig(data_list)
   }
 
+  // 更新站点元信息
+  $("#updateMetaBtn").click(function(){
+    updateFunc1(name="meta_config")
+  })
+
+  // 更新首页主题配置
+  $("#updateIndexModeBtn").click(function(){
+    // console.log(form.val('index_mode_config'))
+    updateFunc1(name="index_mode_config")
+  })
+
+  // 更新站点管控配置
+  function updateSiteCtrl(){
+    var formdata = form.val('siteCtrlConfig');
+    var data_list = [];
+    if(formdata.close_register == undefined){
+      data_list.push({'type':'basic','name':'close_register','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'close_register','value':formdata.close_register})
+    }
+    if(formdata.require_login == undefined){
+      data_list.push({'type':'basic','name':'require_login','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'require_login','value':formdata.require_login})
+    }
+    if(formdata.enable_login_check_code == undefined){
+      data_list.push({'type':'basic','name':'enable_login_check_code','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'enable_login_check_code','value':formdata.enable_login_check_code})
+    }
+    if(formdata.enable_register_code == undefined){
+      data_list.push({'type':'basic','name':'enable_register_code','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'enable_register_code','value':formdata.enable_register_code})
+    }
+    updateConfig(data_list);
+  };
+  $("#updateCtrlBtn").click(function(){
+    updateSiteCtrl()
+  })
+
+  // 更新版本检测配置
+  function updateVersionCheck(){
+    var data = {
+      'type':'basic',
+      'name':'disable_update_check'
+    }
+    if(form.val("version_check_config").disable_update_check == undefined){
+      data['value'] = null
+    }else{
+      data['value'] = form.val("version_check_config").disable_update_check
+    }
+    // console.log(data)
+    updateConfig([data])
+  }
+  $("#updateVersionCheckBtn").click(function(){
+    updateVersionCheck()
+  })
+
   // 更新搜索配置
   $("#updateSearchBtn").click(function(){
     updateFunc1(name="search_config")
+  })
+
+  // 更新邮箱配置
+  $("#updateEmailBtn").click(function(){
+    var form_data = form.val("emailConfig")
+    // console.log(form_data)
+    var data_list = []
+    if(form_data.enable_email == undefined){
+      data_list.push({'type':'basic','name':'enable_email','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'enable_email','value':form_data.enable_email})
+    }
+    if(form_data.smtp_ssl == undefined){
+      data_list.push({'type':'email','name':'smtp_ssl','value':null})
+    }else{
+      data_list.push({'type':'email','name':'smtp_ssl','value':form_data.smtp_ssl})
+    }
+    for(var key in form_data){
+      if(key != 'enable_email' && key != 'smtp_ssl' ){
+        var item = {'type':'email','name':key,'value':form_data[key]}
+        data_list.push(item)
+      }
+    }
+    // console.log(data_list)
+    updateConfig(data_list)
+
   })
 
   // 验证邮箱配置
@@ -413,6 +531,44 @@
   };
   $("#checkEmail").click(function(){
     checkEmailConfig()
+  })
+
+  // 更新全局文集文档配置
+  $("#updateDocBtn").click(function(){
+    var form_data = form.val("global_doc_config")
+    // console.log(form_data)
+    var data_list = []
+    if(form_data.enable_project_report == undefined){
+      data_list.push({'type':'basic','name':'enable_project_report','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'enable_project_report','value':form_data.enable_project_report})
+    }
+    if(form_data.img_scale == undefined){
+      data_list.push({'type':'basic','name':'img_scale','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'img_scale','value':form_data.img_scale})
+    }
+    if(form_data.long_code == undefined){
+      data_list.push({'type':'basic','name':'long_code','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'long_code','value':form_data.long_code})
+    }
+
+    updateConfig(data_list)
+  });
+  // 更新素材配置
+  $("#updateMediaBtn").click(function(){
+    // console.log(form.val('media_config'))
+    var data_list = []
+    var form_data = form.val('media_config')
+
+    // console.log(form_data)
+    for(var key in form_data){
+      var item = {'type':'doc','name':key,'value':form_data[key]}
+      data_list.push(item)
+    }
+    updateConfig(data_list)
+    // console.log(data_list)
   })
 </script>
 {% endblock %}
