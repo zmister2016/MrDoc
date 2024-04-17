@@ -29,6 +29,7 @@ import re
 import datetime
 import requests
 import os
+import json
 
 
 # 返回验证码图片
@@ -1427,6 +1428,23 @@ def admin_setting(request):
             )
             return render(request, 'app_admin/admin_setting.html', locals())
 
+@superuser_only
+@require_http_methods(['POST'])
+def admin_site_config(request):
+    data = request.POST.get("data",'[]')
+    try:
+        data_json = json.loads(data)
+        for d in data_json:
+            if d['type'] == 'email' and d['name'] == 'pwd':
+                d['value'] = enctry(d['value'])
+            SysSetting.objects.update_or_create(
+                name=d['name'],
+                defaults={'value': d['value'], 'types': d['type']}
+            )
+        return JsonResponse({'code':0})
+    except:
+        logger.exception("更新站点设置出错")
+        return JsonResponse({'code':2,'data':'更新出错'})
 
 # 检测版本更新
 def check_update(request):

@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/doc_history_detail/', views.AdminDocHistoryDetail.as_view(), name="api_doc_history_detail"),  # 文档历史记录详情接口
     path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文档模板管理
     path('setting/',views.admin_setting,name="sys_setting"), # 应用设置
+    path('config',views.admin_site_config,name="site_config"), # 站点配置
     path('forget_pwd/',views.forget_pwd,name='forget_pwd'), # 忘记密码
     path('send_email_vcode/',views.send_email_vcode,name='send_email_vcode'), # 忘记密码发送邮件验证码
     path('send_email_test', views.send_email_test, name='send_email_test'),  # 发送测试邮件
