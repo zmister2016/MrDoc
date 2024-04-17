@@ -193,6 +193,28 @@
                     </div>
                   </div>
                 </form>
+
+                <!-- 默认搜索方式 -->
+                <form class="layui-form" lay-filter="search_config">
+                  <div class="layui-card settings-card">
+                    <div class="layui-card-header">站点搜索配置</div>
+                    <div class="layui-card-body">
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">搜索方式</label>
+                        <div class="layui-input-block">
+                          {% if search_type == '1' %}
+                          <input type="radio" name="search_type"" value="0" title="精准搜索" >
+                          <input type="radio" name="search_type" value="1" title="全文搜索" checked>
+                          {% else %}
+                          <input type="radio" name="search_type"" value="0" title="精准搜索" checked>
+                          <input type="radio" name="search_type" value="1" title="全文搜索" >
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div><button id="updateSearchBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                    </div>
+                  </div>
+                </form>
             </div>
               <!-- 网站设置结束 -->
 
@@ -313,6 +335,43 @@
   var form = layui.form;
   var element = layui.element;
   var layer = layui.layer;
+
+  // 更新站点配置
+  function updateConfig(data){
+    $.ajax({
+        url:"{% url 'site_config' %}",
+        type:"post",
+        data:{"data":JSON.stringify(data)},
+        success:function(r){
+          if(r.code === 0){
+            layer.msg("更新成功")
+          }else{
+            layer.msg(r.data)
+          }
+        },
+        error:function(){
+          layer.msg("更新异常")
+        }
+      })
+  }
+
+  // 更新函数1 - 用于 type 为 basic 的输入框、单选框等配置项
+  function updateFunc1(name){
+    var data = form.val(name)
+    // console.log(data)
+    var data_list = []
+    for(var key in data){
+      var item = {'type':'basic','name':key,'value':data[key]}
+      data_list.push(item)
+    }
+    // console.log(data_list)
+    updateConfig(data_list)
+  }
+
+  // 更新搜索配置
+  $("#updateSearchBtn").click(function(){
+    updateFunc1(name="search_config")
+  })
 
   // 验证邮箱配置
   function checkEmailConfig(){

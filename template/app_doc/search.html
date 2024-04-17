@@ -33,12 +33,21 @@
         <div class="con">
             <div class="shlogo"></div>
             <div class="sou">
+                {% if search_type == '1' %}
                 <form action="{% url 'doc_search' %}" method="get" target="_self">
                     <input class="wd" type="text" placeholder="请输入搜索内容" name="q" x-webkit-speech lang="zh-CN">
                     <!-- <input name="type" value="doc" hidden> -->
                     <input name="d_range" value="all" hidden>
                     <button type="submit" style="background-image: url(/static/search/search_btn.svg);"></button>
                 </form>
+                {% else %}
+                <form action="{% url 'search' %}" method="get" target="_self">
+                    <input class="wd" type="text" placeholder="请输入搜索内容" name="kw" x-webkit-speech lang="zh-CN">
+                    <input name="type" value="doc" hidden>
+                    <input name="d_range" value="all" hidden>
+                    <button type="submit" style="background-image: url(/static/search/search_btn.svg);"></button>
+                </form>
+                {% endif %}
                 <ul>
                     <li><a href="/"><i style="background-image: url(/static/search/home_btn.svg);"></i>{% trans "返回首页" %}</a></li>
                 </ul>
