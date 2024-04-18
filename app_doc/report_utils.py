@@ -715,7 +715,7 @@ class ReportPDF():
             <link rel="stylesheet" href="../../static/layui/css/layui.css" />
             <link rel="stylesheet" href="../../static/editor.md/css/editormd.css" />
             <link rel="stylesheet" href="../../static/mrdoc/mrdoc-docs.css" />
-            <script src="../../static/jquery/3.1.1/jquery.min.js"></script>
+            <script src="../../static/jquery/3.5.0/jquery.min.js"></script>
             <script>var iframe_whitelist = []</script>
             <script src="../../static/editor.md/lib/marked.min.js"></script>
             <script src="../../static/editor.md/lib/purify.min.js"></script>
