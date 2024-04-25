@@ -50,6 +50,17 @@
             <!-- 目录大纲 -->
             <div class="layui-tab-item">
                 <ul class="summary" id="doc-tree"></ul>
+                {% if toc_cnt > 999  %}
+                <style>
+                    #project-desc-toc-page .layui-laypage .layui-laypage-curr .layui-laypage-em{
+                        background-color: #333 !important;
+                    }
+                    #project-desc-toc-page a{
+                        color: #333 !important;
+                    }
+                </style>
+                <div id="project-desc-toc-page" style="text-align: center;"></div>
+                {% endif %}
             </div>
             <!-- 最新文档 -->
             <div class="layui-tab-item">
@@ -168,6 +179,84 @@
     var tree = layui.tree;
     var layer = layui.layer;
     var util = layui.util;
+    {% if toc_cnt > 999 %}
+        getDocTree = function(page=1){
+            $.ajax({
+                url:'/get_pro_doc_tree/',
+                type:'post',
+                data:{'pro_id':pro_id,'is_page':true,'page':page},
+                success:function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        var toc_str = generate_children_toc(r.data);
+                        $("#doc-tree").append(toc_str);
+                        docTreePager(r.total);
+                    }else{
+                        layer.msg("获取文集文档大纲失败！")
+                    }
+                },
+                error:function(){
+                    layer.closeAll('loading')
+                    layer.msg("文集目录大纲加载异常");
+                }
+            });
+        };
+        // 文集大纲分页器
+        docTreePager = function(cnt){
+            laypage.render({
+                elem: 'project-desc-toc-page',
+                count: cnt,
+                limit: 20,
+                // layout: ['prev', 'next'],
+                theme:'#333',
+                jump: function(obj,first){
+                    // console.log(obj,first)
+                    if(!first){
+                        getDocTreePage(obj.curr);
+                    }
+                }
+            });
+        }
+        // 文集大纲分页数据
+        getDocTreePage = function(page){
+            $.ajax({
+                url:'/get_pro_doc_tree/',
+                type:'post',
+                data:{'pro_id':pro_id,'is_page':true,'page':page},
+                success:function(r){
+                    layer.closeAll('loading')
+                    if(r.status){
+                        var toc_str = generate_children_toc(r.data);
+                        $('#doc-tree').empty();
+                        $("#doc-tree").append(toc_str);
+                    }else{
+                        layer.msg("获取文集文档大纲失败！")
+                    }
+                },
+                error:function(){
+                    layer.closeAll('loading')
+                    layer.msg("文集目录大纲加载异常");
+                }
+            });
+        };
+        generate_children_toc = function(tree){
+            var toc_str = ""
+            layui.each(tree,function(index,item){
+                toc_str += "<li>"
+                if(item['children'] != undefined){ // 存在二级文档
+                    li = '<div class="project-toc-left"><a href="/doc/'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>' +'<ul class="sub-menu">'
+                    toc_str += li
+                    toc_str += generate_children_toc(item['children'])
+                    toc_str += '</ul>'
+                }else{//不存在二级文档
+                    li = '<div class="project-toc-left"><a href="/doc/'+item.id+'/" title="'+item.title+'">'+item.title+'</a></div><div class="project-toc-right layui-hide-xs">' + util.toDateString(item.modify_time,"yyyy-MM-dd") + '</div>'
+                    toc_str += li
+                }
+                toc_str += '</li>'
+            });
+            return toc_str;
+        };
+    {% else %}
     getDocTree = function(){
         layer.load(1)
         $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
@@ -208,6 +297,7 @@
             layer.closeAll('loading')
         });
     };
+    {% endif %}
     getDocTree();
     // 渲染文集简介Markdown
     const renderDesc = () => {
