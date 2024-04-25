@@ -2180,6 +2180,7 @@ def get_pro_doc(request):
 @logger.catch()
 def get_pro_doc_tree(request):
     pro_id = request.POST.get('pro_id', None)
+    is_page = request.POST.get('is_page', False)
     if pro_id:
         # 查询存在上级文档的文档
         parent_id_list = Doc.objects.filter(top_doc=pro_id,status=1).exclude(parent_doc=0).values_list('parent_doc',flat=True)
@@ -2233,7 +2234,34 @@ def get_pro_doc_tree(request):
             else:
                 doc_list.append(top_item)
         doc_list = jsonXssFilter(doc_list)
-        return JsonResponse({'status':True,'data':doc_list})
+        if is_page is False:
+            return JsonResponse({'status':True,'data':doc_list})
+        else:
+            # 分页处理
+            paginator = Paginator(doc_list, 20)
+            page = request.POST.get('page', 1)
+            doc_id = request.POST.get('doc_id', None)
+            if doc_id:
+                data_index = -1
+                for index, item in enumerate(doc_list):
+                    if item.get('id') == int(doc_id):
+                        data_index = index
+                        break
+
+                if data_index != -1:
+                    # 计算指定 doc_id 所在的分页页码
+                    items_per_page = 20  # 每页显示的数量，需要和分页器中设置的数量保持一致
+                    page = data_index // items_per_page + 1
+                    # print("文档页码：", page)
+            try:
+                project_toc = paginator.page(page)
+            except PageNotAnInteger:
+                project_toc = paginator.page(1)
+            except EmptyPage:
+                project_toc = paginator.page(paginator.num_pages)
+
+            resp = {'status': True, "total": len(doc_list), 'data': list(project_toc), 'current': page}
+            return JsonResponse(resp)
     else:
         return JsonResponse({'status':False,'data':_('参数错误')})
 

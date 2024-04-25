@@ -114,6 +114,7 @@
             {% load doc_filter %}
             <nav>
                 <ul class="summary" id="project-toc"></ul>
+                <div id="project-toc-page" style="text-align: center;"></div>
             </nav>
         {% else %}
         <!-- 文档数量小于999，使用同步加载文集目录 -->
@@ -315,78 +316,114 @@
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
     var layer = layui.layer;
+    var laypage = layui.laypage;
+    var pro_id = '{{project.id}}';
     {% if toc_cnt > 999 %}
         // 如果文集的文档数量大于999，使用异步加载左侧文集大纲
-        getProjectToc = function(){
-            $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
-                $("#loading-project-toc").hide();
-                if(r.status){
-                    var toc_str = ""
-                    layui.each(r.data,function(index,item){
-                        toc_str += "<li>"
-                        if(item['children'] != undefined){ // 存在二级文档
-                            li = '<div style="display:flex;justify-content:space-between;">' +
-                                '<a href="/project-'+'{{project.id}}'+
-                                '/doc-'+item.id +
-                                '/" title="' +
-                                item.title +
-                                '">' +
-                                '<i class="iconfont mrdoc-icon-wendang"></i>&nbsp' +
-                                item.title+'</a>' +
-                                '<i class="layui-icon layui-icon-left switch-toc" style="padding:15px;"></i>'+
-                            '</div>'+
-                            '<ul class="sub-menu toc-close">'
-                            toc_str += li
-                            layui.each(item['children'],function(index,item){// 遍历二级文档
-                                toc_str += '<li>'
-                                if(item['children'] != undefined){ //存在三级文档
-                                    li = '<div style="display:flex;justify-content:space-between;">' +
-                                        '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+
-                                        '<i class="iconfont mrdoc-icon-wendang"></i>&nbsp' +
-                                        item.title+'</a>' +
-                                        '<i class="layui-icon layui-icon-left switch-toc" style="padding:15px;"></i>'+
-                                    '</div>'+'<ul class="sub-menu toc-close">'
-                                    toc_str += li
-                                    layui.each(item['children'],function(index,item){ // 遍历三级文档
-                                       if(item.editor_mode == 4){
-                                           li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
-                                       }else{
-                                           li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
-                                       }
+        getProjectToc = function(tree){
+            var toc_str = ""
+            layui.each(tree,function(index,item){
+                toc_str += "<li>"
+                if(item['children'] != undefined){ // 存在下级文档
+                    li = '<div style="display:flex;justify-content:space-between;">' +
+                        '<a href="/project-'+'{{project.id}}'+
+                        '/doc-'+item.id +
+                        '/" title="' +
+                        item.title +
+                        '">' +
+                        '<i class="iconfont mrdoc-icon-wendang"></i>&nbsp' +
+                        item.title+'</a>' +
+                        '<i class="layui-icon layui-icon-left switch-toc" style="padding:15px;"></i>'+
+                    '</div>'+
+                    '<ul class="sub-menu toc-close">'
+                    toc_str += li
+                    toc_str += getProjectToc(item['children'])
+                    toc_str += '</ul>'
+                }else{//不存在下级文档
+                   if(item.editor_mode == 4){
+                       li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
+                   }else{
+                       li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
+                   }
 
-                                        toc_str += li
-                                    })
-                                    toc_str += '</ul>'
-                                }else{// 不存在三级文档
-                                   if(item.editor_mode == 4){
-                                       li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
-                                   }else{
-                                       li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
-                                   }
-                                    toc_str += li
-                                }
-                                toc_str += '</li>'
-                            })
-                            toc_str += '</ul>'
-                        }else{//不存在二级文档
-                           if(item.editor_mode == 4){
-                               li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-table"></i>&nbsp;' + item.title + '</a>'
-                           }else{
-                               li = '<a href="/doc/'+ item.id +'/" class="doc-link" title="'+ item.title +'"><i class="iconfont mrdoc-icon-wendang"></i>&nbsp;' + item.title + '</a>'
-                           }
+                   toc_str += li
+                }
+                toc_str += '</li>'
+            });
+            return toc_str;
+        };
 
-                           toc_str += li
-                        }
-                        toc_str += '</li>'
-                    });
-                    $('#project-toc').append(toc_str)
-                    tagCurrentDoc();
-                }else{
-                    layer.msg("获取文集目录失败！")
+        initProjectToc = function(data){
+            $.ajax({
+                url:'/get_pro_doc_tree/',
+                type:'post',
+                data:data,
+                success:function(r){
+                    $("#loading-project-toc").hide();
+                    if(r.status){
+                        toc_str = getProjectToc(r.data);
+                        $('#project-toc').append(toc_str);
+                        projectsTocPager(r.total,r.current);
+                        tagCurrentDoc();
+                    }else{
+                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                    }
+                },
+                error:function(){
+                    $("#loading-project-toc").hide();
+                    layer.msg("文集目录大纲加载异常");
                 }
             });
         };
-        getProjectToc();
+        // 文集大纲分页器
+        projectsTocPager = function(cnt,current){
+            laypage.render({
+                elem: 'project-toc-page',
+                count: cnt,
+                limit: 20,
+                curr: current,
+                layout: ['prev', 'next'],
+                theme:'#333',
+                jump: function(obj,first){
+                    // console.log(obj,first)
+                    if(!first){
+                        getProjectTocPage(obj.curr);
+                    }
+                }
+            });
+        }
+        // 文集大纲分页数据
+        getProjectTocPage = function(page){
+            $.ajax({
+                url:'/get_pro_doc_tree/',
+                type:'post',
+                data:{'pro_id':pro_id,'is_page':true,'page':page},
+                success:function(r){
+                    $("#loading-project-toc").hide();
+                    if(r.status){
+                        toc_str = getProjectToc(r.data);
+                        $('#project-toc').empty();
+                        $('#project-toc').append(toc_str);
+                        tagCurrentDoc();
+                    }else{
+                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                    }
+
+                },
+                error:function(){
+                    $("#loading-project-toc").hide();
+                    layer.msg("文集目录大纲加载异常");
+                }
+            });
+        }
+
+        {% if doc.id %}
+            let data = {'pro_id':pro_id,'is_page':true,'doc_id':'{{doc.id}}'}
+            initProjectToc(data);
+        {% else %}
+            let data = {'pro_id':pro_id,'is_page':true,'page':1}
+            initProjectToc(data);
+        {% endif %}
     {% endif %}
 </script>
 
