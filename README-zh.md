@@ -45,7 +45,6 @@ MrDoc 全系产品目前涵盖以下终端：
 - 🗔桌面客户端：支持 Windows、macOS、Linux，[下载地址](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
 - 📱移动客户端：支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
 - Obsidian 同步插件：[使用教程](https://doc.mrdoc.pro/doc/45650/)
-- 微信小程序（开发中）
 
 ## 演示站点
 
@@ -172,8 +171,10 @@ python manage.py runserver
 ## 文档导入工具
 
 - [觅思文档导入工具箱](https://gitee.com/zmister/mrdoc-import-toolbox)
-    - 支持觅思文档导出的文集；
-    - 支持语雀知识库；
+    - 觅思文档导出的文集
+    - 语雀知识库
+    - 印象笔记
+    - Joplin
 
 ## 其他工具
 
