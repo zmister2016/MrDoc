@@ -312,12 +312,12 @@ def send_email_vcode(request):
 @superuser_only
 @require_http_methods(['POST'])
 def send_email_test(request):
-    smtp_host = request.POST.get('smtp_host','')
-    send_emailer = request.POST.get('send_emailer','')
-    smtp_port = request.POST.get('smtp_port','')
-    username = request.POST.get('smtp_username','')
-    pwd = request.POST.get('smtp_pwd','')
-    ssl = True if request.POST.get('smtp_ssl','') == 'on' else False
+    smtp_host = request.POST.get('smtp_host', '')
+    send_emailer = request.POST.get('send_emailer', '')
+    smtp_port = request.POST.get('smtp_port', '')
+    username = request.POST.get('username', '')
+    pwd = request.POST.get('pwd', '')
+    ssl = True if request.POST.get('smtp_ssl', '') == 'on' else False
     # print(smtp_host,smtp_port,send_emailer,username,pwd)
 
     msg_from = send_emailer  # 发件人邮箱
@@ -338,16 +338,17 @@ def send_email_test(request):
             s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
         else:
             s = smtplib.SMTP(smtp_host, int(smtp_port))
+        # print(pwd)
         s.login(username, pwd)
         s.sendmail(from_addr=msg_from, to_addrs=msg_to, msg=msg.as_string())
         s.quit()
-        return JsonResponse({'status':True,'data':_('发送成功')})
+        return JsonResponse({'status': True, 'data': _('发送成功')})
     except smtplib.SMTPException as e:
         logger.error("邮件发送异常:{}".format(repr(e)))
-        return JsonResponse({'status':False,'data':repr(e)})
+        return JsonResponse({'status': False, 'data': repr(e)})
     except Exception as e:
         logger.error("邮件发送异常:{}".format(repr(e)))
-        return JsonResponse({'status':False,'data':repr(e)})
+        return JsonResponse({'status': False, 'data': repr(e)})
 
 # 后台管理 - 仪表盘
 @superuser_only
