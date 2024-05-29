@@ -271,6 +271,7 @@ def get_self_docs(request):
     token = request.GET.get('token', '')
     sort = request.GET.get('sort',0)
     kw = request.GET.get('kw','')
+    limit = request.GET.get('limit', 10)
     if sort == '1':
         sort = '-'
     else:
@@ -286,7 +287,7 @@ def get_self_docs(request):
             docs = Doc.objects.filter(create_user=token.user,status=1,name__icontains=kw).order_by('{}modify_time'.format(sort))
 
         # 分页处理
-        paginator = Paginator(docs, 10)
+        paginator = Paginator(docs, limit)
         page = request.GET.get('page', 1)
         try:
             docs_page = paginator.page(page)
