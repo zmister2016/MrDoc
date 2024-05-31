@@ -161,6 +161,7 @@ def get_projects(request):
 def get_docs(request):
     token = request.GET.get('token', '')
     sort = request.GET.get('sort',0)
+    limit = request.GET.get('limit', 10)
     if sort == '1':
         sort = '-'
     else:
@@ -169,8 +170,20 @@ def get_docs(request):
         token = UserToken.objects.get(token=token)
         pid = request.GET.get('pid','')
         docs = Doc.objects.filter(create_user=token.user,top_doc=pid,status=1).order_by('{}create_time'.format(sort))  # 查询文集下的文档
+
+        # 分页处理
+        paginator = Paginator(docs, limit)
+        page = request.GET.get('page', 1)
+        try:
+            docs_page = paginator.page(page)
+        except PageNotAnInteger:
+            docs_page = paginator.page(1)
+        except EmptyPage:
+            # docs_page = paginator.page(paginator.num_pages)
+            return JsonResponse({'status': True, 'data': []})
+
         doc_list = []
-        for doc in docs:
+        for doc in docs_page:
             item = {
                 'id': doc.id,  # 文档ID
                 'name': doc.name,  # 文档名称
