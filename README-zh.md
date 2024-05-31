@@ -212,7 +212,7 @@ python manage.py runserver
 
 如果违反，开发者保留对侵权者追究责任的权利。
 
-其他相关协议亦可参考《[免责声明](https://gitee.com/zmister/MrDoc/blob/main/DISCLAIMER.md)》。
+其他相关协议亦可参考《[免责声明](https://gitee.com/zmister/MrDoc/blob/master/DISCLAIMER.md)》。
 
 商业授权（专业版）请微信咨询：
 
