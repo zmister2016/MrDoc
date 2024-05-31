@@ -212,6 +212,8 @@ python manage.py runserver
 
 如果违反，开发者保留对侵权者追究责任的权利。
 
+其他相关协议亦可参考《[免责声明](https://gitee.com/zmister/MrDoc/blob/main/DISCLAIMER.md)》。
+
 商业授权（专业版）请微信咨询：
 
 <img src="https://doc.mrdoc.pro/media/202212/wechatwork_qrcode_20221201165203490192.png" width="200px" />
