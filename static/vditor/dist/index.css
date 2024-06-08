@@ -1,5 +1,5 @@
 /*!
- * Vditor v3.8.15 - A markdown editor written in TypeScript.
+ * Vditor v3.10.2 - A markdown editor written in TypeScript.
  *
  * MIT License
  *
@@ -727,7 +727,7 @@
   bottom: 0;
   display: flex;
   flex-direction: column;
-  z-index: 3;
+  z-index: 100;
 }
 .vditor-img__bar {
   border-bottom: 1px solid var(--border-color);
@@ -864,6 +864,9 @@
 }
 .vditor-reset li + li {
   margin-top: 0.25em;
+}
+.vditor-reset li p {
+  margin-top: 16px;
 }
 .vditor-reset audio {
   max-width: 100%;
@@ -1024,6 +1027,7 @@
 .vditor-reset .language-mindmap,
 .vditor-reset .language-plantuml,
 .vditor-reset .language-mermaid,
+.vditor-reset .language-markmap,
 .vditor-reset .language-abc,
 .vditor-reset .language-flowchart,
 .vditor-reset .language-graphviz {
@@ -1039,6 +1043,7 @@
   height: 420px;
 }
 .vditor-reset .language-mermaid,
+.vditor-reset .language-markmap,
 .vditor-reset .language-flowchart,
 .vditor-reset .language-graphviz {
   text-align: center;

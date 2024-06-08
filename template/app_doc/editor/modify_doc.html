@@ -148,7 +148,7 @@
             <div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:600px;left: 0px;top: 0px;"></div>
             <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
         {% else %}
-            {{ doc.pre_content }}
+            <textarea style="display:none;">{{ doc.pre_content }}</textarea>
         {% endif %}
     </div>
 {% endblock %}

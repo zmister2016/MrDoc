@@ -191,6 +191,7 @@
         ]
     }
     var editor = new Vditor('editor-md',{
+        value:$("#editor-md textarea").val(),
         "cdn":"{% static 'vditor' %}",
         "toolbar": vditor_toolbar,
         "height":vditor_height,
