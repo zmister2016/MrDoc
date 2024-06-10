@@ -167,3 +167,8 @@ Thanks for the development based on the following projects：
 <a href="./LICENSE">GPL-3.0</a>
 
 Business License Contact:zmister@qq.com
+### Infrastructure model
+![Infrastructure main model](.infragenie/infrastructure_main_model.svg)
+- [mrdoc-mysql component model](.infragenie/mrdoc-mysql_component_model.svg)
+
+---
