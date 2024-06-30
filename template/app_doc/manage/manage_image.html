@@ -31,7 +31,7 @@
             <a href="{% url 'manage_image' %}?group=0" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == 0 %}current{% endif %}">{% trans "全部图片" %}({{all_img_cnt}})</a>
             <a href="{% url 'manage_image' %}?group=-1" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == -1 %}current{% endif %}">{% trans "未分组" %}({{no_group_cnt}})</a>
             {% for group in groups %}
-            <a href="{% url 'manage_image' %}?group={{group.id}}" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == group.id %}current{% endif %}">{{group.group_name}}({{group.id | img_group_cnt}})</a>
+            <a href="{% url 'manage_image' %}?group={{group.id}}" class="layui-btn layui-btn-xs layui-btn-primary {% if g_id == group.id %}current{% endif %}">{{group.group_name | safe}}({{group.id | img_group_cnt}})</a>
             {% endfor %}
             </span>
         </div>

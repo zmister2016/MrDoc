@@ -33,7 +33,7 @@
                     {% load project_filter %}
                     {% for group in groups %}
                     <tr>
-                    <td>{{ group.group_name }}</td>
+                    <td>{{ group.group_name | safe }}</td>
                     <td>{{ group.id | img_group_cnt }}</td>
                     <td>
                         <a href="javascript:void(0);"  onclick="modifyGroup('{{group.id}}')" class="layui-btn layui-btn-xs layui-btn-normal">

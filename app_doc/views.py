@@ -17,7 +17,7 @@ from rest_framework.pagination import PageNumberPagination # 分页
 from rest_framework.authentication import SessionAuthentication # 认证
 from django.db.models import Q
 from django.db import transaction
-from django.utils.html import strip_tags
+from django.utils.html import strip_tags,escape
 from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from app_api.serializers_app import *
@@ -2673,7 +2673,7 @@ def manage_img_group(request):
         types = request.POST.get('types',None) # 请求类型，0表示创建分组，1表示修改分组，2表示删除分组，3表示获取分组
         # 创建分组
         if int(types) == 0:
-            group_name = request.POST.get('group_name', '')
+            group_name = escape(request.POST.get('group_name', ''))
             if group_name not in ['',_('默认分组'),_('未分组')]:
                 ImageGroup.objects.get_or_create(
                     user = request.user,
@@ -2684,7 +2684,7 @@ def manage_img_group(request):
                 return JsonResponse({'status':False,'data':_('名称无效')})
         # 修改分组
         elif int(types) == 1:
-            group_name = request.POST.get("group_name",'')
+            group_name = escape(request.POST.get("group_name",''))
             if group_name not in ['',_('默认分组'),_('未分组')]:
                 group_id = request.POST.get('group_id', '')
                 ImageGroup.objects.filter(id=group_id,user=request.user).update(group_name=group_name)
