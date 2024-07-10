@@ -98,6 +98,14 @@
                         <h1>{{ doc.name }}</h1><hr>
                         {% endblock %}
 
+                        <!-- 广告代码开始 -->
+                        {% if debug %}
+                        {% else %}
+                            {% if ad_code %}
+                                <div class="ad-code" id="ad-code-1"></div>
+                            {% endif %}
+                        {% endif %}
+                        <!-- 广告代码结束 -->
                     </div>
                     <!-- 标题结束 -->
                     <!-- 正文开始 -->
@@ -136,6 +144,15 @@
                     </div>
                 {% endblock %}
                 </div>
+
+                <!-- 广告代码开始 -->
+                {% if debug %}
+                {% else %}
+                    {% if ad_code_2 %}
+                        <div class="ad-code" id="ad-code-2"></div>
+                    {% endif %}
+                {% endif %}
+                <!-- 广告代码结束 -->
 
                 {% block doc_previous_next %}{% endblock %}
             </div>
