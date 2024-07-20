@@ -202,6 +202,8 @@ if os.path.exists(MEDIA_ROOT) is False:
 # 允许上传的图片后缀
 ALLOWED_IMG = CONFIG.get("image_upload","suffix_name",fallback="jpg,jpeg,gif,png,bmp,webp").split(",")
 
+# 附件格式验证
+CHECK_ATTACHMENT_SUFFIX = CONFIG.getboolean('attachment_suffix','is_enable',fallback=True)
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
