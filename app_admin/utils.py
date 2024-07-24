@@ -13,6 +13,8 @@ from app_admin.models import SysSetting
 from loguru import logger
 import random
 import smtplib
+import zipfile
+import os
 
 # 生成数字验证码
 def generate_vcode(n=6):
@@ -94,3 +96,20 @@ def is_internal_path(path):
         return True
     except Resolver404:
         return False
+
+def is_zip_bomb(zip_path, compression_threshold=100):
+    try:
+        with zipfile.ZipFile(zip_path, 'r') as zip_file:
+            uncompressed_size = sum(file.file_size for file in zip_file.infolist())
+            compressed_size = os.path.getsize(zip_path)
+            # print(f"未压缩大小：{uncompressed_size}")
+            # print(f"压缩后大小：{compressed_size}")
+            compression_ratio = uncompressed_size / compressed_size
+            # print(f"压缩率：{compression_ratio}")
+            if compression_ratio > compression_threshold:
+                return True
+    except zipfile.BadZipFile:
+        return False
+    except Exception as e:
+        return False
+    return False

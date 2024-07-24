@@ -25,6 +25,7 @@ from app_doc.report_utils import *
 from app_doc.utils import check_user_project_writer_role
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
+from app_admin.utils import is_zip_bomb
 from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
 import datetime
 import traceback
@@ -35,6 +36,7 @@ import os.path
 import base64
 import hashlib
 import markdown
+import tempfile
 
 
 # HTML转义
@@ -2824,6 +2826,20 @@ def manage_attachment(request):
                         allow_attachment = True
                 else:
                     allow_attachment = True
+
+                # 检测ZIP炸弹
+                if allow_attachment and attachment_name.split('.')[-1].lower() == 'zip':
+                    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                        for chunk in attachment.chunks():
+                            temp_file.write(chunk)
+                        temp_file_path = temp_file.name
+
+                    if is_zip_bomb(temp_file_path):
+                        os.remove(temp_file_path)
+                        return JsonResponse({'code': 5, 'data': _('检测到可能的ZIP炸弹')})
+
+                    os.remove(temp_file_path)
+                    attachment.seek(0)
 
                 if allow_attachment:
                     a = Attachment.objects.create(
