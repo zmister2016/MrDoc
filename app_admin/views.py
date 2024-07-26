@@ -1546,6 +1546,14 @@ def admin_center_menu(request):
             "href": reverse('sys_setting'),
         },
         {
+            "id": 'update_pro',
+            "title": _("升级专业版"),
+            "type": 1,
+            "icon": "layui-icon layui-icon-senior",
+            "href": 'https://doc.mrdoc.pro/doc/3441/',
+            "openType": "_blank",
+        },
+        {
             "id": "download",
             "title": _("客户端下载"),
             "icon": "layui-icon layui-icon-template-1",
@@ -1576,6 +1584,14 @@ def admin_center_menu(request):
                     "openType": "_blank",
                     "href": "https://gitee.com/zmister/mrdoc-app-release"
                 },
+                {
+                    "id": 705,
+                    "title": _("Obsidian插件"),
+                    "icon": "layui-icon layui-icon-face-cry",
+                    "type": 1,
+                    "openType": "_blank",
+                    "href": "https://gitee.com/zmister/obsidian-mrdoc-plugin"
+                },
             ]
         },
         {
@@ -1598,7 +1614,15 @@ def admin_center_menu(request):
                 "type": 1,
                 "openType": "_blank",
                 "href": "https://doc.mrdoc.pro/project/54/"
-            }]
+            },{
+                "id": 'doc-example',
+                "title": _("文档示例"),
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "https://doc.mrdoc.pro/p/example/"
+            }
+            ]
         }
     ]
     return JsonResponse(menu_data,safe=False)

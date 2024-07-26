@@ -217,6 +217,14 @@ def user_center_menu(request):
                     "openType": "_blank",
                     "href": "https://gitee.com/zmister/mrdoc-app-release"
                 },
+                {
+                    "id": 705,
+                    "title": _("Obsidian插件"),
+                    "icon": "layui-icon layui-icon-face-cry",
+                    "type": 1,
+                    "openType": "_blank",
+                    "href": "https://gitee.com/zmister/obsidian-mrdoc-plugin"
+                },
             ]
         },
         {
@@ -232,6 +240,13 @@ def user_center_menu(request):
                 "type": 1,
                 "openType": "_blank",
                 "href": "https://doc.mrdoc.pro/project/54/"
+            },{
+                "id": 'doc-example',
+                "title": _("文档示例"),
+                "icon": "layui-icon layui-icon-face-smile",
+                "type": 1,
+                "openType": "_blank",
+                "href": "https://doc.mrdoc.pro/p/example/"
             }]
         }
     ]
