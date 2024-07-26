@@ -93,22 +93,19 @@
                 <div class="layui-card-header">MrDoc {{mrdoc_version}}</div>
                 <div class="layui-card-body">
                     <div style="margin-bottom: 5px;">
-                        <a href="https://doc.mrdoc.pro/project-7/doc-3441/" class="pear-btn layui-btn-fluid" target="_blank">
+
+                    </div>
+                    <div class="layui-btn-group" style="margin-bottom: 5px;display:flex;justify-content: space-between;">
+                        <a href="https://doc.mrdoc.pro/project-7/doc-3441/" class="pear-btn" target="_blank">
                             <i class="layui-icon layui-icon-rate-solid" style="color:rgb(242, 203, 81);"></i>
-                            <span style="font-weight:700;color:red;">升级专业版享折扣！</span>
+                            <span style="font-weight:700;color:red;">升级专业版！</span>
                         </a>
+                        <a href="https://gitee.com/zmister/MrDoc" class="pear-btn" target="_blank">访问 Gitee</a>
+                        <a href="https://github.com/zmister2016/MrDoc" class="pear-btn" target="_blank">访问 GitHub</a>
+                        <button class="pear-btn" onclick="checkUpdate()">检查更新</button>
                     </div>
                     <div style="margin-bottom: 5px;">
-                        <a href="https://gitee.com/zmister/MrDoc" class="pear-btn layui-btn-fluid" target="_blank">访问 Gitee</a>
-                    </div>
-                    <div style="margin-bottom: 5px;">
-                        <a href="https://github.com/zmister2016/MrDoc" class="pear-btn layui-btn-fluid" target="_blank">访问 GitHub</a>
-                    </div>
-                    <div style="margin-bottom: 5px;">
-                        <button class="pear-btn layui-btn-fluid" onclick="checkUpdate()">检查版本更新</button>
-                    </div>
-                    <div style="margin-bottom: 5px;">
-                        <img src="{% static 'mrdoc/20220331121926_20220331122015390193.png' %}" width="100%" />
+                        <img src="{% static 'mrdoc/20220331121926_20220331122015390193.png' %}" width="50%" />
                     </div>
 
                 </div>
@@ -186,15 +183,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="layui-card">
-                <div class="layui-card-header">捐赠 - 请作者喝杯奶茶吧</div>
-                <div class="layui-card-body">
-                    <p align="center">
-                        <img src="{% static 'dashang/dashang_wx.webp' %}" height=200>
-                        <img src="{% static 'dashang/dashang_alipay.webp' %}" height=200>
-                    </p>
                 </div>
             </div>
         </div>
