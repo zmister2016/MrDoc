@@ -14,6 +14,7 @@ from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_im
 from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
 from app_doc.models import Project,Doc,DocHistory,Image
+from app_api.serializers_app import ImageSerializer,ProjectSerializer
 from app_api.utils import read_add_projects,remove_doc_tag
 from loguru import logger
 import time,hashlib
@@ -145,6 +146,7 @@ def get_projects(request):
                 'name':project.name, # 文集名称
                 'icon': project.icon,  # 文集图标
                 'type':project.role, # 文集状态
+                'desc': project.intro,  # 文集简介
                 'total': Doc.objects.filter(top_doc=project.id, status=1).count(),
                 'create_time': project.create_time
             }
@@ -156,6 +158,26 @@ def get_projects(request):
         logger.exception(_("token获取文集异常"))
         return JsonResponse({'status':False,'data':_('系统异常')})
 
+# 获取指定文集信息
+def get_project(request):
+    token = request.GET.get('token', '')
+    try:
+        token = UserToken.objects.get(token=token)
+        pid = request.GET.get('pid', '')
+        project = Project.objects.get(id=pid)
+        # 用户有浏览和新增权限的文集列表
+        view_list = read_add_projects(token.user)
+
+        if project.id not in view_list:
+            return JsonResponse({'status': False, 'data': _('无权限')})
+
+        item = ProjectSerializer(project,many=False).data
+        return JsonResponse({'status': True, 'data': item})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': _('token无效')})
+    except:
+        logger.exception("token获取文集异常")
+        return JsonResponse({'status': False, 'data': _('系统异常')})
 
 # 获取文集下的文档列表
 def get_docs(request):
