@@ -182,6 +182,14 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR,'locale'),
 )
 
+# Session 会话配置
+SESSION_COOKIE_AGE = CONFIG.get('session','cookie_age',fallback=604800) # 会话过期时间，秒数
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = CONFIG.getboolean('session','browser_close',fallback=False) # 浏览器关闭即关闭会话
+
+SESSION_COOKIE_SECURE = CONFIG.getboolean('session','cookie_secure',fallback=False) # 安全Cookie状态
+
+SESSION_COOKIE_HTTPONLY = CONFIG.getboolean('session','cookie_httponly',fallback=True)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
