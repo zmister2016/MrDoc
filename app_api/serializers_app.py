@@ -20,10 +20,18 @@ class UserSerializer(ModelSerializer):
 # 文集序列化器
 class ProjectSerializer(ModelSerializer):
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M')
+    doc_total = serializers.SerializerMethodField(label="文档数")
+    username = serializers.SerializerMethodField(label="作者")
 
     class Meta:
         model = Project
         fields = ('__all__')
+
+    def get_username(self,obj):
+        return obj.create_user.username
+
+    def get_doc_total(self,obj):
+        return Doc.objects.filter(top_doc=obj.id).count()
 
 # 协作文集序列化器
 class ProjectCollaSerializer(ModelSerializer):
