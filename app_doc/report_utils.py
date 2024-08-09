@@ -78,59 +78,35 @@ class ReportMD():
         project_toc_list['project_role'] = self.project_data.role
         project_toc_list['toc'] = []
         # 读取指定文集的文档数据
-        data = Doc.objects.filter(top_doc=self.pro_id, parent_doc=0).order_by("sort")
-        # 遍历一级文档
-        for d in data:
-            top_item = {
-                'name': validate_title(d.name),
-                'file': validate_title(d.name)+'.md',
-            }
-            md_name = validate_title(d.name) # 文档名称
-            # 文档内容，如果使用Markdown编辑器编写则导出Markdown文本，如果使用富文本编辑器编写则导出HTML文本
-            md_content = self.operat_md_media(d.pre_content) \
-                if d.editor_mode in [1,2] else self.operat_md_media(d.content)
+        data = Doc.objects.filter(
+            top_doc=self.pro_id,
+            status=1
+        ).order_by('sort', 'create_time').values(
+            'name', 'editor_mode', 'pre_content', 'content', 'parent_doc', 'id'
+        )
+        if data.count() == 0:
+            return None
+        out = {}
+        for p in data:
+            doc_pre_content = p['pre_content']
+            doc_content = p['content']
+            p['name'] = validate_title(p['name'])
+            p['file'] = '{}-{}.md'.format(validate_title(p['name']), p['id'])
+            del p['pre_content']
+            del p['content']
+            out.setdefault(p['parent_doc'], {'children': []})
+            out.setdefault(p['id'], {'children': []})
+            out[p['id']].update(p)
+            out[p['parent_doc']]['children'].append(out[p['id']])
 
+            # 处理文档内的图片，如果使用Markdown编辑器编写则导出Markdown文本，如果使用富文本编辑器编写则导出HTML文本
+            md_content = self.operat_md_media(doc_content) \
+                if p['editor_mode'] in [3] else self.operat_md_media(doc_pre_content)
             # 新建MD文件
-            with open('{}/{}.md'.format(self.project_path,md_name),'w',encoding='utf-8') as files:
+            file_path = '{}/{}-{}.md'.format(self.project_path, p['name'], p['id'])
+            with open(file_path, 'w', encoding='utf-8') as files:
                 files.write(md_content)
-
-            # 查询二级文档
-            data_2 = Doc.objects.filter(parent_doc=d.id).order_by("sort")
-            if data_2.count() > 0:
-                top_item['children'] = []
-                for d2 in data_2:
-                    sec_item = {
-                        'name': validate_title(d2.name),
-                        'file': validate_title(d2.name)+'.md',
-                    }
-
-                    md_name_2 = validate_title(d2.name)
-                    md_content_2 = self.operat_md_media(d2.pre_content) \
-                        if d2.editor_mode in [1,2] else self.operat_md_media(d2.content)
-
-                    # 新建MD文件
-                    with open('{}/{}.md'.format(self.project_path, md_name_2), 'w', encoding='utf-8') as files:
-                        files.write(md_content_2)
-
-                    # 获取第三级文档
-                    data_3 = Doc.objects.filter(parent_doc=d2.id).order_by("sort")
-                    if data_3.count() > 0:
-                        sec_item['children'] = []
-                        for d3 in data_3:
-                            item = {
-                                'name': validate_title(d3.name),
-                                'file': validate_title(d3.name)+'.md',
-                            }
-                            sec_item['children'].append(item)
-                            md_name_3 = validate_title(d3.name)
-                            md_content_3 = self.operat_md_media(d3.pre_content) \
-                                if d3.editor_mode in [1,2] else self.operat_md_media(d3.content)
-
-                            # 新建MD文件
-                            with open('{}/{}.md'.format(self.project_path, md_name_3), 'w', encoding='utf-8') as files:
-                                files.write(md_content_3)
-                    top_item['children'].append(sec_item)
-            project_toc_list['toc'].append(top_item)
+        project_toc_list['toc'] = out[0]['children']
 
         # 写入层级YAML
         with open('{}/mrdoc.yaml'.format(self.project_path), 'a+', encoding='utf-8') as toc_yaml:
