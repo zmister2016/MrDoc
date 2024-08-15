@@ -89,7 +89,7 @@
                             <script>
                                 // 点击一次,更改图片内容,
                                 function ChangeCode(ths){
-                                    ths.src = ths.src + '?';
+                                    ths.src = "{% url 'check_code' %}?t=" + Date.now();
                                 }
                             </script>
                     </div>
