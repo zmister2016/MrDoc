@@ -2,7 +2,7 @@ django==2.2.*
 beautifulsoup4==4.8.2
 lxml
 pillow>=7.1.0,<10.0
-loguru==0.4.1
+loguru==0.5.3
 importlib-metadata==4.7.1
 djangorestframework==3.11.2
 requests==2.24.0
