@@ -3920,6 +3920,9 @@
 .editormd-preview-container .katex, .editormd-html-preview .katex {
   font-size: 1.4em;
 }
+span.editormd-tex .katex{
+  font-size: initial !important;
+}
 .editormd-preview-container .sequence-diagram, .editormd-preview-container .flowchart, .editormd-html-preview .sequence-diagram, .editormd-html-preview .flowchart {
   margin: 0 auto;
   text-align: center;
