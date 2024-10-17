@@ -40,7 +40,6 @@ def validate_title(title):
   return new_title
 
 # 导出MD文件压缩包
-@logger.catch()
 class ReportMD():
     def __init__(self,project_id):
         # 查询文集信息
@@ -240,7 +239,6 @@ class ReportMdBatch():
 
 
 # 导出EPUB
-@logger.catch()
 class ReportEPUB():
     def __init__(self,project_id):
         self.project = Project.objects.get(id=project_id)
@@ -674,7 +672,6 @@ class ReportEPUB():
 
 
 # 导出PDF
-@logger.catch()
 class ReportPDF():
     def __init__(self,project_id,user_id):
         # 查询文集信息
@@ -997,18 +994,3 @@ class ReportDocx():
         with open(temp_file_path, 'a+', encoding='utf-8') as htmlfile:
             htmlfile.write(self.doc_str + self.content_str + "</body></html>")
 
-
-if __name__ == '__main__':
-    # app = ReportMD(
-    #     project_id=7
-    # )
-    # app.work()
-
-    # app = ReportEPUB(project_id=20)
-    # app.work()
-
-    app = ReportPDF(project_id=20)
-    app.work()
-
-    # app = ReportDocx(project_id=20)
-    # app.work()

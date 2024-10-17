@@ -9,8 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.utils import ChromeType
+from webdriver_manager.chrome import ChromeDriverManager,ChromeType
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 import sys
@@ -66,7 +65,10 @@ def __get_pdf_from_html(path: str, timeout: int, install_driver: bool, print_opt
 
     # 使用指定的chromedriver
     if settings.CHROMIUM_DRIVER_PATH is not None:
-        driver = webdriver.Chrome(executable_path=settings.CHROMIUM_DRIVER_PATH,options=webdriver_options)
+        from selenium.webdriver.chrome.service import Service
+        # 创建 Service 对象
+        service = Service(executable_path=settings.CHROMIUM_DRIVER_PATH)
+        driver = webdriver.Chrome(service=service, options=webdriver_options)
     # 使用默认的chromedriver
     else:
         driver = webdriver.Chrome(options=webdriver_options)
@@ -74,7 +76,8 @@ def __get_pdf_from_html(path: str, timeout: int, install_driver: bool, print_opt
     driver.get(path)
 
     try:
-       WebDriverWait(driver, timeout).until(staleness_of(driver.find_element_by_tag_name('html')))
+        from selenium.webdriver.common.by import By
+        WebDriverWait(driver, timeout).until(staleness_of(driver.find_element(By.TAG_NAME, 'html')))
     except TimeoutException:
         calculated_print_options = {
             'landscape': False,
