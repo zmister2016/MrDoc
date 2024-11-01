@@ -9,9 +9,9 @@
 
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.9.3-brightgreen.svg" title="Mrdoc" />
-<img src="https://img.shields.io/badge/Python-3.6+-blue.svg" title="Python" />
-<img src="https://img.shields.io/badge/Django-v2.2-important.svg" title="Django" />
+<img src="https://img.shields.io/badge/MrDoc-v0.9.4-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
+<img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
 <a href="https://hellogithub.com/repository/6494f041e00d4b8481ed1114a0bd33c1" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=6494f041e00d4b8481ed1114a0bd33c1&claim_uid=3IU9mFeOVT0cXyw&theme=small" alt="Featured｜HelloGitHub" /></a>
 </p>
 
