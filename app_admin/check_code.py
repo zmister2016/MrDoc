@@ -81,7 +81,9 @@ def create_validate_code(size=(120, 30),
         strs = ' %s ' % ' '.join(c_chars) # 每个字符前后以空格隔开
 
         font = ImageFont.truetype(font_type, font_size)
-        font_width, font_height = font.getsize(strs)
+        bbox = font.getbbox(strs)
+        font_width = bbox[2] - bbox[0]
+        font_height = bbox[3] - bbox[1]
 
         draw.text(((width - font_width) / 3, (height - font_height) / 3),
                     strs, font=font, fill=fg_color)
