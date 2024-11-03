@@ -38,6 +38,7 @@
         </div>
         
         <!-- 新建文档按钮 -->
+        {% if request.user.is_authenticated %}
         <div class="layui-hide-xs">
             <ul class="layui-nav">
                 <li class="layui-nav-item">
@@ -57,18 +58,17 @@
                                 <span class="layui-hide-xs">{% trans "新建表格" %}</span>
                             </a>
                         </dd>
-                        {% if request.user.is_authenticated %}
                         <dd>
                             <a href="javascript:void(0);" onclick="createPro();">
                                 <img src="{% static 'icon_img/create-pro-icon.svg' %}" height="14px" width="14px"></img>
                                 <span class="layui-hide-xs">{% trans "新建文集" %}</span>
                             </a>
                         </dd>
-                        {% endif %}
                     </dl>
                 </li>
             </ul>
         </div>
+        {% endif %}
         <!-- 用户菜单 -->
         <div class="">
             <ul class="layui-nav layui-layout-right">
