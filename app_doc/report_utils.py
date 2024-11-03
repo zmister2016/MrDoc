@@ -259,7 +259,7 @@ class ReportEPUB():
         # 复制样式文件到相关目录
         shutil.copyfile(settings.BASE_DIR+'/static/report_epub/style.css',self.base_path + '/OEBPS/Styles/style.css')
         # shutil.copyfile(settings.BASE_DIR+'/static/katex/katex.min.css',self.base_path + '/OEBPS/Styles/katex.css')
-        shutil.copyfile(settings.BASE_DIR+'/static/editor.md/css/editormd.min.css',self.base_path + '/OEBPS/Styles/editormd.css')
+        shutil.copyfile(settings.BASE_DIR+'/static/mr-marked/marked.css',self.base_path + '/OEBPS/Styles/marked.css')
         # 复制封面图片到相关目录
         shutil.copyfile(settings.BASE_DIR+'/static/report_epub/epub_cover1.jpg',self.base_path + '/OEBPS/Images/epub_cover1.jpg')
 
@@ -279,7 +279,7 @@ class ReportEPUB():
         # 添加css样式标签
         style_link = html_soup.new_tag(name='link',href="../Styles/style.css",rel="stylesheet",type="text/css")
         html_soup.body.insert_before(style_link)
-        editormd_link = html_soup.new_tag(name='link',href='../Styles/editormd.css',rel="stylesheet",type="text/css")
+        editormd_link = html_soup.new_tag(name='link',href='../Styles/marked.css',rel="stylesheet",type="text/css")
         html_soup.body.insert_before(editormd_link)
 
         # 添加html标签的xmlns属性
@@ -686,7 +686,7 @@ class ReportPDF():
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
             <title>{title}</title>
             <link rel="stylesheet" href="../../static/layui/css/layui.css" />
-            <link rel="stylesheet" href="../../static/editor.md/css/editormd.css" />
+            <link rel="stylesheet" href="../../static/mr-marked/marked.css" />
             <link rel="stylesheet" href="../../static/mrdoc/mrdoc-docs.css" />
             <script src="../../static/jquery/3.5.0/jquery.min.js"></script>
             <script>var iframe_whitelist = []</script>
@@ -695,7 +695,7 @@ class ReportPDF():
             <script src="../../static/editor.md/lib/prettify.min.js"></script>
             <script src="../../static/editor.md/lib/raphael.min.js"></script>
             <script src="../../static/editor.md/lib/underscore.min.js"></script>
-            <script src="../../static/editor.md/editormd.js"></script>
+            <script src="../../static/mr-marked/marked.min.js"></script>
             <style>
             pre.linenums {{
                 max-height: 100%;
@@ -737,28 +737,14 @@ class ReportPDF():
                     <textarea style="display: none;">{pre_content}</textarea>
                 </div>
             <script>
-                editormd.markdownToHTML("content", {{
-                htmlDecode      : "style,script,iframe",
-                emoji           : true,  //emoji表情
-                taskList        : true,  // 任务列表
-                tex             : true,  // 科学公式
-                flowChart       : true,  // 流程图
-                sequenceDiagram : true,  // 时序图
-                tocm            : true, //目录
-                toc             :true,
-                tocContainer : "#toc-container",
-                tocDropdown   : false,
-                atLink    : false,//禁用@链接
-                plugin_path : '../../static/editor.md/lib/',
-    
-            }});
-            $('img.emoji').each(function(){{
-                var img = $(this);
-                if(img[0].src.indexOf("/static/editor.md/")){{
-                    var src = img[0].src.split('static');
-                    img[0].src = '../../static' + src[1];
-                }}
-            }})
+                var marked = new markedParse();
+                marked.getHtml({{
+                    id:'content',
+                    value:$("#content textarea").val(),
+                    cdn:"../../static/mr-marked/",
+                }})
+                marked.renderGraphic()
+                document.querySelector("pre").setAttribute('style',"white-space: pre-wrap");
             </script>
             </body>
             </html>

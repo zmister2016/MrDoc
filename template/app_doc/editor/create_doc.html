@@ -6,10 +6,10 @@
 {% block head_toolbar %}
     <ul class="layui-nav layui-form">
         <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
-            <i class="fa fa-align-justify"></i>
+            <i class="layui-icon layui-icon-slider"></i>
         </a>
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;"><i class="fa fa-file-text layui-hide-md"></i><span class="layui-hide-xs">文档</span></a>
+            <a href="javascript:;"><i class="iconfont mrdoc-icon-wendang"></i><span class="layui-hide-xs">文档</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child">
                 <dd><a href="javascript:void(0);" id="doc-tag-set">文档标签</a></dd>
                 <hr>
@@ -19,7 +19,7 @@
         </li>
         
         <li class="layui-nav-item mrdoc-import-doc-item">
-          <a href="javascript:;"><i class="fa fa-upload layui-hide-md"></i><span class="layui-hide-xs">导入</span></a>
+          <a href="javascript:;"><i class="iconfont mrdoc-icon-import"></i><span class="layui-hide-xs">导入</span></a>
           <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
             {% if editor_mode == 4 %}
             <dd><a href="javascript:void(0);" id="import-excel">
@@ -46,7 +46,7 @@
         </li>
         
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;"><i class="fa fa-edit layui-hide-md"></i><span class="layui-hide-xs">编辑器</span></a>
+            <a href="javascript:;"><i class="iconfont mrdoc-icon-editor"></i><span class="layui-hide-xs">编辑器</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
               <dd><a href="?pid={{pid}}&eid=1">EditorMD{% if editor_mode == 1 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
               <dd><a href="?pid={{pid}}&eid=2">Vditor{% if editor_mode == 2 %}<span class="layui-badge-dot layui-bg-blue"> </span>{% endif %}</a></dd>
@@ -57,7 +57,7 @@
         </li>
 
         <li class="layui-nav-item mrdoc-import-doc-item">
-            <a href="javascript:;"><i class="fa fa-dashboard layui-hide-md"></i><span class="layui-hide-xs">管理</span></a>
+            <a href="javascript:;"><i class="iconfont mrdoc-icon-manage"></i><span class="layui-hide-xs">管理</span></a>
             <dl class="layui-nav-child mrdoc-import-doc-child"> <!-- 二级菜单 -->
                 <dd><a href="{% url 'pro_list' %}" target="_blank">首页</a></dd>
                 <dd><a href="{% url 'user_center' %}?tab=manage_project" target="_blank">文集管理</a></dd>

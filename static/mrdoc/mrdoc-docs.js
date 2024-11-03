@@ -440,19 +440,16 @@ $("#collect_doc").click(function(){
 // 初始化文档内容渲染
 function initDocRender(mode){
     if(mode == 1){
-        editormd.markdownToHTML("content", {
-            emoji           : false,  //emoji表情
-            taskList        : true,  // 任务列表
-            tex             : true,  // 科学公式
-            flowChart       : true,  // 流程图
-            sequenceDiagram : true,  // 时序图
-            tocm            : true, //目录
-            toc             :true,
-            tocContainer : "#toc-container",
-            tocDropdown   : false,
-            atLink    : false,//禁用@链接
-            htmlDecode     : "link,style,base,script", //过滤部分HTML标签
-        });
+        var marked = new markedParse();
+        marked.getHtml({
+            id:'content',
+            value:$("#content textarea").val(),
+            cdn:"/static/mr-marked/",
+//            hljsLineNumber:code_line_number ? true : false,
+        })
+        marked.renderGraphic()
+        var docToc = marked.getToc();
+        $("#toc-container").append(docToc);
     }else if(mode == 2){
         var md_content = $("#content textarea").val()
         Vditor.preview(document.getElementById('content'),md_content, 

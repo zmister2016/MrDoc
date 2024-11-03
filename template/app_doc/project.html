@@ -19,7 +19,7 @@
     {% endif %}
     {% if request.user == project.create_user %}
         <a class="btn pull-left" href="{% url 'user_center' %}?tab=manage_project">
-            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
+            <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% endif %}
 {% endblock %}
@@ -84,7 +84,7 @@
                         {% endif %}
                     </p>
                     {% endif %}
-                    <p style="color:#999;font-size:12px;"><i class="fa fa-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user}}{% endif %} - <i class="fa fa-clock-o"></i> {{doc.modify_time}}</p>
+                    <p style="color:#999;font-size:12px;"><i class="layui-icon layui-icon-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user}}{% endif %} - <i class="layui-icon layui-icon-log"></i> {{doc.modify_time}}</p>
                 </div>
                 <hr>
                 {% endfor %}
@@ -96,10 +96,10 @@
                     <span class="layui-breadcrumb" lay-separator="|">
                         {% if allow_download %}
                             {% if allow_download.allow_epub == 1 %}
-                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','epub')"><i class="fa fa-download"></i> <u>EPUB电子书</u></a>
+                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','epub')"><i class="layui-icon layui-icon-download-circle"></i> <u>EPUB电子书</u></a>
                             {% endif %}
                             {% if allow_download.allow_pdf == 1 %}
-                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="fa fa-download"></i> <u>PDF电子书</u></a>
+                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="layui-icon layui-icon-download-circle"></i> <u>PDF电子书</u></a>
                             {% endif %}
                             {% if allow_download.allow_pdf == 0 and allow_download.allow_epub == 0 %}
                                 <a>{% trans "文集作者未开放此文集的任何格式下载！" %}</a>
@@ -163,14 +163,13 @@
     </span>
 
     <button id="share" class="doc-bottom-btn" tooltip="转发本文集" style="padding-left: 20px;">
-        <i class="fa fa-share-alt" ></i> {% trans "转发" %}
+        <i class="layui-icon layui-icon-share" ></i> {% trans "转发" %}
     </button>
 </div>
 {% endblock %}
 
 {% block custom_script %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
     // 生成文集简介中的文档大纲
     $.ajaxSetup({
@@ -301,19 +300,13 @@
     getDocTree();
     // 渲染文集简介Markdown
     const renderDesc = () => {
-        editormd.markdownToHTML("project-desc", {
-            emoji           : true,  //emoji表情
-            taskList        : true,  // 任务列表
-            tex             : true,  // 科学公式
-            flowChart       : true,  // 流程图
-            sequenceDiagram : true,  // 时序图
-            tocm            : false, //目录
-            toc             :false,
-            tocContainer : "#toc-container",
-            tocDropdown   : false,
-            atLink    : false,//禁用@链接
-            htmlDecode     : "link,style,base,script,iframe", //过滤部分HTML标签
-        });
+        var marked = new markedParse();
+        marked.getHtml({
+            id:'project-desc',
+            value:$("#project-desc textarea").val(),
+            cdn:"/static/mr-marked/",
+        })
+        marked.renderGraphic()
     }
     layer.load(1);
     renderDesc();

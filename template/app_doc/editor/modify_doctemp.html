@@ -5,16 +5,13 @@
 
 {% block head_toolbar %}
     <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
-        <i class="fa fa-align-justify"></i>
+        <i class="layui-icon layui-icon-slider"></i>
     </a>
     <a class="btn pull-left" aria-label="" href="{% url 'create_doctemp' %}" target="_blank">
-        <i class="fa fa-plus-square"></i> <span class="layui-hide-xs">新建模板</span>
+        <span class="layui-hide-xs">新建模板</span>
     </a>
     <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}?tab=manage_doctemp" target="_blank">
-        <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理模板</span>
-    </a>
-    <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}?tab=manage_project" target="_blank">
-        <i class="fa fa-cubes"></i> <span class="layui-hide-xs">管理文集</span>
+        <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">管理模板</span>
     </a>
 {% endblock %}
 
@@ -24,7 +21,7 @@
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <label class="doc-form-label">
                     <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="modifyDocTemp()">
-                        <i class="fa fa-save"></i> 保存模板
+                        保存模板
                     </button>
                 </label>
             </div>
@@ -32,7 +29,7 @@
         <div class="layui-col-md12" style="margin-bottom: 10px;">
             <label class="doc-form-label">
                 <button class="layui-btn layui-btn-primary layui-btn-fluid" id="doc-cache-btn">
-                    <i class="fa fa-save"></i> 本地缓存
+                    本地缓存
                 </button>
             </label>
         </div>
@@ -42,7 +39,7 @@
                 <div class="layui-card-header">现有模板</div>
                 <div class="layui-card-body">
                     {% for temp in doctemps %}
-                        <li><a href="{% url 'modify_doctemp' temp.id %}" target="_blank" title="点击查看修改《{{temp.name}}》的内容"><i class="fa fa-file"></i> {{temp.name}}</a></li>
+                        <li><a href="{% url 'modify_doctemp' temp.id %}" target="_blank" title="点击查看修改《{{temp.name}}》的内容"><i class="layui-icon layui-icon-file"></i> {{temp.name}}</a></li>
                     {% endfor %}
                 </div>
             </div>

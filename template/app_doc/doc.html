@@ -21,7 +21,7 @@
             <i class="layui-icon layui-icon-add-1"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
         <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}?tab=manage_doc">
-            <i class="fa fa-cubes"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
+            <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
         </a>
     {% elif colla_user > 0 %}
         <span class="btn pull-left">|</span>
@@ -76,7 +76,7 @@
 {% block doc_bottom_block %}
 <div class="layui-row" style="margin-bottom: 10px;padding-left: 20px;">
     {% if doc_tags.count > 0 %}
-        <i class="fa fa-tag"></i>
+        <i class="layui-icon layui-icon-note"></i>
         {% for tag in doc_tags %}
             <a href="{% url 'tag_docs' tag.tag.id %}" style="font-size: 12px;line-height: 14px;height: 16px;padding: 0 5px;margin-left: 0;">{{tag.tag.name}}</a>
         {% endfor %}
@@ -109,7 +109,7 @@
 
     {% if request.user == doc.create_user or request.user.is_superuser or request.user == project.create_user %}
     <button class="doc-bottom-btn" tooltip="{% trans '下载文档' %}" id="download_doc">
-        <i class="fa fa-download"></i> {% trans "下载文档" %}
+        <i class="layui-icon layui-icon-download-circle"></i> {% trans "下载文档" %}
     </button>
     {% endif %}
 </div>
@@ -140,13 +140,13 @@
 {% block right_widget %}
 <!-- 修改文档 -->
 {% if doc.create_user == request.user %}
-    <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="{% trans '修改文档' %}"><i class="fa fa-pencil"></i></a>
+    <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="{% trans '修改文档' %}"><i class="layui-icon layui-icon-edit"></i></a>
 {% endif %}
 <!-- 目录 -->
-<div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
+<div class="tocMenu" style="display: none;"><i class="iconfont mrdoc-icon-toc"></i></div>
 <!-- 分享按钮 -->
 {% if request.user == doc.create_user or request.user == project.create_user or colla_user > 0 %}
-    <div class="shareDoc" id="shareDoc"><i class="fa fa-share"></i></div>
+    <div class="shareDoc" id="shareDoc"><i class="layui-icon layui-icon-share"></i></div>
 {% endif %}
 {% endblock %}
 
@@ -224,7 +224,7 @@
                         <input type="text" name="share_value" value='{{doc_share.share_value}}' disabled class="layui-input" id="share_doc_value">
                     </div>
                     <div class="layui-form-mid layui-word-aux">
-                        <button class="layui-btn layui-btn-xs layui-btn-primary" id="updateShareValue"><i class="fa fa-repeat"></i> {% trans "更新密码" %}</button>
+                        <button class="layui-btn layui-btn-xs layui-btn-primary" id="updateShareValue"><i class="layui-icon layui-icon-refresh"></i> {% trans "更新密码" %}</button>
                     </div>
                 </div>
             </div>

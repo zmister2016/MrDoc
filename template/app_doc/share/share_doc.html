@@ -16,7 +16,7 @@
     <title>{{doc.name}} - {% trans "文档分享" %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     {% if doc.editor_mode != 4 %}
-        <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
+        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
     {% endif %}
     {% if doc.editor_mode == 2 %}
         <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
@@ -64,20 +64,17 @@
     <div class="doc-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
-            <!-- <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
-                <i class="fa fa-align-justify"></i>
-            </a> -->
             <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
-                <i class="fa fa-font">-</i>
+                <i class="iconfont mrdoc-icon-font-size">-</i>
             </a>
             <a class="btn pull-left font-large"  href="javascript:void(0);" title="{% trans '放大字体' %}">
-                <i class="fa fa-font">+</i>
+                <i class="iconfont mrdoc-icon-font-size">+</i>
             </a>
             <a class="btn pull-left font-switch" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
-                <i class="fa fa-text-height"></i>
+                <i class="iconfont mrdoc-icon-font-type"></i>
             </a>
             <a class="btn pull-left theme-switch" href="javascript:void(0);" title="{% trans '切换至夜间模式' %}">
-                <i class="fa fa-moon-o"></i>
+                <i class="iconfont mrdoc-icon-night"></i>
             </a>
             <!-- 顶部工具栏 -->
             {% block head_toolbar %}
@@ -136,10 +133,10 @@
                 {% block doc_bottom_block %}
                     <div class="layui-row layui-col-space20" style="padding-top: 10px;padding-left: 20px;">
                         <span>
-                            <i class="fa fa-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
+                            <i class="layui-icon layui-icon-user"></i> {% if doc.create_user.first_name != '' %} {{doc.create_user.first_name}} {% else %} {{doc.create_user.username}}{% endif %}
                         </span>
                         <span tooltip="{% trans '更新于:' %}{{doc.modify_time}}">
-                            <i class="fa fa-clock-o"></i> {{ doc.modify_time }}
+                            <i class="layui-icon layui-icon-log"></i> {{ doc.modify_time }}
                         </span>
                     </div>
                 {% endblock %}
@@ -165,10 +162,10 @@
         {% block right_widget %}
         <!-- 修改文档 -->
         {% if doc.create_user == request.user %}
-            <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="{% trans '修改文档' %}"><i class="fa fa-pencil"></i></a>
+            <a class="editDoc" href="{% url 'modify_doc' doc_id=doc.id %}" title="{% trans '修改文档' %}"><i class="iconfont mrdoc-icon-edit"></i></a>
         {% endif %}
         <!-- 目录 -->
-        <div class="tocMenu" style="display: none;"><i class="fa fa-list"></i></div>
+        <div class="tocMenu" style="display: none;"><i class="iconfont mrdoc-icon-toc"></i></div>
         {% endblock %}
     </div>
 </div>
@@ -229,8 +226,7 @@
 {% if doc.editor_mode == 2 %}
 <script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 4 %}
 <!-- 在线表格 -->
 <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>

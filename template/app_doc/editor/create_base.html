@@ -13,10 +13,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}站点标题{% endif %}</title>
         <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'editor.md/css/font-awesome.min.css' %}?version={{mrdoc_version}}" />
         {% if editor_mode == 1 %}
         <!-- Editor.MD编辑器样式表 -->
-        <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
+        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
+        <link rel="stylesheet" href="{% static 'mr-editor/global.css' %}?version={{mrdoc_version}}" />
         {% elif editor_mode == 2 %}
         <!-- Vditor编辑器样式表 -->
         <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
@@ -33,7 +33,9 @@
         <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
         <link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <style>
-
+            i.iconfont{
+                padding-right: 6px;
+            }
         </style>
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -45,7 +47,10 @@
         <div class="doc layui-fluid" style="padding-left:0px;">
             <!-- 左侧工具栏 -->
             <div class="doc-summary">
-                <div class="project-title"><i class="fa fa-edit"></i> {% trans "MrDoc文档编辑器" %}<br>
+                <div class="project-title">
+                    <svg t="1727182710656" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="74688" width="200" height="200"><path d="M558.63 760.6L386.11 933.12a101.3 101.3 0 0 1-143.26-143.26l172.53-172.52A101.3 101.3 0 0 1 558.63 760.6z m0 0" fill="#1792E5" p-id="74689"></path><path d="M600.05 225.39l197.46 197.45a18 18 0 0 0 25.46 0l67.62-67.58a18 18 0 0 0 0-25.46L693.05 132.43a18 18 0 0 0-25.45 0l-67.55 67.5a18 18 0 0 0 0 25.46z m-73.16 47.68L162.84 637a90 90 0 0 0-26.35 64.82l2.2 167.18a18 18 0 0 0 18 17.76H358.92L749.8 496a18 18 0 0 0 0-25.46L552.34 273.08a18 18 0 0 0-25.44 0z m408.43 5.83a90 90 0 0 1 0 127.33L406.66 934.7a90.09 90.09 0 0 1-63.58 26.37l-190.73 0.24a90.05 90.05 0 0 1-90.19-89.92l-0.24-191.34a90 90 0 0 1 26.38-63.77L616.87 87.9a90.1 90.1 0 0 1 127.38 0z m-344.69 615h326.09c24.85 0 45 6.63 45 31.48s-20.13 36-45 36H590.65a33.73 33.73 0 0 1 0-67.46z m0 0" fill="#424242" p-id="74690"></path></svg>
+                    {% trans "文档编辑器" %}
+                    <br>
                     <span style="font-size: 14px;">你正在：{{editor_type }}</span>
                 </div>
                 <hr>
@@ -119,7 +124,7 @@
             <span>* 仅支持 {% if attachment_suffix and attachment_suffix != '' %}{{attachment_suffix}}{% else %}zip{% endif %} 格式文件，文件大小不超过 {% if attachment_size and attachment_size != '' %}{{attachment_size}}{% else %}50{% endif %}MB</span>
             <div style="margin: 10px 0 0 10px;">
                 <button class="layui-btn layui-btn-primary layui-btn-sm" id="upload_attachment"><i class="layui-icon layui-icon-upload"></i> 上传附件</button>
-                <a class="layui-btn layui-btn-primary layui-btn-sm" href="{% url 'user_center' %}?tab=manage_attachment" target="_blank"><i class="fa fa-cubes"></i> 管理附件</a>
+                <a class="layui-btn layui-btn-primary layui-btn-sm" href="{% url 'user_center' %}?tab=manage_attachment" target="_blank"><i class="iconfont mrdoc-icon-manage"></i> 管理附件</a>
             </div>
             <table class="layui-table" id="attach_table" style="margin: 10px;width:90%;">
                 <thead>
@@ -176,7 +181,7 @@
                     <legend>插入音频链接</legend>
                     <div class="layui-field-box">
                     <input class="layui-input" type="url" id="audio_input" placeholder="填入音频文件链接，支持文件后缀格式为mp3、wav、flac、m4a" style="margin-bottom: 5px;">
-                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('audio')"><i class="fa fa-music"></i> 插入音频</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('audio')">插入音频</button>
                     </div>
                 </fieldset>
             </div>
@@ -185,7 +190,7 @@
                     <legend>插入视频链接</legend>
                     <div class="layui-field-box">
                         <input class="layui-input" type="url" id="video_input" placeholder="填入视频文件链接，支持文件后缀格式为mp4、m4v、ogg、ogv、webm" style="margin-bottom: 5px;">
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video')"><i class="fa fa-video-camera"></i> 插入视频</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video')">插入视频</button>
                     </div>
                 </fieldset>
             </div>
@@ -194,7 +199,7 @@
                     <legend>插入视频网站链接</legend>
                     <div class="layui-field-box">
                         <input class="layui-input" type="url" id="video_iframe_input" placeholder="填入视频网站视频播放页链接，支持YouTube、优酷、QQ视频、Facebook、哔哩哔哩、TED网站" style="margin-bottom: 5px;">
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video_iframe')"><i class="fa fa-youtube-play"></i> 插入视频网站视频</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="insertMultimedia('video_iframe')">插入视频网站视频</button>
                     </div>
                 </fieldset>
             </div>
@@ -226,7 +231,6 @@
         <!-- 加载编辑器 -->
         {% if editor_mode == 1 %}
             <!-- Editor.MD编辑器 -->
-            <script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
             {% include 'app_doc/editor/tpl_editor_editormd.html' %}
         {% elif editor_mode == 2 %}
             <!-- Vditor编辑器 -->

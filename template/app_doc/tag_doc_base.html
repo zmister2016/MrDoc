@@ -17,7 +17,7 @@
 
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     {% if doc.editor_mode != 4 %}
-        <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
+        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
     {% endif %}
     {% if doc.editor_mode == 2 %}
         <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
@@ -68,7 +68,8 @@
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
-            <i class="fa fa-tag"></i> {% trans "标签：" %}<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
+            <svg t="1726495807304" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10999" width="200" height="200"><path d="M510.467066 220.742515m-220.742515 0a220.742515 220.742515 0 1 0 441.48503 0 220.742515 220.742515 0 1 0-441.48503 0Z" fill="#4C91FF" p-id="11000"></path><path d="M421.556886 1014.802395L13.796407 607.041916c-12.263473-12.263473-12.263473-30.658683 0-42.922156L531.928144 45.988024c6.131737-6.131737 12.263473-9.197605 21.461078-9.197605L985.676647 12.263473c18.39521 0 33.724551 15.329341 33.724551 33.724551l-24.526947 432.287425c0 6.131737-3.065868 15.329341-9.197604 21.461078L464.479042 1014.802395c-12.263473 12.263473-30.658683 12.263473-42.922156 0zM99.640719 607.041916l321.916167 321.916168c12.263473 12.263473 30.658683 12.263473 42.922156 0l459.880239-459.88024c6.131737-6.131737 9.197605-12.263473 9.197605-21.461078L955.017964 73.580838l-377.101796 21.461078c-6.131737 0-15.329341 3.065868-21.461078 9.197605l-459.88024 459.880239c-9.197605 12.263473-9.197605 30.658683 3.065869 42.922156z" fill="#231815" p-id="11001"></path><path d="M761.868263 285.125749m-64.383233 0a64.383234 64.383234 0 1 0 128.766467 0 64.383234 64.383234 0 1 0-128.766467 0Z" fill="#231815" p-id="11002"></path></svg> 
+            {% trans "标签：" %}<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
                 {% if project.role == 1 %}
                     <i class="layui-icon layui-icon-password" title="私密文档"></i>
                 {% endif %}
@@ -110,23 +111,26 @@
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
             <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
-                <i class="fa fa-align-justify"></i>
+                <i class="layui-icon layui-icon-slider"></i>
             </a>
             <a class="btn pull-left font-small"  href="javascript:void(0);" title="缩小字体">
-                <i class="fa fa-font">-</i>
+                <i class="iconfont mrdoc-icon-font-size">-</i>
             </a>
             <a class="btn pull-left font-large"  href="javascript:void(0);" title="放大字体">
-                <i class="fa fa-font">+</i>
+                <i class="iconfont mrdoc-icon-font-size">+</i>
             </a>
             <a class="btn pull-left font-switch" href="javascript:void(0);" title="切换字体类型">
-                <i class="fa fa-text-height"></i>
+                <i class="iconfont mrdoc-icon-font-type"></i>
+            </a>
+            <a class="btn pull-left theme-switch" href="javascript:void(0);" title="{% trans '切换至夜间模式' %}">
+                <i class="iconfont mrdoc-icon-night"></i>
             </a>
             <!-- 顶部工具栏 -->
             {% block head_toolbar %}
             {% endblock %}
 
             <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
-                <i class="fa fa-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
+                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
             </a>
         </div>
         <!-- 文档主体 -->
@@ -215,65 +219,15 @@
 <script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'darkmode-js/darkmode-js.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/lib/purify.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/lib/echarts.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mr-marked/echarts/echarts.min.js' %}?version={{mrdoc_version}}"></script>
 <!-- 生成文集目录大纲 -->
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
-    // 生成文集目录
-    getProjectToc = function(){
-        $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':'{{project.id}}'},function(r){
-            $("#loading-project-toc").hide();
-            if(r.status){
-                var toc_str = ""
-                layui.each(r.data,function(index,item){
-                    toc_str += "<li>"
-                    if(item['children'] != undefined){ // 存在二级文档
-                        li = '<div style="display:flex;justify-content:space-between;">' + 
-                            '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +
-                            '<i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>'+
-                        '</div>'+
-                        '<ul class="sub-menu toc-close">'
-                        toc_str += li
-                        layui.each(item['children'],function(index,item){// 遍历二级文档
-                            toc_str += '<li>'
-                            if(item['children'] != undefined){ //存在三级文档
-                                li = '<div style="display:flex;justify-content:space-between;">' + 
-                                    '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>' +
-                                    '<i class="fa fa-chevron-left switch-toc" style="padding:15px;"></i>'+
-                                '</div>'+'<ul class="sub-menu toc-close">'
-                                toc_str += li
-                                layui.each(item['children'],function(index,item){ // 遍历三级文档
-                                    li = '<li><a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a></li>'
-                                    toc_str += li
-                                })
-                                toc_str += '</ul>'
-                            }else{// 不存在三级文档
-                                li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
-                                toc_str += li
-                            }
-                            toc_str += '</li>'
-                        })    
-                        toc_str += '</ul>'
-                    }else{//不存在二级文档
-                       li = '<a href="/project-'+'{{project.id}}'+'/doc-'+item.id+'/" title="'+item.title+'">'+item.title+'</a>'
-                       toc_str += li
-                    }
-                    toc_str += '</li>'
-                });
-                $('#project-toc').append(toc_str)
-                tagCurrentDoc();
-            }else{
-                layer.msg("获取文集目录失败！")
-            }
-        });
-    };
-    // getProjectToc();
 
     //为当前页面的目录链接添加蓝色样式
     tagCurrentDoc = function(){
@@ -300,8 +254,7 @@
 {% if doc.editor_mode == 2 %}
 <script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 4 %}
 <!-- 在线表格 -->
 <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>

@@ -10,7 +10,7 @@
 {% block head_toolbar %}
     {% if request.user == project.create_user %}
         <a class="btn pull-left" aria-label="" href="{% url 'create_doc' %}?pid={{project.id}}" target="_blank">
-            <i class="fa fa-edit"></i> {% trans "添加文档" %}
+            <i class="layui-icon layui-icon-edit"></i> {% trans "添加文档" %}
         </a>
     {% endif %}
 {% endblock %}

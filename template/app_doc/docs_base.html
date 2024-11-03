@@ -23,7 +23,7 @@
     <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     {% if doc.editor_mode != 4 %}
-        <link rel="stylesheet" href="{% static 'editor.md/css/editormd.css' %}?version={{mrdoc_version}}" />
+        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
     {% endif %}
     {% if doc.editor_mode == 2 %}
         <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
@@ -48,9 +48,12 @@
         }
         {% endif %}
         {% if long_code == 'on' %}
-        pre.linenums,pre.line-numbers,.vditor-reset > pre > code{
-            max-height: max-content!important;
-        }
+            .markdown-code .markdown-code-block pre,.vditor-reset > pre > code.hljs{
+                max-height: max-content!important;
+            }
+            code[class*=language-], pre[class*=language-]{
+                white-space: pre-wrap !important;
+            }
         {% endif %}
         /* html{
         filter: invert(1) hue-rotate(180deg);
@@ -110,7 +113,7 @@
         <!-- 遍历文集大纲 -->
         <!-- 如果文集的文档数量超过999，使用异步加载文集目录 -->
         {% if toc_cnt > 999  %}
-            <div style="text-align: center;" id='loading-project-toc'><i class="fa fa-spinner fa-pulse"></i>{% trans "文集大纲加载中……" %}</div>
+            <div style="text-align: center;" id='loading-project-toc'><i class="layui-icon layui-icon-loading"></i>{% trans "文集大纲加载中……" %}</div>
             {% load doc_filter %}
             <nav>
                 <ul class="summary" id="project-toc"></ul>
@@ -198,16 +201,16 @@
                 <i class="layui-icon layui-icon-slider"></i>
             </a>
             <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
-                <i class="fa fa-font">-</i>
+                <i class="iconfont mrdoc-icon-font-size">-</i>
             </a>
             <a class="btn pull-left font-large"  href="javascript:void(0);" title="{% trans '放大字体' %}">
-                <i class="fa fa-font">+</i>
+                <i class="iconfont mrdoc-icon-font-size">+</i>
             </a>
             <a class="btn pull-left font-switch" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
-                <i class="fa fa-text-height"></i>
+                <i class="iconfont mrdoc-icon-font-type"></i>
             </a>
             <a class="btn pull-left theme-switch" href="javascript:void(0);" title="{% trans '切换至夜间模式' %}">
-                <i class="fa fa-moon-o"></i>
+                <i class="iconfont mrdoc-icon-night"></i>
             </a>
             <!-- 顶部工具栏 -->
             {% block head_toolbar %}
@@ -309,8 +312,6 @@
 <script src="{% static '/markjs/mark.min.js' %}?version={{mrdoc_version}}" charset="UTF-8"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/lib/purify.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
 <script>
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -428,8 +429,7 @@
 {% if doc.editor_mode == 2 %}
 <script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 1 %}
-<script src="{% static 'editor.md/lib/marked.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'editor.md/editormd.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 4 %}
 <!-- 在线表格 -->
 <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
