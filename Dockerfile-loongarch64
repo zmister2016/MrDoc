@@ -1,23 +1,61 @@
-FROM harbor.loongnix.cn/mirrorloongsoncontainers/python:3.8.12-alpine3.11
-LABEL maintainer="www.mrdoc.fun"
+# Stage 1: Build stage
+FROM harbor.loongnix.cn/mirrorloongsoncontainers/python:3.11-alpine3.19 AS builder
+
+LABEL maintainer="mrdoc.pro"
+
+# 设置 Python 环境变量
 ENV PYTHONUNBUFFERED=0 \
     TZ=Asia/Shanghai \
-    LISTEN_PORT=10086\
-    USER=admin
-COPY . /app/MrDoc/
+    PIP_NO_PROXY='*'
 
+# 替换 alpine 软件仓库的源并安装编译依赖
+RUN set -x \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
+    && apk add --no-cache --virtual .build-deps build-base g++ gcc libxslt-dev py3-lxml openldap-dev python3-dev linux-headers \
+    && apk add --no-cache git tzdata zlib-dev freetype-dev jpeg-dev mariadb-dev postgresql-dev
+
+# 设置工作目录并复制依赖文件
+WORKDIR /app/MrDoc
+COPY requirements.txt /app/MrDoc/
+
+# 升级 pip 并安装 Python 依赖
+RUN python -m pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host pypi.tuna.tsinghua.edu.cn \
+    && pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host pypi.tuna.tsinghua.edu.cn \
+    && pip install --no-cache-dir uwsgi -i https://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host pypi.tuna.tsinghua.edu.cn
+
+# Stage 2: Final stage
+FROM harbor.loongnix.cn/mirrorloongsoncontainers/python:3.11-alpine3.19
+
+# 设置时区和基本环境变量
+ENV PYTHONUNBUFFERED=0 \
+    TZ=Asia/Shanghai \
+    LISTEN_PORT=10086 \
+    USER=admin \
+    PIP_NO_PROXY='*'
+
+# 替换 alpine 软件仓库的源并安装运行时依赖
+RUN set -x \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
+    && apk add --no-cache tzdata chromium chromium-chromedriver libreoffice libreoffice-base libreoffice-lang-zh_cn ttf-dejavu fontconfig libmagic libffi-dev \
+    && ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone
+
+# 复制字体文件
+COPY SourceHanSerifCN-Medium.otf /usr/share/fonts/sourcehan/SourceHanSerifCN-Medium.otf
+
+# 从构建阶段复制已安装的 Python 依赖
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# 复制应用代码
+COPY . /app/MrDoc/
 WORKDIR /app/MrDoc
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+# 启动脚本权限
+RUN chmod +x docker_mrdoc.sh
 
-RUN  set -x \
-    && apk add --no-cache --virtual .build-deps build-base g++ gcc libxslt-dev python2-dev linux-headers \
-    && apk add --no-cache pwgen git tzdata zlib-dev freetype-dev jpeg-dev  mariadb-dev postgresql-dev libxml2-dev \
-    && python -m pip install --upgrade pip \
-    && pip --no-cache-dir install -r requirements.txt \
-    && pip --no-cache-dir install mysqlclient uwsgi \
-    && chmod +x docker_mrdoc.sh \
-    && apk del .build-deps \
-    && rm -rf /var/cache/apk/* 
+# 暴露端口
+EXPOSE 10086
 
-ENTRYPOINT ["./docker_mrdoc.sh"]
+# 容器启动命令
+ENTRYPOINT ["sh", "docker_mrdoc.sh"]
+
