@@ -239,7 +239,7 @@
         {% elif editor_mode == 3 %}
             <!-- iceEditor富文本编辑器 -->
             <script src="{% static 'iceEditor/src/iceEditor.min.js' %}?version={{mrdoc_version}}"></script>
-            <script src="{% static 'editor.md/lib/purify.min.js' %}?version={{mrdoc_version}}"></script>
+            <script src="{% static 'purifyjs/purify.min.js' %}?version={{mrdoc_version}}"></script>
             {% include 'app_doc/editor/tpl_editor_ice.html' %}
         {% elif editor_mode == 4 %}
             <!-- 在线表格 -->
