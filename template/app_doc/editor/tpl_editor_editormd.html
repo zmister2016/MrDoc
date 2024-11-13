@@ -74,7 +74,32 @@
                         content:$('#upload-attach'),
                         success: function(layero, index){
                             layer.load(1);
-                            initAttachmentsTable();
+                            $.post('{% url "manage_attachment" %}',{types:2},function(r){
+                                $("#attach_table tbody").empty()
+                                if(r.status){
+                                    //调用分页显示
+                                    laypage.render({
+                                        elem: 'select-attach-page',//分页的div
+                                        count: r.data.length, //数据总数
+                                        limit:10, //单页数
+                                        jump: function(obj){
+                                            //渲染HTML
+                                            $("#attach_table tbody").empty();
+                                            var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                            layui.each(thisData, function(k, v){
+                                                var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                                // arr.push(row);
+                                                $("#attach_table tbody").append(row)
+                                            });
+                                        }
+                                    });
+                                    layer.closeAll("loading");//关闭加载提示
+                                }else{
+                                    layer.closeAll("loading");//关闭加载提示
+                                    layer.msg("获取附件失败，请稍后重试！")
+                                }
+                            })
+
                         }
                     })
                 }
