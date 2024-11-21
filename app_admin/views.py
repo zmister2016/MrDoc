@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.core.management import call_command
 from rest_framework.views import APIView # 视图
 from rest_framework.response import Response # 响应
 from rest_framework.pagination import PageNumberPagination # 分页
@@ -25,11 +26,13 @@ from app_admin.models import *
 from app_admin.utils import *
 from loguru import logger
 from urllib.parse import quote
+from io import StringIO
 import re
 import datetime
 import requests
 import os
 import json
+import time
 
 
 # 返回验证码图片
@@ -1461,6 +1464,74 @@ def check_update(request):
             return JsonResponse({'status':True,'data':github_resp.json()[0]})
         else:
             return JsonResponse({'status':True,'data':{'name': 'v0.0.1'}})
+
+# 站点数据备份
+@superuser_only
+@require_POST
+def admin_backup(request):
+    mode = request.POST.get('mode','data')
+    # 定义备份文件路径
+    backup_dir = os.path.join(settings.MEDIA_ROOT, 'backup')
+    if not os.path.exists(backup_dir):
+        os.makedirs(backup_dir)
+
+    if mode == 'data':
+        # 数据库文件路径
+        db_files = {
+            'db_admin.json': 'app_admin',
+            'db_doc.json': 'app_doc',
+            'db_api.json': 'app_api'
+        }
+        backup_files = []
+        try:
+            # 生成备份文件
+            for db_file, app_label in db_files.items():
+                dst = os.path.join(backup_dir, db_file)
+                with open(dst, 'w', encoding='utf-8') as f:
+                    # result = subprocess.run([sys.executable, 'manage.py', 'dumpdata', app_label],stdout=f,stderr=subprocess.PIPE)
+                    # if result.returncode != 0:
+                    #     raise Exception(f"Error dumping {app_label}: {result.stderr}")
+                    out = StringIO()
+                    call_command('dumpdata', app_label, stdout=out)
+                    f.write(out.getvalue())
+                backup_files.append(dst)
+
+            # 压缩备份文件
+            zip_file_name = 'mrdoc_backup_data_{}.zip'.format(str(int(time.time())))
+            zip_file_path = os.path.join(backup_dir, zip_file_name)
+            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for file in backup_files:
+                    zipf.write(file, os.path.basename(file))
+            # shutil.make_archive(os.path.splitext(zip_file_path)[0], 'zip', backup_dir)
+
+            # 删除json文件
+            for db_file, app_label in db_files.items():
+                os.remove(os.path.join(backup_dir,db_file))
+
+            backup_file_path = "/media/backup/" + zip_file_name
+            return JsonResponse({'status':True,'data':backup_file_path})
+        except Exception as e:
+            return JsonResponse({'status':False,'data':f"An error occurred: {str(e)}"})
+    elif mode == 'media':
+        try:
+            # 压缩备份文件
+            zip_file_name = 'mrdoc_backup_media_{}.zip'.format(str(int(time.time())))
+            zip_file_path = os.path.join(backup_dir, zip_file_name)
+            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for root, dirs, files in os.walk(settings.MEDIA_ROOT):
+                    # 排除要忽略的目录
+                    dirs[:] = [d for d in dirs if os.path.join(root, d) != os.path.join(settings.MEDIA_ROOT, 'backup')]
+
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, settings.MEDIA_ROOT)
+                        zipf.write(file_path, arcname)
+            backup_file_path = "/media/backup/" + zip_file_name
+            return JsonResponse({'status': True, 'data': backup_file_path})
+        except Exception as e:
+            return JsonResponse({'status': False, 'data': f"导出媒体文件失败: {str(e)}"})
+    else:
+        return JsonResponse({'status':False,'data':_("不支持的类型")})
 
 
 # 后台管理

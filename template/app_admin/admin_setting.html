@@ -20,6 +20,7 @@
             <li class="layui-this">基础设置</li>
             <li>邮箱设置</li>
             <li>文档设置</li>
+            <li>站点数据管理</li>
           </ul>
           <div class="layui-tab-content">
               <!-- 网站设置 -->
@@ -351,6 +352,32 @@
                 </div>
                 </form>
             </div>
+
+            <!-- 站点数据管理 -->
+              <div class="layui-tab-item">
+                <div class="layui-form">
+                    <div class="layui-row">
+                        <div style="float: left;">
+                            <strong><img src="{% static '/icon_img/icon-data.svg' %}" style="width: 16px;" />{% trans "导出站点数据" %}</strong>
+                            <p>{% trans "将站点数据导出为 json 格式文件，你可以通过此操作备份站点的数据" %}</p>
+                        </div>
+                        <div style="float: right;">
+                            <button class="pear-btn pear-btn-normal" style="float: right;margin-left: 10px;" onclick="backupData()"><i class="layui-icon layui-icon-export"></i><u>{% trans "导出数据" %}</u></button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="layui-row">
+                      <div style="float: left;">
+                          <strong><img src="{% static '/icon_img/icon-media.svg' %}" style="width: 16px;" />{% trans "导出站点媒体文件" %}</strong>
+                          <p>{% trans "导出站点的媒体数据（图片、附件），你可以通过此操作备份站点的媒体文件" %}</p>
+                      </div>
+                      <div style="float: right;">
+                          <button class="pear-btn pear-btn-normal" style="float: right;margin-left: 10px;" onclick="backupData('media')"><i class="layui-icon layui-icon-export"></i><u>{% trans "导出数据" %}</u></button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 站点数据管理结束 -->
           </div>
         </div>
     </div>
@@ -575,5 +602,55 @@
     updateConfig(data_list)
     // console.log(data_list)
   })
+    // 导出站点数据
+  backupData = function(mode = 'data'){
+    var layer_content;
+    if(mode == 'data'){
+      layer_content = "你正在导出站点数据至本地，根据站点的数据量大小，此操作可能会消耗一定时间，请耐心等待，不要关闭或刷新页面！"
+    }else if(mode == 'media'){
+      layer_content = "你正在导出站点媒体文件至本地，根据站点的数据量大小，此操作可能会消耗一定时间，请耐心等待，不要关闭或刷新页面！"
+    }
+    layer.open({
+      title:"导出站点数据",
+      content:layer_content,
+      yes:function(){
+        layer.load(1);
+        $.ajax({
+          url:"{% url 'admin_backup' %}",
+          method:'POST',
+          data:{mode:mode},
+          success: function(r) {
+            layer.closeAll()
+            if(r.status){
+              downloadZip(r.data)
+            }else{
+              layer.msg('导出站点数据失败:' + r.data);
+            }
+          },
+          error: function(xhr, status, error) {
+            layer.closeAll();
+              layer.msg('导出站点数据请求异常:' + error);
+          }
+        })
+      }
+    })
+  };
+  //下载文件弹出框
+  downloadZip = function(download_link){
+        layer.open({
+            type:1,
+            title:"下载文件",
+            area:"300px",
+            id:"downloadMd",
+            content:'<div style="margin:10px;"><p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_backup.zip" >点击下载文件(zip)</a></div>',
+            //btn:['确定','取消'], //添加按钮
+            //btnAlign:'c', //按钮居中
+            success: function (layero, index) {
+                $(layero).find('.download-md-link').click(function () {
+                    layer.closeAll();
+                })
+        }
+        })
+    };
 </script>
 {% endblock %}

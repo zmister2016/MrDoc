@@ -39,5 +39,6 @@ urlpatterns = [
     path('manage/attachment/', views.admin_attachment, name="attachment_manage"),  # 附件管理页面
     path('api/attachments/', views.AdminAttachmentList.as_view(), name="api_admin_attachments"),  # 附件列表接口
     path('api/attachment/<int:id>/', views.AdminAttachmentDetail.as_view(), name="api_admin_attachment"),  # 附件详情接口
-
+    # 站点备份
+    path('admin/backup/',views.admin_backup,name="admin_backup"),
 ]
