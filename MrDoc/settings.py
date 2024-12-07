@@ -29,7 +29,12 @@ LOG_DIR = os.path.join(BASE_DIR,'log')
 if os.path.exists(LOG_DIR) is False:
     os.makedirs(LOG_DIR)
 
-logger.add(os.path.join(LOG_DIR,'error.log'),rotation='1 days',retention='30 days',encoding='utf-8')
+logger.add(
+    os.path.join(LOG_DIR,'{time:error.YYYY-MM-DD}.log'),
+    rotation='1 days',
+    retention='30 days',
+    encoding='utf-8'
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
