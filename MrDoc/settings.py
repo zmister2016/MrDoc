@@ -189,7 +189,7 @@ LOCALE_PATHS = (
 )
 
 # Session 会话配置
-SESSION_COOKIE_AGE = CONFIG.get('session','cookie_age',fallback=604800) # 会话过期时间，秒数
+SESSION_COOKIE_AGE = int(CONFIG.get('session','cookie_age',fallback=604800)) # 会话过期时间，秒数
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = CONFIG.getboolean('session','browser_close',fallback=False) # 浏览器关闭即关闭会话
 
