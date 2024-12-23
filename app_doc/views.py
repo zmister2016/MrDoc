@@ -557,7 +557,9 @@ def modify_project_role(request,pro_id):
 def check_viewcode(request):
     try:
         if request.method == 'GET':
-            project_id = request.GET.get('to','').split("/")[1].split('-')[1]
+            project_id = re.search(r'/project[/-](\d+)', request.GET.get('to', ''))
+            if project_id:
+                project_id = project_id.group(1)
             project = Project.objects.get(id=int(project_id))
             return render(request,'app_doc/check_viewcode.html',locals())
         else:
