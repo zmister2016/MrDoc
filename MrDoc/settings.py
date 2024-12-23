@@ -262,6 +262,8 @@ except ImportError:
 
 X_FRAME_OPTIONS = CONFIG.get("x_frame","option",fallback='SAMEORIGIN')
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'None'
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 # CSRF 可信来源
