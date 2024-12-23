@@ -92,6 +92,79 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
 .vditor-reset pre>code{
     font-size: 100%;
 }
+/* 下拉目录隐藏li样式 */
+.editormd-toc-menu ul.markdown-toc-list li{
+    /*list-style:none;*/
+}
+ul.markdown-toc-list{
+    list-style-position:inside;
+}
+ul.markdown-toc-list li, .mce-toc li{
+    list-style: none!important;
+    line-height: 24px;
+}
+ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
+    padding-left:15px;
+}
+.mce-toc ul ul{
+    padding-left:15px;
+}
+
+.toc-level-2 {
+    margin-left: 10px;
+}
+
+.toc-level-3 {
+    margin-left: 20px;
+}
+
+.toc-level-4 {
+    margin-left: 30px;
+}
+
+.toc-level-5 {
+    margin-left: 40px;
+}
+
+.toc-level-6 {
+    margin-left: 50px;
+}
+/* 块级代码和行内代码去除边框 */
+.markdown-body p code{
+    border:none;
+}
+/* HTML预览样式 */
+.markdown-body h1{
+    font-size: 1.7em;
+}
+.markdown-body h2{
+    font-size: 1.5em;
+}
+.markdown-body h3{
+    font-size: 1.25em;
+}
+.markdown-body h4{
+    font-size: 1em;
+}
+.markdown-body h5{
+    font-size: .875em;
+}
+.markdown-body h6{
+    font-size: .85em;
+}
+#url_qrcode img{
+    margin: auto;
+}
+/* 文档代码块样式 */
+ol.linenums li{
+    width: max-content;
+}
+pre.linenums,pre.line-numbers{
+    max-height: 500px;
+}
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+    background: none !important;
+}
 /* 文档图片悬浮鼠标样式 */
 #content img:hover{
     cursor: -moz-zoom-in;
