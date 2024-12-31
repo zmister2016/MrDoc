@@ -236,6 +236,36 @@ ul#doc-tree{
   content: '\e7c2';
   font-family: 'iconfont';
 }
+
+/* 小屏幕下文集大纲悬浮切换按钮 */
+.doc-container-sidebar-toggle {
+    position: fixed;
+    top: 50%;
+    left: 300px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+  }
+  .big-page .doc-container-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .big-page .doc-container-sidebar-toggle{
+    left: 0px;
+  }
+  @media (min-width: 768px) {
+    .doc-container-sidebar-toggle {
+      display: none;
+    }
+  }
+
 @media screen and (max-width:768px){
     .project-toc-left{
         border-top:1px dashed #d8d8d8;
