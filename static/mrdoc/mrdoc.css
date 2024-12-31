@@ -172,6 +172,11 @@
     color: #333;
 }
 
+.index-doc-name{
+    display: inline-block;
+    max-width: 250px;
+}
+
 a.index-add-link{
     color: #999;
     float: right;
@@ -891,5 +896,8 @@ input#doc-name,input#doctemp-name{
     }
     .markdown-body iframe{
         width: 100% !important;
+    }
+    .index-doc-name{
+        max-width: 200px;
     }
 }
