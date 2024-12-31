@@ -31,7 +31,7 @@
             </form>
             {% endif %}
         </div>
-        <div class="layui-hide-lg layui-hide-md layui-hide-sm" style="margin:20px;">
+        <div class="layui-hide-lg layui-hide-md layui-hide-sm" style="margin:20px;padding-left:60px;">
             <a href="{% url 'search' %}">
                 <i class="layui-icon layui-icon-search" style="font-size: 24px;"></i>
             </a>
@@ -116,7 +116,8 @@
                 {% else %}
                 <li class="layui-nav-item">
                 <a href="javascript:void(0);">
-                <i class="layui-icon layui-icon-username"></i> {% trans "游客" %}
+                <i class="layui-icon layui-icon-username"></i>
+                    <span class="layui-hide-xs">{% trans "游客" %}</span>
                 </a>
                 <dl class="layui-nav-child">
                     {% if close_register == 'on' %}
