@@ -2178,6 +2178,38 @@ def get_pro_doc(request):
     else:
         return JsonResponse({'status':False,'data':_('参数错误')})
 
+# 获取文档所在的页码索引位置
+def find_doc_index(toc_list, doc_id):
+    """
+    递归搜索文档树，查找指定doc_id的索引位置
+
+    Args:
+        toc_list: 文档树列表
+        doc_id: 要查找的文档ID
+
+    Returns:
+        找到时返回文档在平铺列表中的索引，未找到返回-1
+    """
+    flat_index = 0  # 用于跟踪文档在平铺列表中的位置
+
+    def search_in_tree(items):
+        nonlocal flat_index
+
+        for item in items:
+            current_index = flat_index
+            flat_index += 1
+
+            if item.get('id') == int(doc_id):
+                return current_index
+
+            if item.get('children'):
+                result = search_in_tree(item['children'])
+                if result != -1:
+                    return result
+
+        return -1
+
+    return search_in_tree(toc_list)
 
 # 获取指定文集的文档树数据
 @require_http_methods(['POST'])
@@ -2246,11 +2278,7 @@ def get_pro_doc_tree(request):
             page = request.POST.get('page', 1)
             doc_id = request.POST.get('doc_id', None)
             if doc_id:
-                data_index = -1
-                for index, item in enumerate(doc_list):
-                    if item.get('id') == int(doc_id):
-                        data_index = index
-                        break
+                data_index = find_doc_index(doc_list, doc_id)
 
                 if data_index != -1:
                     # 计算指定 doc_id 所在的分页页码
