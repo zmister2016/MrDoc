@@ -118,7 +118,7 @@
 
 {% block doc_previous_next %}
     {% load doc_filter %}
-    <div class="layui-row" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;">
+    <div class="layui-row page-flip" style="margin-top: 10px;padding:10px;display:flex;justify-content:space-around;">
         <!-- <hr> -->
         <div>
             {% if doc.id|get_doc_previous == None %}
@@ -179,6 +179,9 @@
         <a class="layui-btn layui-btn-primary layui-btn-sm" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
             {% trans "Markdown文件" %}
         </a>
+        {% if doc.editor_mode != 4 %}
+        <a href="?print=true" target="_blank" class="layui-btn layui-btn-primary layui-btn-sm" >{% trans "PDF文档（打印）" %}</a>
+        {% endif %}
     </div>
 </div>
 <!-- 分享文档选项卡模板 -->
@@ -394,6 +397,41 @@
         updateDocShare(share_data);
     })
 </script>
+
+<!-- 调用浏览器打印功能 -->
+{% if request.user.is_authenticated and doc.editor_mode != 4 %}
+<script>
+    var is_print = getQueryVariable('print');
+    var beforePrint = function() {
+        console.log('beforePrint');
+    };
+
+    var afterPrint = function() {
+        if(is_print === 'true'){
+            window.close()
+        }
+    };
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+
+    if(is_print === 'true'){
+        setTimeout(function(){
+            // console.log("打印文档")
+            $("body").addClass('big-page');
+            // $(".doc-header").css('display','none'); // 隐藏顶部工具栏
+            // $("#doc-content-bottom-toolbar").css('display','none') // 隐藏底部工具栏
+            // $("#toc-container").css('display','none'); // 隐藏文档目录
+            // $("#doc-summary").css('display','none'); // 隐藏左侧文集大纲
+            // $(".fixed-tool-bar").css('display','none'); // 隐藏悬浮工具按钮组
+            // $(".doc-comment").css('display','none'); // 隐藏评论
+            // $(".page-flip").css('display','none'); // 隐藏翻页
+            // $("#ad-1").css('display','none'); // 隐藏广告
+            // $("#ad-2").css('display','none'); // 隐藏广告
+            window.print();
+        }, 2000);
+    }
+</script>
+{% endif %}
 
 <!-- 在线表格文档根据窗口高度调整表格高度 -->
 {% if doc.editor_mode == 4 %}

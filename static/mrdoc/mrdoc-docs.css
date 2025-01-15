@@ -280,3 +280,10 @@ ul#doc-tree{
 .vditor-outline ul{
     padding-left: 0px;
 }
+
+@media print {
+    #doc-container {
+      height: auto !important;
+    }
+    .doc-header,#doc-content-bottom-toolbar,#toc-container,doc-summary,.fixed-tool-bar,.doc-comment,.page-flip,#ad-1,#ad-2,.page-flip,.doc-container-sidebar-toggle {display: none !important;}
+  }
