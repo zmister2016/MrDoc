@@ -333,7 +333,7 @@ def send_email_test(request):
     content = "此邮件由管理员配置【{sitename}】邮箱信息时发出！".format(sitename=sitename)
     msg = MIMEText(content, _subtype='html', _charset='utf-8')
     msg['Subject'] = subject
-    msg['From'] = '{}[{}]'.format(sitename, msg_from)
+    msg['From'] = Header(sitename, 'utf-8').encode() + " <{}>".format(msg_from)
     msg['To'] = msg_to
     try:
         # print(smtp_host,smtp_port)
