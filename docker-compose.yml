@@ -1,0 +1,9 @@
+version: '3'
+services:
+  mrdoc:
+    image: zmister/mrdoc:v9.1  # 镜像名称和标签
+    volumes:
+      - ${PWD}:/app/MrDoc  # 挂载代码目录
+    ports:
+      - "10086:10086"
+    restart: always
