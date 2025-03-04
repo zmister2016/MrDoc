@@ -7,3 +7,6 @@ services:
     ports:
       - "10086:10086"
     restart: always
+    dns:
+      - 8.8.8.8
+      - 114.114.114.114
