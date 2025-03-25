@@ -69,6 +69,17 @@ username:test1  password:123456
 
 Update Record : [CHANGES.md](./CHANGES.md)
 
+## Docker Compose Deployment
+
+### 1、Deployment
+```
+git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chmod +x docker-install.sh && ./docker-install.sh
+```
+
+### 2、Update
+
+run`docker-update.sh`
+
 ## Simple Installation Tutorial
 
 ### 1. install dependent modules

@@ -121,6 +121,17 @@ MrDoc 全系产品目前涵盖以下终端：
 
 完整更新记录详见：[CHANGES.md](./CHANGES.md)
 
+## 基于 Docker Compose 的一键部署和更新
+
+### 1、部署
+```
+git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chmod +x docker-install.sh && ./docker-install.sh
+```
+
+### 2、更新
+
+如果有版本更新，直接在觅思文档项目目录下运行`docker-update.sh`脚本即可完成更新。
+
 ## 简明运行教程
 
 ### 1、安装依赖库
@@ -164,8 +175,9 @@ python manage.py runserver
 ## 部署工具
 
 - [Docker 官方镜像](https://hub.docker.com/r/zmister/mrdoc)
+- [Docker Compose 一键部署](https://doc.mrdoc.pro/doc/45758/)
 - [Docker镜像 By jonnyan404 ](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
-- [Linux 一键部署脚本 By jonnyan404](https://gitee.com/jonnyan404/oh-my-mrdoc)
+- [~~Linux 一键部署脚本 By jonnyan404~~](https://gitee.com/jonnyan404/oh-my-mrdoc)
 - [Windows 部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
 - [VirtualBox/VmWare 虚拟机镜像 By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
