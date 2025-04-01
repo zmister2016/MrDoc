@@ -120,8 +120,11 @@ def check_token(request):
     token = request.GET.get('token', '')
     try:
         token = UserToken.objects.get(token=token)
+        user = token.user
         data = {
             'is_writer':True,
+            'username': user.first_name if user.first_name else user.username,  # 用户昵称
+            'user_type': 'admin' if user.is_superuser else 'user',  # 用户类型
         }
         return JsonResponse({'status':True,'data':data})
     except:
