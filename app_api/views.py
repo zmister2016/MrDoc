@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload,img_upload
 from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
-from app_doc.models import Project,Doc,DocHistory,Image
+from app_doc.models import Project, Doc, DocHistory, Image, ProjectCollaborator
 from app_api.serializers_app import ImageSerializer,ProjectSerializer
 from app_api.utils import read_add_projects,remove_doc_tag
 from loguru import logger
@@ -131,14 +131,25 @@ def check_token(request):
 @require_GET
 def get_projects(request):
     token = request.GET.get('token','')
-    sort = request.GET.get('sort',0)
+    sort_name = request.GET.get('sort_name', 'create_time')  # 排序字段
+    sort = request.GET.get('sort', 0)  # 排序值，0为顺序 1为降序
+    filter = request.GET.get('filter_name', '')  # 文集过滤
     if sort == '1':
         sort = '-'
     else:
         sort = ''
     try:
         token = UserToken.objects.get(token=token)
-        projects = Project.objects.filter(create_user=token.user).order_by('{}create_time'.format(sort)) # 查询文集
+        if filter == 'self':  # 自己的文集
+            view_list = Project.objects.filter(create_user=token.user).values_list('id', flat=True)
+        elif filter == 'colla':  # 协作的文集
+            view_list = ProjectCollaborator.objects.filter(user=token.user).values_list('project_id', flat=True)
+        else:  # 自己和协作的文集
+            # 用户有浏览和新增权限的文集列表
+            view_list = read_add_projects(token.user)
+
+        # 查询符合条件的文集
+        projects = Project.objects.filter(id__in=view_list).order_by(f'{sort}{sort_name}')
         project_list =  []
         for project in projects:
             item = {
