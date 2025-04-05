@@ -381,6 +381,12 @@ def get_doc(request):
         token = UserToken.objects.get(token=token)
         did = request.GET.get('did', '')
         doc = Doc.objects.get(create_user=token.user, id=did)  # 查询文集下的文档
+        project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
+        # 用户有浏览和新增权限的文集列表
+        view_list = read_add_projects(token.user)
+
+        if project.id not in view_list:
+            return JsonResponse({'status': False, 'data': _('无权限')})
 
         item = {
             'id': doc.id,  # 文档ID
@@ -389,6 +395,7 @@ def get_doc(request):
             'md_content':doc.pre_content, # 文档内容
             'parent_doc':doc.parent_doc, # 上级文档
             'top_doc':doc.top_doc, # 所属文集
+            'project_name': project.name,
             'status':doc.status, # 文档状态
             "editor_mode": doc.editor_mode,  # 文档编辑模式
             'create_time': doc.create_time,  # 文档创建时间
