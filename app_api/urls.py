@@ -9,6 +9,7 @@ from app_api import views
 urlpatterns = [
     path('manage_token/',views.manage_token,name='manage_token'),# 用户Token管理
     path('get_projects/',views.get_projects,name="api_get_projects"), # 获取文集列表
+    path('get_project/',views.get_project,name="api_get_project"), # 获取文集信息
     path('get_docs/',views.get_docs,name="api_get_docs"), # 获取文集的文档列表
     path('get_level_docs/',views.get_level_docs,name="api_get_level_docs"), # 获取文集的文档列表
     path('get_self_docs/',views.get_self_docs,name="get_self_docs"), # 获取自己的文档列表
