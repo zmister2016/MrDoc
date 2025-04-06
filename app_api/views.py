@@ -10,6 +10,7 @@ from django.contrib.auth.models import User # Django默认用户模型
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
 from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload,img_upload
 from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
@@ -137,6 +138,7 @@ def get_projects(request):
     sort_name = request.GET.get('sort_name', 'create_time')  # 排序字段
     sort = request.GET.get('sort', 0)  # 排序值，0为顺序 1为降序
     filter = request.GET.get('filter_name', '')  # 文集过滤
+    kw = request.GET.get('kw', '')  # 文集搜索
     if sort == '1':
         sort = '-'
     else:
@@ -152,7 +154,12 @@ def get_projects(request):
             view_list = read_add_projects(token.user)
 
         # 查询符合条件的文集
-        projects = Project.objects.filter(id__in=view_list).order_by(f'{sort}{sort_name}')
+        if kw == '':
+            projects = Project.objects.filter(id__in=view_list).order_by(f'{sort}{sort_name}')
+        else:
+            projects = Project.objects.filter(Q(name__icontains=kw) | Q(intro__icontains=kw),
+                                              id__in=view_list).order_by(f'{sort}{sort_name}')
+
         project_list =  []
         for project in projects:
             item = {
