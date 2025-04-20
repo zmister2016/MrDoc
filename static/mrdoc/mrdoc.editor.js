@@ -650,3 +650,46 @@ pasteExcel.addEventListener("paste", function(event) {
     event.target.value = markdownRows.join("\n")
     return false
 });
+
+// 获取经过处理的精简版LuckySheet表格数据
+function getOptimizedSheets() {
+    // 获取完整的表格数据
+    const allSheets = luckysheet.getAllSheets();
+
+    // 处理每个工作表
+    return allSheets.map(sheet => {
+        // 创建浅拷贝，避免修改原始对象
+        const optimizedSheet = {...sheet};
+
+        // 删除包含大量null的data数组
+        delete optimizedSheet.data;
+        // 删除visibledatacolumn 可视列
+        delete optimizedSheet.visibledatacolumn;
+        // 删除 visibledatarow 可视行
+        delete optimizedSheet.visibledatarow;
+
+        // 确保celldata存在（有些情况可能没有）
+        if (!optimizedSheet.celldata || optimizedSheet.celldata.length === 0) {
+        // 如果没有celldata但原始数据中有data，则从data中提取非空数据
+        optimizedSheet.celldata = [];
+
+        if (sheet.data) {
+            sheet.data.forEach((row, r) => {
+            if (row) {
+                row.forEach((cell, c) => {
+                if (cell !== null) {
+                    optimizedSheet.celldata.push({
+                    r: r,
+                    c: c,
+                    v: cell
+                    });
+                }
+                });
+            }
+            });
+        }
+        }
+
+        return optimizedSheet;
+    });
+};

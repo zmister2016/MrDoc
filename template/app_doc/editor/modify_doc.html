@@ -252,7 +252,7 @@
                 var pre_content = editor.getText()
             }else if(editor_mode == 4){
                 var content  = '';
-                var pre_content = JSON.stringify(luckysheet.getAllSheets());
+                var pre_content = JSON.stringify(getOptimizedSheets());
             }
             // 获取文档状态
             if(status == undefined){
