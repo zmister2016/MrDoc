@@ -299,6 +299,12 @@ if cors_str == []:
 else:
     CORS_ALLOWED_ORIGINS = capacitor_origins + cors_str.split(',')
 
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "token",
+    'access-control-allow-origin',
+]
+
 # sitemap 站点地图
 SITEMAP = CONFIG.getboolean('sitemap','status',fallback=True)
 
