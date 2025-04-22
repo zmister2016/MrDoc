@@ -12,6 +12,7 @@ from django.shortcuts import render,redirect
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload,img_upload
+from app_doc.util_upload_file import handle_attachment_upload
 from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
 from app_doc.models import Project, Doc, DocHistory, Image, ProjectCollaborator
@@ -667,6 +668,24 @@ def upload_img_url(request):
     except:
         logger.error(_("token上传url图片异常"))
         return JsonResponse({'success':0,'data':_('上传出错')})
+
+# 上传附件
+@csrf_exempt
+@require_http_methods(['POST'])
+def upload_attachment(request):
+    attachment = request.FILES.get('attachment_upload', None)
+    token = request.GET.get('token', '')
+    try:
+        token = UserToken.objects.get(token=token)
+        if not (token.user.is_writer and token.user.writer_value[3] == '1'):
+            return JsonResponse({'status': False, 'data': _('用户无权限操作')})
+        result = handle_attachment_upload(attachment, token.user, request)
+        return JsonResponse({'status': result['status'], 'data': result['data']})
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': False, 'data': _('token无效')})
+    except Exception:
+        logger.exception(_("上传出错"))
+        return JsonResponse({'status': False, 'data': _('上传出错')})
 
 # 删除文档（软删除）
 @csrf_exempt
