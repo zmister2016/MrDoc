@@ -150,10 +150,10 @@ Submit questions on the following pages:
 
 ### 3. Contact author
 
-WeChat Subscription : **mrdocpro**
+WeChat Subscription : **觅思文档**
 
 <p align="center">
-<img src="https://doc.mrdoc.pro/media/202203/20220331121926_20220331122015390193.png" height="50%">
+<img src="https://doc.mrdoc.pro/media/202505/1354bec77bdb4339a74a79397ca79f2d4926.png" width="50%">
 </p>
 
 ## Dependent
