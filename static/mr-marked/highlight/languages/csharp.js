@@ -1,4 +1,4 @@
-/*! `csharp` grammar compiled for Highlight.js 11.9.0 */
+/*! `csharp` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -169,6 +169,11 @@
       ],
       relevance: 0
     };
+    const RAW_STRING = {
+      className: 'string',
+      begin: /"""("*)(?!")(.|\n)*?"""\1/,
+      relevance: 1
+    };
     const VERBATIM_STRING = {
       className: 'string',
       begin: '@"',
@@ -234,6 +239,7 @@
       hljs.inherit(hljs.C_BLOCK_COMMENT_MODE, { illegal: /\n/ })
     ];
     const STRING = { variants: [
+      RAW_STRING,
       INTERPOLATED_VERBATIM_STRING,
       INTERPOLATED_STRING,
       VERBATIM_STRING,

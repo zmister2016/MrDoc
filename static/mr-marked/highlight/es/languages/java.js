@@ -1,4 +1,4 @@
-/*! `java` grammar compiled for Highlight.js 11.9.0 */
+/*! `java` grammar compiled for Highlight.js 11.10.0 */
 var hljsGrammar = (function () {
   'use strict';
 
@@ -112,7 +112,8 @@ var hljsGrammar = (function () {
       'do',
       'sealed',
       'yield',
-      'permits'
+      'permits',
+      'goto'
     ];
 
     const BUILT_INS = [

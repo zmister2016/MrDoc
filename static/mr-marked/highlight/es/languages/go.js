@@ -1,4 +1,4 @@
-/*! `go` grammar compiled for Highlight.js 11.9.0 */
+/*! `go` grammar compiled for Highlight.js 11.10.0 */
 var hljsGrammar = (function () {
   'use strict';
 
@@ -113,10 +113,25 @@ var hljsGrammar = (function () {
           className: 'number',
           variants: [
             {
-              begin: hljs.C_NUMBER_RE + '[i]',
-              relevance: 1
+              match: /-?\b0[xX]\.[a-fA-F0-9](_?[a-fA-F0-9])*[pP][+-]?\d(_?\d)*i?/, // hex without a present digit before . (making a digit afterwards required)
+              relevance: 0
             },
-            hljs.C_NUMBER_MODE
+            {
+              match: /-?\b0[xX](_?[a-fA-F0-9])+((\.([a-fA-F0-9](_?[a-fA-F0-9])*)?)?[pP][+-]?\d(_?\d)*)?i?/, // hex with a present digit before . (making a digit afterwards optional)
+              relevance: 0
+            },
+            {
+              match: /-?\b0[oO](_?[0-7])*i?/, // leading 0o octal
+              relevance: 0
+            },
+            {
+              match: /-?\.\d(_?\d)*([eE][+-]?\d(_?\d)*)?i?/, // decimal without a present digit before . (making a digit afterwards required)
+              relevance: 0
+            },
+            {
+              match: /-?\b\d(_?\d)*(\.(\d(_?\d)*)?)?([eE][+-]?\d(_?\d)*)?i?/, // decimal with a present digit before . (making a digit afterwards optional)
+              relevance: 0
+            }
           ]
         },
         { begin: /:=/ // relevance booster

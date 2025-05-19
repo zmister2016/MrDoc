@@ -1,4 +1,4 @@
-/*! `javascript` grammar compiled for Highlight.js 11.9.0 */
+/*! `javascript` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -295,7 +295,7 @@
       contains: [] // defined later
     };
     const HTML_TEMPLATE = {
-      begin: 'html`',
+      begin: '\.?html`',
       end: '',
       starts: {
         end: '`',
@@ -308,7 +308,7 @@
       }
     };
     const CSS_TEMPLATE = {
-      begin: 'css`',
+      begin: '\.?css`',
       end: '',
       starts: {
         end: '`',
@@ -321,7 +321,7 @@
       }
     };
     const GRAPHQL_TEMPLATE = {
-      begin: 'gql`',
+      begin: '\.?gql`',
       end: '',
       starts: {
         end: '`',
@@ -418,7 +418,7 @@
     const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
       // eat recursive parens in sub expressions
       {
-        begin: /\(/,
+        begin: /(\s*)\(/,
         end: /\)/,
         keywords: KEYWORDS$1,
         contains: ["self"].concat(SUBST_AND_COMMENTS)
@@ -426,7 +426,8 @@
     ]);
     const PARAMS = {
       className: 'params',
-      begin: /\(/,
+      // convert this to negative lookbehind in v12
+      begin: /(\s*)\(/, // to match the parms with 
       end: /\)/,
       excludeBegin: true,
       excludeEnd: true,
@@ -549,8 +550,8 @@
           ...BUILT_IN_GLOBALS,
           "super",
           "import"
-        ]),
-        IDENT_RE$1, regex.lookahead(/\(/)),
+        ].map(x => `${x}\\s*\\(`)),
+        IDENT_RE$1, regex.lookahead(/\s*\(/)),
       className: "title.function",
       relevance: 0
     };
@@ -671,7 +672,7 @@
                       skip: true
                     },
                     {
-                      begin: /\(/,
+                      begin: /(\s*)\(/,
                       end: /\)/,
                       excludeBegin: true,
                       excludeEnd: true,

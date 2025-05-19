@@ -1,4 +1,4 @@
-/*! `swift` grammar compiled for Highlight.js 11.9.0 */
+/*! `swift` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -158,6 +158,7 @@
     'operator',
     'optional', // contextual
     'override', // contextual
+    'package',
     'postfix', // contextual
     'precedencegroup',
     'prefix', // contextual
@@ -654,14 +655,17 @@
         }
       ] }
     };
+
     const KEYWORD_ATTRIBUTE = {
       scope: 'keyword',
-      match: concat(/@/, either(...keywordAttributes))
+      match: concat(/@/, either(...keywordAttributes), lookahead(either(/\(/, /\s+/))),
     };
+
     const USER_DEFINED_ATTRIBUTE = {
       scope: 'meta',
       match: concat(/@/, identifier)
     };
+
     const ATTRIBUTES = [
       AVAILABLE_ATTRIBUTE,
       KEYWORD_ATTRIBUTE,
@@ -854,6 +858,37 @@
       end: /}/
     };
 
+    const TYPE_DECLARATION = {
+      begin: [
+        /(struct|protocol|class|extension|enum|actor)/,
+        /\s+/,
+        identifier,
+        /\s*/,
+      ],
+      beginScope: {
+        1: "keyword",
+        3: "title.class"
+      },
+      keywords: KEYWORDS,
+      contains: [
+        GENERIC_PARAMETERS,
+        ...KEYWORD_MODES,
+        {
+          begin: /:/,
+          end: /\{/,
+          keywords: KEYWORDS,
+          contains: [
+            {
+              scope: "title.class.inherited",
+              match: typeIdentifier,
+            },
+            ...KEYWORD_MODES,
+          ],
+          relevance: 0,
+        },
+      ]
+    };
+
     // Add supported submodes to string interpolation.
     for (const variant of STRING.variants) {
       const interpolation = variant.contains.find(mode => mode.label === "interpol");
@@ -887,19 +922,7 @@
         ...COMMENTS,
         FUNCTION_OR_MACRO,
         INIT_SUBSCRIPT,
-        {
-          beginKeywords: 'struct protocol class extension enum actor',
-          end: '\\{',
-          excludeEnd: true,
-          keywords: KEYWORDS,
-          contains: [
-            hljs.inherit(hljs.TITLE_MODE, {
-              className: "title.class",
-              begin: /[A-Za-z$_][\u00C0-\u02B80-9A-Za-z$_]*/
-            }),
-            ...KEYWORD_MODES
-          ]
-        },
+        TYPE_DECLARATION,
         OPERATOR_DECLARATION,
         PRECEDENCEGROUP,
         {

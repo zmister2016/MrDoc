@@ -1,6 +1,6 @@
 /*!
-  Highlight.js v11.9.0 (git: b7ec4bfafc)
-  (c) 2006-2024 undefined and other contributors
+  Highlight.js v11.10.0 (git: 366a8bd012)
+  (c) 2006-2024 Josh Goebel <hello@joshgoebel.com> and other contributors
   License: BSD-3-Clause
  */
 /* eslint-disable no-multi-assign */
@@ -1555,7 +1555,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.9.0";
+var version = "11.10.0";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {

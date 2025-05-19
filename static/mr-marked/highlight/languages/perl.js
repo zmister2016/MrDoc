@@ -1,4 +1,4 @@
-/*! `perl` grammar compiled for Highlight.js 11.9.0 */
+/*! `perl` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -275,7 +275,7 @@
       variants: [
         { begin: /\$\d/ },
         { begin: regex.concat(
-          /[$%@](\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/,
+          /[$%@](?!")(\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/,
           // negative look-ahead tries to avoid matching patterns that are not
           // Perl at all like $ident$, @ident@, etc.
           `(?![A-Za-z])(?![@$%])`
@@ -283,7 +283,7 @@
         },
         {
           // Only $= is a special Perl variable and one can't declare @= or %=.
-          begin: /[$%@][^\s\w{=]|\$=/,
+          begin: /[$%@](?!")[^\s\w{=]|\$=/,
           relevance: 0
         }
       ],

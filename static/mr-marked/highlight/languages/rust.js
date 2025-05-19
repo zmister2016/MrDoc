@@ -1,4 +1,4 @@
-/*! `rust` grammar compiled for Highlight.js 11.9.0 */
+/*! `rust` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -12,15 +12,22 @@
   */
 
   /** @type LanguageFn */
+
   function rust(hljs) {
     const regex = hljs.regex;
+    // ============================================
+    // Added to support the r# keyword, which is a raw identifier in Rust.
+    const RAW_IDENTIFIER = /(r#)?/;
+    const UNDERSCORE_IDENT_RE = regex.concat(RAW_IDENTIFIER, hljs.UNDERSCORE_IDENT_RE);
+    const IDENT_RE = regex.concat(RAW_IDENTIFIER, hljs.IDENT_RE);
+    // ============================================
     const FUNCTION_INVOKE = {
       className: "title.function.invoke",
       relevance: 0,
       begin: regex.concat(
         /\b/,
         /(?!let|for|while|if|else|match\b)/,
-        hljs.IDENT_RE,
+        IDENT_RE,
         regex.lookahead(/\s*\(/))
     };
     const NUMBER_SUFFIX = '([ui](8|16|32|64|128|size)|f(32|64))\?';
@@ -69,6 +76,7 @@
       "try",
       "type",
       "typeof",
+      "union",
       "unsafe",
       "unsized",
       "use",
@@ -221,7 +229,7 @@
           begin: [
             /fn/,
             /\s+/,
-            hljs.UNDERSCORE_IDENT_RE
+            UNDERSCORE_IDENT_RE
           ],
           className: {
             1: "keyword",
@@ -248,7 +256,7 @@
             /let/,
             /\s+/,
             /(?:mut\s+)?/,
-            hljs.UNDERSCORE_IDENT_RE
+            UNDERSCORE_IDENT_RE
           ],
           className: {
             1: "keyword",
@@ -261,7 +269,7 @@
           begin: [
             /for/,
             /\s+/,
-            hljs.UNDERSCORE_IDENT_RE,
+            UNDERSCORE_IDENT_RE,
             /\s+/,
             /in/
           ],
@@ -275,7 +283,7 @@
           begin: [
             /type/,
             /\s+/,
-            hljs.UNDERSCORE_IDENT_RE
+            UNDERSCORE_IDENT_RE
           ],
           className: {
             1: "keyword",
@@ -286,7 +294,7 @@
           begin: [
             /(?:trait|enum|struct|union|impl|for)/,
             /\s+/,
-            hljs.UNDERSCORE_IDENT_RE
+            UNDERSCORE_IDENT_RE
           ],
           className: {
             1: "keyword",

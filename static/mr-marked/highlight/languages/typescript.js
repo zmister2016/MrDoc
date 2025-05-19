@@ -1,4 +1,4 @@
-/*! `typescript` grammar compiled for Highlight.js 11.9.0 */
+/*! `typescript` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -295,7 +295,7 @@
       contains: [] // defined later
     };
     const HTML_TEMPLATE = {
-      begin: 'html`',
+      begin: '\.?html`',
       end: '',
       starts: {
         end: '`',
@@ -308,7 +308,7 @@
       }
     };
     const CSS_TEMPLATE = {
-      begin: 'css`',
+      begin: '\.?css`',
       end: '',
       starts: {
         end: '`',
@@ -321,7 +321,7 @@
       }
     };
     const GRAPHQL_TEMPLATE = {
-      begin: 'gql`',
+      begin: '\.?gql`',
       end: '',
       starts: {
         end: '`',
@@ -418,7 +418,7 @@
     const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
       // eat recursive parens in sub expressions
       {
-        begin: /\(/,
+        begin: /(\s*)\(/,
         end: /\)/,
         keywords: KEYWORDS$1,
         contains: ["self"].concat(SUBST_AND_COMMENTS)
@@ -426,7 +426,8 @@
     ]);
     const PARAMS = {
       className: 'params',
-      begin: /\(/,
+      // convert this to negative lookbehind in v12
+      begin: /(\s*)\(/, // to match the parms with 
       end: /\)/,
       excludeBegin: true,
       excludeEnd: true,
@@ -549,8 +550,8 @@
           ...BUILT_IN_GLOBALS,
           "super",
           "import"
-        ]),
-        IDENT_RE$1, regex.lookahead(/\(/)),
+        ].map(x => `${x}\\s*\\(`)),
+        IDENT_RE$1, regex.lookahead(/\s*\(/)),
       className: "title.function",
       relevance: 0
     };
@@ -671,7 +672,7 @@
                       skip: true
                     },
                     {
-                      begin: /\(/,
+                      begin: /(\s*)\(/,
                       end: /\)/,
                       excludeBegin: true,
                       excludeEnd: true,
@@ -796,10 +797,15 @@
       "unknown"
     ];
     const NAMESPACE = {
-      beginKeywords: 'namespace',
-      end: /\{/,
-      excludeEnd: true,
-      contains: [ tsLanguage.exports.CLASS_REFERENCE ]
+      begin: [
+        /namespace/,
+        /\s+/,
+        hljs.IDENT_RE
+      ],
+      beginScope: {
+        1: "keyword",
+        3: "title.class"
+      }
     };
     const INTERFACE = {
       beginKeywords: 'interface',
@@ -818,7 +824,7 @@
     };
     const TS_SPECIFIC_KEYWORDS = [
       "type",
-      "namespace",
+      // "namespace",
       "interface",
       "public",
       "private",
@@ -828,8 +834,16 @@
       "abstract",
       "readonly",
       "enum",
-      "override"
+      "override",
+      "satisfies"
     ];
+
+    /*
+      namespace is a TS keyword but it's fine to use it as a variable name too.
+      const message = 'foo';
+      const namespace = 'bar';
+    */
+
     const KEYWORDS$1 = {
       $pattern: IDENT_RE,
       keyword: KEYWORDS.concat(TS_SPECIFIC_KEYWORDS),
@@ -855,6 +869,13 @@
     Object.assign(tsLanguage.keywords, KEYWORDS$1);
 
     tsLanguage.exports.PARAMS_CONTAINS.push(DECORATOR);
+
+    // highlight the function params
+    const ATTRIBUTE_HIGHLIGHT = tsLanguage.contains.find(c => c.className === "attr");
+    tsLanguage.exports.PARAMS_CONTAINS.push([
+      tsLanguage.exports.CLASS_REFERENCE, // class reference for highlighting the params types
+      ATTRIBUTE_HIGHLIGHT, // highlight the params key
+    ]);
     tsLanguage.contains = tsLanguage.contains.concat([
       DECORATOR,
       NAMESPACE,

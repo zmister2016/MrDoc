@@ -1,4 +1,4 @@
-/*! `python` grammar compiled for Highlight.js 11.9.0 */
+/*! `python` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -378,7 +378,8 @@
         NUMBER,
         {
           // very common convention
-          begin: /\bself\b/
+          scope: 'variable.language',
+          match: /\bself\b/
         },
         {
           // eat "if" prior to string so that it won't accidentally be

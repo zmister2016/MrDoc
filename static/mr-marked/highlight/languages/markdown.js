@@ -1,4 +1,4 @@
-/*! `markdown` grammar compiled for Highlight.js 11.9.0 */
+/*! `markdown` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -221,6 +221,12 @@
       end: '$'
     };
 
+    const ENTITY = {
+      //https://spec.commonmark.org/0.31.2/#entity-references
+      scope: 'literal',
+      match: /&([a-zA-Z0-9]+|#[0-9]{1,7}|#[Xx][0-9a-fA-F]{1,6});/
+    };
+
     return {
       name: 'Markdown',
       aliases: [
@@ -238,7 +244,8 @@
         CODE,
         HORIZONTAL_RULE,
         LINK,
-        LINK_REFERENCE
+        LINK_REFERENCE,
+        ENTITY
       ]
     };
   }

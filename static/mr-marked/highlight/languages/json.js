@@ -1,4 +1,4 @@
-/*! `json` grammar compiled for Highlight.js 11.9.0 */
+/*! `json` grammar compiled for Highlight.js 11.10.0 */
   (function(){
     var hljsGrammar = (function () {
   'use strict';
@@ -39,6 +39,7 @@
 
     return {
       name: 'JSON',
+      aliases: ['jsonc'],
       keywords:{
         literal: LITERALS,
       },

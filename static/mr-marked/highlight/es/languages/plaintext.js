@@ -1,4 +1,4 @@
-/*! `plaintext` grammar compiled for Highlight.js 11.9.0 */
+/*! `plaintext` grammar compiled for Highlight.js 11.10.0 */
 var hljsGrammar = (function () {
   'use strict';
 

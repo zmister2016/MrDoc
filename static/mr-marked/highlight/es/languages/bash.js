@@ -1,4 +1,4 @@
-/*! `bash` grammar compiled for Highlight.js 11.9.0 */
+/*! `bash` grammar compiled for Highlight.js 11.10.0 */
 var hljsGrammar = (function () {
   'use strict';
 
@@ -187,6 +187,7 @@ var hljsGrammar = (function () {
       "read",
       "readarray",
       "source",
+      "sudo",
       "type",
       "typeset",
       "ulimit",
@@ -372,7 +373,10 @@ var hljsGrammar = (function () {
 
     return {
       name: 'Bash',
-      aliases: [ 'sh' ],
+      aliases: [
+        'sh',
+        'zsh'
+      ],
       keywords: {
         $pattern: /\b[a-z][a-z0-9._-]+\b/,
         keyword: KEYWORDS,
