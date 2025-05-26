@@ -36,6 +36,15 @@
   border: 0;
 }
 
+.markdown-body img[data-align="center"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.markdown-body img[data-align="right"] {
+  float: right;
+}
+
 .markdown-body hr {
   -moz-box-sizing: content-box;
   box-sizing: content-box;
