@@ -53,7 +53,7 @@
         <div></div>
         <div></div>
         <div class="login-form">
-            <form class="layui-form" action=""  method='POST'>
+            <form class="layui-form" action=""  method='POST' id="checkForm">
                 {% csrf_token %}
                 <div class="layui-form-item">
                     <h4>{% trans "你正在访问私密文档：" %}</h4><br>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-inline login-input">
-                      <input type="text" name="share_value" required  lay-verify="required" placeholder="{% trans '请输入文档分享码' %}" autocomplete="off" class="layui-input" >
+                      <input type="text" name="share_value" id="share_value" required  lay-verify="required" placeholder="{% trans '请输入文档分享码' %}" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -74,4 +74,13 @@
         </div>
     </div>
 </body>
+<script>
+    var urlString = window.location.search;
+    var urlParams = new URLSearchParams(urlString);
+    var share_value = urlParams.get('pwd');
+    document.getElementById('share_value').value = share_value;
+    if(share_value){
+        document.getElementById('checkForm').submit();
+    }
+</script>
 </html>

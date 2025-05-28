@@ -1845,7 +1845,8 @@ def share_doc(request):
                 if share_doc.share_value == share_value:
                     return render(request, 'app_doc/share/share_doc.html', locals())
                 else:
-                    return redirect('/share_doc_check/?surl={}'.format(share_token))
+                    share_pwd = request.GET.get('pwd', '')
+                    return redirect('/share_doc_check/?surl={}&pwd={}'.format(share_token, share_pwd))
         except ObjectDoesNotExist:
             return render(request,'404.html')
     elif request.method == 'POST':
