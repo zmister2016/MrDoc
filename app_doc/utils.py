@@ -2,8 +2,14 @@ from app_doc.models import Doc,Project,ProjectCollaborator
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.conf import settings
 from urllib.parse import urlparse
 from loguru import logger
+import time
+import os
+import io
+import subprocess
+import shutil
 
 # 查找文档的下级文档
 def find_doc_next(doc_id):
@@ -136,3 +142,107 @@ def validate_url(url):
         return url
     except:
         return False
+
+# Docx x-emf 图片处理
+_wmf_extensions = {
+    "image/x-wmf": ".wmf",
+    "image/x-emf": ".emf",
+}
+
+
+def libreoffice_wmf_conversion(image, post_process=None):
+    if post_process is None:
+        post_process = lambda x: x
+
+    wmf_extension = _wmf_extensions.get(image.content_type)
+    if wmf_extension is None:
+        return image
+    else:
+        # 定义临时文件夹
+        temporary_directory = os.path.join(settings.MEDIA_ROOT,'import_docx_imgs')
+        if os.path.exists(temporary_directory) is False:
+            os.mkdir(temporary_directory)
+        try:
+            timestamp = str(time.time())
+            # 将 docx 内嵌图片文件存为wmf、emf等文件
+            input_path = os.path.join(temporary_directory, "image_{}".format(timestamp) + wmf_extension)
+            with open(input_path, "wb") as input_fileobj:
+                with image.open() as image_fileobj:
+                    shutil.copyfileobj(image_fileobj, input_fileobj)
+
+            # 调用 LibreOffice 将 wmf/emf 文件转为 PNG 图片文件
+            output_path = os.path.join(temporary_directory, "image_{}.png".format(timestamp))
+            subprocess.check_call([
+                settings.LIBREOFFICE_PATH,
+                "--headless",
+                "--convert-to",
+                "png",
+                input_path,
+                "--outdir",
+                temporary_directory,
+            ])
+
+            # return post_process(output_path)
+
+            with open(output_path, "rb") as output_fileobj:
+                output = output_fileobj.read()
+
+            def open_image():
+                return io.BytesIO(output)
+
+            return post_process(image.copy(
+                content_type="image/png",
+                open=open_image,
+            ))
+        except:
+            return image
+        finally:
+            if os.path.exists(input_path):
+                os.remove(input_path)
+            if os.path.exists(output_path):
+                os.remove(output_path)
+
+def image_trim(old_image):
+    from PIL import Image
+
+    # 获取时间戳作为文件名的一部分
+    timestamp = str(time.time())
+    temporary_directory = os.path.join(settings.MEDIA_ROOT, 'import_docx_imgs')
+    output_path = os.path.join(temporary_directory, f"trim_image_{timestamp}.png")
+
+    def open_image():
+        try:
+            with open(output_path, 'rb') as imgfile:
+                return io.BytesIO(imgfile.read())
+        finally:
+            if os.path.exists(output_path):
+                os.remove(output_path)
+
+    image = Image.open(old_image.open())
+    width, height = image.size
+
+    # 初始化裁剪边界
+    x_left, x_top = width, height
+    x_right = x_bottom = 0
+
+    # 遍历每个像素
+    for r in range(height):
+        for c in range(width):
+            pixel = image.getpixel((c, r))  # 获取 (x, y) 像素值
+            # 判断条件，避免裁剪掉内容
+            if pixel[0] < 255 and pixel[1] < 255 and pixel[2] < 255:  # 假设是接近白色的区域
+                x_top = min(x_top, r)
+                x_bottom = max(x_bottom, r)
+                x_left = min(x_left, c)
+                x_right = max(x_right, c)
+
+    # 进行裁剪
+    if x_left < x_right and x_top < x_bottom:
+        cropped = image.crop((x_left - 5, x_top - 5, x_right + 5, x_bottom + 5))  # 裁剪区域
+        cropped.save(output_path, format="PNG")
+    else:
+        # 如果没有找到有效的裁剪区域，直接保存原图
+        image.save(output_path, format="PNG")
+
+    new_image = old_image.copy(open=open_image)
+    return new_image

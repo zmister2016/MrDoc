@@ -8,6 +8,7 @@
 from django.utils.translation import gettext_lazy as _
 from app_doc.models import Doc,Project,Image
 from app_doc.util_upload_img import upload_generation_dir
+from app_doc.utils import libreoffice_wmf_conversion,image_trim
 from django.db import transaction
 from django.conf import settings
 from loguru import logger
@@ -224,6 +225,11 @@ class ImportDocxDoc():
 
     # 转存docx文件中的图片
     def convert_img(self,image):
+        image = libreoffice_wmf_conversion(image, post_process=image_trim)
+        if image.alt_text:
+            alt = image.alt_text.replace('\n', '').replace('\r', '')
+        else:
+            alt = ''
         with image.open() as image_bytes:
             file_suffix = image.content_type.split("/")[1]
             file_time_name = str(time.time())
@@ -233,18 +239,18 @@ class ImportDocxDoc():
             # 文件的绝对路径 形如/home/MrDoc/media/202012/12542542.jpg
             new_media_file_path = settings.MEDIA_ROOT + copy2_filename
             # 图片文件的相对url路径
-            new_media_filename = '/media' + copy2_filename
+            file_url = '/media' + copy2_filename
 
             # 图片数据写入数据库
             Image.objects.create(
                 user=self.create_user,
-                file_path=new_media_filename,
+                file_path=file_url,
                 file_name=file_time_name + '.' + file_suffix,
                 remark=_('本地上传'),
             )
             with open(new_media_file_path, 'wb') as f:
                 f.write(image_bytes.read())
-        return {"src": new_media_filename}
+        return {"src": file_url,"alt_text":alt,"alt":alt}
 
     # 转换docx文件内容为HTML和Markdown
     def convert_docx(self):
