@@ -305,6 +305,14 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     'access-control-allow-origin',
 ]
 
+# 附件预览
+# LibreOffice 路径
+LIBREOFFICE_PATH = CONFIG.get('preview','libreoffice_path',fallback='soffice')
+# LibreOffice预览格式
+PREVIEW_SUFFIX_OFFICE = ['opt','csv','doc','docx','odp','ods','ppt','pptx','tsv','wps','xls','xlsx','txt']
+# 附件预览格式
+DEFAULT_ATTACHMENT_PREVIEW_SUFFIX = ['pdf','mp4','flv','docx','xlsx','xls','csv','zip']
+
 # sitemap 站点地图
 SITEMAP = CONFIG.getboolean('sitemap','status',fallback=True)
 
