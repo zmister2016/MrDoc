@@ -19,6 +19,7 @@ class RequiredLoginMiddleware():
             r'/register(.*)$', # 注册
             r'/check_code(.*)$', # 验证码
             r'/admin/forget_pwd(.*)$',  # 忘记密码
+            r'/admin/send_check_email_vcode/(.*)$',  # 邮箱验证码
             r'/static/(.*)$', # 静态文件
             r'/media/(.*)$',  # 媒体文件
             r'/share_doc(.*)$',  # 文档分享
