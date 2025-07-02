@@ -9,7 +9,7 @@
 
 
 <p align="center">
-<img src="https://img.shields.io/badge/MrDoc-v0.9.5-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.9.6-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
 <a href="https://hellogithub.com/repository/6494f041e00d4b8481ed1114a0bd33c1" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=6494f041e00d4b8481ed1114a0bd33c1&claim_uid=3IU9mFeOVT0cXyw&theme=small" alt="Featured｜HelloGitHub" /></a>
@@ -43,7 +43,7 @@ MrDoc 全系产品目前涵盖以下终端：
 
 - 🌐Web端：开源版、专业版，[版本对比](https://doc.mrdoc.pro/doc/3441/)
 - 💻浏览器扩展：主要用于网页剪藏和速记，支持 Chromium 系列浏览器、Firefox 浏览器，[下载地址](https://gitee.com/zmister/mrdoc-webclipper)
-- 🗔桌面客户端：主要用于文档编辑，支持 Windows、macOS、Linux，[下载地址](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
+- 🗔桌面客户端：主要用于文档编辑和文档导入，支持 Windows、macOS、Linux，[下载地址](https://doc.mrdoc.pro/doc/4031/)
 - 📱移动客户端：主要用于个人知识库查看和文档编辑，支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
 - Obsidian 同步插件：[使用教程](https://doc.mrdoc.pro/doc/45650/)
 
@@ -182,12 +182,8 @@ python manage.py runserver
 - [VirtualBox/VmWare 虚拟机镜像 By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
 ## 文档导入工具
-
-- [觅思文档导入工具箱](https://gitee.com/zmister/mrdoc-import-toolbox)
-    - 觅思文档导出的文集
-    - 语雀知识库
-    - 印象笔记
-    - Joplin
+- [觅思文档桌面客户端](https://doc.mrdoc.pro/doc/4031/)
+- ~~[觅思文档导入工具箱](https://gitee.com/zmister/mrdoc-import-toolbox)~~
 
 ## 其他工具
 
