@@ -6,7 +6,11 @@
 
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from app_doc.models import *
+from app_admin.models import RegisterCode
+
 
 # 用户序列化器
 class UserSerializer(ModelSerializer):
@@ -16,6 +20,22 @@ class UserSerializer(ModelSerializer):
                 'id', 'last_login', 'is_superuser', 'username', 'email', 'date_joined', 'is_active', 'first_name'
             )
 
+# 注册邀请码序列化器
+class RegisterCodeSerializer(ModelSerializer):
+    status = serializers.SerializerMethodField(label="状态")
+
+    class Meta:
+        model = RegisterCode
+        fields = ('__all__')
+
+    def get_status(self,obj):
+        current_date = timezone.now().date()
+        if obj.used_cnt >= obj.all_cnt:
+            return _('使用次数已满')
+        elif obj.expire_date is not None and obj.expire_date < current_date:
+            return _('已到期')
+        else:
+            return _('有效')
 
 # 文集序列化器
 class ProjectSerializer(ModelSerializer):

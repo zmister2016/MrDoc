@@ -136,14 +136,24 @@ def register(request):
             email = request.POST.get('email',None)
             password = request.POST.get('password',None)
             checkcode = request.POST.get("check_code",None)
-            register_code = request.POST.get("register_code",None)
             if len(password) > 50:
                 errormsg = _('密码长度不符！')
                 return render(request, 'register.html', locals())
             is_register_code = SysSetting.objects.filter(types='basic', name='enable_register_code', value='on')
-            if is_register_code.count() > 0: # 开启了注册码设置
+            if is_register_code.exists(): # 开启了注册码设置
+                register_code = request.POST.get("register_code", None)
+                if len(register_code) > 255:
+                    errormsg = _('注册码无效!')
+                    return render(request, 'register.html', locals())
                 try:
-                    register_code_value = RegisterCode.objects.get(code=register_code,status=1)
+                    current_date = timezone.now().date()
+                    register_code_value = RegisterCode.objects.get(code=register_code)
+                    if register_code_value.used_cnt >= register_code_value.all_cnt:
+                        errormsg = _('注册码使用次数已达限制!')
+                        return render(request, 'register.html', locals())
+                    elif register_code_value.expire_date is not None and register_code_value.expire_date < current_date:
+                        errormsg = _('注册码已过期!')
+                        return render(request, 'register.html', locals())
                 except ObjectDoesNotExist:
                     errormsg = _('注册码无效!')
                     return render(request, 'register.html', locals())
@@ -177,7 +187,7 @@ def register(request):
                         # 登录用户
                         user = authenticate(username=username, password=password)
                         # 注册码数据更新
-                        if is_register_code.count() > 0:
+                        if is_register_code.exists():
                             r_all_cnt = register_code_value.all_cnt # 注册码的最大使用次数
                             r_used_cnt = register_code_value.used_cnt + 1 # 更新注册码的已使用次数
                             r_use_user = register_code_value.user_list # 注册码的使用用户
@@ -1113,60 +1123,70 @@ class AdminAttachmentDetail(APIView):
 @logger.catch()
 def admin_register_code(request):
     # 返回注册邀请码管理页面
-    if request.method == 'GET':
-        register_codes = RegisterCode.objects.all()
-        paginator = Paginator(register_codes, 10)
-        page = request.GET.get('page', 1)
+    return render(request,'app_admin/admin_register_code.html',locals())
+
+
+# 注册邀请码列表接口
+class AdminRegisterCodeApi(APIView):
+    authentication_classes = [SessionAuthentication,AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    # 获取邀请码列表
+    def get(self,request):
+        page_num = request.query_params.get('page', 1)
+        limit = request.query_params.get('limit', 10)
+        code_data = RegisterCode.objects.all().order_by('-create_time')
+        page = PageNumberPagination()  # 实例化一个分页器
+        page.page_size = limit
+        page_codes = page.paginate_queryset(code_data, request, view=self)  # 进行分页查询
+        serializer = RegisterCodeSerializer(page_codes, many=True)  # 对分页后的结果进行序列化处理
+        resp = {
+            'code': 0,
+            'data': serializer.data,
+            'count': code_data.count()
+        }
+
+        return Response(resp)
+
+    # 新增注册邀请码
+    def post(self,request):
         try:
-            codes = paginator.page(page)
-        except PageNotAnInteger:
-            codes = paginator.page(1)
-        except EmptyPage:
-            codes = paginator.page(paginator.num_pages)
-        return render(request,'app_admin/admin_register_code.html',locals())
-    elif request.method == 'POST':
-        types = request.POST.get('types',None)
-        if types is None:
-            return JsonResponse({'status':False,'data':'参数错误'})
-        # types表示注册码操作的类型，1表示新增、2表示删除
-        if int(types) == 1:
-            try:
-                all_cnt = int(request.POST.get('all_cnt',1)) # 注册码的最大使用次数
-                if all_cnt <= 0:
-                    return JsonResponse({'status': False, 'data': _('最大使用次数不可为负数')})
-                is_code = False
-                while is_code is False:
-                    code_str = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
-                    random_code = ''.join(random.sample(code_str, k=10))
-                    random_code_used = RegisterCode.objects.filter(code=random_code).count()
-                    if random_code_used > 0: # 已存在此注册码，继续生成一个注册码
-                        is_code = False
-                    else:# 数据库中不存在此注册码，跳出循环
-                        is_code = True
-                # 创建一个注册码
-                RegisterCode.objects.create(
-                    code = random_code,
-                    all_cnt = all_cnt,
-                    create_user = request.user
-                )
-                return JsonResponse({'status':True,'data':_('新增成功')})
-            except Exception as e:
-                logger.exception(_("生成注册码异常"))
-                return JsonResponse({'status': False,'data':_('系统异常')})
-        elif int(types) == 2:
-            code_id = request.POST.get('code_id',None)
-            try:
-                register_code = RegisterCode.objects.get(id=int(code_id))
-                register_code.delete()
-                return JsonResponse({'status':True,'data':_('删除成功')})
-            except ObjectDoesNotExist:
-                return JsonResponse({'status':False,'data':_('注册码不存在')})
-            except:
-                return JsonResponse({'status':False,'data':_('系统异常')})
-        else:
-            return JsonResponse({'status':False,'data':_('类型错误')})
-    else:
-        return JsonResponse({'status': False,'data':_('方法错误')})
+            all_cnt = int(request.data.get('all_cnt', 1))  # 注册码的最大使用次数
+            expire_date = request.data.get('expire_date',None)
+            if all_cnt <= 0:
+                return Response({'code': 5, 'data': _('最大使用次数不可为负数')})
+            is_code = False
+            while is_code is False:
+                code_str = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
+                random_code = ''.join(random.sample(code_str, k=10))
+                random_code_used = RegisterCode.objects.filter(code=random_code).count()
+                if random_code_used > 0:  # 已存在此注册码，继续生成一个注册码
+                    is_code = False
+                else:  # 数据库中不存在此注册码，跳出循环
+                    is_code = True
+            # 创建一个注册码
+            RegisterCode.objects.create(
+                code=random_code,
+                all_cnt=all_cnt,
+                expire_date = expire_date,
+                create_user=request.user
+            )
+            return Response({'code': 0, 'data': _('新增成功')})
+        except Exception as e:
+            logger.exception(_("生成注册码异常"))
+            return Response({'code': 4, 'data': _('系统异常')})
+
+    # 删除邀请码
+    def delete(self,request):
+        code_id = request.data.get('code_id', None)
+        try:
+            register_code = RegisterCode.objects.get(id=int(code_id))
+            register_code.delete()
+            return Response({'code': 0, 'data': _('删除成功')})
+        except ObjectDoesNotExist:
+            return Response({'code': 1, 'data': _('注册码不存在')})
+        except:
+            return Response({'code': 4, 'data': _('系统异常')})
 
 
 # 普通用户修改密码

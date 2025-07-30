@@ -26,11 +26,13 @@ urlpatterns = [
     path('forget_pwd/',views.forget_pwd,name='forget_pwd'), # 忘记密码
     path('send_email_vcode/',views.send_email_vcode,name='send_email_vcode'), # 忘记密码发送邮件验证码
     path('send_email_test', views.send_email_test, name='send_email_test'),  # 发送测试邮件
-    path('admin_register_code/',views.admin_register_code,name='register_code_manage'), # 注册邀请码管理
     path('check_update/',views.check_update,name='check_update'), # 检测版本更新
     path('admin_center/',views.admin_center,name="admin_center"), # 后台管理
     path('admin/center_menu/',views.admin_center_menu,name="admin_center_menu"), # 后台管理菜单数据
     path('admin_overview/',views.admin_overview,name="admin_overview"), # 后台管理仪表盘
+    # 注册邀请码及接口
+    path('admin_register_code/', views.admin_register_code, name='register_code_manage'),  # 注册邀请码管理
+    path('api/register_code/', views.AdminRegisterCodeApi.as_view(), name="api_admin_register_code"),  # 注册邀请码接口
     # 图片管理及接口
     path('manage/image/', views.admin_image, name="image_manage"),  # 图片管理页面
     path('api/imgs/', views.AdminImageList.as_view(), name="api_admin_imgs"),  # 图片列表接口

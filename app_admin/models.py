@@ -55,6 +55,7 @@ class RegisterCode(models.Model):
     # 注册码状态：0表示数据已满，1表示有效，默认为1
     status = models.IntegerField(verbose_name="注册码状态",default=1)
     user_list = models.CharField(verbose_name="使用此注册码的用户",default='',max_length=500,blank=True,null=True)
+    expire_date = models.DateField(verbose_name="注册码有效期", null=True, blank=True)
     create_user = models.ForeignKey(User,on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now=True,verbose_name='创建时间')
 
