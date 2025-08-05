@@ -163,6 +163,22 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# 缓存配置
+CACHE_MAP = {
+    'memcached':'django.core.cache.backends.memcached.PyMemcacheCache',
+    'redis':'django.core.cache.backends.redis.RedisCache',
+    'database':'django.core.cache.backends.db.DatabaseCache',
+    'filebase':'django.core.cache.backends.filebased.FileBasedCache',
+    'locmem': 'django.core.cache.backends.locmem.LocMemCache'
+}
+CACHES = {
+    "default": {
+        "BACKEND": CACHE_MAP[CONFIG.get('cache','backend',fallback='locmem')],
+        "LOCATION": CONFIG.get('cache','location',fallback='unique-snowflake'),
+        "KEY_PREFIX":'mrdoc'
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
