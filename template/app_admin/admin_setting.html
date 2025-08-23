@@ -211,6 +211,23 @@
                     </div>
                   </div>
                 </form>
+
+                <!-- 页面链接 -->
+                <form class="layui-form" lay-filter="page_link_config">
+                  <div class="layui-card settings-card">
+                    <div class="layui-card-header">页面链接</div>
+                    <div class="layui-card-body">
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">单标签</label>
+                        <div class="layui-input-inline">
+                          <input type="checkbox" name="single_tab_link" lay-skin="switch" lay-text="开启|关闭"  {% if single_tab_link %}checked{% endif %}>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">开启后，页面所有链接都将在同一个标签页内打开，默认关闭。</div>
+                      </div>
+                      <div><button id="updatePageLinkBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                    </div>
+                  </div>
+                </form>
             </div>
               <!-- 网站设置结束 -->
 
@@ -495,6 +512,23 @@
   // 更新搜索配置
   $("#updateSearchBtn").click(function(){
     updateFunc1(name="search_config")
+  })
+
+  // 更新页面链接配置
+  function updatePageLink(){
+    var data = {
+      'type':'basic',
+      'name':'single_tab_link'
+    }
+    if(form.val("page_link_config").single_tab_link == undefined){
+      data['value'] = null
+    }else{
+      data['value'] = form.val("page_link_config").single_tab_link
+    }
+    updateConfig([data])
+  }
+  $("#updatePageLinkBtn").click(function(){
+    updatePageLink()
   })
 
   // 更新邮箱配置

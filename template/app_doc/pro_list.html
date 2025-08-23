@@ -491,6 +491,12 @@
             {{ static_code | safe }}
         {% endif %}
     <!-- 统计代码结束 -->
+    <script>
+        {% if single_tab_link %}
+            $("a").attr("target","_self");
+            $("form").attr("target","_self");
+        {% endif %}
+    </script>
 
 {% endblock %}
 </body>
