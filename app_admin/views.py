@@ -97,24 +97,31 @@ def log_in(request):
                 request.session['LoginNum'] = 0  # 重试次数清零
                 return render(request, 'login.html', locals())
 
-            if username != '' and pwd != '':
-                user = authenticate(username=username,password=pwd)
-                if user is not None:
-                    if user.is_active:
-                        login(request,user)
-                        request.session['LoginNum'] = 0  # 重试次数
-                        request.session['LoginLock'] = False  # 是否锁定
-                        request.session['LoginTime'] = datetime.datetime.now().timestamp()  # 解除锁定时间
-                        return redirect(to)
-                    else:
-                        errormsg = _('用户被禁用！')
-                        return render(request, 'login.html', locals())
-                else:
-                    errormsg = _('用户名或密码错误！')
-                    request.session['LoginNum'] += 1
-                    return render(request, 'login.html', locals())
-            else:
+            if username == '' or pwd == '':
                 errormsg = _('用户名或密码未输入！')
+                return render(request, 'login.html', locals())
+
+            # 支持通过邮箱进行登录
+            if '@' in username:
+                try:
+                    username = User.objects.get(email=username).username
+                except:
+                    pass
+
+            user = authenticate(username=username,password=pwd)
+            if user is None:
+                errormsg = _('用户名或密码错误！')
+                request.session['LoginNum'] += 1
+                return render(request, 'login.html', locals())
+
+            if user.is_active:
+                login(request,user)
+                request.session['LoginNum'] = 0  # 重试次数
+                request.session['LoginLock'] = False  # 是否锁定
+                request.session['LoginTime'] = datetime.datetime.now().timestamp()  # 解除锁定时间
+                return redirect(to)
+            else:
+                errormsg = _('用户被禁用！')
                 return render(request, 'login.html', locals())
         except Exception as e:
             logger.exception("登录异常")
