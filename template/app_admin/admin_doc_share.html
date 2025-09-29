@@ -1,0 +1,298 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "文档分享管理" %}{% endblock %}
+{% block content %}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="share-doc-table" lay-filter="share-doc-table"></table>
+    </div>
+</div>
+
+    <!-- 自定义表单工具栏 -->
+    <script type="text/html" id="share-doc-toolbar">
+        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
+            <i class="layui-icon layui-icon-delete"></i>
+            {% trans "删除" %}
+        </button>
+    </script>
+
+    <!-- 表格操作栏 -->
+    <script type="text/html" id="share-doc-bar">
+        {% verbatim %}
+        <a href="javascript:void(0);" title="查看分享信息" class="table-col-link" lay-event="showShare">查看</a>
+        <a href="/doc/{{d.doc_id}}/" target="_blank" title="查看源文档" class="table-col-link">前往文档</a>
+        <a href="javascript:void(0);" title="删除文档分享" class="table-col-link" lay-event="remove">删除</a>
+        {% endverbatim %}
+    </script>
+
+    <!-- 分享类型 -->
+    <script type="text/html" id="share-type">
+        {% verbatim %}
+        {{#if (d['share_type'] == '0') { }}
+        <span>公开</span>
+        {{# }else if(d['share_type'] == '1'){ }}
+        <span>私密</span>
+        {{# } }}
+        {% endverbatim %}
+    </script>
+
+
+    <!-- 有效期 -->
+    <script type="text/html" id="expire-date">
+        {% verbatim %}
+        {{#if(d.expire_type == -1){ }}
+        <span>永久</span>
+        {{# }else{ }}
+        <span>{{layui.util.toDateString(d.expire_time,  "yyyy-MM-dd")}}</span>
+        {{# } }}
+        {% endverbatim %}
+    </script>
+
+    <!-- 分享时间 -->
+    <script type="text/html" id="share-create-time">
+        {% verbatim %}
+        {{layui.util.toDateString(d.create_time,  "yyyy-MM-dd HH:mm:ss")}}
+        {% endverbatim %}
+    </script>
+
+    <!-- 分享状态 -->
+    <script type="text/html" id="share-enable">
+        {% verbatim %}
+        <input type="checkbox" name="share-enable" value="{{d.token}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="share-enable" {{ d.share_status == true ? 'checked' : '' }}>
+        {% endverbatim %}
+    </script>
+
+{% endblock %}
+{% block custom_script %}
+<div id="show-share-info-div" style="margin:10px;display: none;">
+    <div class="layui-form" lay-filter="show-share-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">文档名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="doc_name" readonly  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">分享类型</label>
+            <div class="layui-input-block">
+              <input type="text" name="share_type" readonly lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">分享链接</label>
+            <div class="layui-input-block">
+              <input type="text" name="share_url" readonly lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" id="share-code-input">
+            <label class="layui-form-label">分享码</label>
+            <div class="layui-input-block">
+              <input type="text" name="share_pwd" readonly lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" id="copyShareInfo">复制链接</button>
+              </div>
+        </div>
+    </div>
+</div>
+<script src="{% static '/clipboard/clipboard.min.js' %}"></script>
+<script>
+    layui.use(['layer', 'echarts', 'element', 'count','topBar','form','table'], function() {
+        var $ = layui.jquery,
+            table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            element = layui.element,
+            count = layui.count,
+            echarts = layui.echarts;
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        let cols = [
+                [
+                    {type: 'checkbox'},
+                    {title: '文档名称',field: 'doc_name',align: 'left'},
+                    {title: '分享类型',field: 'share_type',align: 'left',width: 100,templet:"#share-type"},
+                    {title: '分享码',field: 'share_value',align: 'left',width: 100},
+                    {title: '有效期',field: 'expire_date',align: 'left',templet:"#expire-date"},
+                    {title: '作者',field: 'create_user',align: 'left',},
+                    {title: '分享时间',field: 'create_time',align: 'left',width: 150,templet:"#share-create-time"},
+                    {title: '状态',field: 'share_status',align: 'left',width: 100,templet:"#share-enable"},
+                    {title: '操作',toolbar: '#share-doc-bar',align: 'left',minWidth:200}
+                ]
+            ]
+        // 渲染表格
+        table.render({
+            elem: '#share-doc-table',
+            method:'post',
+            where:{'type':1},
+            url: "{% url 'admin_doc_share' %}",
+            page: true,
+            cols: cols,
+            skin: 'line',
+            escape:true,
+            toolbar: '#share-doc-toolbar',
+            defaultToolbar: ['filter']
+        });
+        
+        // 侦听分享状态开关
+        form.on('switch(share-enable)',function(obj){
+            var data = {
+                    'type':3,
+                    'token':this.value,
+                    'key':'share_status',
+                }
+            if(obj.elem.checked){
+                data['value'] = 'true'
+            }else{
+                data['value'] = 'false'
+            }
+            $.post("{% url 'manage_doc_share' %}",data,function(r){
+                if(r.status){
+                    layer.msg("设置成功")
+                }else{
+                    layer.msg("设置失败")
+                }
+            })
+        })
+        // 侦听单个分享操作
+        table.on('tool(share-doc-table)', function(obj) {
+            // console.log(obj)
+            if (obj.event === 'remove') {
+                // console.log(obj)
+                window.remove(obj);
+            }else if(obj.event === 'showShare'){
+                showShareInfo(obj.data)
+            }
+        });
+        // 显示文集分享信息
+        showShareInfo = function(data){
+            let share_link = window.location.protocol 
+                + '//' 
+                + document.location.host 
+                + '/share_doc/?token=' 
+                + data.token;
+            if(data.share_type == 0){
+                $("#share-code-input").css('display','none');
+            }else{
+                $("#share-code-input").css('display','block');
+            }
+            form.val('show-share-form',{
+                'doc_name':data.doc_name,
+                'share_type':data.share_type,
+                'share_url':share_link,
+                'share_pwd':data.share_value,
+            })
+            layer.open({
+                type:1,
+                area:["500px"],
+                title:"查看文档分享信息",
+                content:$("#show-share-info-div"),
+            })
+        };
+        // 复制分享URL及分享码
+        var copy_share_link = new ClipboardJS('#copyShareInfo', {
+            text: function() {
+                let share_val = form.val("show-share-form");
+                if(share_val['share_type'] == 0){
+                    return share_val['share_url']
+                }else{
+                    return '链接：' + share_val['share_url'] + " 分享码：" + share_val['share_pwd']
+                }
+            }
+        });
+        copy_share_link.on('success', function(e) {
+            layer.msg("复制成功！")
+        });
+        // 删除文档分享
+        window.remove = function(obj) {
+            layer.confirm('确定要删除该分享？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "{% url 'admin_doc_share' %}",
+                    dataType: 'json',
+                    type: 'post',
+                    data:{'token':obj.data.token,'type':2,'range':'single'},
+                    success: function(r) {
+                        layer.close(loading);
+                        if (r.status) {
+                            layer.msg("删除成功", {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(r.data, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        };
+        // 侦听批量删除
+        table.on('toolbar(share-doc-table)', function(obj) {
+            if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+        window.batchRemove = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let tokens = "";
+            for (let i = 0; i < data.length; i++) {
+                tokens += data[i].token + ",";
+            }
+            tokens = tokens.substr(0, tokens.length - 1);
+            console.log(tokens)
+            layer.confirm('确定要删除这些分享？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "{% url 'admin_doc_share' %}",
+                    dataType: 'json',
+                    type: 'post',
+                    data:{'token':tokens,'type':2,'range':'multi'},
+                    success: function(r) {
+                        layer.close(loading);
+                        if (r.status) {
+                            layer.msg("删除成功", {
+                                icon: 1,
+                                time: 1000
+                            }, function() {
+                                table.reload('share-doc-table',{
+                                    page:{curr:1}
+                                });
+                            });
+                        } else {
+                            layer.msg(r.data, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+    })
+</script>
+{% endblock %}

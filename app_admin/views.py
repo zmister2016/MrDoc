@@ -939,7 +939,86 @@ class AdminDocHistoryDetail(APIView):
 
             return Response({'code':5,'data':_("系统异常")})
 
-
+# 文档分享管理
+@superuser_only
+@require_http_methods(['GET','POST'])
+def admin_doc_share(request):
+    if request.method == 'GET':
+        return render(request, 'app_admin/admin_doc_share.html', locals())
+    else:
+        types = request.POST.get('type')
+        # 请求类型 1：获取列表 2：删除 3：修改
+        if types == '1':
+            page = request.POST.get('page', 1)
+            limit = request.POST.get('limit', 10)
+            docshare_list = DocShare.objects.all().order_by('-create_time')
+            paginator = Paginator(docshare_list, limit)
+            page = request.GET.get('page', page)
+            try:
+                docshares = paginator.page(page)
+            except PageNotAnInteger:
+                docshares = paginator.page(1)
+            except EmptyPage:
+                docshares = paginator.page(paginator.num_pages)
+            share_list = []
+            for doc in docshares:
+                item = {
+                    'token':doc.token,
+                    'doc_id':doc.doc.id,
+                    'doc_name':doc.doc.name,
+                    'share_type':doc.share_type,
+                    'share_value':doc.share_value,
+                    'share_status':doc.is_enable,
+                    'create_user': doc.doc.create_user.username,
+                    # 'expire_type':doc.expire_type,
+                    # 'expire_time':doc.expire_time,
+                    'create_time':doc.create_time
+                }
+                share_list.append(item)
+            resp_data = {
+                "code":0,
+                "msg":"ok",
+                "count":docshare_list.count(),
+                "data":share_list
+            }
+            return JsonResponse(resp_data)
+        # 删除
+        elif types == '2':
+            range = request.POST.get("range")
+            token = request.POST.get("token")
+            if range == 'single':
+                try:
+                    share = DocShare.objects.get(token=token)
+                    share.delete()
+                    return JsonResponse({'status':True,'data':'ok'})
+                except:
+                    return JsonResponse({'status':False,'data':_('无指定内容')})
+            elif range == "multi":
+                tokens = token.split(",")
+                try:
+                    share = DocShare.objects.filter(token__in=tokens)
+                    share.delete()
+                    return JsonResponse({'status':True,'data':'ok'})
+                except:
+                    return JsonResponse({'status':False,'data':_('无指定内容')})
+            else:
+                return JsonResponse({'status':False,'data':_('类型错误')})
+        # 修改
+        elif types == '3':
+            token = request.POST.get("token",'')
+            name = request.POST.get('key','')
+            value = request.POST.get('value','')
+            # 修改分享状态
+            if name == 'share_status':
+                is_enable = True if value == 'true' else False
+                DocShare.objects.filter(token=token).update(is_enable=is_enable)
+            # 修改分享类型
+            elif name == 'share_type':
+                share_type = 0 if value == '0' else 1
+                DocShare.objects.filter(token=token).update(share_type=share_type)
+            else:
+                return JsonResponse({'status':False,'data':_('参数错误')})
+            return JsonResponse({'status':True,'data':'ok'})
 
 # 后台管理 - 文档模板管理
 @superuser_only
@@ -1587,16 +1666,34 @@ def admin_center_menu(request):
         {
             "id": 3,
             "title": _("文档管理"),
-            "type": 1,
+            "type": 0,
             "icon": "layui-icon layui-icon-form",
-            "href": reverse('doc_manage'),
-        },
-        {
-            "id": 4,
-            "title": _("文档模板管理"),
-            "type": 1,
-            "icon": "layui-icon layui-icon-templeate-1",
-            "href": reverse('doctemp_manage'),
+            "href": "",
+            "children": [
+                {
+                    "id": 'doc_manage',
+                    "title": _("文档管理"),
+                    "type": 1,
+                    "icon": "layui-icon layui-icon-form",
+                    "href": reverse('doc_manage'),
+                },
+                {
+                    "id": 4,
+                    "title": _("文档模板管理"),
+                    "type": 1,
+                    "icon": "layui-icon layui-icon-templeate-1",
+                    "href": reverse('doctemp_manage'),
+                },
+                {
+                    "id": 'doc_share_manage',
+                    "title": _("文档分享管理"),
+                    "type": 1,
+                    "icon": "layui-icon layui-icon-templeate-1",
+                    "href": reverse('admin_doc_share'),
+                },
+
+            ],
+
         },
         {
             "id": "my_fodder",

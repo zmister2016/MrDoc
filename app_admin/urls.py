@@ -20,6 +20,8 @@ urlpatterns = [
     path('doc_history_manage/<int:id>/', views.admin_doc_history, name='doc_history_manage'),  # 文档历史记录管理
     path('api/doc_history/<int:id>/', views.AdminDocHistory.as_view(), name="api_doc_history"),  # 文档历史记录接口
     path('api/doc_history_detail/', views.AdminDocHistoryDetail.as_view(), name="api_doc_history_detail"),  # 文档历史记录详情接口
+    # 文档分享管理
+    path('doc_share_manage/',views.admin_doc_share,name="admin_doc_share"), # 分享文档管理
     path('doctemp_manage/',views.admin_doctemp,name='doctemp_manage'), # 文档模板管理
     path('setting/',views.admin_setting,name="sys_setting"), # 应用设置
     path('config',views.admin_site_config,name="site_config"), # 站点配置
