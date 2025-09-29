@@ -42,6 +42,12 @@ logger.add(
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
 
+MRDOC_CRYPTO_KEY = os.getenv('MRDOC_CRYPTO_KEY', None)
+if MRDOC_CRYPTO_KEY is None:
+    CRYPTO_KEY = CONFIG.get('site','crypto_key',fallback='i8wVMM2WxTXGK8wdKV4_WBP1syNPdNVRfdG7bVoTtoM=')
+else:
+    CRYPTO_KEY = MRDOC_CRYPTO_KEY
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug',fallback=False)
 
@@ -62,6 +68,7 @@ INSTALLED_APPS = [
     'app_admin', # 管理APP
     'app_doc', # 文档APP
     'app_api', # API APP
+    'app_ai',
     'django.contrib.sitemaps', # 站点地图
     'rest_framework',
     'corsheaders',

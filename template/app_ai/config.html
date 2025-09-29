@@ -1,0 +1,249 @@
+{% extends 'app_admin/admin_base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}AI功能接入配置{% endblock %}
+{% block custom_element %}
+{% endblock %}
+{% block content %}
+<div class="layui-card">
+  <div class="layui-card-body">
+    <div class="layui-card-header" style="margin-bottom: 10px;">
+      <div class="layui-row">
+          <span style="font-size:18px;">AI功能接入配置
+          </span>
+      </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-tab">
+          <ul class="layui-tab-title">
+            <li class="layui-this">基础配置</li>
+            <li>Dify配置</li>
+          </ul>
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form" lay-filter="ai-basic-config">
+                    <div class="layui-card settings-card">
+                      <div class="layui-card-header">基础信息</div>
+                      <div class="layui-card-body">
+                        <!-- 启用状态 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-block">
+                            {% if ai_status == '1' %}
+                            <input type="radio" name="ai_status" value="1" title="启用" checked>
+                            <input type="radio" name="ai_status" value="0" title="关闭">
+                            {% else %}
+                            <input type="radio" name="ai_status" value="1" title="启用" >
+                            <input type="radio" name="ai_status" value="0" title="关闭" checked>
+                            {% endif %}
+                            </div>
+                        </div>
+                        <!-- 框架选择 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">AI框架</label>
+                            <div class="layui-input-inline">
+                            <select name="ai_frame" lay-verify="required">
+                                <option value=""></option>
+                                {% for frame in ai_frames %}
+                                <option value="{{frame.value}}">{{frame.name}}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                            <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_basic_config">保存</button>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="layui-form" lay-filter="ai-write-config">
+                  <div class="layui-card settings-card">
+                    <div class="layui-card-header">AI辅助写作</div>
+                    <div class="layui-card-body">
+                      <!-- AI写作辅助 -->
+                      <div class="layui-form-item">
+                          <label class="layui-form-label">状态</label>
+                          <div class="layui-input-block">
+                              <input type="radio" name="ai_write_status" value="1" title="启用" {% if ai_write_status == '1' %}checked{% endif %}>
+                              <input type="radio" name="ai_write_status" value="0" title="关闭" {% if ai_write_status != '1' %}checked{% endif %}>
+                          </div>                            
+                      </div>
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">请求频率限制</label>
+                        <div class="layui-input-inline">
+                          <select name="ai_write_rate_limit" lay-verify="required">
+                            <option value="-1">无限制</option>
+                            <option value="1">每分钟1次</option>
+                            <option value="5">每分钟5次</option>
+                            <option value="10">每分钟10次</option>
+                            <option value="20">每分钟20次</option>
+                            <option value="30">每分钟30次</option>
+                            <option value="40">每分钟40次</option>
+                          </select>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">以用户为对象进行对 AI 接口请求频率进行限制。</div>                            
+                      </div>
+                      <div class="layui-form-item">
+                          <div class="layui-input-block">
+                          <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_write_config">保存</button>
+                          </div>
+                      </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+            
+              <!-- Dify开始 -->
+            <div class="layui-tab-item">
+               <div class="layui-form" lay-filter="dify-config">
+                 <!-- 启用状态 -->
+                 <div class="layui-form-item">
+                    <label class="layui-form-label">API地址</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="ai_dify_api_address" id="dify_api_address" placeholder="请输入Dify API 地址，例如 https://api.dify.ai/v1" autocomplete="off" class="layui-input" value="{{ai_dify_api_address}}">
+                    </div>
+                 </div>
+
+                 <div class="layui-form-item">
+                    <label class="layui-form-label">文本生成 API 密钥</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="ai_dify_textgenerate_api_key" id="dify_chat_api_key" placeholder="请输入Dify 文本生成型 API 密钥" autocomplete="off" class="layui-input" value="{{ai_dify_textgenerate_api_key}}">
+                    </div>
+                </div>
+
+                  <hr>
+                  <div class="layui-form-item">
+                    <div class="layui-input-block">
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_dify_config">保存配置</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <!-- Dify结束 -->
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block custom_script %}
+<style>
+  #projectMapKnowledgeDiv .layui-form-label{
+    width: 100px;
+  }
+</style>
+
+<script src="{% static 'jquery/3.5.0/jquery.min.js' %}"></script>
+<script>
+  $.ajaxSetup({
+      data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+  });
+  var form = layui.form;
+  var element = layui.element;
+  var layer = layui.layer;
+  let dropdown = layui.dropdown;
+  let table = layui.table;
+  // console.log(ai_dify_kb_list)
+
+  form.val('ai-basic-config',{ // AI基础配置
+    'ai_frame':'{{ai_frame}}'
+  })
+
+  form.val('ai-chat-config',{ // AI辅助写作配置
+    'ai_chat_rate_limit': '{{ai_chat_rate_limit|default:"-1"}}'
+  })
+
+  form.val('ai-write-config',{ // AI辅助写作配置
+    'ai_write_rate_limit': '{{ai_write_rate_limit|default:"-1"}}'
+  })
+
+  // 保存AI基础配置
+  saveAIBasicWork = function(){
+    var formData = form.val('ai-basic-config');
+    // console.log(formData)
+    var data = [
+        {
+          'type':'ai',
+          'name':'ai_status',
+          'value':formData['ai_status'],
+        }
+        ,{
+          'type':'ai',
+          'name':'ai_frame',
+          'value':formData['ai_frame'],
+        }
+    ]
+    // console.log(data)
+    saveAiConfig(data);
+  };
+  $("#save_basic_config").click(function(){
+    saveAIBasicWork();
+  });
+
+  // 保存AI写作配置
+  saveAIWriteConfig = function(){
+    var formData = form.val('ai-write-config');
+    console.log(formData)
+    var data = [
+        {
+            'type':'ai',
+            'name':'ai_write_status',
+            'value':formData['ai_write_status'],
+        },
+        {
+            'type':'ai',
+            'name':'ai_write_rate_limit',
+            'value':formData['ai_write_rate_limit'],
+        },
+    ]
+    // console.log(data)
+    saveAiConfig(data);
+  }
+  $("#save_write_config").click(function(){
+    saveAIWriteConfig();
+  });
+
+  // 保存dify配置
+  $("#save_dify_config").click(function(){
+    var formData = form.val('dify-config');
+    console.log(formData)
+    const result = [];
+
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+          result.push({ type: 'ai', name: key, value: formData[key] });
+      }
+    }
+    saveAiConfig(result);
+  });
+
+  
+
+
+
+
+  // AI 接入通用配置保存函数
+  saveAiConfig = function(data){
+    $.ajax({
+        url:"{% url 'ai_config' %}",
+        type:"post",
+        data:{'data':JSON.stringify(data)},
+        success:function(r){
+          if(r.code === 0){
+            layer.msg("保存成功")
+          }else{
+            layer.msg(r.data)
+          }
+        },
+        error:function(){
+          layer.msg("保存异常")
+        }
+      })
+  };
+
+
+</script>
+{% endblock %}

@@ -1639,10 +1639,29 @@ def admin_center_menu(request):
         },
         {
             "id": 7,
-            "title": _("站点设置"),
-            "type": 1,
+            "title": _("站点管理"),
+            "type": 0,
             "icon": "layui-icon layui-icon-set",
-            "href": reverse('sys_setting'),
+            "href": "",
+            "children":[
+                {
+                    "id": 'site_manage',
+                    "title": _("站点设置"),
+                    "type": 1,
+                    "icon": "layui-icon layui-icon-set",
+                    "href": reverse('sys_setting'),
+                    "children": [
+
+                    ]
+                },
+                {
+                    "id": "ai_config",
+                    "title": _("AI接入"),
+                    "type": 1,
+                    "openType": "_iframe",
+                    "href": reverse("ai_config")
+                },
+            ]
         },
         {
             "id": 'update_pro',

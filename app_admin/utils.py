@@ -11,6 +11,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from app_admin.models import SysSetting
 from loguru import logger
+from cryptography.fernet import Fernet
 import random
 import smtplib
 import zipfile
@@ -88,6 +89,20 @@ def dectry(p):
         temp = chr(int(i) - ord(j)) # 解密字符 = (加密Unicode码字符 - 秘钥字符的Unicode码)的单字节字符
         dec_str = dec_str+temp
     return dec_str
+
+# 基于cryptography的加解密
+# 加密数据
+def encrypt_data(data):
+    cipher_suite = Fernet(settings.CRYPTO_KEY)
+    encrypted_data = cipher_suite.encrypt(data.encode()).decode()
+    return encrypted_data
+
+# 解密数据
+def decrypt_data(encrypted_data):
+    cipher_suite = Fernet(settings.CRYPTO_KEY)
+    decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
+    return decrypted_data
+
 
 # 判断是否内部链接
 def is_internal_path(path):

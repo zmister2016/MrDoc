@@ -18,6 +18,7 @@ from django.urls import path,include,re_path
 from django.views.static import serve
 from django.conf import settings
 from django.contrib.sitemaps import views
+from django.views.i18n import JavaScriptCatalog
 from django.views.generic import TemplateView
 from app_doc.sitemaps import SitemapAll
 from app_admin import views as admin_views
@@ -33,8 +34,10 @@ urlpatterns = [
     path('admin/',include('app_admin.urls'),), # admin应用
     path('api/',include('app_api.urls')), # 用户 Token API 接口
     path('api_app/',include('app_api.urls_app')), # RESTFUL API 接口
+    path('ai/',include('app_ai.urls')), # AI 接入
     # re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
     re_path('^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
+    re_path(r'^jsi18n/', JavaScriptCatalog.as_view(),name="javascript-catalog"),
 ]
 
 if settings.SITEMAP:

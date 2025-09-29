@@ -32,11 +32,7 @@
             ]
     }
 
-    var editor = new MrEditor({
-        element: document.getElementById("editor-md"),
-        value:$("#editor-md textarea").val(),
-        cdn:"{% static '/mr-marked/'%}",
-        toolbar:[
+    var toolbars = [
             'undo','redo','separator',
             'heading-2','heading-3','heading-4','separator',
             'font','bold','italic','strikethrough','mark','inlinecode','separator',
@@ -166,7 +162,43 @@
                 }
             },'separator',
             'formula','graph','mermaid'
-        ]
+        ];
+
+    var ai_write_status = '{{ai_write_status}}';
+    if(ai_write_status == '1'){
+        toolbars.push({
+            name: 'ai',
+            title: 'AI助手',
+            svg: '<svg t="1738736727063" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5387" width="200" height="200"><path d="M576 85.333333c0 18.944-8.234667 35.968-21.333333 47.701334V213.333333h213.333333a128 128 0 0 1 128 128v426.666667a128 128 0 0 1-128 128H256a128 128 0 0 1-128-128V341.333333a128 128 0 0 1 128-128h213.333333V133.034667A64 64 0 1 1 576 85.333333zM256 298.666667a42.666667 42.666667 0 0 0-42.666667 42.666666v426.666667a42.666667 42.666667 0 0 0 42.666667 42.666667h512a42.666667 42.666667 0 0 0 42.666667-42.666667V341.333333a42.666667 42.666667 0 0 0-42.666667-42.666666H256z m-170.666667 128H0v256h85.333333v-256z m853.333334 0h85.333333v256h-85.333333v-256zM384 618.666667a64 64 0 1 0 0-128 64 64 0 0 0 0 128z m256 0a64 64 0 1 0 0-128 64 64 0 0 0 0 128z" fill="#000000" p-id="5388"></path></svg>',
+            type:'dropdown',
+            actions:[
+                {
+                    name: 'ai-write',
+                    title:'文档创作',
+                    svg: '<svg t="1738931526526" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8593" width="200" height="200"><path d="M896 864a32 32 0 0 1 0 64H128a32 32 0 0 1 0-64z m-60.16-733.621333l15.093333 15.093333c45.866667 45.834667 45.866667 120.16 0 166.005333L418.794667 743.338667a160.192 160.192 0 0 1-78.122667 42.986666l-152.245333 34.197334c-23.84 5.365333-44.661333-16.853333-37.749334-40.288l43.338667-146.88a160.042667 160.042667 0 0 1 40.373333-67.925334l435.328-435.050666c45.866667-45.834667 120.245333-45.834667 166.112 0zM636.32 254.304L279.68 610.709333a96.021333 96.021333 0 0 0-24.213333 40.746667l-27.946667 94.656 99.093333-22.261333a96.117333 96.117333 0 0 0 46.869334-25.781334L726.933333 344.842667l-90.602666-90.538667z m78.698667-78.656l-33.397334 33.386667 90.602667 90.538666 33.386667-33.376a53.333333 53.333333 0 0 0 0-75.456l-15.093334-15.093333a53.408 53.408 0 0 0-75.498666 0z" fill="#000000" p-id="8594"></path></svg>',
+                    action:function(cm){openAiDialog('write')}
+                },
+                {
+                    name: 'ai-write',
+                    title:'文档续写',
+                    svg: '<svg t="1738931438198" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6382" width="200" height="200"><path d="M795.712 99.456a96 96 0 0 1 35.2 131.136l-137.6 238.272a64 64 0 0 1-32.64 27.776l-49.856 19.072a61.824 61.824 0 0 1-83.136-48l-8.448-52.736a64 64 0 0 1 7.808-42.112l137.536-238.272a96 96 0 0 1 131.136-35.2zM720 166.592L582.4 404.864l8 50.048 47.488-18.048 137.536-238.272a32 32 0 1 0-55.424-32zM512 608a32 32 0 0 1 0 64H192a32 32 0 1 0 0 64h640a96 96 0 0 1 0 192H448a32 32 0 1 1 0-64h384a32 32 0 1 0 0-64H192a96 96 0 0 1 0-192h320z" fill="#606266" p-id="6383"></path></svg>',
+                    action:function(cm){openAiDialog('continue')}
+                },
+                {
+                    name: 'ai-write',
+                    title:'文档润色',
+                    svg: '<svg t="1738931490061" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7534" width="200" height="200"><path d="M691.008 112.256l-44.672-67.84-44.608 67.84-78.336 21.504 50.752 63.36-3.776 81.152L646.4 249.6l75.968 28.672-3.712-81.088 50.688-63.424-78.272-21.504zM209.92 319.808l146.24-146.24L465.92 283.136l0.128-0.128 475.264 475.264-0.192 0.128 0.128 0.064-146.24 146.24-584.96-584.96z m146.24-55.744l64.384 64.32-55.744 55.744-64.384-64.32 55.744-55.744zM206.848 495.488l-31.808-48.384-31.808 48.384-55.808 15.36 36.16 45.12-2.688 57.856 54.144-20.48 54.144 20.48-2.624-57.856 36.096-45.184-55.808-15.36z m186.496 144.768l-18.944-28.672-18.88 28.672-33.152 9.088 21.504 26.88-1.6 34.304 32.128-12.16 32.192 12.16-1.6-34.304 21.44-26.88-33.088-9.088z" p-id="7535"></path></svg>',
+                    action:function(cm){openAiDialog('polish')}
+                }
+            ]
+        })
+    }
+
+    var editor = new MrEditor({
+        element: document.getElementById("editor-md"),
+        value:$("#editor-md textarea").val(),
+        cdn:"{% static '/mr-marked/'%}",
+        toolbar:toolbars
     });
 
     //粘贴上传图片
@@ -222,4 +254,239 @@
             return null;
         }
     };
+
+    // 打开AI助手对话框
+    const openAiDialog = (actionType) => {
+        let title = '🤖 AI文档创作';
+        let btnTitle = '生成';
+        if(actionType == 'continue'){
+            title = '🤖 AI文档续写'
+            btnTitle = '续写';
+        }else if(actionType == 'polish'){
+            title = '🤖 AI文档润色';
+            btnTitle = '润色'
+        }
+
+        layer.open({
+            type: '1',
+            title: title,
+            id:'aiWrite',
+            area: ['800px', '700px'],
+            content:`
+                <div style="padding: 20px;">
+                    <div class="layui-form">
+                        <div class="layui-form-item">
+                            <div class="layui-input-inline" style="width:80%;">
+                                <textarea id="inputText" class="layui-textarea" placeholder="描述你的文档创作需求，例如“请为我生成一篇新兴产业调研报告结构大纲”..." rows="2"></textarea>
+                            </div>
+                            <div class="layui-input-inline" style="width:80px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" id="submitText"">${btnTitle}文档</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div id="chatHistory" class="layui-form-item markdown-body" style="height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; padding: 10px;"></div>
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" id="insertText"">插入编辑器</button>
+                    </div>
+                </div>
+            `,
+            success: function (layero, index) {
+                // 点击提交按钮后发送请求
+                $('#submitText').click(function () {
+                    $('#submitText').prop('disabled', true);
+                    $('#submitText').addClass('layui-btn-disabled')
+                    $("#chatHistory").empty();
+                    var inputText = $('#inputText').val();
+                    if (inputText.trim() !== "") {
+                        ai_text = ''
+                        sendRequest(`${inputText}`); // 发送请求
+                    }
+                });
+
+                if(actionType == 'write'){ // 文本创作
+                    // 插入文本到编辑器
+                    $('#insertText').click(function(){
+                        editor.insertValue(ai_text);
+                        layer.closeAll();
+                    });
+                }else if(actionType == 'continue'){ // 文档续写
+                    // 获取编辑器文本
+                    var editor_selected = editor.getSelectedValue();
+                    if(editor_selected == ""){
+                        $("#inputText").val(`请对下面的文档进行续写：\n${editor.getMarkdown()}`)
+                    }else{
+                        $("#inputText").val(`请对下面的文档进行续写：\n${editor_selected}`)
+                    };
+                    // 插入文本到编辑器
+                    $('#insertText').click(function(){
+                        if(editor_selected == ''){
+                            editor.insertValue(ai_text,'end');
+                        }else{
+                            editor.insertValue(editor_selected + ai_text);
+                        }
+                        layer.closeAll();
+                    })
+                }else if(actionType == 'polish'){ // 文档润色
+                    // 获取编辑器文本
+                    var editor_selected = editor.getSelectedValue();
+                    if(editor_selected == ""){
+                        $("#inputText").val(`请对下面的文档进行润色：\n${editor.getMarkdown()}`)
+                    }else{
+                        $("#inputText").val(`请对下面的文档进行润色：\n${editor_selected}`)
+                    };
+                    // 插入文本到编辑器
+                    $('#insertText').click(function(){
+                        if(editor_selected == ''){
+                            editor.setValue(ai_text);
+                        }else{
+                            editor.insertValue(ai_text);
+                        }
+                        layer.closeAll();
+                    });
+                }
+            },
+        });
+
+    };
+
+    const ai_marked = new markedParse();
+    var ai_text = '';
+    // 使用fetch发送请求，并处理流式响应
+    function sendRequest(message) {
+        const controller = new AbortController(); // 控制请求的abort
+        const signal = controller.signal;
+        fetch('{% url "ai_text_genarate" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer app-NoBXlbeHEVfmelOAc4oeyrmR' // 需要认证时加上此头
+            },
+            body: JSON.stringify({
+                inputs: { query: message },
+            }),
+            signal: signal
+        })
+        .then(response => {
+            if (!response.ok) {
+                $('#submitText').prop('disabled', false);
+                $('#submitText').removeClass('layui-btn-disabled')
+                throw new Error('网络错误');
+            }
+            if (response.headers.get('Content-Type') && response.headers.get('Content-Type').includes('application/json')) {
+                return response.json().then(data => {
+                    if (!data.status) {
+                        layer.msg('请求异常：'+data.data)
+                        $('#submitText').prop('disabled', false);
+                        $('#submitText').removeClass('layui-btn-disabled')
+                        return; // Early exit if there's an error
+                    }
+                });
+            }
+            // 处理响应体的ReadableStream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullText = ''; // 存储完整文本
+            let currentIndex = 0; // 当前文本的显示位置
+
+            // 逐块读取流并处理
+            function readStream() {
+                reader.read().then(({ done, value }) => {
+                    if (done) {
+                        return; // 流结束
+                    }
+
+                    // 解码并处理每个chunk
+                    const chunkText = decoder.decode(value, { stream: true });
+                    processStream(chunkText); // 处理流数据
+                    readStream(); // 继续读取
+                }).catch((error) => {
+                    console.error('读取流时发生错误:', error);
+                });
+            }
+
+            readStream(); // 开始读取流
+        }).catch(error => {
+            console.error('请求错误:', error);
+        });
+    }
+
+    function renderMarkdownGradually(text) {
+        ai_text += text;
+        // console.log(ai_text)
+        let i = 0;
+        function step() {
+            if (i < text.length) {
+                document.getElementById("chatHistory").innerHTML = ai_marked.getHtml({value:ai_text});
+                // 保持滚动到最后
+                const chatHistory = document.getElementById("chatHistory");
+                chatHistory.scrollTop = chatHistory.scrollHeight;  // 滚动到底部
+                i++;
+                setTimeout(step, 30); // 控制打字机速度
+            }
+        }
+        step();
+    }
+
+    // 处理流式数据块
+    function processStream(chunkText) {
+        const container = $('#chatHistory');
+        const events = chunkText.split('\n\n'); // 根据两个换行符分隔每个事件
+
+        events.forEach(eventText => {
+            if (eventText.startsWith('data:')) {
+                const eventData = eventText.slice(5).trim(); // 去掉data:前缀
+                // console.log(eventData)
+                try {
+                    const event = JSON.parse(eventData);
+
+                    if (event.event === 'message') {
+                        renderMarkdownGradually(event.answer); // 新文本块
+                    } else if (event.event === 'message_end') {
+                        console.log('消息传输完成');
+                        $('#submitText').prop('disabled', false);
+                        $('#submitText').removeClass('layui-btn-disabled')
+                    } else if (event.event === 'error') {
+                        console.error('发生错误:', event.message);
+                        layer.alert(event.message,{icon:2})
+                        $('#submitText').prop('disabled', false);
+                        $('#submitText').removeClass('layui-btn-disabled')
+                    } else if (event.event === 'ping') {
+                        // 定时的ping事件，保持连接活跃，通常不需要做任何操作
+                    }
+                } catch (e) {
+                    console.error('事件解析错误:', e);
+                    $('#submitText').prop('disabled', false);
+                    $('#submitText').removeClass('layui-btn-disabled')
+                }
+            }
+        });
+    }
+
+
+    // 转换 Mathlive与Katex公式不兼容的语法
+    function sanitizeMathLiveLatex(latex) {
+        return latex
+        // 替换 \bigm{...} → \left.\right... （如 \bigm{|}）
+        .replace(/\\bigm{([^\{\}])}/g, '\\left.\\right$1')
+
+        // 移除 \Bigl, \Biggr, \biggl 等括号尺寸宏
+        .replace(/\\(?:Big|big)[glrt]?\s*/g, '')
+
+        // 移除 \class{classname}{...} → ...
+        .replace(/\\class\{[^}]*\}\{([^}]*)\}/g, '$1')
+
+        // 移除 \style{...}{...} → ...
+        .replace(/\\style\{[^}]*\}\{([^}]*)\}/g, '$1')
+
+        // 移除 \htmlClass 和 \htmlId
+        .replace(/\\html(Class|Id)\{[^}]*\}\{([^}]*)\}/g, '$2')
+
+        // 替换 \not= → \neq
+        .replace(/\\not=/g, '\\neq')
+
+        // 替换 MathLive 有时会导出的 \unicode{...} → 尝试替换为普通字符（简化示例）
+        .replace(/\\unicode\{[Uu]\+([0-9A-Fa-f]+)\}/g, (_, hex) =>
+        String.fromCodePoint(parseInt(hex, 16))
+        );
+    }
 </script>
