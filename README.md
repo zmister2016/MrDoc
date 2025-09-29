@@ -46,7 +46,7 @@ Current Platform：
 
 ## Example Site
 
-Open Source Edition -  [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+Open Source Edition -  [http://demo.mrdoc.pro](http://demo.mrdoc.pro)
 
 Professional Edition - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 

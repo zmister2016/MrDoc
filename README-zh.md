@@ -49,7 +49,7 @@ MrDoc 全系产品目前涵盖以下终端：
 
 ## 演示站点
 
-开源版 - [http://mrdoc.zmister.com](http://mrdoc.zmister.com)
+开源版 - [http://demo.mrdoc.pro](http://demo.mrdoc.pro)
 
 专业版 - [https://doc.mrdoc.pro](https://doc.mrdoc.pro)
 
