@@ -286,4 +286,13 @@ ul#doc-tree{
       height: auto !important;
     }
     .doc-header,#doc-content-bottom-toolbar,#toc-container,doc-summary,.fixed-tool-bar,.doc-comment,.page-flip,#ad-1,#ad-2,.page-flip,.doc-container-sidebar-toggle {display: none !important;}
+    .markdown-code .markdown-code-block pre{
+        max-height: 100%;
+    }
+    .markdown-body pre code,
+    .markdown-body pre.hljs {
+        white-space: pre-wrap !important;
+        word-break: break-all !important;
+        overflow-x: visible !important;
+    }
   }
