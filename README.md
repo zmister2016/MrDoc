@@ -66,6 +66,7 @@ username:test1  password:123456
     - Support the account based `API` interface, which can use the account `token` to get the corpus, upload pictures and create documents through the 'API';
     - Supports the project collaboration function. A project can have one Creator and multiple collaborators, and can flexibly select collaboration permissions;
     - It supports the function of document historical version to view and compare the differences between the historical version and the existing version, and restore a historical version to the current version;
+    - AI Write;
 
 Update Record : [CHANGES.md](./CHANGES.md)
 
