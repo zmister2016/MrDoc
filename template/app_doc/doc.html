@@ -179,8 +179,12 @@
         <a class="layui-btn layui-btn-primary layui-btn-sm" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
             {% trans "Markdown文件" %}
         </a>
-        {% if doc.editor_mode != 4 %}
-        <a href="?print=true" target="_blank" class="layui-btn layui-btn-primary layui-btn-sm" >{% trans "PDF文档（打印）" %}</a>
+        {% if doc.editor_mode == 4 %}
+            <button class="layui-btn layui-btn-primary layui-btn-sm" id="download-doc-xls">
+                {% trans "Excel表格" %}
+            </button>
+        {% else %}
+            <a href="?print=true" target="_blank" class="layui-btn layui-btn-primary layui-btn-sm" >{% trans "PDF文档（打印）" %}</a>
         {% endif %}
     </div>
 </div>
@@ -448,6 +452,18 @@
 <script>
     var lucksheet_height = $(window).height() - $(".doc-header").height() - $(".doc-info").height() - 30;
     $("#luckysheet").height(lucksheet_height);
+</script>
+
+<!-- 在线表格文档导出Excel -->
+<script src="{% static 'luckysheet/dist/exportexcel.js' %}?version={{mrdoc_version}} charset="utf-8"></script>
+<script>
+$("#download-doc-xls").click(function(){
+    layer.load("Excel生成中……")
+    // console.log(luckysheet.getAllSheets())
+    exportExcel(luckysheet.getAllSheets(),"{{doc.name}}");
+    layer.closeAll();
+    $("#download_div").css("display","none");
+})
 </script>
 {% endif %}
 
