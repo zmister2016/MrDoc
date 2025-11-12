@@ -2,6 +2,149 @@
 html.theme-dark{
     filter: invert(1) hue-rotate(180deg);
 }
+
+/* 文档页面布局样式 */
+body{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#doc-container {
+    display: flex;
+    height: 100vh;
+}
+
+#doc-container-sidebar {
+    width: var(--sidebar-width, 300px);
+    min-width: 300px;
+    max-width: 800px; /* 设置最大宽度 */
+    background-color: #fafafa;
+    border-right: 1px solid #f1f1f1;
+    overflow: auto;
+}
+body.big-page #doc-container-sidebar{
+    display: none;
+}
+
+#doc-container-sidebar ul.summary li a, #doc-container-sidebar ul.summary li span{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#doc-container-sidebar ul.summary {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    -webkit-transition: top .5s ease;
+    -moz-transition: top .5s ease;
+    -o-transition: top .5s ease;
+    transition: top .5s ease;
+}
+#doc-container-sidebar ul.summary li a, #doc-container-sidebar ul.summary li span {
+    display: block;
+    padding: 10px;
+    border-bottom: none;
+    /*color: #364149;*/
+    background: 0 0;
+    /* text-overflow: ellipsis;  */
+    /* overflow: hidden; */
+    white-space: nowrap;
+    position: relative;
+}
+#doc-container-sidebar ul.summary li ul {
+    padding-left: 10px;
+}
+#doc-container-sidebar ul.summary li a:hover,.bq a:hover{
+    text-decoration: underline;
+}
+
+#doc-container-body {
+    flex: 1;
+    overflow: auto;
+    padding: 0px 10px;
+}
+
+#doc-container-splitter {
+    cursor: ew-resize;
+    width: 1px; /* 默认细一些 */
+    height: 100%;
+    padding: 0 4px;
+    flex-shrink: 0;
+    transition: width 0.2s;
+    position: relative;
+}
+body.big-page #doc-container-splitter{
+    display: none;
+}
+
+#doc-container-splitter:hover::before,#doc-container-splitter.active:before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    left: 0;
+    background-color: #2176ff;
+}
+
+/* 小屏幕下文集大纲悬浮切换按钮 */
+.doc-container-sidebar-toggle {
+    position: fixed;
+    top: 50%;
+    left: 300px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+  }
+  .big-page .doc-container-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .big-page .doc-container-sidebar-toggle{
+    left: 0px;
+  }
+  @media (min-width: 768px) {
+    .doc-container-sidebar-toggle {
+      display: none;
+    }
+  }
+
+@media screen and (max-width:768px){
+    body{
+        display: block;
+    }
+    #doc-container {
+
+    }
+    #doc-container-sidebar{
+        color: #333;
+        position: fixed;
+        height: calc(100%);
+        background-color: #fafafa;
+        width:300px;
+        overflow: auto;
+        z-index: 9999;
+    }
+    #doc-container-body{
+        max-width: 100%;
+    }
+
+    #doc-container-splitter{
+        display: none;
+    }
+}
+
+/* end文档页面布局样式 */
+
 /*一级无序li显示实心圆点*/
 .doc-content ul li{
     list-style:disc;
@@ -12,7 +155,7 @@ html.theme-dark{
 }
 /*有序li显示数字*/
 .doc-content ol li{
-    list-style-type: decimal;
+    list-style-type: inherit !important;
 }
 .doc-content ol ol ul,.doc-content ol ul ul,.doc-content ul ol ul,.doc-content ul ul ul {
     list-style-type: square;
@@ -25,83 +168,15 @@ html.theme-dark{
 .editormd-toc-menu ul.markdown-toc-list li{
     /*list-style:none;*/
 }
-/* 弹出框文档目录样式 */
-ul.markdown-toc-list{
-    list-style-position:inside;
-}
-ul.markdown-toc-list li{
-    list-style: none!important;
-    line-height: 24px;
-}
-ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
-    padding-left:15px;
-}
-ul.markdown-toc-list a{
-    /* text-decoration: underline!important; */
-}
-/* 块级代码和行内代码去除边框 */
-.markdown-body p code{
-    border:none;
-}
-/* HTML预览样式 */
-.markdown-body h1{ 
-    font-size: 1.7em;
-}
-.markdown-body h2{
-    font-size: 1.5em;
-}
-.markdown-body h3{
-    font-size: 1.25em;
-}
-.markdown-body h4{
-    font-size: 1em;
-}
-.markdown-body h5{
-    font-size: .875em;
-}
-.markdown-body h6{
-    font-size: .85em;
-}
-#url_qrcode img{
-    margin: auto;
-}
-/* 文档代码块样式 */
-ol.linenums li{ 
-    width: max-content;
-}
-pre.linenums,pre.line-numbers{
-    max-height: 500px;
-}
-li.L1, li.L3, li.L5, li.L7, li.L9 {
-    background: none !important;
-}
-
-/* layui弹出框颜色 */
-.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
-    border-bottom: 2px solid #333;
-}
-.layui-tab-brief>.layui-tab-title .layui-this{
-    color: #333;
-}
-/* 覆盖vditor样式 */
-.vditor-outline__item{
-    padding: 0;
-    padding-bottom: 5px;
-    color: #333;
-}
-.vditor-reset pre>code{
-    font-size: 100%;
-}
-/* 下拉目录隐藏li样式 */
-.editormd-toc-menu ul.markdown-toc-list li{
-    /*list-style:none;*/
-}
 ul.markdown-toc-list{
     list-style-position:inside;
 }
 ul.markdown-toc-list li, .mce-toc li{
     list-style: none!important;
     line-height: 24px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 ul.markdown-toc-list > li > ul > li,ul.markdown-toc-list > li > ul li{
     padding-left:15px;
@@ -165,6 +240,54 @@ pre.linenums,pre.line-numbers{
 li.L1, li.L3, li.L5, li.L7, li.L9 {
     background: none !important;
 }
+
+/* 富文本任务列表 */
+ul[data-type="taskList"] {
+    list-style: none;
+    margin-left: 0;
+    padding: 0;
+  }
+  ul[data-type="taskList"] li {
+    align-items: flex-start;
+    display: flex;
+  }
+  ul[data-type="taskList"] li > label {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+    user-select: none;
+  }
+  ul[data-type="taskList"] li > div {
+    flex: 1 1 auto;
+  }
+  ul[data-type="taskList"] input[type="checkbox"] {
+    cursor: pointer;
+  }
+  ul[data-type="taskList"] ul[data-type="taskList"] {
+    margin: 0;
+  }
+
+/* layui弹出框颜色 */
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
+    border-bottom: 2px solid #333;
+}
+.layui-tab-brief>.layui-tab-title .layui-this{
+    color: #333;
+}
+/* 覆盖vditor样式 */
+.vditor-outline__item{
+    padding: 0;
+    padding-bottom: 5px;
+    color: #333;
+}
+.vditor-outline li > span{
+    padding: 0px;
+}
+.vditor-outline li > span:hover{
+    color: #2176ff;
+}
+.vditor-reset pre>code{
+    font-size: 100%;
+}
 /* 文档图片悬浮鼠标样式 */
 #content img:hover{
     cursor: -moz-zoom-in;
@@ -172,12 +295,12 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
     cursor: zoom-in;
 }
 #wm{
-    width: 100%;
-    height: 100%;
-    display: block;
-    position: absolute;
-    opacity: 0.1;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
     pointer-events: none;
+    z-index: 9999;
+    background-repeat: repeat, repeat;
 }
 .collected{
     color: rgb(250, 173, 20);
@@ -186,13 +309,106 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
     cursor: pointer;
 }
 
-/* 文集大纲图标 */
-i.switch-toc{
-    padding:10px;
-    cursor: pointer;
-}
+/* 左侧层级目录样式 */
+#doc-container-sidebar ul.doctree-ul {
+    list-style: none;
+    padding-left: 20px;
+  }
 
-/* 文集大纲样式 */
+  #doc-container-sidebar li.doctree-li {
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #doc-container-sidebar .doctree-item-wrapper{
+      border-radius: 5px;
+      display:flex;
+      flex-direction: row;
+  }
+
+  #doc-container-sidebar .doctree-item-name-wrapper > i{
+    padding: 5px;
+  }
+
+  #doc-container-sidebar .doctree-item-name-wrapper.no-children-icon > a {
+    padding: 5px; /* 示例：左侧多一点内边距 */
+  }
+
+  #doc-container-sidebar .doctree-item-name-wrapper.has-children-icon > a{
+    padding: 5px 5px 5px 0px;
+  }
+
+  #doc-container-sidebar .doctree-item-name-wrapper {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  #doc-container-sidebar .doctree-item-btn {
+    margin-left: auto;
+    display:none;
+    margin-right:5px;
+    border: 0 solid transparent;
+    background: transparent;
+    padding:2px;
+  }
+
+  #doc-container-sidebar .doctree-item-btn:hover {
+    cursor: pointer;
+    background-color: #d8d8d8;
+    border-radius: 3px;
+  }
+
+  #doc-container-sidebar .sub-items {
+    display: none;
+    margin-top: 5px;
+  }
+
+  #doc-container-sidebar .sub-items.visible {
+    display: block;
+  }
+
+  #doc-container-sidebar .doctree-item-wrapper:hover {
+    background-color: #f0f0f0;
+  }
+  #doc-container-sidebar .doctree-item-wrapper.active {
+    /* background-color: #e2e2e2; */
+    background-color: #d3def6;
+  }
+  #doc-container-sidebar .doctree-item-wrapper.active a {
+    color: #2176ff;
+  }
+
+  #doc-container-sidebar .doctree-item-wrapper:hover > .doctree-item-btn{
+      display:block;
+  }
+
+  #doc-container-sidebar .doctree-item-name-wrapper i.switch-toc:hover{
+    background-color: #d8d8d8;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+
+  #doc-container-sidebar a {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-grow: 1;
+    color: #333;
+    text-decoration: none;
+  }
+/* end左侧层级目录样式 */
+
+/* 文档下载弹出框样式 */
+#download_div .layui-btn{
+    margin-bottom: 10px;
+}
+/* end文档下载弹出框样式 */
+
+/* 文集目录大纲样式 */
 ul#doc-tree{
     padding-left: 0;
 }
@@ -230,42 +446,15 @@ ul#doc-tree{
     height: 24px;
     color: #666;
     font-family: Consolas,Menlo,Courier,monospace;
+    overflow: hidden;
 }
+/* 文集目录样式结束 */
+
 /* 为外部链接添加图标指示 */
 .external::after {
   content: '\e7c2';
   font-family: 'iconfont';
 }
-
-/* 小屏幕下文集大纲悬浮切换按钮 */
-.doc-container-sidebar-toggle {
-    position: fixed;
-    top: 50%;
-    left: 300px;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-    transition: left 0.3s ease;
-  }
-  .big-page .doc-container-toggle-icon {
-    transform: rotate(180deg);
-  }
-
-  .big-page .doc-container-sidebar-toggle{
-    left: 0px;
-  }
-  @media (min-width: 768px) {
-    .doc-container-sidebar-toggle {
-      display: none;
-    }
-  }
-
 @media screen and (max-width:768px){
     .project-toc-left{
         border-top:1px dashed #d8d8d8;
@@ -281,11 +470,99 @@ ul#doc-tree{
     padding-left: 0px;
 }
 
+/* 文集大纲搜索框 */
+.project-search-div{
+    position: relative;
+    width: 100%;
+    z-index: 999;
+}
+.project-search-active-div{
+    position: fixed;
+    width: inherit;
+    top: 0;
+}
+
+/* 文档评论样式 */
+.doc-comment{
+    margin:20px;
+}
+
+
+/* 文档附件样式 */
+.mrdoc-da-card{
+    background: #FAFAFA;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+.mrdoc-da-collapse{
+    display: flex;
+    align-items: center;
+    padding: 12px;
+}
+.mrdoc-da-content{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin: 0 12px;
+    min-width: 0;
+    color: #262626;
+    font-size: 14px;
+}
+.mrdoc-da-icon{
+    width: 20px;
+    height: auto;
+    margin-right: 5px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+.mrdoc-da-op a:hover{
+    text-decoration: none;
+}
+.mrdoc-da-content-name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+.mrdoc-da-content-name:hover{
+    cursor: pointer;
+    color:#4183c4;
+}
+.mrdoc-da-content-size{
+    margin-left: 5px;
+    color:#BEC0BF;
+}
+
+/* 文档面包屑样式 */
+.breadcrumb-container{
+    text-align: left;
+}
+
+.breadcrumb-container .layui-breadcrumb{
+    margin-bottom: 20px;
+}
+
+.breadcrumb-container i.layui-icon,.breadcrumb-container a{
+    color: #333 !important;
+    font-size: 16px !important;
+}
+
+.breadcrumb-container i.layui-icon:hover,.breadcrumb-container a:hover{
+    color: #2176ff !important;
+}
+
+
+
+
+
 @media print {
     #doc-container {
       height: auto !important;
     }
-    .doc-header,#doc-content-bottom-toolbar,#toc-container,doc-summary,.fixed-tool-bar,.doc-comment,.page-flip,#ad-1,#ad-2,.page-flip,.doc-container-sidebar-toggle {display: none !important;}
+    .doc-header,#doc-content-bottom-toolbar,#toc-container,doc-summary,.fixed-tool-bar,.doc-comment,.page-flip,#ad-1,#ad-2,.page-flip,.doc-container-sidebar-toggle,#wm,#chat-bubble-btn {display: none !important;}
     .markdown-code .markdown-code-block pre{
         max-height: 100%;
     }

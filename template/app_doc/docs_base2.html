@@ -1,0 +1,612 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="zh-cn" style="font-size: 15px;">
+<head>
+    <meta charset="UTF-8">
+    <meta name=renderer  content=webkit>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <!-- <meta name="referrer" content="no-referrer"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="{% block keyword %}{% endblock %}{{site_keywords}}"/>
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <!-- OGP分享协议开始 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block ogp_title %}{% endblock %}">
+    <meta property="og:description" content="{% block ogp_desc %}{% endblock %}">
+    <meta property="og:url" content="{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path_info}}">
+    {% if site_favicon and site_favicon != '' %}
+        <link rel="icon" href="{{site_favicon}}" sizes="192x192" />
+        <meta property="og:image" content="{{site_favicon}}">
+    {% else %}
+        <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+        <meta property="og:image" content="{{request.scheme}}://{{request.META.HTTP_HOST}}{% static 'search/mrdoc_logo_300.png' %}">
+    {% endif %}
+    <!-- OGP分享协议结束 -->
+    <title>{% block title %}{% endblock %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
+    <link href="{% static 'PearAdminLayui/component/layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    {% if doc.editor_mode != 4 %}
+        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
+    {% endif %}
+    {% if doc.editor_mode == 2 %}
+        <link rel="stylesheet" href="{% static 'vditor/dist/index.css' %}?version={{mrdoc_version}}" />
+    {% endif %}
+    {% if doc.editor_mode == 4 %}
+        <!-- 在线表格 -->
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/css/pluginsCss.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/plugins/plugins.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/css/luckysheet.css' %}?version={{mrdoc_version}}" />
+        <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
+    {% endif %}
+    <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    {% if project.is_comment %}
+    <!-- 文档评论CSS -->
+    <link href="{% static 'mrtalk/Artalk.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    {% endif %}
+    <style>
+        {% if project.doc_width == 1 %}
+        .doc-body-content-div{
+            max-width: 100%;
+        }
+        .doc-content{
+            max-width: 98%;
+        }
+        {% endif %}
+        {% if img_scale %}
+        .markdown-body p img{
+            max-width: 350px;
+        }
+        {% endif %}
+        {% if long_code == 'on' %}
+            .markdown-code .markdown-code-block pre,.vditor-reset > pre > code.hljs{
+                max-height: max-content!important;
+            }
+            code[class*=language-], pre[class*=language-]{
+                white-space: pre-wrap !important;
+            }
+        {% endif %}
+        :not(pre)>code[class*=language-]{
+            white-space: inherit !important;
+        }
+        /* html{
+        filter: invert(1) hue-rotate(180deg);
+        } */
+    </style>
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    {{ custom_head | safe }}
+</head>
+{% if project.is_ban_copy %}
+    {% include 'app_doc/ban_copy_tpl.html' %}
+{% else %}
+<body class="big-page">
+{% endif %}
+<div id="doc-container">
+    <!-- 左侧目录栏 -->
+    <div id="doc-container-sidebar" id="doc-summary">
+        <div>
+        <!-- 左上角广告块 -->
+        <!-- 广告代码开始 -->
+        {% if debug %}
+        {% else %}
+            {% if ad_code_4 %}
+                <div class="ad-code" id="ad-code-4"></div>
+            {% endif %}
+        {% endif %}
+        <!-- 广告代码结束 -->
+        <!-- 文集名称 -->
+        <div class="project-title">
+            {% if project.is_custom_icon %}
+                <img src="{{project.custom_icon_url}}" style="width: 1em;height: 1em;">
+            {% else %}
+                {% if project.icon and project.icon != 'None' %}
+                    <svg class="icon" aria-hidden="true"><use xlink:href="#{{project.icon}}"></use></svg>
+                {% else %}
+                    <svg class="icon" aria-hidden="true"><use xlink:href="#mrdoc-icon-pro-2"></use></svg>
+                {% endif %}
+            {% endif %}
+
+            <a 
+                {% if project.is_custom_name %}
+                href="{% url 'pro_index_custom_url' custom_name=project.custom_name %}"
+                {% else %}
+                href="{% url 'pro_index_id' pro_id=project.id %}"
+                {% endif %}
+            >{{ project.name }}
+                {% if project.role == 1 %}
+                    <i class="layui-icon layui-icon-password" title="{% trans '私密文档' %}"></i>
+                {% endif %}
+            </a>
+            {% if linkedset_projects %}
+                <button class="layui-btn layui-btn-xs layui-btn-primary" style="border:0 solid transparent;" id="linkedset"><i class="layui-icon layui-icon-down layui-font-12"></i></button>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+                {% if is_collect_pro %}
+                    <i class="layui-icon layui-icon-star-fill collected" style="cursor: pointer;" title="{% trans '已收藏文集，点击取消' %}" id="collect_pro"></i>
+                {% else %}
+                    <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="{% trans '收藏文集' %}" id="collect_pro"></i>
+                {% endif %}
+            {% else %}
+                <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="{% trans '请登录后收藏' %}"></i>
+            {% endif %}
+            <p>
+                {% if colla_user > 0 %}
+                <span style="font-size:12px;color:gray;font-weight:100;">{% trans "* 此为协作文集" %}</span>
+                {% endif %}
+            </p>
+        </div>
+        <!-- 文档搜索框 -->
+        <form
+            {% if project.is_custom_name %}
+            action="{% url 'pro_index_custom_url' custom_name=project.custom_name %}" 
+            {% else %} 
+            action="{% url 'pro_index_id' pro_id=project.id %}" 
+            {% endif %}
+            method="get" class="project-search-div"
+        >
+            <div id="doc-search-input">
+                <input type="text" name="kw" placeholder="{% trans '在文集内搜索文档' %}" value="" class="layui-input doc-search-input">
+                <button type="submit" style="position: absolute;top:15px;right: 20px;border: none;background-color: white;cursor:pointer">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+            </div>
+        </form>
+        <!-- <hr> -->
+        <!-- 遍历文集大纲 -->
+        <!-- 如果文集的文档数量超过999，使用异步加载文集目录 -->
+        {% if toc_cnt > 999  %}
+            <div style="text-align: center;" id='loading-project-toc'><i class="layui-icon layui-icon-loading"></i>{% trans "文集大纲加载中……" %}</div>
+            <nav>
+                <ul class="" id="project-toc"></ul>
+                <div id="project-toc-page" style="text-align: center;"></div>
+            </nav>
+        {% else %}
+        <!-- 文档数量小于999，使用同步加载文集目录 -->
+            <nav>
+                <ul class="">
+                    {% include 'app_doc/project_toc_base.html' %}
+                </ul>
+            </nav>
+        {% endif %}
+        <div class="bq">
+            <a href="https://mrdoc.pro" class="mrdoc-link" target="_blank">{% trans "本文档使用 MrDoc 发布" %}</a>
+        </div>
+        <!-- 右下角广告块 -->
+        <!-- 广告代码开始 -->
+        {% if debug %}
+        {% else %}
+            {% if ad_code_3 %}
+                <div class="ad-code" id="ad-code-3"></div>
+            {% endif %}
+        {% endif %}
+        <!-- 广告代码结束 -->
+        </div>
+    </div>
+    <!-- 左侧目录栏结束 -->
+    <div id="doc-container-splitter"></div>
+    <button class="doc-container-sidebar-toggle" onclick="toggleSidebar()">
+        <svg class="doc-container-toggle-icon" viewBox="0 0 24 24" width="24" height="24">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+    </button>
+    <!-- 右侧文档栏 -->
+    <div id="doc-container-body">
+        <!-- 文档导航 -->
+        <div class="doc-header" role="navigation">
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="{% trans '切换侧边栏' %}">
+                <i class="layui-icon layui-icon-slider"></i>
+            </a>
+            <a class="btn pull-left font-small layui-hide-xs"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
+                <i class="iconfont mrdoc-icon-font-size">-</i>
+            </a>
+            <a class="btn pull-left font-large layui-hide-xs"  href="javascript:void(0);" title="{% trans '放大字体' %}">
+                <i class="iconfont mrdoc-icon-font-size">+</i>
+            </a>
+            <a class="btn pull-left font-switch layui-hide-xs" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
+                <i class="iconfont mrdoc-icon-font-type"></i>
+            </a>
+            <a class="btn pull-left theme-switch" href="javascript:void(0);" title="{% trans '切换至夜间模式' %}">
+                <i class="iconfont mrdoc-icon-night"></i>
+            </a>
+            <!-- 顶部工具栏 -->
+            {% block head_toolbar %}
+            {% endblock %}
+            {% if project.index_position == 1 %}
+            <a class="btn pull-right" aria-label="" href="{% url 'pro_list' %}">
+                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
+            </a>
+            {% elif project.index_position == 2 %}
+            <a class="btn pull-left" aria-label="" href="{% url 'pro_list' %}">
+                <i class="layui-icon layui-icon-home"></i> <span class="layui-hide-xs">{% trans "首页" %}</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- 文档主体 -->
+        <div class="doc-body-content">
+            <div class="doc-body-content-div">
+                {% if project.is_watermark %}
+                    <div id="wm"></div>
+                {% endif %}
+                <!-- 文档内容 -->
+                <div class="doc-content" id="doc-content">
+                    <!-- 标题 -->
+                    <div class="doc-info">
+                        <!-- 页面主体头信息 -->
+                        {% block content_head %}
+                        {% endblock %}
+                        
+                        <!-- 广告代码开始 -->
+                        {% if debug %}
+                        {% else %}
+                            {% if ad_code %}
+                                <div class="ad-code" id="ad-code-1"></div>
+                            {% endif %}
+                        {% endif %}
+                        <!-- 广告代码结束 -->
+                    </div>
+                    <!-- 标题结束 -->
+                    <!-- 正文开始 -->
+                    <div class="markdown-body" id="content">
+                        {% block page_content %}
+                        {% endblock %}
+                    </div>
+                    <!-- 正文结束 -->
+                    <div class="markdown-body">
+                        {% block children_content %}
+                        {% endblock %}
+                    </div>
+                    <hr>
+                </div>
+                <!-- 分享栏 -->
+                <div id="doc-content-bottom-toolbar" style="color: rgba(0,0,0,.65);padding-bottom: 10px;margin-top: 10px;">
+                {% block doc_bottom_block %}
+                {% endblock %}
+                </div>
+
+                <!-- 广告代码开始 -->
+                {% if debug %}
+                {% else %}
+                    {% if ad_code_2 %}
+                        <div class="ad-code" id="ad-code-2"></div>
+                    {% endif %}
+                {% endif %}
+                <!-- 广告代码结束 -->
+
+                {% block doc_previous_next %}{% endblock %}
+                {% block doc_comment %}{% endblock %}
+            </div>
+            {% block docToc %}
+            {% endblock %}
+        </div>
+    </div>
+    <!-- 右侧文档栏结束 -->
+</div>
+
+<!-- 右下角工具按钮 -->
+<div class="fixed-tool-bar">
+    <div class="toTop" ><i class="layui-icon layui-icon-up"></i></div>
+    {% block right_widget %} {% endblock %}
+</div>
+
+<!-- 转发选项卡模板 -->
+<div id="share_div" style="display: none;">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{% trans "手机扫码" %}</li>
+            <li>{% trans "复制链接" %}</li>
+        </ul>
+    <div class="layui-tab-content" style="height: 100px;">
+        <div class="layui-tab-item layui-show" align='center'>
+            <p style="font-weight: 700;margin-bottom: 10px;">{% trans "手机扫一扫转发分享" %}</p>
+            <div id="url_qrcode"></div>
+        </div>
+        <div class="layui-tab-item mrdoc-margin-1" align='center'>
+            <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
+            <button class="layui-btn layui-btn-xs" title="复制链接到粘贴板" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
+        </div>
+    </div>
+    </div> 
+</div>
+<script src="{% url 'javascript-catalog' %}"></script>
+<script src="{% static 'jquery/3.5.0/jquery.min.js' %}"></script>
+<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'darkmode-js/darkmode-js.min.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static '/markjs/mark.min.js' %}?version={{mrdoc_version}}" charset="UTF-8"></script>
+<script>
+    var layer = layui.layer;
+    var laypage = layui.laypage;
+    var dropdown = layui.dropdown;
+    var element = layer.element;
+    var pro_id = '{{project.id}}';
+    var csrf_token_str = '{{csrf_token}}';
+    {% if request.user == project.create_user or request.user == doc.create_user or colla_user > 0 %}
+        var is_creater = true;
+    {% else %}
+        var is_creater = false;
+    {% endif %}
+    {% if code_line_number == 'on' %}
+        var code_line_number = true;
+    {% else %}
+        var code_line_number = false;
+    {% endif %}
+
+</script>
+<script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
+<script>
+    var pro_id = '{{project.id}}';
+    var csrf_token_str = '{{csrf_token}}';
+    var doc_editor_mode;
+    {% if toc_cnt > 999 %}
+        // 如果文集的文档数量大于999，使用异步加载左侧文集大纲
+        initProjectToc = function(data){
+            $.ajax({
+                url:'/get_pro_doc_tree/',
+                type:'post',
+                data:data,
+                success:function(r){
+                    $("#loading-project-toc").hide();
+                    if(r.status){
+                        toc_str = getProjectToc(r.data);
+                        $('#project-toc').append(toc_str);
+                        projectsTocPager(r.total,r.current);
+                        activeCurrentDoc();
+                        renderTocDropDown();
+                    }else{
+                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                    }
+                },
+                error:function(){
+                    $("#loading-project-toc").hide();
+                    layer.msg("文集目录大纲加载异常");
+                }
+            });
+        };
+        // 文集大纲分页器
+        projectsTocPager = function(cnt,current){
+            laypage.render({
+                elem: 'project-toc-page',
+                count: cnt,
+                limit: 20,
+                curr: current,
+                layout: ['prev', 'next'],
+                theme:'#333',
+                jump: function(obj,first){
+                    // console.log(obj,first)
+                    if(!first){
+                        getProjectTocPage(obj.curr);
+                    }
+                }
+            });
+        }
+        // 文集大纲分页数据
+        getProjectTocPage = function(page){
+            $.ajax({
+                url:'/get_pro_doc_tree/',
+                type:'post',
+                data:{'pro_id':pro_id,'is_page':true,'page':page},
+                success:function(r){
+                    $("#loading-project-toc").hide();
+                    if(r.status){
+                        toc_str = getProjectToc(r.data);
+                        $('#project-toc').empty();
+                        $('#project-toc').append(toc_str);
+                        // tagCurrentDoc();
+                        activeCurrentDoc();
+                        renderTocDropDown();
+                    }else{
+                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                    }
+                    
+                },
+                error:function(){
+                    $("#loading-project-toc").hide();
+                    layer.msg("文集目录大纲加载异常");
+                }
+            });
+        }
+
+        {% if doc.id %}
+            let data = {'pro_id':pro_id,'is_page':true,'doc_id':'{{doc.id}}'}
+            initProjectToc(data);
+        {% else %}
+            let data = {'pro_id':pro_id,'is_page':true,'page':1}
+            initProjectToc(data);
+        {% endif %}
+        
+    {% endif %}
+
+    var is_print = getQueryVariable('print');
+    if(is_print === 'true'){
+        // 打印模式下代码块不显示行号
+        code_line_number = false;
+    }
+
+    if(is_creater){
+        renderTocDropDown()
+    }
+
+    function renderTocDropDown(){
+        dropdown.render({
+            elem: '.doctree-item-btn',
+            trigger:'hover',
+            data: [
+                {title:'修改文档',id:'modify'},
+                {title:'新增文档',id:'add'},
+                {title:'复制链接',id:'copy'},
+            ],
+            click:function(obj){
+                // console.log(obj)
+                var elem = $(this.elem)
+                // console.log(elem.data('id'))
+                switch (obj.id) {
+                    case 'modify':
+                        window.location.href = `/modify_doc/${elem.data('id')}/`;
+                        break;
+                    case 'add':
+                        window.location.href = `/create_doc/?pid=${pro_id}&parent_id=${elem.data('id')}`;
+                        break;
+                    case 'copy':
+                        var baseURL = window.location.protocol + "//" + window.location.host
+                        copyToClipboard(`${baseURL}/doc/${elem.data('id')}/`)
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    };
+</script>
+
+{% if doc.editor_mode == 1 %}
+<script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 2 %}
+<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 3 %}
+<link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+<script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 4 %}
+<!-- 在线表格 -->
+<script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'luckysheet/dist/luckysheet.umd.js' %}?version={{mrdoc_version}}"></script>
+{% endif %}
+
+<!-- 动态添加广告代码 -->
+{% if debug %}
+{% else %}
+<div id="ad-1">
+    {{ad_code|safe}}
+</div>
+<div id="ad-2">
+    {{ad_code_2|safe}}
+</div>
+<div id="ad-3">
+    {{ad_code_3|safe}}
+</div>
+<div id="ad-4">
+    {{ad_code_4|safe}}
+</div>
+<script>
+    $("#ad-1").appendTo($("#ad-code-1"));
+    $("#ad-2").appendTo($("#ad-code-2"));
+    $("#ad-3").appendTo($("#ad-code-3"));
+    $("#ad-4").appendTo($("#ad-code-4"));
+</script>
+{% endif %}
+<!-- 广告代码结束 -->
+
+<!-- 统计代码开始 -->
+    {% if debug %}
+    {% else %}
+        {{ static_code | safe }}
+    {% endif %}
+<!-- 统计代码结束 -->
+{% block custom_script %}
+{% endblock %}
+<script>
+    {% if project.is_watermark and project.watermark_type == 1 %}
+        initWhterMark('{{project.watermark_value}}')
+    {% elif project.is_watermark and project.watermark_type == 2 %}
+        Date.prototype.Format = function (fmt) { // author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, // 月份
+                "d+": this.getDate(), // 日
+                "h+": this.getHours(), // 小时
+                "m+": this.getMinutes(), // 分
+                "s+": this.getSeconds(), // 秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+                "S": this.getMilliseconds() // 毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                    return fmt;
+        }
+        {% if request.user.is_authenticated %}
+            var watermark_value = "{{request.user.username}}" + new Date().Format("yyyyMMddhhmmss");
+        {% else %}
+            var watermark_value = "游客" + new Date().Format("yyyyMMddhhmmss");
+        {% endif %}
+        initWhterMark(watermark_value)
+    {% endif %}
+    
+    {% if outside_link_icon %}
+    // 外部链接添加图标
+    document.addEventListener('DOMContentLoaded', function() {
+        Array.prototype.filter.call(document.links, function(link) {
+            return link.hostname && link.hostname !== location.hostname;
+        })
+        .forEach(function(link) {
+            link.target = '_blank';
+            // console.log(link,$(link).children('img').length)
+            if($(link).children().length == 0){
+                link.classList.add('external');
+            }
+        });
+    });
+    {% endif %}
+    // 高亮搜索词
+    {% if doc.editor_mode != 2 %}
+    setTimeout(function(){
+        keyLight('doc-content',getQueryVariable("highlight"));
+        scrollIntoKey('doc-content',getQueryVariable("highlight"));
+    },500)
+    {% endif %}
+
+</script>
+<script>
+    const docContainer = document.getElementById('doc-container');
+    const docSidebar = document.getElementById('doc-container-sidebar');
+    const docSplitter = document.getElementById('doc-container-splitter');
+    let isResizing = false;
+
+    // 从 localStorage 获取上一次保存的宽度
+    const savedWidth = localStorage.getItem('sidebar-width');
+    if (savedWidth) {
+        docContainer.style.setProperty('--sidebar-width', savedWidth);
+        docSidebar.style.width = savedWidth;
+    }
+
+    docSplitter.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        docSplitter.classList.add('active');
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            docSplitter.classList.remove('active');
+            document.removeEventListener('mousemove', handleMouseMove);
+        });
+    });
+
+    function handleMouseMove(e) {
+        if (isResizing) {
+            const containerRect = docContainer.getBoundingClientRect();
+            const newSidebarWidth = e.clientX - containerRect.left;
+            
+            // 限制最大宽度
+            const maxWidth = 800; // 可以根据需要修改
+            if (newSidebarWidth <= maxWidth) {
+                // 保存当前宽度到 localStorage
+                localStorage.setItem('sidebar-width', `${newSidebarWidth}px`);
+                
+                docContainer.style.setProperty('--sidebar-width', `${newSidebarWidth}px`);
+                docSidebar.style.width = `${newSidebarWidth}px`;
+            }
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!-- 一级目录 -->
+{% for docs in toc_list %}
+    <li class="doctree-li">
+        {% if docs.sub %}
+            <div class="doctree-item-wrapper">
+                <span class="doctree-item-name-wrapper has-children-icon">
+                    {% if docs.open_children %}
+                        <i class="layui-icon layui-icon-down switch-toc"></i>&nbsp;
+                    {% else %}
+                        <i class="layui-icon layui-icon-right switch-toc"></i>&nbsp;
+                    {% endif %}
+                    {% if docs.editor_mode == 5 %}
+                        <a href="{{docs.pre_content}}" class="doc-link" data-id="{{docs.id}}" title="{{docs.name}}">
+                    {% else %}
+                        <a href="{% url 'doc_id' doc_id=docs.id %}" class="doc-link" data-id="{{docs.id}}" title="{{docs.name}}">
+                    {% endif %}
+                        {{ docs.name }}
+                    </a>
+                </span>
+                {% if request.user == project.create_user or request.user == doc.create_user or colla_user > 0 %}
+                    <button class="doctree-item-btn" data-id="{{docs.id}}"><i class="layui-icon layui-icon-more"></i></button>
+                {% endif %}
+            </div>
+            {% if docs.open_children %}
+                <div class="sub-items visible"><ul class="doctree-ul">
+            {% else %}
+                <div class="sub-items"><ul class="doctree-ul">
+            {% endif %}
+            {% include 'app_doc/project_toc_base.html' with toc_list=docs.sub request=request project=project colla_user=colla_user only %}
+            </ul></div>
+        {% else %}
+            <div class="doctree-item-wrapper">
+                <span class="doctree-item-name-wrapper no-children-icon">
+                    {% if docs.editor_mode == 5 %}
+                    <a href="{{docs.pre_content}}" class="doc-link" data-id="{{docs.id}}" title="{{docs.pre_content}}">
+                    {% else %}
+                    <a href="{% url 'doc_id' doc_id=docs.id %}" class="doc-link" data-id="{{docs.id}}" title="{{docs.name}}">
+                    {% endif %}
+
+                    {% if docs.editor_mode == 4 %}
+                        <i class="layui-icon layui-icon-table"></i>&nbsp;
+                    {% elif docs.editor_mode == 5 %}
+                        <i class="layui-icon layui-icon-link"></i>&nbsp;
+                    {% elif docs.editor_mode == 6 %}
+                        <i class="layui-icon layui-icon-release"></i>&nbsp;
+                    {% elif docs.editor_mode == 8 %}
+                        <i class="layui-icon layui-icon-table"></i>&nbsp;
+                    {% else %}
+                        <i class="iconfont mrdoc-icon-wendang"></i>&nbsp;
+                    {% endif %}
+                        {{ docs.name }}
+                    </a>
+                </span>
+                {% if request.user == project.create_user or request.user == doc.create_user or colla_user > 0 %}
+                    <button class="doctree-item-btn" data-id="{{docs.id}}"><i class="layui-icon layui-icon-more"></i></button>
+                {% endif %}
+            </div>
+        {% endif %}
+    </li>
+{% endfor %}
