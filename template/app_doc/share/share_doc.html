@@ -14,7 +14,7 @@
     <meta name="keywords" content="{% block keyword %}{% endblock %}{{site_keywords}}"/>
     <meta name="description" content="{% block description %}{% endblock %}" />
     <title>{{doc.name}} - {% trans "文档分享" %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
-    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'PearAdminLayui/component/layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     {% if doc.editor_mode != 4 %}
         <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
     {% endif %}
@@ -29,12 +29,24 @@
         <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
     {% endif %}
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <!-- favicon -->
+    {% if site_favicon and site_favicon != '' %}
+    <link rel="icon" href="{{site_favicon}}" sizes="192x192" />
+    {% else %}
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+    {% endif %}
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <style>
+        {% if project.doc_width == 1 %}
+        .doc-body-content-div{
+            max-width: 100%;
+        }
+        .doc-content{
+            max-width: 98%;
+        }
+        {% endif %}
         {% if img_scale %}
         .markdown-body p img{
             max-width: 350px;
@@ -55,15 +67,19 @@
     <![endif]-->
 
 </head>
+{% if project.is_ban_copy %}
+    {% include 'app_doc/ban_copy_tpl.html' %}
+{% else %}
 <body>
-<div class="doc layui-fluid" style="padding-left:0px;">
+{% endif %}
+<div id="doc-container">
     <!-- 左侧目录栏 -->
     <!-- 左侧目录栏结束 -->
 
     <!-- 右侧文档栏 -->
-    <div class="doc-body">
+    <div id="doc-container-body">
         <!-- 文档导航 -->
-        <div class="doc-header" role="navigation">
+        <div class="doc-header" role="navigation" style="max-width: 960px;margin: 0 auto;">
             <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
                 <i class="iconfont mrdoc-icon-font-size">-</i>
             </a>
@@ -78,14 +94,14 @@
             </a>
             <!-- 顶部工具栏 -->
             {% block head_toolbar %}
-            <!-- 文档目录 -->
-            <div id="toc-container" class='sidebar doc-toc-hide'></div>
-            {% endblock %}
 
         </div>
         <!-- 文档主体 -->
         <div class="doc-body-content">
             <div class="doc-body-content-div">
+                {% if project.is_watermark %}
+                    <div id="wm"></div>
+                {% endif %}
                 <!-- 文档内容 -->
                 <div class="doc-content">
                     <!-- 标题 -->
@@ -103,6 +119,7 @@
                             {% endif %}
                         {% endif %}
                         <!-- 广告代码结束 -->
+
                     </div>
                     <!-- 标题结束 -->
                     <!-- 正文开始 -->
@@ -120,6 +137,90 @@
                             </style>
                             <div id="luckysheet" style="margin:0px;padding:0px;width:100%;min-height:500px;left: 0px;top: 0px;"></div>
                             <textarea id="sheet_table_content" style="display: none;">{{ doc.pre_content }}</textarea>
+                        {% elif doc.editor_mode == 7 %}
+                            <style>
+                                .doc-content,.doc-body-content-div{
+                                    max-width: 100%;
+                                }
+                            </style>
+                            <div id="iframeEditor">
+                        {% elif doc.editor_mode == 8 %}
+                            <style>
+                                .doc-content,.doc-body-content-div{
+                                    max-width: 100%;
+                                }
+                                #content{
+                                    height: 85vh;
+                                }
+                            </style>
+                            <div id="univer-sheet" style="height: 100%;"></div>
+                        {% elif doc.editor_mode == 9 %}
+                            <link href="{% static 'my-simple-mindmap/simple-mind-map.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+                            <script src="{% static 'my-simple-mindmap/simple-mind-map.min.js' %}?version={{mrdoc_version}}"></script>
+                            <style>
+                                .doc-content,.doc-body-content-div,#mindMapContainer > svg{
+                                    max-width: 100%;
+                                }
+                            </style>
+                            <div id="mindMapContainer" style="height: 80vh;width: 100%;"></div>
+                            {{ mindmap_data|json_script:'mindmap-data' }}
+                            <script>
+                                let mindmap_data = JSON.parse(document.getElementById('mindmap-data').textContent);
+                                let mindmap = new MindMap({
+                                    el:document.getElementById('mindMapContainer'),
+                                    readonly:true,
+                                    data:[]
+                                });
+                                mindmap.setFullData(mindmap_data);
+                            </script>
+                        {% elif doc.editor_mode == 10 %}
+                            <style>
+                                .doc-content,.doc-body-content-div{
+                                    max-width: 100%;
+                                }
+                            </style>
+                            <div id="drawio-container" style="height: 80vh;">
+                                <iframe
+                                    id="drawio-frame"
+                                    src="{{drawio_host}}?embed=1&proto=json&noSaveBtn=1&noExitBtn=1&saveAndExit=0&modified=0&disableEditor=1&pages=1&ui=min&chrome=0&grid=1&spin=1&lang=zh"
+                                    width="100%"
+                                    height="100%"
+                                    frameborder="0">
+                                </iframe>
+                            </div>
+                            <script>
+                                const drawioIframe = document.getElementById('drawio-frame');
+                                const default_drawio = `<mxfile host="app.diagrams.net">
+                                                        <diagram id="0" name="Page-1">
+                                                        <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+                                                            <root>
+                                                            <mxCell id="0"/>
+                                                            <mxCell id="1" parent="0"/>
+                                                            </root>
+                                                        </mxGraphModel>
+                                                        </diagram>
+                                                    </mxfile>`
+                                const drawioData = '{{ drawio_data|default:""|safe }}'
+                                let xmlToLoad = drawioData && drawioData.trim() !== ""
+                                    ? drawioData
+                                    : default_drawio;
+                                // 监听来自drawio的消息
+                                window.addEventListener('message', function(evt) {
+                                    try {
+                                        const msg = JSON.parse(evt.data);
+                                        if (msg.event === 'init') {
+                                            // 编辑器初始化完成,发送初始数据
+                                            drawioIframe.contentWindow.postMessage(JSON.stringify({
+                                                action: 'load',
+                                                autosave: 1,
+                                                xml: xmlToLoad
+                                            }), '*');
+                                        }
+                                    } catch (e) {
+                                        console.error('解析Drawio消息失败:', e);
+                                    }
+                                });
+                            </script>
                         {% else %}
                             <textarea style="display: none;">{{ doc.pre_content }}</textarea>
                         {% endif %}
@@ -153,6 +254,10 @@
 
                 {% block doc_previous_next %}{% endblock %}
             </div>
+
+            <!-- 文档目录 -->
+            <div id="toc-container" class='sidebar doc-toc-hide'></div>
+            {% endblock %}
         </div>
     </div>
     <!-- 右侧文档栏结束 -->
@@ -189,17 +294,22 @@
     </div>
     </div>
 </div>
-
+<script>
+    var csrf_token_str = '{{csrf_token}}';
+    {% if code_line_number == 'on' %}
+        var code_line_number = true;
+    {% else %}
+        var code_line_number = false;
+    {% endif %}
+</script>
+<script src="{% url 'javascript-catalog' %}"></script>
 <script src="{% static 'jquery/3.5.0/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'darkmode-js/darkmode-js.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'purifyjs/purify.min.js' %}?version={{mrdoc_version}}"></script>
-<script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
-
 <!-- 小屏自动收起左侧文集大纲 -->
 <script>
     //加载页面时执行一次
@@ -223,10 +333,13 @@
     }
 </script>
 
-{% if doc.editor_mode == 2 %}
-<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
-{% elif doc.editor_mode == 1 %}
+{% if doc.editor_mode == 1 %}
 <script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 2 %}
+<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 3 %}
+<link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+<script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 4 %}
 <!-- 在线表格 -->
 <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
@@ -319,7 +432,6 @@
 <script>
     $("#ad-1").appendTo($("#ad-code-1"));
     $("#ad-2").appendTo($("#ad-code-2"));
-    $("#ad-3").appendTo($("#ad-code-3"));
 </script>
 {% endif %}
 <!-- 广告代码结束 -->
@@ -332,5 +444,33 @@
 <!-- 统计代码结束 -->
 {% block custom_script %}
 {% endblock %}
+<script>
+    {% if project.is_watermark and project.watermark_type == 1 %}
+        initWhterMark('{{project.watermark_value}}')
+    {% elif project.is_watermark and project.watermark_type == 2 %}
+        Date.prototype.Format = function (fmt) { // author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, // 月份
+                "d+": this.getDate(), // 日
+                "h+": this.getHours(), // 小时
+                "m+": this.getMinutes(), // 分
+                "s+": this.getSeconds(), // 秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+                "S": this.getMilliseconds() // 毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                    return fmt;
+        }
+        {% if request.user.is_authenticated %}
+            var watermark_value = "{{request.user.username}}" + new Date().Format("yyyyMMddhhmmss");
+        {% else %}
+            var watermark_value = "游客" + new Date().Format("yyyyMMddhhmmss");
+        {% endif %}
+        initWhterMark(watermark_value)
+    {% endif %}
+</script>
 </body>
 </html>

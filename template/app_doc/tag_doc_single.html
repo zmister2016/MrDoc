@@ -7,6 +7,12 @@
 {% block keyword %}{{ doc.name }},{{ project.name }},{% endblock %}
 {% block description %}{{doc.pre_content | slice:"0:100"}}{% endblock %}
 {% block title %}{{ doc.name }} - {% trans "标签：" %}{{ tag.name }}{% endblock %}
+{% block custom_style %}
+{% if project.is_comment %}
+<!-- 文档评论CSS -->
+<link href="{% static 'mrtalk/Artalk.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+{% endif %}
+{% endblock %}
 
 {% block head_toolbar %}
     {% if request.user == doc.create_user or request.user == project.create_user %}
@@ -31,9 +37,12 @@
             <i class="layui-icon layui-icon-add-1"></i> <span class="layui-hide-xs">{% trans "添加" %}</span>
         </a>
     {% endif %}
-    <!-- 文档目录 -->
-    <div id="toc-container" class='sidebar'></div>
-    
+
+{% endblock %}
+
+{% block docToc %}
+<!-- 文档目录 -->
+<div id="toc-container" class='sidebar doc-toc-hide'></div>
 {% endblock %}
 
 {% block content_head %}
@@ -68,7 +77,7 @@
     <span tooltip="文档创建人">
         <i class="layui-icon layui-icon-user"></i> {{ doc.create_user.username }}
     </span>
-    
+
     <span tooltip="所属文集" >
         <i class="layui-icon layui-icon-list"></i> <a href="{% url 'pro_index' project.id %}">{{project.name}}</a>
     </span>
@@ -148,68 +157,11 @@
 
 </script>
 
-<!-- 下载选项卡模板 -->
-<div id="download_div" style="display: none;">
-    <div class="layui-row" style="margin: 10px;">
-        <a class="" download='{{doc.name}}.md' href="{% url 'download_doc_md' doc.id %}" target="_blank">
-            <i class="layui-icon layui-icon-download-circle"></i> {% trans "下载Markdown文件" %}
-        </a>
-    </div>
-</div>
-<!-- 分享文档选项卡模板 -->
-<div id="share_doc_div" style="display: none;">
-    <div class="layui-tab-content">
-        <div class="layui-form layui-form-pane">
-            <div class="layui-form-item">
-                <label class="layui-form-label">{% trans "分享" %}</label>
-                <div class="layui-input-block">
-                  <input type="checkbox" name="switch" 
-                    lay-skin="switch" lay-text="{% trans '开启|关闭' %}" lay-filter="share-switch"
-                    {% if is_share and doc_share.is_enable %}checked{%endif%}
-                    >
-                </div>
-            </div>
-            
-            <div class="layui-form" style="display: {% if is_share and doc_share.is_enable %}block;{% else %}none;{% endif %}" id="share-link">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">{% trans "链接" %}</label>
-                    <div class="layui-input-block" id='copy_link'>
-                        <input type="text" name="share_link" class="layui-input" id="share_link" readonly>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="layui-form-item" style="display:{% if is_share and doc_share.is_enable %}block;{% else %}none;{% endif %}" id="share-type">
-                <label class="layui-form-label">{% trans "类型" %}</label>
-                <div class="layui-input-block">
-                    {% if doc_share.share_type == 1 %}
-                    <input type="radio" name="share_type" value="0" title="{% trans '公开' %}" lay-filter="share_type">
-                    <input type="radio" name="share_type" value="1" title="{% trans '私密' %}" checked lay-filter="share_type">
-                    {% else %}
-                    <input type="radio" name="share_type" value="0" title="{% trans '公开' %}" checked lay-filter="share_type">
-                    <input type="radio" name="share_type" value="1" title="{% trans '私密' %}" lay-filter="share_type">
-                    {% endif %}
-                </div>
-                
-            </div>
-            <div class="layui-form" style="display:{% if is_share and doc_share.is_enable and doc_share.share_type == 1 %}block;{% else %}none;{% endif %}" id="share_value_item">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">{% trans "密码" %}</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="share_value" value='{{doc_share.share_value}}' disabled class="layui-input" id="share_doc_value">
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">
-                        <button class="layui-btn layui-btn-xs layui-btn-primary" id="updateShareValue"><i class="layui-icon layui-icon-refresh"></i> {% trans "更新密码" %}</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script src="{% static 'toc/doctoc.js' %}?version={{mrdoc_version}}"></script>
 <script>
     var layer = layui.layer;
     var form = layui.form;
+    var is_auth = {% if request.user.is_authenticated %}true{% else %}false{% endif %};
     // Ajax默认配置
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -223,146 +175,11 @@
         // console.log("切换文档目录显示")
         $(".sidebar").toggleClass("doc-toc-hide");
     });
-    
+
     //修改a标签链接新窗口打开
     $('#content').on('click','a',function(e){
         e.target.target = '_blank';
     });
-    // 显示文档下载弹出框
-    $("#download_doc").click(function(r){
-        var layer = layui.layer;
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 0,
-            area: ['350px','150px'],
-            shadeClose: true,
-            content: $('#download_div')
-          });
-    });
-    
-    // 生成随机分享码
-    function randomWord(randomFlag, min, max){
-        var str = "",
-            range = min,
-            arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-        // 随机产生
-        if(randomFlag){
-            range = Math.round(Math.random() * (max-min)) + min;
-        }
-        for(var i=0; i<range; i++){
-            pos = Math.round(Math.random() * (arr.length-1));
-            str += arr[pos];
-        }
-        return str;
-    };
-    
-    // 更新文档分享状态
-    function updateDocShare(data){
-        $.post("{% url 'share_doc' %}",data,function(r){
-            if(r.status){
-                layer.msg("{% trans '设置成功' %}",{offset: 't'})
-                console.log(r.data)
-                $("input[name=share_link]").val(document.location.protocol + '//' + document.location.host + '/share_doc/?token=' + r.data.doc)
-            }else{
-                layer.msg("{% trans '设置出错' %}")
-            }
-        })
-    }
 
-    // 分享文档
-    $("#shareDoc").click(function(){
-        layer.open({
-            type:1,
-            title:'{% trans "分享文档" %}:{{doc.name}}',
-            content:$("#share_doc_div"),
-            area:'450px',
-            success : function(index, layero) { // 成功弹出后回调
-                form.render();
-            },
-        })
-    })
-    {% if is_share %}
-        $("input[name=share_link]").val(window.location.protocol + '//' + document.location.host + '/share_doc/?token={{doc_share.token}}')
-    {% endif %}
-
-    var share_data = {
-        'id':'{{doc.id}}',
-    }
-
-    //监听链接栏被单击
-    $('#copy_link').click(function(){
-        var target = document.getElementById("share_link");
-        // 选择内容
-        target.focus();
-        target.setSelectionRange(0, target.value.length);
-        document.execCommand("copy");
-        layer.msg('链接地址已复制', {
-            time: 2000, //2s后自动关闭
-            btn: '好的',
-            btnAlign: 'c'
-        });
-    })
-
-    //监听分享框分享类型的单选事件
-    form.on('radio(share_type)', function(data){
-    //   console.log(data.value); //被点击的radio的value值
-      if(data.value == 0){ // 公开
-            $("#share_value_item").css("display","none");
-            share_data['share_type'] = 0;
-            share_data['share_value'] = $("#share_doc_value").val();
-            share_data['is_enable'] = true
-            updateDocShare(share_data);
-            
-      }else if(data.value == 1){ // 私密
-            $("#share_value_item").css("display","block");
-            {% if doc_share.share_value == '' or doc_share is None %}
-                $("#share_doc_value").val(randomWord(false,4))
-            {% endif %}
-            share_data['share_type'] = 1;
-            share_data['share_value'] = $("#share_doc_value").val();
-            share_data['is_enable'] = true
-            updateDocShare(share_data);
-      }
-    });
-
-    // 监听分享开关事件
-    form.on('switch(share-switch)', function(data){
-        console.log(data.elem.checked); //开关是否开启，true或者false
-        if(data.elem.checked){ // 开启
-            console.log("开启分享")
-            $("#share-type").css('display',"block");
-            $("#share-expire").css('display',"block");
-            $("#share-link").css("display","block");
-            if($("input[name='share_type']:checked").val() == 1){
-                $("#share_value_item").css("display","block");
-            }
-            // 开启
-            share_data['share_type'] = $("input[name='share_type']:checked").val();
-            share_data['share_value'] = $("#share_doc_value").val();
-            share_data['is_enable'] = true
-            updateDocShare(share_data);
-        }else{
-            console.log("关闭分享")
-            layer.msg("{% trans '关闭分享' %}",{offset: 't'})
-            $("#share-type").css('display',"none")
-            $("#share-expire").css('display',"none")
-            $("#share_value_item").css("display","none");
-            $("#share-link").css("display","none");
-            share_data['share_type'] = $("input[name='share_type']:checked").val();
-            share_data['share_value'] = $("#share_doc_value").val();
-            share_data['is_enable'] = false
-            updateDocShare(share_data);
-        }
-    });  
-
-    // 更新文档分享密码
-    $("#updateShareValue").click(function(){
-        $("#share_doc_value").val(randomWord(false,4));
-        share_data['share_type'] = 1;
-        share_data['share_value'] = $("#share_doc_value").val();
-        share_data['is_enable'] = true
-        updateDocShare(share_data);
-    })
 </script>
 {% endblock %}

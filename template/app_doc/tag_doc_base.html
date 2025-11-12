@@ -15,7 +15,7 @@
     <meta name="description" content="{% if site_desc != None %}{{site_desc}}{% endif %}" />
     <title>{% block title %}{% trans "标签：" %}{{tag.name}}{% endblock %} - {% if site_name != None and site_name != '' %}{{ site_name }}{% else %}{% trans "站点标题" %}{% endif %}</title>
 
-    <link href="{% static 'layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <link href="{% static 'PearAdminLayui/component/layui/css/layui.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     {% if doc.editor_mode != 4 %}
         <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}" />
     {% endif %}
@@ -30,11 +30,16 @@
         <link rel='stylesheet' href="{% static 'luckysheet/dist/assets/iconfont/iconfont.css' %}?version={{mrdoc_version}}" />
     {% endif %}
     <link href="{% static 'viewerjs/viewer.min.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    <!-- favicon -->
+    {% if site_favicon and site_favicon != '' %}
+    <link rel="icon" href="{{site_favicon}}" sizes="192x192" />
+    {% else %}
     <link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
+    {% endif %}
     <link href="{% static 'mrdoc/mrdoc.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'mrdoc/mrdoc-docs.css' %}?version={{mrdoc_version}}" rel="stylesheet">
     <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
-    <link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+    {% block custom_style %}{% endblock %}
     <style>
         {% if img_scale %}
         .markdown-body p img{
@@ -56,10 +61,14 @@
     <![endif]-->
 
 </head>
-<body>
-<div class="doc layui-fluid" style="padding-left:0px;">
+{% if project.is_ban_copy %}
+    {% include 'app_doc/ban_copy_tpl.html' %}
+{% else %}
+<body class="big-page">
+{% endif %}
+<div id="doc-container">
     <!-- 左侧目录栏 -->
-    <div class="doc-summary">
+    <div id="doc-container-sidebar" id="doc-summary">
         <!-- 文档搜索 -->
         <form action="" method="get">
             <div id="doc-search-input">
@@ -68,7 +77,7 @@
         </form>
         <!-- 文集名称 -->
         <div class="project-title">
-            <svg t="1726495807304" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10999" width="200" height="200"><path d="M510.467066 220.742515m-220.742515 0a220.742515 220.742515 0 1 0 441.48503 0 220.742515 220.742515 0 1 0-441.48503 0Z" fill="#4C91FF" p-id="11000"></path><path d="M421.556886 1014.802395L13.796407 607.041916c-12.263473-12.263473-12.263473-30.658683 0-42.922156L531.928144 45.988024c6.131737-6.131737 12.263473-9.197605 21.461078-9.197605L985.676647 12.263473c18.39521 0 33.724551 15.329341 33.724551 33.724551l-24.526947 432.287425c0 6.131737-3.065868 15.329341-9.197604 21.461078L464.479042 1014.802395c-12.263473 12.263473-30.658683 12.263473-42.922156 0zM99.640719 607.041916l321.916167 321.916168c12.263473 12.263473 30.658683 12.263473 42.922156 0l459.880239-459.88024c6.131737-6.131737 9.197605-12.263473 9.197605-21.461078L955.017964 73.580838l-377.101796 21.461078c-6.131737 0-15.329341 3.065868-21.461078 9.197605l-459.88024 459.880239c-9.197605 12.263473-9.197605 30.658683 3.065869 42.922156z" fill="#231815" p-id="11001"></path><path d="M761.868263 285.125749m-64.383233 0a64.383234 64.383234 0 1 0 128.766467 0 64.383234 64.383234 0 1 0-128.766467 0Z" fill="#231815" p-id="11002"></path></svg> 
+            <svg t="1726495807304" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10999" width="200" height="200"><path d="M510.467066 220.742515m-220.742515 0a220.742515 220.742515 0 1 0 441.48503 0 220.742515 220.742515 0 1 0-441.48503 0Z" fill="#4C91FF" p-id="11000"></path><path d="M421.556886 1014.802395L13.796407 607.041916c-12.263473-12.263473-12.263473-30.658683 0-42.922156L531.928144 45.988024c6.131737-6.131737 12.263473-9.197605 21.461078-9.197605L985.676647 12.263473c18.39521 0 33.724551 15.329341 33.724551 33.724551l-24.526947 432.287425c0 6.131737-3.065868 15.329341-9.197604 21.461078L464.479042 1014.802395c-12.263473 12.263473-30.658683 12.263473-42.922156 0zM99.640719 607.041916l321.916167 321.916168c12.263473 12.263473 30.658683 12.263473 42.922156 0l459.880239-459.88024c6.131737-6.131737 9.197605-12.263473 9.197605-21.461078L955.017964 73.580838l-377.101796 21.461078c-6.131737 0-15.329341 3.065868-21.461078 9.197605l-459.88024 459.880239c-9.197605 12.263473-9.197605 30.658683 3.065869 42.922156z" fill="#231815" p-id="11001"></path><path d="M761.868263 285.125749m-64.383233 0a64.383234 64.383234 0 1 0 128.766467 0 64.383234 64.383234 0 1 0-128.766467 0Z" fill="#231815" p-id="11002"></path></svg>
             {% trans "标签：" %}<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
                 {% if project.role == 1 %}
                     <i class="layui-icon layui-icon-password" title="私密文档"></i>
@@ -76,16 +85,32 @@
             </a>
         </div>
         <hr>
-        
+
         <!-- 遍历文集大纲 -->
         {% load doc_filter %}
         <nav>
-            <ul class="summary">
+            <ul class="">
             <!-- 一级目录 -->
-            {% for doc in docs %}
-                <li tooltip="{{doc.doc.top_doc | get_doc_top}}" placement="bottom">
-                    <a href="{% url 'tag_doc' tag_id=tag.id doc_id=doc.doc.id %}" target="_blank" ><i class="{% if doc.doc.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ doc.doc.name }}</a>
-                </li>
+            {% for docs in docs %}
+                <div class="doctree-item-wrapper">
+                <span class="doctree-item-name-wrapper no-children-icon">
+                    <a href="{% url 'tag_doc' tag_id=tag.id doc_id=docs.doc.id %}" class="doc-link" data-id="{{docs.id}}" title="{{docs.name}}">
+
+                    {% if docs.doc.editor_mode == 4 %}
+                        <i class="layui-icon layui-icon-table"></i>&nbsp;
+                    {% elif docs.doc.editor_mode == 5 %}
+                        <i class="layui-icon layui-icon-link"></i>&nbsp;
+                    {% elif docs.doc.editor_mode == 6 %}
+                        <i class="layui-icon layui-icon-release"></i>&nbsp;
+                    {% elif docs.doc.editor_mode == 8 %}
+                        <i class="layui-icon layui-icon-table"></i>&nbsp;
+                    {% else %}
+                        <i class="iconfont mrdoc-icon-wendang"></i>&nbsp;
+                    {% endif %}
+                        {{ docs.doc.name }}
+                    </a>
+                </span>
+                </div>
             {% endfor %}
             </ul>
         </nav>
@@ -105,9 +130,9 @@
         <!-- 广告代码结束 -->
     </div>
     <!-- 左侧目录栏结束 -->
-
+    <div id="doc-container-splitter"></div>
     <!-- 右侧文档栏 -->
-    <div class="doc-body">
+    <div id="doc-container-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
             <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
@@ -185,7 +210,10 @@
                 <!-- 广告代码结束 -->
 
                 {% block doc_previous_next %}{% endblock %}
+                {% block doc_comment %}{% endblock %}
             </div>
+            {% block docToc %}
+            {% endblock %}
         </div>
     </div>
     <!-- 右侧文档栏结束 -->
@@ -212,11 +240,20 @@
             <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" onclick="copyUrl();">复制链接</button>
         </div>
     </div>
-    </div> 
+    </div>
 </div>
 
+<script>
+    var csrf_token_str = '{{csrf_token}}';
+    {% if code_line_number == 'on' %}
+        var code_line_number = true;
+    {% else %}
+        var code_line_number = false;
+    {% endif %}
+</script>
+<script src="{% url 'javascript-catalog' %}"></script>
 <script src="{% static 'jquery/3.5.0/jquery.min.js' %}"></script>
-<script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'PearAdminLayui/component/layui/layui.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'viewerjs/viewer.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'darkmode-js/darkmode-js.min.js' %}?version={{mrdoc_version}}"></script>
@@ -234,7 +271,7 @@
         $("nav li a").each(function (i) {
             var $me = $(this);
             var lochref = $.trim(window.location.href); // 获取当前URL
-            var mehref = $.trim($me.get(0).href); 
+            var mehref = $.trim($me.get(0).href);
             if (lochref.indexOf(mehref) != -1) {
                 // console.log($me,lochref,mehref)
                 $me.closest("li").addClass("active");
@@ -251,10 +288,13 @@
     };
 </script>
 
-{% if doc.editor_mode == 2 %}
-<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
-{% elif doc.editor_mode == 1 %}
+{% if doc.editor_mode == 1 %}
 <script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 2 %}
+<script src="{% static 'vditor/dist/method.min.js' %}?version={{mrdoc_version}}"></script>
+{% elif doc.editor_mode == 3 %}
+<link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+<script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
 {% elif doc.editor_mode == 4 %}
 <!-- 在线表格 -->
 <script src="{% static 'luckysheet/dist/plugins/js/plugin.js' %}?version={{mrdoc_version}}"></script>
@@ -305,5 +345,46 @@
 <!-- 统计代码结束 -->
 {% block custom_script %}
 {% endblock %}
+<script>
+    const docContainer = document.getElementById('doc-container');
+    const docSidebar = document.getElementById('doc-container-sidebar');
+    const docSplitter = document.getElementById('doc-container-splitter');
+    let isResizing = false;
+
+    // 从 localStorage 获取上一次保存的宽度
+    const savedWidth = localStorage.getItem('sidebar-width');
+    if (savedWidth) {
+        docContainer.style.setProperty('--sidebar-width', savedWidth);
+        docSidebar.style.width = savedWidth;
+    }
+
+    docSplitter.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        docSplitter.classList.add('active');
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            docSplitter.classList.remove('active');
+            document.removeEventListener('mousemove', handleMouseMove);
+        });
+    });
+
+    function handleMouseMove(e) {
+        if (isResizing) {
+            const containerRect = docContainer.getBoundingClientRect();
+            const newSidebarWidth = e.clientX - containerRect.left;
+
+            // 限制最大宽度
+            const maxWidth = 800; // 可以根据需要修改
+            if (newSidebarWidth <= maxWidth) {
+                // 保存当前宽度到 localStorage
+                localStorage.setItem('sidebar-width', `${newSidebarWidth}px`);
+
+                docContainer.style.setProperty('--sidebar-width', `${newSidebarWidth}px`);
+                docSidebar.style.width = `${newSidebarWidth}px`;
+            }
+        }
+    }
+</script>
 </body>
 </html>
