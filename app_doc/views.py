@@ -107,13 +107,6 @@ def remove_markdown_tag(docs):
 
 # 获取文集的文档目录
 def get_pro_toc(pro_id):
-    # try:
-    #     project = Project.objects.get(id=pro_id)
-    #     pro_toc = ProjectToc.objects.get(project=project)
-    #     doc_list = json.loads(pro_toc.value)
-    #     print("使用缓存")
-    # except:
-    # print("重新生成")
     # 查询存在上级文档的文档
     parent_id_list = Doc.objects.filter(
         top_doc=pro_id,
@@ -132,8 +125,6 @@ def get_pro_toc(pro_id):
             'name': doc['name'],
             'open_children':doc['open_children'],
             'editor_mode':doc['editor_mode']
-            # 'spread': True,
-            # 'level': 1
         }
         # 如果一级文档存在下级文档，查询其二级文档
         if doc['id'] in parent_id_list:
@@ -143,14 +134,13 @@ def get_pro_toc(pro_id):
                 parent_doc=doc['id'],
                 status=1
             ).values('id', 'name','open_children','editor_mode').order_by('sort')
-            top_item['children'] = []
+            top_item['sub'] = []
             for doc in sec_docs:
                 sec_item = {
                     'id': doc['id'],
                     'name': doc['name'],
                     'open_children': doc['open_children'],
                     'editor_mode': doc['editor_mode']
-                    # 'level': 2
                 }
                 # 如果二级文档存在下级文档，查询第三级文档
                 if doc['id'] in parent_id_list:
@@ -160,20 +150,19 @@ def get_pro_toc(pro_id):
                         parent_doc=doc['id'],
                         status=1
                     ).values('id','name','editor_mode').order_by('sort')
-                    sec_item['children'] = []
+                    sec_item['sub'] = []
                     for doc in thr_docs:
                         item = {
                             'id': doc['id'],
                             'name': doc['name'],
                             'editor_mode': doc['editor_mode']
-                            # 'level': 3
                         }
-                        sec_item['children'].append(item)
+                        sec_item['sub'].append(item)
                         n += 1
-                    top_item['children'].append(sec_item)
+                    top_item['sub'].append(sec_item)
                     n += 1
                 else:
-                    top_item['children'].append(sec_item)
+                    top_item['sub'].append(sec_item)
                     n += 1
             doc_list.append(top_item)
             n += 1
@@ -181,15 +170,6 @@ def get_pro_toc(pro_id):
         else:
             doc_list.append(top_item)
             n += 1
-    # 将文集的大纲目录写入数据库
-    # ProjectToc.objects.create(
-    #     project = project,
-    #     value = json.dumps(doc_list)
-    # )
-    # print(doc_list,n)
-    # if n > 999:
-    #     return ([],n)
-    # else:
     return (doc_list,n)
 
 
@@ -2232,6 +2212,8 @@ def get_pro_doc_tree(request):
                 'id':doc['id'],
                 'field':doc['name'],
                 'title':doc['name'],
+                'name':doc['name'],
+                'lable':doc['name'],
                 'modify_time':doc['modify_time'],
                 'spread':True,
                 'level':1
@@ -2246,6 +2228,8 @@ def get_pro_doc_tree(request):
                         'id': doc['id'],
                         'field': doc['name'],
                         'title': doc['name'],
+                        'name': doc['name'],
+                        'lable': doc['name'],
                         'modify_time': doc['modify_time'],
                         'level':2
                     }
@@ -2259,6 +2243,8 @@ def get_pro_doc_tree(request):
                                 'id': doc['id'],
                                 'field': doc['name'],
                                 'title': doc['name'],
+                                'name': doc['name'],
+                                'lable': doc['name'],
                                 'modify_time': doc['modify_time'],
                                 'level': 3
                             }
