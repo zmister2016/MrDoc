@@ -1,13 +1,40 @@
 (function () {
     'use strict';
-    var toc_cnt = $(".markdown-toc-list").children().length;
-    // console.log(toc_cnt)
+    // 获取文档目录数量
+    if(mode == 3){
+        $(".mce-toc h2").remove();
+        $("#toc-container").prepend($(".mce-toc")[0]);
+        var toc_cnt = $(".mce-toc ul").children().length;
+        addTitleAnchorIcon();
+    }else{
+        var toc_cnt = $(".markdown-toc-list").children().length;
+    }
+    console.log(toc_cnt)
     if(toc_cnt > 0){
         // console.log('显示文档目录')
         $(".tocMenu").show();
         initSidebar('.sidebar', '.doc-content');
     }
 })();
+
+function addTitleAnchorIcon(){
+    try{
+        $('#content').find('h1, h2, h3, h4').each(function(){
+            var heading = $(this);
+            var heading_id = heading.attr('id');
+            if(heading_id){
+                var anchor = $('<a></a>')
+                    .attr('href', '#' + heading_id)
+                    .addClass('anchor')
+                    .html('<span class="octicon octicon-link"></span>');
+                
+                heading.append(anchor);
+            }
+        })
+    } catch (error) {
+        console.error("标题锚点图标生成出错:", error);
+    }
+};
 
 /**
 * 左侧目录生成插件
@@ -17,14 +44,14 @@
 */
 function initSidebar(sidebarQuery, contentQuery, mode=1) {
     addAllStyle();
-    var sidebar = document.querySelector(sidebarQuery)   
+    var sidebar = document.querySelector(sidebarQuery)
     if(mode == 1){
         // 遍历文章中的所有 h1或 h2(取决于最大的 h 是多大) , 编辑为li.h3插入 ul
         var allHeaders = []
         var content = document.querySelector(contentQuery)
         for(var i = 1;i < 7; i++){
-        //    console.log(i,content.querySelectorAll('h' + i))
-        allHeaders.push.apply(allHeaders,content.querySelectorAll('h' + i))
+            // console.log(i,content.querySelectorAll('h' + i))
+            allHeaders.push.apply(allHeaders,content.querySelectorAll('h' + i))
         }
         // console.log('目录列表：',allHeaders)
         
@@ -51,18 +78,21 @@ function initSidebar(sidebarQuery, contentQuery, mode=1) {
         });
         
         //监听窗口的滚动和缩放事件
-        window.addEventListener('scroll', updateSidebar)
+        document.getElementById('doc-container-body').addEventListener('scroll', throttle(updateSidebar))
         // window.addEventListener('resize', throttle(updateSidebar))
         function updateSidebar() {
             if (scrollFlag) return // 如果存在scrollFlag，直接返回
-            var doc = document.documentElement // 定义doc变量值为页面文档元素
+
+            var doc = document.getElementById('doc-container-body') // 定义doc变量值为页面文档元素
             var top = doc && doc.scrollTop || document.body.scrollTop // 获取当前页面滚动条纵坐标
+            
             if (!allHeaders.length) return // 如果allHeaders的列表长度为空，直接返回
+            
             var last // 定义一个变量last
             // console.log(allHeaders)
             // 按照allHeaders的列表长度进行遍历
-            for (var i = 0; i < allHeaders.length; i++) { 
-                var link = allHeaders[i] // 按索引取出一个目录link
+            
+            for (const link of allHeaders) { 
                 // console.log("当前元素：",link)
                 // console.log("页面可视区域高度：",document.body.clientHeight)
                 // console.log("元素距离顶部距离：",link.offsetTop)
@@ -71,10 +101,10 @@ function initSidebar(sidebarQuery, contentQuery, mode=1) {
                 // link.offsetTop 表示元素距离上方的距离
                 // top 表示当前页面滚动条的纵坐标
                 // document.body.clientHeight 表示页面可视区域高度
-                var link_to_top_offset = link.offsetTop - document.documentElement.scrollTop;
-                // console.log(link_to_top_offset)
-                if(link_to_top_offset > 150){
-                }else if(link_to_top_offset < -150){
+                var linkOffset  = link.offsetTop - doc.scrollTop;
+                // console.log(linkOffset)
+                if(linkOffset  > 150){
+                }else if(linkOffset  < -150){
                 }else{
                     if (!last) {last = link }
                     break
@@ -92,9 +122,9 @@ function initSidebar(sidebarQuery, contentQuery, mode=1) {
                 headingElements.push(item)
             }
         })
-
         let toc = []
-        window.addEventListener('scroll', () => {
+        document.getElementById('doc-container-body').addEventListener('scroll', () => {
+            var doc = document.getElementById('doc-container-body') // 定义doc变量值为页面文档元素
             toc = []
             headingElements.forEach((item) => {
                 toc.push({
@@ -105,9 +135,7 @@ function initSidebar(sidebarQuery, contentQuery, mode=1) {
             var last // 定义一个变量last
             for (let i = 0, iMax = toc.length; i < iMax; i++) {
                 var link = headingElements[i] // 按索引取出一个目录link
-                var link_to_top_offset = link.offsetTop - document.documentElement.scrollTop;
-                // console.log(link)
-                // console.log(link_to_top_offset)
+                var link_to_top_offset = link.offsetTop - doc.scrollTop;
                 if(link_to_top_offset > 150){
                 }else if(link_to_top_offset < -150){
                 }else{
@@ -119,16 +147,36 @@ function initSidebar(sidebarQuery, contentQuery, mode=1) {
                             h.classList.remove('active')
                         })
                         document.querySelector('span[data-target-id="' + toc[index].id + '"]').classList.add('active')
-        
                     }
                     break
                 };
             };
         });
+        $("#toc-container li").click(function(e){
+            var linkId = $(this).children('span').data('target-id')
+            // console.log(linkId)
+            if(linkId){
+                var previousActives = sidebar.querySelectorAll(`.active`)
+                ;[].forEach.call(previousActives, function (h) {
+                    h.classList.remove('active')
+                })
+                document.querySelector('span[data-target-id="' + linkId + '"]').classList.add('active');
+                setTimeout(function() {
+                    var target = document.getElementById(linkId)
+                    target.scrollIntoView({ behavior: 'smooth', block: "start" });
+                }, 30);
+            }
+            return false;
+        })
     };
-    $("#toc-container").prepend("<strong>文档目录</strong><hr>")
+    let tocCollapseIcon = '<svg t="1750910790995" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8337" width="200" height="200"><path d="M317.724444 519.774815L157.392593 682.192593c-7.016296 7.111111-18.962963 2.085926-18.962963-7.964445V349.487407c0-10.05037 11.946667-15.075556 18.962963-7.964444l160.237037 162.322963c4.361481 4.456296 4.361481 11.567407 0.094814 15.928889zM885.096296 239.691852H171.899259c-11.757037 0-21.333333-9.576296-21.333333-21.333333s9.576296-21.333333 21.333333-21.333334h713.102222c11.757037 0 21.333333 9.576296 21.333334 21.333334s-9.481481 21.333333-21.238519 21.333333zM885.096296 435.38963H472.841481c-11.757037 0-21.333333-9.576296-21.333333-21.333334s9.576296-21.333333 21.333333-21.333333h412.254815c11.757037 0 21.333333 9.576296 21.333334 21.333333s-9.576296 21.333333-21.333334 21.333334zM885.096296 630.992593H472.841481c-11.757037 0-21.333333-9.576296-21.333333-21.333334s9.576296-21.333333 21.333333-21.333333h412.254815c11.757037 0 21.333333 9.576296 21.333334 21.333333s-9.576296 21.333333-21.333334 21.333334zM885.096296 826.595556H171.899259c-11.757037 0-21.333333-9.576296-21.333333-21.333334s9.576296-21.333333 21.333333-21.333333h713.102222c11.757037 0 21.333333 9.576296 21.333334 21.333333s-9.481481 21.333333-21.238519 21.333334z" p-id="8338"></path></svg>'
+    $("#toc-container").prepend(`<strong><a href="javasript:void(0);" title="收起目录" onclick="toggleDocToc()">${tocCollapseIcon}</a> ${gettext("文档目录")}</strong><hr>`)
 }
 
+// 切换目录的显示
+function toggleDocToc(){
+    $(".sidebar").toggleClass("doc-toc-hide");
+}
 
 /**
 *设置目录的激活状态,按既定规则添加 active 和 current 类
@@ -183,7 +231,7 @@ function setActive(id, sidebar) {
 @param {string} highlightColor - 高亮颜色, 默认为'#c7254e'
 */
 function addAllStyle(highlightColor) {
-    highlightColor = highlightColor || "#c7254e"
+    highlightColor = highlightColor || "#2176ff"
     var sheet = newStyleSheet()
     /**
     >创建一个新的`<style></style>`标签插入`<head>`中
@@ -205,70 +253,20 @@ function addAllStyle(highlightColor) {
     function addStyle(str) {
         sheet.insertRule(str,position++);
     }
-    addStyle(`.sidebar{position:fixed;    z-index: 10;
-        top: 50px;
+    addStyle(`.sidebar{
+        position:fixed;    
+        z-index: 10;
+        top: 60px;
         right: 5px;
-        bottom: 0;
+        /* bottom: 0; */
         overflow-x: auto;
         overflow-y: auto;
         padding: 20px 20px 20px 20px;
         width:200px;
-        height: min-content;
-        max-height:400px;
+        max-height:calc(100vh - 120px - 100px);
         background-color:white;
-        border-left:2px solid #dddddd;
-    }`)
-    addStyle(`.menu-root { list-style:none; text-align:left }`)
-    addStyle(`.menu-root .h1-link{
-        display:inline-block;
-        color:rgb(44, 62, 80);
-        font-family:"source sans pro", "helvetica neue", Arial, sans-serif;
-        font-size:17.55px;
-        font-weight:600;
-        height:22px;
-        line-height:22.5px;
-        list-style-type:none;
-        margin-block-end:11px;
-        margin-block-start:11px;
-    }`)
-    addStyle(`.menu-root .h2-link:hover {
-        border-bottom: 2px solid ${highlightColor};
-    }`)
-    addStyle(`.menu-root .h2-link.current+.menu-sub{
-        display:block;
-    }`)
-    addStyle(`.menu-root .h2-link{
-        color:rgb(127,140,141);
-        cursor:pointer;
-        font-family:"source sans pro", "helvetica neue", Arial, sans-serif;
-        font-size:15px;
-        height:auto;
-        line-height:22.5px;
-        list-style-type:none;
-        text-align:left;
-        text-decoration-color:rgb(127, 140, 141);
-        text-decoration-line:none;
-        text-decoration-style:solid;
-        margin-left:12.5px;
-    }`)
-    addStyle(`.menu-sub {
-        padding-left:25px;
-        list-style:none;
-        display:none;
-    }`)
-    addStyle(`.menu-sub .h3-link{
-        color:#333333;
-        cursor:pointer;
-        display:inline;
-        font-family:"source sans pro", "helvetica neue", Arial, sans-serif;
-        font-size:12.75px;
-        height:auto;
-        line-height:19.125px;
-        list-style-type:none;
-        text-align:left;
-        text-decoration-color:rgb(52, 73, 94);
-        text-decoration-line:none;
-        text-decoration-style:solid;
+        box-shadow: 4px 4px 4px 4px #ddd;
+        font-size:16px;
     }`)
     addStyle(`@media only screen and (max-width : 1300px){
         .content-with-sidebar {
@@ -278,6 +276,9 @@ function addAllStyle(highlightColor) {
     addStyle(`.sidebar .active{
         color:${highlightColor};
         font-weight:700;
+    }`)
+    addStyle(`.sidebar a:hover{
+        color:${highlightColor};
     }`)
 }
 /**
