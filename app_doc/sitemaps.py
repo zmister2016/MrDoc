@@ -32,11 +32,9 @@ class DocSitemap(Sitemap):
     changefreq = "daily"
     priority = 0.8
 
-    def __init__(self,pro):
-        self.pro = pro
-
     def items(self):
-        return Doc.objects.filter(status=1,top_doc=self.pro)
+        public_project_ids = Project.objects.filter(role=0).values_list('id', flat=True)
+        return Doc.objects.filter(status=1,top_doc__in=public_project_ids)
 
     def lastmod(self,obj):
         return obj.modify_time
@@ -61,7 +59,6 @@ class SitemapAll():
     def _generate_sitemaps_dict(self):
         if self.sitemaps:
             return
-        for project in Project.objects.filter(role=0):
-            sitemap = DocSitemap(pro=project.id)
-            self.sitemaps[str(project.id)] = sitemap
         self.sitemaps['home'] = HomeSitemap()
+        self.sitemaps['projects'] = ProjectSitemap()
+        self.sitemaps['docs'] = DocSitemap()

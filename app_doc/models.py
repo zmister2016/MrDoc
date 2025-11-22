@@ -27,7 +27,7 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse("pro_index",
+        return reverse("pro_index_id",
                        kwargs={
                            "pro_id":self.pk}
                        )
@@ -95,10 +95,9 @@ class Doc(models.Model):
 
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse("doc",
+        return reverse("doc_id",
                        kwargs={
-                           "pro_id": str(self.top_doc),
-                           "doc_id":self.pk}
+                           "doc_id": self.pk}
                        )
 
 
