@@ -15,15 +15,15 @@
 </p>
 
 <p align="center">
-<a href="https://mrdoc.pro/en.html">Home</a> | 
-<a href="http://mrdoc.zmister.com/">Example Site</a> |
+<a href="https://mrdoc.io">Home</a> | 
+<a href="http://demo.mrdoc.pro/">Example Site</a> |
 
 </p>
 
 <p align="center">
-<a href="https://doc.mrdoc.pro/p/deploy/">Installation Manual</a> | 
-<a href="https://doc.mrdoc.pro/p/user-guide/">User Manual</a> |
-<a href="https://doc.mrdoc.pro/p/example/">Document Example</a>
+<a href="https://mrdoc.io/p/deploy_guide/">Deployment Guide</a> | 
+<a href="https://mrdoc.io/p/user_manual/">User Manual</a> |
+<a href="https://mrdoc.io/p/example/">Document Example</a>
 </p>
 
 
@@ -38,7 +38,7 @@
 
 Current Platform：
 
-- 🌐Web:[instructions](https://doc.mrdoc.pro/p/deploy/)；
+- 🌐Web:[instructions](https://mrdoc.io/p/deploy_guide/)；
 - 💻Browser Extensions:Supported Chromium Browser,Firefox Browser [Download](https://gitee.com/zmister/mrdoc-webclipper)/[Chrome](https://chromewebstore.google.com/detail/mrdoc-%E9%80%9F%E8%AE%B0/aenkcglddghpaemlhefmhkdnhfceflcj)/[Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic)/[Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/mrdoc-webclipper/)
 - 🗔Desktop: Supported Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
 - 📱Mobile APP:supportd Android [Download](https://gitee.com/zmister/mrdoc-app-release)
