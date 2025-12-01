@@ -1,0 +1,284 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-20 21:27+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+
+#: .\static\mrdoc\mrdoc-docs.js:180 .\static\mrdoc\mrdoc-docs.js:197
+msgid "文档链接已复制到剪贴板"
+msgstr "Document link copied to clipboard"
+
+#: .\static\mrdoc\mrdoc-docs.js:183
+msgid "无法复制文本到剪贴板:"
+msgstr "Unable to copy"
+
+#: .\static\mrdoc\mrdoc-docs.js:327
+msgid "切换至夜间模式"
+msgstr "Switch to dark mode"
+
+#: .\static\mrdoc\mrdoc-docs.js:332
+msgid "切换至日间模式"
+msgstr "Switch to light mode"
+
+#: .\static\mrdoc\mrdoc-docs.js:502
+msgid "链接复制成功！"
+msgstr "Copied Successfully!"
+
+#: .\static\mrdoc\mrdoc-docs.js:562
+msgid "操作异常"
+msgstr "Failed Action"
+
+#: .\static\mrdoc\mrdoc-docs.js:703 .\static\mrdoc\mrdoc.editor.js:1420
+msgid "复制"
+msgstr "Copy"
+
+#: .\static\mrdoc\mrdoc-docs.js:704 .\static\mrdoc\mrdoc.editor.js:1421
+msgid "按Ctrl+C复制"
+msgstr "Press Ctrl+C to Copy"
+
+#: .\static\mrdoc\mrdoc-docs.js:705 .\static\mrdoc\mrdoc.editor.js:1422
+msgid "代码已复制！"
+msgstr "Code Copied!"
+
+#: .\static\mrdoc\mrdoc-docs.js:735
+msgid "修改文档"
+msgstr "Edit Document"
+
+#: .\static\mrdoc\mrdoc-docs.js:736
+msgid "新增文档"
+msgstr "Add Children"
+
+#: .\static\mrdoc\mrdoc-docs.js:737
+msgid "复制链接"
+msgstr "Copy Link"
+
+#: .\static\mrdoc\mrdoc.editor.js:220
+msgid "浏览器文档缓存"
+msgstr "Browser Document Cache"
+
+#: .\static\mrdoc\mrdoc.editor.js:225
+msgid "使用缓存"
+msgstr "Use Cache"
+
+#: .\static\mrdoc\mrdoc.editor.js:225
+msgid "删除缓存"
+msgstr "Delete Cache"
+
+#: .\static\mrdoc\mrdoc.editor.js:247
+msgid "暂无本地缓存"
+msgstr "No Local Cache Available"
+
+#: .\static\mrdoc\mrdoc.editor.js:399
+msgid "设为上级"
+msgstr "Set as Parent"
+
+#: .\static\mrdoc\mrdoc.editor.js:403
+msgid "查看文档"
+msgstr "View Document"
+
+#: .\static\mrdoc\mrdoc.editor.js:407
+msgid "新建文档"
+msgstr "Create Document"
+
+#: .\static\mrdoc\mrdoc.editor.js:410
+msgid "修改此文档"
+msgstr "Edit This Document"
+
+#: .\static\mrdoc\mrdoc.editor.js:484
+msgid "获取图片失败"
+msgstr "Failed to Fetch Image"
+
+#: .\static\mrdoc\mrdoc.editor.js:547
+msgid "获取分组图片失败"
+msgstr "Failed to Fetch Group Images"
+
+#: .\static\mrdoc\mrdoc.editor.js:603
+msgid "文件名称"
+msgstr "File Name"
+
+#: .\static\mrdoc\mrdoc.editor.js:604
+msgid "文件大小"
+msgstr "File Size"
+
+#: .\static\mrdoc\mrdoc.editor.js:607
+msgid "上传时间"
+msgstr "Upload Time"
+
+#: .\static\mrdoc\mrdoc.editor.js:611 .\static\mrdoc\mrdoc.editor.js:1183
+msgid "操作"
+msgstr "Actions"
+
+#: .\static\mrdoc\mrdoc.editor.js:618
+msgid "选择"
+msgstr "Select"
+
+#: .\static\mrdoc\mrdoc.editor.js:622
+msgid "插入预览"
+msgstr "Insert Preview"
+
+#: .\static\mrdoc\mrdoc.editor.js:697 .\static\mrdoc\mrdoc.editor.js:764
+#: .\static\mrdoc\mrdoc.editor.js:956
+msgid "上传成功"
+msgstr "Upload Successful"
+
+#: .\static\mrdoc\mrdoc.editor.js:704
+msgid "无图片上传权限！"
+msgstr "No Permission to Upload Images!"
+
+#: .\static\mrdoc\mrdoc.editor.js:707 .\static\mrdoc\mrdoc.editor.js:774
+#: .\static\mrdoc\mrdoc.editor.js:966
+msgid "上传失败，请稍后重试！"
+msgstr "Upload Failed, Please Try Again Later!"
+
+#: .\static\mrdoc\mrdoc.editor.js:771
+msgid "操作受限，请检查用户登录状态或操作权限！"
+msgstr "Operation Restricted. Please Check Login Status or Permissions!"
+
+#: .\static\mrdoc\mrdoc.editor.js:815 .\static\mrdoc\mrdoc.editor.js:859
+msgid "导入成功"
+msgstr "Import Successful"
+
+#: .\static\mrdoc\mrdoc.editor.js:823 .\static\mrdoc\mrdoc.editor.js:867
+msgid "系统异常，请稍后再试！"
+msgstr "System Error, Please Try Again Later!"
+
+#: .\static\mrdoc\mrdoc.editor.js:831
+msgid "导入本地 Office 文件"
+msgstr "Import Local Office File"
+
+#: .\static\mrdoc\mrdoc.editor.js:832
+msgid ""
+"<div>将本地Excel表格、PPT演示文稿、PDF文件的内容导入到觅思文档。<br>仅支持普"
+"通文本型文件，主要进行文本内容的提取和导入，不保留样式。<br><button class="
+"\"layui-btn layui-btn-primary\" id=\"import-doc-by-file\">选择文件</button></"
+"div>"
+msgstr ""
+"<div>Import contents from local Excel spreadsheets, PPT presentations, or "
+"PDF files into MrDoc.<br>Only plain-text documents are supported. The system "
+"extracts and imports text only, without preserving formatting.<br><button "
+"class=\"layui-btn layui-btn-primary\" id=\"import-doc-by-file\">Select File</"
+"button></div>"
+
+#: .\static\mrdoc\mrdoc.editor.js:963
+msgid "无附件上传权限！"
+msgstr "No Permission to Upload Attachments!"
+
+#: .\static\mrdoc\mrdoc.editor.js:979
+msgid "文档标签设置"
+msgstr "Document Tag Settings"
+
+#: .\static\mrdoc\mrdoc.editor.js:982 .\static\mrdoc\mrdoc.editor.js:992
+#: .\static\mrdoc\mrdoc.editor.js:1043
+msgid "确定"
+msgstr "Confirm"
+
+#: .\static\mrdoc\mrdoc.editor.js:989
+msgid "文档别名设置"
+msgstr "Document Alias Settings"
+
+#: .\static\mrdoc\mrdoc.editor.js:1000
+msgid "思维导图在线编辑器"
+msgstr "Mind Map Online Editor"
+
+#: .\static\mrdoc\mrdoc.editor.js:1004
+msgid "保存"
+msgstr "Save"
+
+#: .\static\mrdoc\mrdoc.editor.js:1029
+msgid "修改思维导图失败"
+msgstr "Failed to Update Mind Map"
+
+#: .\static\mrdoc\mrdoc.editor.js:1040
+msgid "文档权限设置"
+msgstr "Document Permission Settings"
+
+#: .\static\mrdoc\mrdoc.editor.js:1053
+msgid "文档附件选择"
+msgstr "Select Document Attachment"
+
+#: .\static\mrdoc\mrdoc.editor.js:1055
+msgid "关闭"
+msgstr "Close"
+
+#: .\static\mrdoc\mrdoc.editor.js:1077 .\static\mrdoc\mrdoc.editor.js:1121
+msgid "获取附件失败，请稍后重试！"
+msgstr "Failed to Fetch Attachments. Please Try Again Later!"
+
+#: .\static\mrdoc\mrdoc.editor.js:1082
+msgid "操作异常，请检查网络连接和站点是否运行正常"
+msgstr "Operation Error. Please Check Network Connection and Server Status."
+
+#: .\static\mrdoc\mrdoc.editor.js:1084
+msgid "用户未登录"
+msgstr "User Not Logged In"
+
+#: .\static\mrdoc\mrdoc.editor.js:1086
+msgid "操作受限，请检查用户登录状态或操作权限"
+msgstr "Operation Restricted. Please Check Login Status or Permissions."
+
+#: .\static\mrdoc\mrdoc.editor.js:1125
+msgid "获取附件异常，请稍后重试！"
+msgstr "Attachment Retrieval Error. Please Try Again Later!"
+
+#: .\static\mrdoc\mrdoc.editor.js:1153
+msgid "添加成功"
+msgstr "Added Successfully"
+
+#: .\static\mrdoc\mrdoc.editor.js:1155
+msgid "附件已存在"
+msgstr "Attachment Already Exists"
+
+#: .\static\mrdoc\mrdoc.editor.js:1164
+msgid "添加文档附件请求异常，请稍后重试！"
+msgstr "Error Adding Attachment. Please Try Again Later!"
+
+#: .\static\mrdoc\mrdoc.editor.js:1182
+msgid "附件名称"
+msgstr "Attachment Name"
+
+#: .\static\mrdoc\mrdoc.editor.js:1191
+msgid "获取已添加附件失败："
+msgstr "Failed to Fetch Added Attachments:"
+
+#: .\static\mrdoc\mrdoc.editor.js:1195
+msgid "请求已添加附件数据异常，请稍后重试！"
+msgstr "Error Fetching Added Attachment Data. Please Try Again Later!"
+
+#: .\static\mrdoc\mrdoc.editor.js:1202
+msgid "确定要删除此文档附件？"
+msgstr "Are You Sure You Want to Delete This Attachment?"
+
+#: .\static\mrdoc\mrdoc.editor.js:1204
+msgid "提示"
+msgstr "Notice"
+
+#: .\static\mrdoc\mrdoc.editor.js:1216
+msgid "删除成功"
+msgstr "Deleted Successfully"
+
+#: .\static\mrdoc\mrdoc.editor.js:1232
+msgid "删除文档附件请求异常，请稍后重试"
+msgstr "Error Deleting Attachment. Please Try Again Later."
+
+#: .\static\mrdoc\mrdoc.editor.js:1252
+msgid "复制成功！"
+msgstr "Copied Successfully!"
+
+#: .\static\toc\doctoc.js:173
+msgid "文档目录"
+msgstr "Toc"
