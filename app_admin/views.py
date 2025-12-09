@@ -657,7 +657,7 @@ def admin_project_role(request,pro_id):
             pro = Project.objects.get(id=int(pro_id))
             return render(request, 'app_admin/admin_project_role.html', locals())
         else:
-            return Http404
+            raise Http404
 
 # 后台管理 - 修改文集协作成员页面
 @superuser_only

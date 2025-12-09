@@ -456,7 +456,7 @@ def modify_project(request):
         if (request.user == pro.create_user) or request.user.is_superuser:
             return render(request,'app_doc/manage/manage_project_options.html',locals())
         else:
-            return Http404
+            raise Http404
     elif request.method == 'POST':
         try:
             pro_id = request.POST.get('pro_id',None)
@@ -494,7 +494,7 @@ def modify_project_role(request,pro_id):
     try:
         pro = Project.objects.get(id=pro_id)
     except ObjectDoesNotExist:
-        return Http404
+        raise Http404
     if (pro.create_user != request.user) and (request.user.is_superuser is False):
         return render(request,'403.html')
     else:
@@ -529,7 +529,7 @@ def modify_project_role(request,pro_id):
                 except:
                     return JsonResponse({'status':False,'data':_('出错')})
             else:
-                return Http404
+                raise Http404
 
 
 # 验证文集访问码
@@ -774,7 +774,7 @@ def modify_project_download(request,pro_id):
     try:
         pro = Project.objects.get(id=pro_id)
     except ObjectDoesNotExist:
-        return Http404
+        raise Http404
     if (pro.create_user != request.user) and (request.user.is_superuser is False):
         return render(request,'403.html')
     else:
@@ -953,7 +953,7 @@ def manage_project_transfer(request,pro_id):
     try:
         pro = Project.objects.get(id=pro_id)
     except ObjectDoesNotExist:
-        return Http404
+        raise Http404
     if (pro.create_user != request.user) and (request.user.is_superuser is False):
         return render(request,'403.html')
     else:
