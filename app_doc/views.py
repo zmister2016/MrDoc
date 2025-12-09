@@ -2160,37 +2160,44 @@ def get_pro_doc(request):
         return JsonResponse({'status':False,'data':_('参数错误')})
 
 # 获取文档所在的页码索引位置
-def find_doc_index(toc_list, doc_id):
+def find_top_level_index(toc_list, doc_id):
     """
-    递归搜索文档树，查找指定doc_id的索引位置
+    在第一层级中查找包含 doc_id 的那个顶级条目的索引（0-based）。
+    如果找不到，返回 -1。
 
-    Args:
-        toc_list: 文档树列表
-        doc_id: 要查找的文档ID
-
-    Returns:
-        找到时返回文档在平铺列表中的索引，未找到返回-1
+    toc_list: 列表，每项为 dict，可能包含 'id' 和 'children'（子列表）
+    doc_id: 要查找的 id（可以是 str 或 int）
     """
-    flat_index = 0  # 用于跟踪文档在平铺列表中的位置
 
-    def search_in_tree(items):
-        nonlocal flat_index
+    # 统一为整数比较（如果不希望强转，可删除这行）
+    try:
+        target = int(doc_id)
+    except (TypeError, ValueError):
+        target = doc_id
 
-        for item in items:
-            current_index = flat_index
-            flat_index += 1
+    def subtree_contains(item):
+        """递归判断某个节点的子树（含自己）是否包含 target"""
+        # 比较 id
+        try:
+            if int(item.get('id')) == target:
+                return True
+        except Exception:
+            if item.get('id') == target:
+                return True
 
-            if item.get('id') == int(doc_id):
-                return current_index
+        # 递归检查 children
+        children = item.get('children') or []
+        for c in children:
+            if subtree_contains(c):
+                return True
+        return False
 
-            if item.get('children'):
-                result = search_in_tree(item['children'])
-                if result != -1:
-                    return result
+    # 遍历第一层级节点
+    for idx, top_item in enumerate(toc_list):
+        if subtree_contains(top_item):
+            return idx
 
-        return -1
-
-    return search_in_tree(toc_list)
+    return -1
 
 # 获取指定文集的文档树数据
 @require_http_methods(['POST'])
@@ -2265,7 +2272,7 @@ def get_pro_doc_tree(request):
             page = request.POST.get('page', 1)
             doc_id = request.POST.get('doc_id', None)
             if doc_id:
-                data_index = find_doc_index(doc_list, doc_id)
+                data_index = find_top_level_index(doc_list, doc_id)
 
                 if data_index != -1:
                     # 计算指定 doc_id 所在的分页页码
