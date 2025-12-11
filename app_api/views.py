@@ -206,6 +206,7 @@ def get_docs(request):
     token = request.GET.get('token', '')
     sort = request.GET.get('sort',0)
     limit = request.GET.get('limit', 10)
+    kw = request.GET.get('kw', '')
     if sort == '1':
         sort = '-'
     else:
@@ -213,7 +214,12 @@ def get_docs(request):
     try:
         token = UserToken.objects.get(token=token)
         pid = request.GET.get('pid','')
-        docs = Doc.objects.filter(create_user=token.user,top_doc=pid,status=1).order_by('{}create_time'.format(sort))  # 查询文集下的文档
+        if kw:
+            docs = Doc.objects.filter(create_user=token.user,top_doc=pid, status=1,).filter(
+                Q(name__icontains=kw) | Q(pre_content__icontains=kw)
+            ).order_by('{}modify_time'.format(sort))  # 查询文集下的文档
+        else:
+            docs = Doc.objects.filter(create_user=token.user,top_doc=pid,status=1).order_by('{}modify_time'.format(sort))  # 查询文集下的文档
 
         # 分页处理
         paginator = Paginator(docs, limit)
