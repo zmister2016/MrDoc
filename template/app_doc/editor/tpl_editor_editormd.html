@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="{% static 'mr-editor/mreditor.css' %}?version={{mrdoc_version}}" />
 <script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'mr-editor/mreditor.js' %}?version={{mrdoc_version}}"></script>
+<script src="{% static 'turndown/turndown.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
     // 视频iframe域名白名单
     var iframe_whitelist = '{{ iframe_whitelist }}'.split(',')
@@ -198,16 +199,24 @@
         element: document.getElementById("editor-md"),
         value:$("#editor-md textarea").val(),
         cdn:"{% static '/mr-marked/'%}",
-        toolbar:toolbars
+        toolbar:toolbars,
+        pasteEvent:handlePaste,
     });
 
     //粘贴上传图片
-    $("#editor-md").on('paste', function (ev) {
+    async function handlePaste(ev, view) {
+        ev.preventDefault();
+
         var data = ev.clipboardData;
-        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        var items = ev.clipboardData.items;
+
+        let hasFile = false;
+
+        // 检查是否为文件粘贴
         for (var index in items) {
             var item = items[index];
             if (item.kind === 'file') {
+                hasFile = true;
                 var blob = item.getAsFile();
                 // console.log(blob)
                 var reader = new FileReader();
@@ -243,7 +252,83 @@
                 var url = reader.readAsDataURL(blob);
             }
         }
-    });
+
+        if(hasFile) return true; // 已经处理过文件粘贴，结束；
+
+        // 处理粘贴自网页的HTML
+        const html = data.getData('text/html');
+        if (html) {
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(html, 'text/html');
+            let imgs = doc.querySelectorAll('img');
+
+            layer.load(1);
+            for (let img of imgs) {
+                let src = img.getAttribute('src');
+                if (!src) continue;
+
+                // 只处理网络图片
+                if (src.startsWith('http')) {
+                    try {
+                        const newUrl = await transferRemoteImage(src);
+                        if (newUrl) img.setAttribute('src', newUrl);
+                    } catch (e) {
+                        console.warn("图片转存失败：", src);
+                    }
+                }
+            }
+            layer.closeAll("loading");
+
+            // HTML → Markdown
+            const htmlStr = doc.body.innerHTML;
+            const markdown = htmlToMarkdown(htmlStr);
+
+            // 插入 Markdown
+            editor.insertValue('\n' + markdown + '\n');
+            editor.focus();
+            return true;
+        }
+
+        // 普通文本
+        const text = data.getData('text/plain');
+        if (text) {
+            editor.insertValue(text);
+            editor.focus();
+            return true;
+        }
+        return true;
+    };
+
+    // 调用后端URL转存
+    async function transferRemoteImage(url) {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: "{% url 'upload_doc_img' %}",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({ url }),
+                success: function (ret) {
+                    if (ret.code === 0) resolve(ret.data.url);
+                    else resolve(null);
+                },
+                error: function () { resolve(null); }
+            });
+        });
+    }
+
+    // 辅助函数：HTML转Markdown
+    function htmlToMarkdown(html) {
+        // 推荐使用 turndown.js
+        if (window.TurndownService) {
+            const turndownService = new TurndownService({
+                headingStyle: 'atx',
+                codeBlockStyle: 'fenced'
+            });
+            return turndownService.turndown(html);
+        } else {
+            return html; // 如果没加载 turndown，则退化为原始 HTML
+        }
+    }
     
     //未保存离开提示
     window.onbeforeunload =function() {
