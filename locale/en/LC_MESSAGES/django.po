@@ -1200,6 +1200,9 @@ msgstr "Update Type."
 msgid "【预览草稿】"
 msgstr "[preview draft]"
 
+msgid "错误：你无权限访问此文档！"
+msgstr "Error:Not Access Permission"
+
 #: .\app_doc\views.py:1905 .\app_doc\views.py:4661
 msgid "文集浏览出错"
 msgstr "Project browsing error"
@@ -3071,6 +3074,9 @@ msgstr "Edit"
 msgid "重命名快捷方式"
 msgstr "Rename shortcut"
 
+msgid "修改源文档"
+msgstr "Edit Doc"
+
 #: .\template\app_doc\doc.html:27 .\template\app_doc\doc.html:44
 #: .\template\app_doc\project.html:17
 #: .\template\app_doc\share\share_project_doc.html:21
@@ -3313,11 +3319,11 @@ msgstr "The outline of the project is loading"
 #: .\template\app_doc\docs_base2.html:182
 #: .\template\app_doc\share\share_project_base.html:113
 #: .\template\app_doc\tag_doc_base.html:122
-msgid "本文档使用「觅思文档专业版」发布"
-msgstr "Published with MrDoc Pro"
+msgid "本站点使用「觅思文档专业版」构建"
+msgstr "Powered by MrDoc Pro"
 
-msgid "本文档使用 MrDoc 发布"
-msgstr "Published with MrDoc"
+msgid "本站点使用 MrDoc 构建"
+msgstr "Powered by MrDoc"
 
 #: .\template\app_doc\docs_base2.html:212
 #: .\template\app_doc\share\share_doc.html:83
@@ -3579,6 +3585,9 @@ msgstr "User list retrieval exception"
 msgid "文档权限"
 msgstr "Document Permissions"
 
+msgid "文档别名"
+msgstr "Document Alias"
+
 #: .\template\app_doc\editor\create_doc.html:17
 msgid "展开下级目录"
 msgstr "Expand Subdirectories"
@@ -3737,9 +3746,9 @@ msgstr "Visible to specified user groups"
 
 #: .\template\app_doc\foot_base.html:6
 msgid ""
-"<a href=\"https://mrdoc.pro\" target=\"_blank\">觅思网络科技工作室</a>出品"
+"<a href=\"https://mrdoc.pro\" target=\"_blank\">觅道网络科技工作室</a>出品"
 msgstr ""
-"Power By <a href=\"https://mrdoc.io\" target=\"_blank\">Midao Tech Studio</a>"
+"Power By <a href=\"https://mrdoc.io\" target=\"_blank\">SeekDao Studio</a>"
 
 #: .\template\app_doc\foot_base.html:8
 msgid "网站地图"
@@ -4601,8 +4610,8 @@ msgid "其他方式登录"
 msgstr "Other Login Type"
 
 #: .\template\login.html:183 .\template\register.html:128
-msgid "觅思文档 - 私有云知识库部署方案"
-msgstr "MrDoc - Self-Hosted Knowledge Base"
+msgid "本站点使用 MrDoc 构建 - 私有云知识库部署方案"
+msgstr "Powered By MrDoc - Self-Hosted Knowledge Base"
 
 #: .\template\register.html:6
 msgid "用户注册"
