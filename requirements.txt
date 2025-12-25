@@ -18,3 +18,4 @@ PyYAML==6.0.2
 qiniu==7.14.0
 mysqlclient
 django-cors-headers==4.4.0
+django-filter==24.3
