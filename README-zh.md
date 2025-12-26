@@ -11,6 +11,7 @@
 <p align="center">
 <a href='https://gitee.com/zmister/MrDoc/stargazers'><img src='https://gitee.com/zmister/MrDoc/badge/star.svg?theme=gvp' alt='star'></img></a>
 <a href='https://github.com/zmister2016/MrDoc/stargazers'><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zmister2016/MrDoc?style=flat&logo=github"></a>
+<a href='https://atomgit.com/zmister/MrDoc/stargazers'><img src='https://atomgit.com/zmister/MrDoc/star/badge.svg' alt='star'></img></a>
 <img src="https://img.shields.io/badge/MrDoc-v0.9.8-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
@@ -28,7 +29,7 @@
 
 <p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">Gitee</a> | 
 <a href="https://github.com/zmister2016/MrDoc">GitHub</a> |
-<a href="https://github.com/zmister2016/MrDoc">GitCode</a>
+<a href="https://atomgit.com/zmister/MrDoc">AtomGit</a>
 </p>
 
 ## 简介
