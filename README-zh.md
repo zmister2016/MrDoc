@@ -9,6 +9,8 @@
 
 
 <p align="center">
+<a href='https://gitee.com/zmister/MrDoc/stargazers'><img src='https://gitee.com/zmister/MrDoc/badge/star.svg?theme=gvp' alt='star'></img></a>
+<a href='https://github.com/zmister2016/MrDoc/stargazers'><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zmister2016/MrDoc?style=flat&logo=github"></a>
 <img src="https://img.shields.io/badge/MrDoc-v0.9.8-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
@@ -16,19 +18,17 @@
 </p>
 
 <p align="center">
+<a href="https://mrdoc.io">English</a> | 
 <a href="https://mrdoc.pro">官网</a> | 
 <a href="http://mrdoc.zmister.com/">演示站点</a> |
-<a href="https://www.bilibili.com/video/BV1LF411u7NM/">零基础视频教程</a>
-</p>
-
-<p align="center">
 <a href="https://doc.mrdoc.pro/p/deploy/">安装手册</a> | 
 <a href="https://doc.mrdoc.pro/p/user-guide/">使用手册</a> |
 <a href="https://doc.mrdoc.pro/p/example/">文档效果</a>
 </p>
 
-<p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">码云</a> | 
-<a href="https://github.com/zmister2016/MrDoc">GitHub</a>
+<p align="center">源码：<a href="https://gitee.com/zmister/MrDoc">Gitee</a> | 
+<a href="https://github.com/zmister2016/MrDoc">GitHub</a> |
+<a href="https://github.com/zmister2016/MrDoc">GitCode</a>
 </p>
 
 ## 简介
