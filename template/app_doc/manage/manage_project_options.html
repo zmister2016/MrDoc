@@ -56,6 +56,14 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
+                        <label class="layui-form-label">首页图标</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="index_position" value="1" title="右侧（默认）" {% if pro.index_position == 1 %}checked{% endif %}>
+                            <input type="radio" name="index_position" value="2" title="左侧" {% if pro.index_position == 2 %}checked{% endif %}>
+                            <input type="radio" name="index_position" value="3" title="隐藏" {% if pro.index_position == 0 %}checked{% endif %}>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
                         <label class="layui-form-label">文集水印</label>
                         <div class="layui-input-block">
                             <input type="checkbox" name="is_watermark" id="is_watermark" lay-skin="switch" lay-text="开启|关闭" {% if pro.is_watermark %}checked{% endif %}>
@@ -270,6 +278,7 @@
             'desc':editor.getMarkdown(),
             'is_watermark':$("input[name=is_watermark]")[0].checked,
             'watermark_value':$("#watermark_value").val(),
+            'index_position':$("input[name='index_position']:checked").val(),
         }
         $.post("{% url 'modify_project' %}",project_data,function(r){
             layer.closeAll('loading'); //关闭loading
