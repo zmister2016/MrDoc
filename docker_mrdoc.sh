@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# 生成数据库迁移文件
-python /app/MrDoc/manage.py makemigrations &&
 # 根据数据库迁移文件执行数据库变更
 python /app/MrDoc/manage.py migrate &&
 # 重建全文搜索索引
