@@ -41,7 +41,9 @@
                         <div class="layui-input-inline" style="width: 30px;">
                             <button class="layui-btn layui-btn-primary layui-btn-sm" id="project-icon-select">
                                 {% if pro.icon %}
-                                <svg class="icon" aria-hidden="true"><use xlink:href="{% if pro.icon %}#{{pro.icon}}{% else %}#mrdoc-icon-pro-2{% endif %}"></use></svg>
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="{% if pro.icon and pro.icon != 'None' %}#{{pro.icon}}{% else %}#mrdoc-icon-pro-2{% endif %}"></use>
+                                </svg>
                                 {% else %}
                                 <i class="layui-icon layui-icon-addition"></i>
                                 {% endif %}
