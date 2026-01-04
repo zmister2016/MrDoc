@@ -12,7 +12,7 @@
 <a href='https://gitee.com/zmister/MrDoc/stargazers'><img src='https://gitee.com/zmister/MrDoc/badge/star.svg?theme=gvp' alt='star'></img></a>
 <a href='https://github.com/zmister2016/MrDoc/stargazers'><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zmister2016/MrDoc?style=flat&logo=github"></a>
 <a href='https://atomgit.com/zmister/MrDoc/stargazers'><img src='https://atomgit.com/zmister/MrDoc/star/badge.svg' alt='star'></img></a>
-<img src="https://img.shields.io/badge/MrDoc-v0.9.8-brightgreen.svg" title="Mrdoc" />
+<img src="https://img.shields.io/badge/MrDoc-v0.9.9-brightgreen.svg" title="Mrdoc" />
 <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
 <a href="https://hellogithub.com/repository/6494f041e00d4b8481ed1114a0bd33c1" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=6494f041e00d4b8481ed1114a0bd33c1&claim_uid=3IU9mFeOVT0cXyw&theme=small" alt="Featured｜HelloGitHub" /></a>
