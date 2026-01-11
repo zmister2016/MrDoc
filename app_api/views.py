@@ -345,9 +345,9 @@ def get_self_docs(request):
         if kw == '':
             docs = Doc.objects.filter(create_user=token.user,status=1).order_by('{}modify_time'.format(sort))
         else:
-            # kw_list = jieba.cut(kw, cut_all=True)
-            # reduce(operator.or_,(Q(name__icontains=x) for x in kw_list))
-            docs = Doc.objects.filter(create_user=token.user,status=1,name__icontains=kw).order_by('{}modify_time'.format(sort))
+            docs = Doc.objects.filter(create_user=token.user,status=1).filter(
+                Q(name__icontains=kw) | Q(pre_content__icontains=kw)
+            ).order_by('{}modify_time'.format(sort))
 
         # 分页处理
         paginator = Paginator(docs, limit)
