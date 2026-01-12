@@ -23,6 +23,9 @@ import time,hashlib
 import traceback,json
 import datetime
 
+from app_doc.views import find_top_level_index
+
+
 # MrDoc 基于用户的Token访问API模块
 
 # 用户通过该url获取服务器时间戳，便于接口访问
@@ -260,6 +263,7 @@ def get_level_docs(request):
     try:
         token = UserToken.objects.get(token=token)
         pid = request.GET.get('pid', '')
+        is_page = request.GET.get('is_page', True)
 
         # 用户有浏览和新增权限的文集列表
         view_list = read_add_projects(token.user)
@@ -322,7 +326,32 @@ def get_level_docs(request):
             else:
                 doc_list.append(top_item)
 
-        return JsonResponse({'status': True, 'data': doc_list,'total':doc_cnt})
+        # 不需要分页
+        if is_page is False:
+            return JsonResponse({'status': True, 'data': doc_list,'total':doc_cnt})
+
+        # 分页处理
+        paginator = Paginator(doc_list, 20)
+        page = request.GET.get('page', 1)
+        doc_id = request.GET.get('doc_id', None)
+        if doc_id:
+            data_index = find_top_level_index(doc_list, doc_id)
+            if data_index != -1:
+                # 计算指定 doc_id 所在的分页页码
+                items_per_page = 20  # 每页显示的数量，需要和分页器中设置的数量保持一致
+                page = data_index // items_per_page + 1
+                print("文档页码：", page)
+        try:
+            project_toc = paginator.page(page)
+        except PageNotAnInteger:
+            print("页码错误", page)
+            project_toc = paginator.page(1)
+        except EmptyPage:
+            project_toc = paginator.page(paginator.num_pages)
+        resp = {'status': True, "total": len(doc_list), 'data': list(project_toc),
+                'total_page': paginator.num_pages, 'current': page}
+        return JsonResponse(resp)
+
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
