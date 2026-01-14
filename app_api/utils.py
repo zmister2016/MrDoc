@@ -2,6 +2,11 @@ from app_doc.models import Project,ProjectCollaborator
 from django.utils.html import strip_tags
 import markdown
 
+# 验证用户对文档是否读写授权权限
+def is_edit_authorized(token, doc):
+    view_list = read_add_edit_projects(token.user)
+    return doc.create_user == token.user or doc.top_doc in view_list
+
 # 用户有浏览和、新增权限的文集列表
 def read_add_projects(user):
     # 用户的协作文集ID列表

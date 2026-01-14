@@ -17,7 +17,7 @@ from app_doc.utils import find_doc_next,find_doc_previous
 from app_api.models import UserToken
 from app_doc.models import Project, Doc, DocHistory, Image, ProjectCollaborator
 from app_api.serializers_app import ImageSerializer,ProjectSerializer
-from app_api.utils import read_add_projects,remove_doc_tag
+from app_api.utils import read_add_projects, remove_doc_tag, is_edit_authorized
 from loguru import logger
 import time,hashlib
 import traceback,json
@@ -604,38 +604,39 @@ def modify_doc(request):
     try:
         # 验证Token
         token = UserToken.objects.get(token=token)
-        # 文集是否属于用户
-        is_project = Project.objects.filter(create_user=token.user,id=project_id)
         # 修改现有文档
-        if is_project.exists():
-            # 将现有文档内容写入到文档历史中
-            doc = Doc.objects.get(id=doc_id,top_doc=project_id)
-            parent_id = doc.parent_doc if parent_doc == '' else parent_doc
-            DocHistory.objects.create(
-                doc=doc,
-                pre_content=doc.pre_content,
-                create_user=token.user
+        doc = Doc.objects.get(id=doc_id)
+
+        # 验证权限
+        if not is_edit_authorized(token, doc):
+            return JsonResponse({'status': False, 'data': '非法请求'})
+
+        # 将现有文档内容写入到文档历史中
+        parent_id = doc.parent_doc if parent_doc == '' else parent_doc
+        DocHistory.objects.create(
+            doc=doc,
+            pre_content=doc.pre_content,
+            create_user=token.user
+        )
+        # 更新修改现有文档
+        if doc.editor_mode == 1 or doc.editor_mode == 2: # markdown文档
+            Doc.objects.filter(id=int(doc_id)).update(
+                name=doc_title,
+                pre_content=doc_content,
+                parent_doc=parent_id,
+                modify_time=datetime.datetime.now(),
             )
-            # 更新修改现有文档
-            if doc.editor_mode == 1 or doc.editor_mode == 2: # markdown文档
-                Doc.objects.filter(id=int(doc_id),top_doc=project_id).update(
-                    name=doc_title,
-                    pre_content=doc_content,
-                    parent_doc=parent_id,
-                    modify_time=datetime.datetime.now(),
-                )
-            elif doc.editor_mode == 3: # 富文本文档
-                Doc.objects.filter(id=int(doc_id),top_doc=project_id).update(
-                    name=doc_title,
-                    content=doc_content,
-                    parent_doc=parent_id,
-                    modify_time=datetime.datetime.now(),
-                )
-            elif doc.editor_mode == 4: # 在线表格
-                pass
-            return JsonResponse({'status': True, 'data': 'ok'})
-        else:
-            return JsonResponse({'status':False,'data':'非法请求'})
+        elif doc.editor_mode == 3: # 富文本文档
+            Doc.objects.filter(id=int(doc_id)).update(
+                name=doc_title,
+                content=doc_content,
+                parent_doc=parent_id,
+                modify_time=datetime.datetime.now(),
+            )
+        elif doc.editor_mode == 4: # 在线表格
+            pass
+        return JsonResponse({'status': True, 'data': 'ok'})
+
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': 'token无效'})
     except:
