@@ -44,8 +44,8 @@ MrDoc 全系产品目前涵盖以下终端：
 
 - 🌐Web端：开源版、专业版，[版本对比](https://doc.mrdoc.pro/doc/3441/)
 - 💻浏览器扩展：主要用于网页剪藏和速记，支持 Chromium 系列浏览器、Firefox 浏览器，[下载地址](https://gitee.com/zmister/mrdoc-webclipper)/[Chrome应用商店](https://chromewebstore.google.com/detail/mrdoc-%E9%80%9F%E8%AE%B0/aenkcglddghpaemlhefmhkdnhfceflcj)/[Edge应用商店](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic)/[Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/mrdoc-webclipper/)
-- 🗔桌面客户端：主要用于文档编辑和文档导入，支持 Windows、macOS、Linux，[下载地址](https://doc.mrdoc.pro/doc/4031/)
-- 📱移动客户端：主要用于个人知识库查看和文档编辑，支持 Android，[下载地址](https://gitee.com/zmister/mrdoc-app-release)
+- 🗔桌面客户端：主要用于文档编辑和文档导入，支持 Windows、macOS、Linux，[下载地址](https://doc.mrdoc.pro/d/mrdoc-desktop-releases/)
+- 📱移动客户端：主要用于个人知识库查看和文档编辑，支持 Android，[下载地址](https://doc.mrdoc.pro/d/mobile-app-releases/)
 - Obsidian 同步插件：[使用教程](https://doc.mrdoc.pro/doc/45650/)
 
 ## 演示站点

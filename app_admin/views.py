@@ -1781,7 +1781,7 @@ def admin_center_menu(request):
                     "icon": "layui-icon layui-icon-face-cry",
                     "type": 1,
                     "openType": "_blank",
-                    "href": "https://gitee.com/zmister/mrdoc-webclipper"
+                    "href": "https://doc.mrdoc.pro/doc/4032/"
                 },
                 {
                     "id": 703,
@@ -1789,7 +1789,7 @@ def admin_center_menu(request):
                     "icon": "layui-icon layui-icon-face-cry",
                     "type": 1,
                     "openType": "_blank",
-                    "href": "https://gitee.com/zmister/mrdoc-desktop-release"
+                    "href": "https://doc.mrdoc.pro/d/mrdoc-desktop-releases/"
                 },
                 {
                     "id": 704,
@@ -1797,7 +1797,7 @@ def admin_center_menu(request):
                     "icon": "layui-icon layui-icon-face-cry",
                     "type": 1,
                     "openType": "_blank",
-                    "href": "https://gitee.com/zmister/mrdoc-app-release"
+                    "href": "https://doc.mrdoc.pro/d/mobile-app-releases/"
                 },
                 {
                     "id": 705,
@@ -1805,7 +1805,7 @@ def admin_center_menu(request):
                     "icon": "layui-icon layui-icon-face-cry",
                     "type": 1,
                     "openType": "_blank",
-                    "href": "https://gitee.com/zmister/obsidian-mrdoc-plugin"
+                    "href": "https://doc.mrdoc.pro/doc/45721/"
                 },
             ]
         },
