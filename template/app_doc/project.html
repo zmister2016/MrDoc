@@ -18,8 +18,8 @@
         </a>
     {% endif %}
     {% if request.user == project.create_user %}
-        <a class="btn pull-left" href="{% url 'user_center' %}?tab=manage_project">
-            <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">{% trans "管理" %}</span>
+        <a class="btn pull-left" href="{% url 'user_center' %}?tab=manage_project&pid={{project.id}}">
+            <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">{% trans "文集管理" %}</span>
         </a>
     {% endif %}
 {% endblock %}

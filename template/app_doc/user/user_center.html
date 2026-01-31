@@ -182,7 +182,8 @@
 					console.log("选项卡跳转",tabKw)
 					switch(tabKw){
 						case 'manage_project':
-							layui.tab.addTabOnlyByElem("content",{id:"manage_project",title:"文集管理",url:"{% url 'manage_project' %}",close:"true"})
+							var projectId = getQueryVariable('pid')
+							layui.tab.addTabOnlyByElem("content",{id:"manage_project",title:"文集管理",url:"{% url 'manage_project' %}?pid="+projectId,close:"true"})
 							break;
 						case 'manage_doc':
 							layui.tab.addTabOnlyByElem("content",{id:"doc_manage",title:"文档管理",url:"{% url 'manage_doc' %}",close:"true"})

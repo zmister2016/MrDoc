@@ -86,6 +86,10 @@
 {% endblock %}
 {% block custom_script %}
 <script>
+    let pid = getQueryVariable('pid');
+    if(pid){
+        window.location.href = `/modify_pro/?pro_id=${pid}`;
+    }
     layui.use(['table', 'form', 'jquery', 'layer'], function() {
         let table = layui.table;
         let form = layui.form;
