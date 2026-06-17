@@ -45,7 +45,8 @@ class ProjectSerializer(ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('__all__')
+        fields = ('id', 'name', 'icon', 'intro', 'index_position','role', 'is_top', 'create_time', 'doc_total', 'username','is_watermark','watermark_type','watermark_value')
+        read_only_fields = ('id', 'create_time', 'doc_total', 'username')
 
     def get_username(self,obj):
         return obj.create_user.username
