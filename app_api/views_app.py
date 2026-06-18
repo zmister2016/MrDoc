@@ -20,6 +20,7 @@ from app_doc.models import *
 from app_api.serializers_app import *
 from app_api.auth_app import AppAuth,AppMustAuth
 from app_doc.views import validateTitle
+from app_doc.utils import can_view_project
 from app_doc.util_upload_img import img_upload,base_img_upload
 from loguru import logger
 import datetime
@@ -440,45 +441,20 @@ class DocView(APIView):
 
         # 存在文集ID和文档ID，进行数据库检索
         if pro_id != '' and doc_id != '':
-            # 获取文集信息
-            project = Project.objects.get(id=int(pro_id))
-            # 获取文集的协作用户信息
-            if request.auth:
-                colla_user = ProjectCollaborator.objects.filter(project=project, user=request.user)
-                if colla_user.exists():
-                    colla_user_role = colla_user[0].role
-                    colla_user = colla_user.count()
-                else:
-                    colla_user = colla_user.count()
-            else:
-                colla_user = 0
+            try:
+                # 获取文集信息
+                project = Project.objects.get(id=int(pro_id))
+            except (ValueError, ObjectDoesNotExist):
+                return Response({'code':4})
 
-            # 私密文集且访问者非创建者、协作者 - 不能访问
-            if (project.role == 1) and (request.user != project.create_user) and (colla_user == 0):
+            if not can_view_project(request, project):
+                if project.role == 3:
+                    return Response({'code':3})
                 return Response({'code':2})
-            # 指定用户可见文集
-            elif project.role == 2:
-                user_list = project.role_value
-                if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
-                    if (request.user.username not in user_list) and \
-                            (request.user != project.create_user) and \
-                            (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
-                        return Response({'code': 2})
-                else:  # 游客直接返回404
-                    return Response({'code': 2})
-            # 访问码可见
-            elif project.role == 3:
-                # 浏览用户不为创建者和协作者 - 需要访问码
-                if (request.user != project.create_user) and (colla_user == 0):
-                    viewcode = project.role_value
-                    viewcode_name = 'viewcode-{}'.format(project.id)
-                    r_viewcode = request.data.get(viewcode_name,0)  # 获取访问码
-                    if viewcode != r_viewcode:  # cookie中的访问码不等于文集访问码，跳转到访问码认证界面
-                        return Response({'code':3})
 
             # 获取文档内容
             try:
-                doc = Doc.objects.get(id=int(doc_id), status=1)
+                doc = Doc.objects.get(id=int(doc_id), top_doc=project.id, status=1)
                 if doc_format == 'json':
                     serializer = DocSerializer(doc)
                     resp = {'code':0,'data':serializer.data}
@@ -489,7 +465,7 @@ class DocView(APIView):
                     return render(request,'app_api/single_doc_detail.html',locals())
                 else:
                     logger.info(doc_format)
-            except ObjectDoesNotExist:
+            except (ValueError, ObjectDoesNotExist):
                 return Response({'code':4})
         # 不存在文集ID和文档ID，返回用户自己的文档列表
         else:
