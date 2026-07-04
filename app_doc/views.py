@@ -17,6 +17,7 @@ from rest_framework.pagination import PageNumberPagination # 分页
 from rest_framework.authentication import SessionAuthentication # 认证
 from django.db.models import Q
 from django.db import transaction
+from django.urls import reverse
 from django.utils.html import strip_tags,escape
 from django.utils.translation import gettext_lazy as _
 from loguru import logger
@@ -2139,6 +2140,9 @@ def find_top_level_index(toc_list, doc_id):
 @require_http_methods(['POST'])
 @logger.catch()
 def get_pro_doc_tree(request):
+    def _build_url(p):
+        return reverse("doc_id", kwargs={"doc_id": p['id']})
+
     pro_id = request.POST.get('pro_id', None)
     is_page = request.POST.get('is_page', False)
     if pro_id:
@@ -2157,6 +2161,7 @@ def get_pro_doc_tree(request):
                 'title':doc['name'],
                 'name':doc['name'],
                 'lable':doc['name'],
+                'url': _build_url(doc),
                 'modify_time':doc['modify_time'],
                 'spread':True,
                 'level':1
@@ -2173,6 +2178,7 @@ def get_pro_doc_tree(request):
                         'title': doc['name'],
                         'name': doc['name'],
                         'lable': doc['name'],
+                        'url': _build_url(doc),
                         'modify_time': doc['modify_time'],
                         'level':2
                     }
@@ -2188,6 +2194,7 @@ def get_pro_doc_tree(request):
                                 'title': doc['name'],
                                 'name': doc['name'],
                                 'lable': doc['name'],
+                                'url': _build_url(doc),
                                 'modify_time': doc['modify_time'],
                                 'level': 3
                             }
