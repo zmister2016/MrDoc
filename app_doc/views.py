@@ -23,7 +23,7 @@ from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from app_api.serializers_app import *
 from app_doc.report_utils import *
-from app_doc.utils import check_user_project_writer_role, EDITOR_MODE_ICON_MAP
+from app_doc.utils import can_view_project, check_user_project_writer_role, EDITOR_MODE_ICON_MAP
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 from app_admin.utils import is_zip_bomb
@@ -551,6 +551,8 @@ def check_viewcode(request):
             if project_id:
                 project_id = project_id.group(1)
             project = Project.objects.get(id=int(project_id))
+            if project.role != 3:
+                return render(request,'404.html')
             return render(request,'app_doc/check_viewcode.html',locals())
         else:
             viewcode = request.POST.get('viewcode','')
@@ -2067,6 +2069,12 @@ def get_doctemp(request):
 def get_pro_doc(request):
     pro_id = request.POST.get('pro_id','')
     if pro_id != '':
+        try:
+            project = Project.objects.get(id=int(pro_id))
+        except (ValueError, ObjectDoesNotExist):
+            return JsonResponse({'status':False,'data':_('参数错误')})
+        if not can_view_project(request, project):
+            return JsonResponse({'status':False,'data':_('无权访问')})
         # 获取文集所有文档的id、name和parent_doc3个字段
         doc_list = Doc.objects.filter(top_doc=int(pro_id),status=1).values_list('id','name','parent_doc').order_by('parent_doc')
         item_list = []
@@ -2146,6 +2154,12 @@ def get_pro_doc_tree(request):
     pro_id = request.POST.get('pro_id', None)
     is_page = request.POST.get('is_page', False)
     if pro_id:
+        try:
+            project = Project.objects.get(id=int(pro_id))
+        except (ValueError, ObjectDoesNotExist):
+            return JsonResponse({'status':False,'data':_('参数错误')})
+        if not can_view_project(request, project):
+            return JsonResponse({'status':False,'data':_('无权访问')})
         # 查询存在上级文档的文档
         parent_id_list = Doc.objects.filter(top_doc=pro_id,status=1).exclude(parent_doc=0).values_list('parent_doc',flat=True)
         # 获取存在上级文档的上级文档ID

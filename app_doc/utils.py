@@ -11,6 +11,66 @@ import io
 import subprocess
 import shutil
 
+
+def get_project_role_users(role_value):
+    if not role_value:
+        return []
+    return [i.strip() for i in str(role_value).split(',') if i.strip()]
+
+
+def is_project_role_user(user, role_value):
+    return user.is_authenticated and user.username in get_project_role_users(role_value)
+
+
+def is_project_privileged_user(user, project):
+    if not user.is_authenticated:
+        return False
+    if user == project.create_user:
+        return True
+    return ProjectCollaborator.objects.filter(project=project, user=user).exists()
+
+
+def get_request_project_viewcode(request, project):
+    viewcode_name = 'viewcode-{}'.format(project.id)
+    request_cookies = getattr(request, 'COOKIES', {})
+    if viewcode_name in request_cookies:
+        return request_cookies.get(viewcode_name)
+
+    request_data = getattr(request, 'data', None)
+    if request_data is not None:
+        viewcode = request_data.get(viewcode_name, None)
+        if viewcode is not None:
+            return viewcode
+
+    query_params = getattr(request, 'query_params', None)
+    if query_params is not None:
+        viewcode = query_params.get(viewcode_name, None)
+        if viewcode is not None:
+            return viewcode
+
+    request_post = getattr(request, 'POST', {})
+    return request_post.get(viewcode_name, None)
+
+
+def can_view_project(request, project):
+    user = getattr(request, 'user', None)
+    if user is None:
+        return project.role == 0
+    if project.role == 0:
+        return True
+    if is_project_privileged_user(user, project):
+        return True
+    if project.role == 1:
+        return False
+    if project.role == 2:
+        return is_project_role_user(user, project.role_value)
+    if project.role == 3:
+        return project.role_value == get_request_project_viewcode(request, project)
+    if project.role == 4:
+        return user.is_authenticated
+    return False
+
+
 # 编辑模式与图标class映射
 EDITOR_MODE_ICON_MAP = {
     1:'iconfont mrdoc-icon-wendang',
