@@ -1247,7 +1247,9 @@ def modify_doc(request,doc_id):
                     return JsonResponse({'status': False, 'data': _('参数错误')})
                 if doc.editor_mode == 3:
                     doc_content = sanitize_html(doc_content)
-                project = Project.objects.get(id=project_id)
+                project = Project.objects.get(id=doc.top_doc)
+                if int(project_id) != int(project.id):
+                    return JsonResponse({'status': False, 'data': _('Unauthorized request')})
                 pro_colla = ProjectCollaborator.objects.filter(project=project, user=request.user)
                 if pro_colla.count() == 0:
                     is_pro_colla = False
