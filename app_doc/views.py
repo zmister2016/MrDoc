@@ -2262,6 +2262,7 @@ def handle_404(request):
 
 # 导出文集MD文件
 @login_required()
+@allow_report_file
 @require_http_methods(["POST"])
 def report_md(request):
     pro_id = request.POST.get('project_id','')
@@ -2309,6 +2310,7 @@ def report_md(request):
 
 # 生成文集文件 - 个人中心 - 文集管理
 @login_required()
+@allow_report_file
 @require_http_methods(["POST"])
 def genera_project_file(request):
     report_type = request.POST.get('types',None) # 获取前端传入到导出文件类型参数
