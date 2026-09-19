@@ -13,6 +13,8 @@ import datetime,time
 import re
 import os,sys
 import shutil
+import tempfile
+import html
 
 
 from django.core.wsgi import get_wsgi_application
@@ -247,7 +249,10 @@ class ReportMdBatch():
 class ReportEPUB():
     def __init__(self,project_id):
         self.project = Project.objects.get(id=project_id)
-        self.base_path = settings.MEDIA_ROOT + '/report_epub/{}/'.format(project_id)
+        # 中间产物使用系统临时目录，不落在 MEDIA_ROOT 下：
+        # 这些 .xhtml 含未转义的文档内容，若位于 /media/ 下会被未授权访问，
+        # 并被浏览器按 application/xhtml+xml 解析而执行其中的脚本。
+        self.base_path = tempfile.mkdtemp(prefix='mrdoc_epub_{}_'.format(project_id))
 
         # 创建相关目录
         if os.path.exists(self.base_path + '/OEBPS') is False:
@@ -375,7 +380,7 @@ class ReportEPUB():
 
         for d in data:
             # 拼接HTML字符串
-            html_str = "<h1 style='page-break-before: always;'>{}</h1>".format(d.name)
+            html_str = "<h1 style='page-break-before: always;'>{}</h1>".format(html.escape(d.name))
             if d.content is None:
                 d.content = markdown.markdown(
                     d.pre_content,
@@ -388,7 +393,7 @@ class ReportEPUB():
                 'id':d.id,
                 'link':'{}.xhtml'.format(d.id),
                 'pid':d.parent_doc,
-                'title':d.name
+                'title':html.escape(d.name)
             }
             self.toc_list.append(toc)
 
@@ -396,7 +401,7 @@ class ReportEPUB():
             toc_nav = '''<navPoint id="np_{nav_num}" playOrder="{nav_num}">
                     <navLabel><text>{title}</text></navLabel>
                     <content src="Text/{file}"/>
-                '''.format(nav_num=nav_num,title=d.name,file=toc['link'])
+                '''.format(nav_num=nav_num,title=html.escape(d.name),file=toc['link'])
             nav_str += toc_nav
 
             # toc_summary
@@ -412,7 +417,7 @@ class ReportEPUB():
             if data_2.count() > 0:
                 toc_summary_str += '<ul>'
             for d2 in data_2:
-                html_str = "<h1>{}</h1>".format(d2.name)
+                html_str = "<h1>{}</h1>".format(html.escape(d2.name))
                 if d2.content is None:
                     d2.content = markdown.markdown(
                         d2.pre_content,
@@ -425,13 +430,13 @@ class ReportEPUB():
                     'id': d2.id,
                     'link': '{}.xhtml'.format(d2.id),
                     'pid': d2.parent_doc,
-                    'title': d2.name
+                    'title': html.escape(d2.name)
                 }
                 self.toc_list.append(toc)
                 toc_nav = '''<navPoint id="np_{nav_num}" playOrder="{nav_num}">
                                     <navLabel><text>{title}</text></navLabel>
                                     <content src="Text/{file}"/>
-                                '''.format(nav_num=nav_num, title=d2.name, file=toc['link'])
+                                '''.format(nav_num=nav_num, title=html.escape(d2.name), file=toc['link'])
                 nav_str += toc_nav
 
                 # toc_summary
@@ -447,7 +452,7 @@ class ReportEPUB():
                 if data_3.count() > 0:
                     toc_summary_str += '<ul>'
                 for d3 in data_3:
-                    html_str = "<h1>{}</h1>".format(d3.name)
+                    html_str = "<h1>{}</h1>".format(html.escape(d3.name))
                     # 如果文档没有HTML内容，将Markdown转换为HTML
                     if d3.content is None:
                         d3.content = markdown.markdown(
@@ -461,7 +466,7 @@ class ReportEPUB():
                         'id': d3.id,
                         'link': '{}.xhtml'.format(d3.id),
                         'pid': d3.parent_doc,
-                        'title': d3.name
+                        'title': html.escape(d3.name)
                     }
                     self.toc_list.append(toc)
 
@@ -469,7 +474,7 @@ class ReportEPUB():
                                     <navLabel><text>{title}</text></navLabel>
                                     <content src="Text/{file}"/>
                                 </navPoint>
-                        '''.format(nav_num=nav_num, title=d3.name, file=toc['link'])
+                        '''.format(nav_num=nav_num, title=html.escape(d3.name), file=toc['link'])
                     nav_str += toc_nav
 
                     # toc_summary
@@ -523,8 +528,8 @@ class ReportEPUB():
             </body>
             </html>
         '''.format(
-            title=self.project.name,
-            author=self.project.create_user,
+            title=html.escape(self.project.name),
+            author=html.escape(str(self.project.create_user)),
             create_time = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日')
         )
         with open(self.base_path+'/OEBPS/Text/book_title.xhtml','a+',encoding='utf-8') as file:
@@ -544,7 +549,7 @@ class ReportEPUB():
                   </div>
             </body>
             </html>
-        '''.format(desc=self.project.intro)
+        '''.format(desc=html.escape(self.project.intro or ''))
         with open(self.base_path+'/OEBPS/Text/book_desc.xhtml','a+',encoding='utf-8') as file:
             file.write(desc_str)
 
@@ -605,7 +610,7 @@ class ReportEPUB():
               </docTitle>
               {nav_map}
             </ncx>
-        '''.format(title=self.project.name,nav_map=self.nav_str)
+        '''.format(title=html.escape(self.project.name),nav_map=self.nav_str)
 
         with open(self.base_path+'/OEBPS/toc.ncx','a+',encoding='utf-8') as file:
             file.write(ncx)
@@ -667,10 +672,10 @@ class ReportEPUB():
         with open(self.base_path+'/OEBPS/content.opf','a+',encoding='utf-8') as file:
             file.write(
                 content_info.format(
-                    title = self.project.name,
-                    creator = self.project.create_user,
+                    title = html.escape(self.project.name),
+                    creator = html.escape(str(self.project.create_user)),
                     create_time = str(datetime.date.today()),
-                    desc=self.project.intro,
+                    desc=html.escape(self.project.intro or ''),
                     manifest=self.manifest,
                     spine = self.spine,
                 )
@@ -680,11 +685,13 @@ class ReportEPUB():
     def generate_epub(self):
         try:
             # 生成ZIP压缩文件
-            zipfile_name = settings.MEDIA_ROOT + '/report_epub/{}'.format(self.project.name)+'_'+str(int(time.time()))
+            # 文集名可被用户控制（部分创建入口未过滤），直接拼路径可写出 report_epub 之外，
+            # 此处按文件名规则过滤后再拼接
+            zipfile_name = settings.MEDIA_ROOT + '/report_epub/{}'.format(validate_title(self.project.name))+'_'+str(int(time.time()))
             zip_name = shutil.make_archive(
                 base_name = zipfile_name,
                 format='zip',
-                root_dir= settings.MEDIA_ROOT + '/report_epub/{}'.format(self.project.id)
+                root_dir= self.base_path
             )
             # print(zip_name)
             # 修改zip压缩文件后缀为EPUB
@@ -850,10 +857,12 @@ class ReportPDF():
         with open(temp_file_path, 'w', encoding='utf-8') as htmlfile:
             htmlfile.write(
                 self.editormd_html_str.format(
-                    title=project.name,
-                    pre_content=self.content_str,
-                    project_name=project.name,
-                    author=project.create_user.first_name if project.create_user.first_name != '' else project.create_user.username,
+                    title=html.escape(project.name),
+                    # 用户可控内容（文档内容、文集名、作者名）统一HTML转义，
+                    # 防止 </textarea> 闭合等注入在PDF渲染页执行任意脚本
+                    pre_content=html.escape(self.content_str),
+                    project_name=html.escape(project.name),
+                    author=html.escape(project.create_user.first_name if project.create_user.first_name != '' else project.create_user.username),
                     create_time=str(datetime.date.today())
                 )
             )
