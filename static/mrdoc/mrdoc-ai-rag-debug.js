@@ -38,6 +38,15 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
       return section.doc_id || (section.doc && (typeof section.doc === 'number' ? section.doc : section.doc.id)) || null;
     }
 
+    // 展示本次检索实际生效的过滤范围
+    function formatScope(scope) {
+      if (!scope) return '全部（未过滤）';
+      var parts = [];
+      if (scope.project_ids && scope.project_ids.length) parts.push('文集 ' + scope.project_ids.join(','));
+      if (scope.doc_ids && scope.doc_ids.length) parts.push('文档 ' + scope.doc_ids.join(','));
+      return parts.length ? parts.join(' + ') : '全部（未过滤）';
+    }
+
     // 格式化 JSON 数组为标签串
     function formatTags(arr) {
       if (!arr || !Array.isArray(arr) || arr.length === 0) return '';
@@ -77,6 +86,16 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
             background:#5fb878; color:#fff; padding:2px 10px; border-radius:12px;
             font-size:12px; font-weight:500; white-space:nowrap; margin-left:12px;
           }
+          .result-badges { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+          .score-badge.rerank-badge { background:#1e9fff; }
+          .channel-line { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+          .channel-badge {
+            font-size:11px; padding:1px 8px; border-radius:10px;
+            background:#eef0f2; color:#888; white-space:nowrap;
+          }
+          .channel-badge.hit-vector { background:#e8f4fd; color:#1e9fff; }
+          .channel-badge.hit-bm25 { background:#eaf7ee; color:#5fb878; }
+          .channel-badge.miss { background:#fdecec; color:#ff5722; }
           .breadcrumb { font-size:12px; color:#888; margin-bottom:6px; display:flex; align-items:center; gap:4px; }
           .content-preview { font-size:13px; color:#555; line-height:1.7; margin-bottom:8px; }
           .detail-toggle { color:#1e9fff; font-size:12px; cursor:pointer; user-select:none; display:inline-flex; align-items:center; gap:4px; }
@@ -99,9 +118,12 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
             <div class="layui-input-block" style="flex:3;">
               <input type="text" name="query" placeholder="输入搜索关键词..." autocomplete="off" class="layui-input" id="ragQueryInput">
             </div>
-            <!-- <div class="layui-input-block" style="flex:1;">
-              <input type="text" name="project_id" placeholder="文集ID（可选）" autocomplete="off" class="layui-input">
-            </div> -->
+            <div class="layui-input-block" style="flex:1;min-width:110px;">
+              <input type="number" name="doc_id" placeholder="文档ID（可选）" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-input-block" style="flex:1;min-width:110px;">
+              <input type="number" name="project_id" placeholder="文集ID（可选）" autocomplete="off" class="layui-input">
+            </div>
             <button class="layui-btn layui-btn-normal layui-btn-xs" id="ragSearchBtn">
               <i class="layui-icon layui-icon-search"></i> 检索
             </button>
@@ -122,25 +144,34 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
       }
 
       var html = '';
-      
-      // 显示耗时信息
+
+      // 显示耗时与生效的过滤范围
       if (debug) {
         var searchTime = debug.search_time_ms != null ? debug.search_time_ms : '-';
         var rerankTime = debug.rerank_time_ms != null ? debug.rerank_time_ms : '-';
         var totalTime = debug.total_time_ms != null ? debug.total_time_ms : '-';
-        
+
         html += '<div class="debug-info" style="background:#fff3cd;padding:10px 15px;border-radius:6px;margin-bottom:16px;font-size:13px;">';
         html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-time" style="color:#ff9800;"></i> 检索耗时：<strong>' + searchTime + ' ms</strong></span>';
         if (rerankTime !== '-') {
           html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-refresh" style="color:#1e9fff;"></i> 重排耗时：<strong>' + rerankTime + ' ms</strong></span>';
         }
-        html += '<span><i class="layui-icon layui-icon-ok-circle" style="color:#5fb878;"></i> 总耗时：<strong>' + totalTime + ' ms</strong></span>';
+        html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-ok-circle" style="color:#5fb878;"></i> 总耗时：<strong>' + totalTime + ' ms</strong></span>';
+        html += '<span><i class="layui-icon layui-icon-set" style="color:#888;"></i> 过滤范围：<strong>' + formatScope(debug.scope) + '</strong></span>';
         html += '</div>';
       }
 
       $.each(data, function (i, item) {
         var section = item.section || item;
-        var score = item.score != null ? parseFloat(item.score).toFixed(4) : '-';
+
+        // 分路召回明细：RRF 融合分 + 向量/BM25 各自的排名与原始分
+        var rrfScore = item.score != null ? parseFloat(item.score).toFixed(4) : '-';
+        var vectorRank = item.vector_rank != null ? item.vector_rank : null;
+        var bm25Rank = item.bm25_rank != null ? item.bm25_rank : null;
+        var vectorScore = item.vector_score != null ? parseFloat(item.vector_score).toFixed(4) : '-';
+        var bm25Score = item.bm25_score != null ? parseFloat(item.bm25_score).toFixed(4) : '-';
+        var rerankScore = item.rerank_score != null ? parseFloat(item.rerank_score).toFixed(4) : null;
+        var finalScore = item.final_score != null ? parseFloat(item.final_score).toFixed(4) : null;
 
         var docId = getDocId(section);
         var docTitle = section.doc_title || '';
@@ -173,7 +204,22 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         // 标题行
         html += '<div class="result-header">';
         html += '<div class="result-title">' + docLinkHtml + (hlSectionTitle ? ' / ' + hlSectionTitle : '') + '</div>';
-        html += '<span class="score-badge">相似度 ' + score + '</span>';
+        html += '<div class="result-badges">';
+        html += '<span class="score-badge">融合 ' + rrfScore + '</span>';
+        if (rerankScore !== null) {
+          html += '<span class="score-badge rerank-badge">重排 ' + rerankScore + '</span>';
+        }
+        html += '</div>';
+        html += '</div>';
+
+        // 分路命中情况：一眼看出是向量语义命中还是关键词命中
+        html += '<div class="channel-line">';
+        html += vectorRank !== null
+          ? '<span class="channel-badge hit-vector">向量 #' + vectorRank + ' · 相似度 ' + vectorScore + '</span>'
+          : '<span class="channel-badge miss">向量 未命中</span>';
+        html += bm25Rank !== null
+          ? '<span class="channel-badge hit-bm25">BM25 #' + bm25Rank + ' · 得分 ' + bm25Score + '</span>'
+          : '<span class="channel-badge miss">BM25 未命中</span>';
         html += '</div>';
 
         // 面包屑
@@ -217,6 +263,20 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         if (faqs.length > 0) {
           html += '<div class="detail-field"><div class="detail-field-label">❓ FAQ</div><div class="detail-field-value">' + formatFaqs(faqs) + '</div></div>';
         }
+
+        // 召回得分明细
+        html += '<div class="detail-field"><div class="detail-field-label">🎯 召回得分明细</div><div class="detail-field-value">';
+        html += '向量召回：' + (vectorRank !== null
+          ? '排名 #' + vectorRank + '，余弦相似度 ' + vectorScore
+          : '未命中（该切片不在向量路 top 结果中）') + '<br>';
+        html += 'BM25 召回：' + (bm25Rank !== null
+          ? '排名 #' + bm25Rank + '，BM25 得分 ' + bm25Score
+          : '未命中（该切片不在关键词路 top 结果中）') + '<br>';
+        html += 'RRF 融合分：' + rrfScore + '（向量权重 0.6 / BM25 权重 0.4）';
+        if (rerankScore !== null) {
+          html += '<br>重排得分：' + rerankScore + '，融合后最终分：' + finalScore;
+        }
+        html += '</div></div>';
 
         // 其他元数据
         html += '<div class="detail-field"><div class="detail-field-label">ℹ️ 元信息</div><div class="detail-field-value">';
@@ -272,13 +332,17 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
 
           $layer.find('#ragSearchBtn').on('click', function () {
             var queryVal = $layer.find('input[name="query"]').val().trim();
-            // var docId = $layer.find('input[name="doc_id"]').val().trim();
-            // var projectId = $layer.find('input[name="project_id"]').val().trim();
+            var docId = $layer.find('input[name="doc_id"]').val().trim();
+            var projectId = $layer.find('input[name="project_id"]').val().trim();
 
             if (!queryVal) {
               layer.msg('请输入查询关键词', { icon: 0, time: 1500 });
               return;
             }
+
+            var payload = { query: queryVal };
+            if (docId) payload.doc_id = docId;
+            if (projectId) payload.project_id = projectId;
 
             $container.html('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 搜索中...</div>');
 
@@ -286,11 +350,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
               url: apiUrl,
               type: 'POST',
               contentType: 'application/json',
-              data: JSON.stringify({
-                query: queryVal,
-                // doc_id: docId || undefined,
-                // project_id: projectId || undefined
-              }),
+              data: JSON.stringify(payload),
               dataType: 'json',
               success: function (res) {
                 if (res && res.status && res.data) {
@@ -308,12 +368,17 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
 
           $layer.find('#ragSearchRankingBtn').on('click', function () {
             var queryVal = $layer.find('input[name="query"]').val().trim();
-            // var projectId = $layer.find('input[name="project_id"]').val().trim();
+            var docId = $layer.find('input[name="doc_id"]').val().trim();
+            var projectId = $layer.find('input[name="project_id"]').val().trim();
 
             if (!queryVal) {
               layer.msg('请输入查询关键词', { icon: 0, time: 1500 });
               return;
             }
+
+            var payload = { query: queryVal, rerank: true };
+            if (docId) payload.doc_id = docId;
+            if (projectId) payload.project_id = projectId;
 
             $container.html('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 检索+重排中...</div>');
 
@@ -321,11 +386,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
               url: apiUrl,
               type: 'POST',
               contentType: 'application/json',
-              data: JSON.stringify({
-                query: queryVal,
-                // project_id: projectId || undefined,
-                rerank: true
-              }),
+              data: JSON.stringify(payload),
               dataType: 'json',
               success: function (res) {
                 if (res && res.status && res.data) {

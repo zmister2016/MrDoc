@@ -470,15 +470,45 @@ def rebuild_section_index(request):
 
 # RAG调试接口
 class RagSearchDebugView(APIView):
+    authentication_classes = [SessionAuthentication, AppMustAuth]
+    permission_classes = [SuperUserPermission]
+
+    @staticmethod
+    def _to_int_list(value):
+        """把前端传入的 ID（标量或列表）归一化为 int 列表，非法项忽略。
+
+        必须归一化：Django 的 __in 若收到字符串会按字符拆解（如 "12" -> 1、2），
+        导致过滤出错误结果。
+        """
+        if value in (None, ''):
+            return []
+        items = value if isinstance(value, (list, tuple)) else [value]
+        result = []
+        for item in items:
+            try:
+                result.append(int(item))
+            except (TypeError, ValueError):
+                continue
+        return result
+
     def post(self, request):
         query = request.data.get("query")
         rerank = request.data.get('rerank')
 
+        # 文集/文档过滤：均未传时为 None（调试需看到全量召回，不加限制）；
+        # 传了任一则构造 scope，注意不能传空列表的 scope —— 空 scope 在
+        # DB/BM25 实现下等价于“命中为空”，而非“不过滤”
+        project_ids = self._to_int_list(request.data.get('project_id'))
+        doc_ids = self._to_int_list(request.data.get('doc_id'))
+        scope = None
+        if project_ids or doc_ids:
+            scope = {'project_ids': project_ids, 'doc_ids': doc_ids}
+
         total_start = time.perf_counter()
 
-        # 混合检索
+        # 向量 + BM25 混合检索（RRF 融合）
         search_start = time.perf_counter()
-        results = hybrid_search(query, scope=None)
+        results = hybrid_search(query, scope=scope)
         search_time = round(
             (time.perf_counter() - search_start) * 1000,
             2
@@ -514,6 +544,7 @@ class RagSearchDebugView(APIView):
             "debug": {
                 "search_time_ms": search_time,
                 "rerank_time_ms": rerank_time,
-                "total_time_ms": total_time
+                "total_time_ms": total_time,
+                "scope": scope
             }
         })
