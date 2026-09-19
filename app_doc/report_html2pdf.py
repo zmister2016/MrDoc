@@ -6,24 +6,23 @@
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.expected_conditions import staleness_of
 from webdriver_manager.chrome import ChromeDriverManager,ChromeType
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 import sys
 import json
 import base64
+import time
 
 
-def convert(source: str, target: str, timeout: int = 2, compress: bool = False, power: int = 0, install_driver: bool = True):
+def convert(source: str, target: str, timeout: int = 20, compress: bool = False, power: int = 0, install_driver: bool = True):
     '''
     Convert a given html file or website into PDF
 
     :param str source: source html file or website link
     :param str target: target location to save the PDF
-    :param int timeout: timeout in seconds. Default value is set to 2 seconds
+    :param int timeout: 等待正文图片加载完成的秒数上限，默认 20 秒。
+        图片全部加载完成后会提前结束等待，不必等到上限
     :param bool compress: whether PDF is compressed or not. Default value is False
     :param int power: power of the compression. Default value is 0. This can be 0: default, 1: prepress, 2: printer, 3: ebook, 4: screen
    '''
@@ -54,6 +53,35 @@ def __send_devtools(driver, cmd, params={}):
     return response.get('value')
 
 
+def __wait_content_images(driver, timeout: int):
+    '''
+    打印前去掉图片的懒加载标记，并等待正文图片加载完成。
+
+    MrDoc 的 Markdown 渲染器会给每张图片加上 loading="lazy"，
+    而打印时页面不会滚动，首屏之外的图片不会进入加载队列，
+    导出的 PDF 中这些图片就是空白（文档页打印路径已在 doc.html 中做同样处理）。
+    '''
+    script = '''
+        var lazies = document.querySelectorAll('img[loading="lazy"], iframe[loading="lazy"]');
+        for (var i = 0; i < lazies.length; i++) {
+            lazies[i].removeAttribute('loading');
+        }
+        // 只统计还没有结果的图片：加载失败的 complete 也为 true，
+        // 因此不会把它们算作在途请求，避免无谓地等到超时
+        var pending = 0;
+        var imgs = document.querySelectorAll('#content img');
+        for (var i = 0; i < imgs.length; i++) {
+            if (imgs[i].getAttribute('src') && !imgs[i].complete) pending++;
+        }
+        return pending;
+    '''
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if driver.execute_script(script) == 0:
+            return
+        time.sleep(0.3)
+
+
 def __get_pdf_from_html(path: str, timeout: int, install_driver: bool, print_options={}):
     webdriver_options = Options()
     webdriver_prefs = {}
@@ -79,20 +107,19 @@ def __get_pdf_from_html(path: str, timeout: int, install_driver: bool, print_opt
 
     driver.get(path)
 
-    try:
-        from selenium.webdriver.common.by import By
-        WebDriverWait(driver, timeout).until(staleness_of(driver.find_element(By.TAG_NAME, 'html')))
-    except TimeoutException:
-        calculated_print_options = {
-            'landscape': False,
-            'displayHeaderFooter': False,
-            'printBackground': True,
-            'preferCSSPageSize': True,
-        }
-        calculated_print_options.update(print_options)
-        result = __send_devtools(driver, "Page.printToPDF", calculated_print_options)
-        driver.quit()
-        return base64.b64decode(result['data'])
+    # driver.get 返回时页面已加载完成，正文也已由 marked 渲染出来，此处只需等待图片加载
+    __wait_content_images(driver, timeout)
+
+    calculated_print_options = {
+        'landscape': False,
+        'displayHeaderFooter': False,
+        'printBackground': True,
+        'preferCSSPageSize': True,
+    }
+    calculated_print_options.update(print_options)
+    result = __send_devtools(driver, "Page.printToPDF", calculated_print_options)
+    driver.quit()
+    return base64.b64decode(result['data'])
 
 if __name__ == '__main__':
     # print(sys.argv)
