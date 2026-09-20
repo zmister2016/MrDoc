@@ -1,0 +1,10 @@
+<!-- 文集文档排序节点，递归渲染不限层级；lazy_mode 下只渲染当前层，子级在展开时按需加载 -->
+<li data-sortable-id="{{node.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{node.title}}
+{% if lazy_mode %}
+    {% if node.children %}<i class="layui-icon layui-icon-right switch-toc"></i><ul class="list-group nested-sortable-lazy toc-close" data-parent="{{node.id}}"></ul>
+    {% else %}<ul class="list-group nested-sortable"></ul>{% endif %}
+{% else %}
+    {% if node.children %}<i class="layui-icon layui-icon-down switch-toc"></i><ul class="list-group nested-sortable">{% for node in node.children %}{% include 'app_doc/manage/manage_project_doc_sort_node.html' with node=node lazy_mode=lazy_mode only %}{% endfor %}</ul>
+    {% else %}<ul class="list-group nested-sortable"></ul>{% endif %}
+{% endif %}
+</li>

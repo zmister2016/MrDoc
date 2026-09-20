@@ -197,26 +197,21 @@
                         onlyIconControl:true,
                         data:r.data,
                         click: function(obj){
-                            if(obj.data.level != 3){
-                                console.log(obj.data.id,doc_parent_id)
-                                if(obj.data.id != '{{ doc.id }}' ){
-                                    $('#parent-doc').val(obj.data.id);// 设置上级文档
-                                    $("div.layui-tree-set").each(function(i){
-                                        var $me = $(this)
-                                        if($me.data('id') == obj.data.id){
-                                            // console.log('点击了')
-                                            layer.msg("你选择了上级文档："+obj.data.title)
-                                            $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                                        }else{
-                                            $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                                        }
-                                    });
-                                }else{
-                                    layer.msg("不可选择自己作为上级")
-                                };
-                                
+                            console.log(obj.data.id,doc_parent_id)
+                            if(obj.data.id != '{{ doc.id }}' ){
+                                $('#parent-doc').val(obj.data.id);// 设置上级文档
+                                $("div.layui-tree-set").each(function(i){
+                                    var $me = $(this)
+                                    if($me.data('id') == obj.data.id){
+                                        // console.log('点击了')
+                                        layer.msg("你选择了上级文档："+obj.data.title)
+                                        $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                                    }else{
+                                        $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                                    }
+                                });
                             }else{
-                                layer.msg("第三级文档不能作为上级文档")
+                                layer.msg("不可选择自己作为上级")
                             };
                             
                         }
@@ -495,22 +490,17 @@
                                         ,none: '文集暂无文档' //数据为空时的提示文本
                                         },
                                     click: function(obj){
-                                        if(obj.data.level != 3){
-                                            $('#move-parent-id').val(obj.data.id);// 设置上级文档
-                                            $("div.layui-tree-set").each(function(i){
-                                                var $me = $(this)
-                                                if($me.data('id') == obj.data.id){
-                                                    // console.log('点击了')
-                                                    layer.msg("选择了上级文档："+obj.data.title)
-                                                    $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                                                }else{
-                                                    $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                                                }
-                                            });
-                                        }else{
-                                            layer.msg("第三级文档不能作为上级文档")
-                                        }
-                                        
+                                        $('#move-parent-id').val(obj.data.id);// 设置上级文档
+                                        $("div.layui-tree-set").each(function(i){
+                                            var $me = $(this)
+                                            if($me.data('id') == obj.data.id){
+                                                // console.log('点击了')
+                                                layer.msg("选择了上级文档："+obj.data.title)
+                                                $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
+                                            }else{
+                                                $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
+                                            }
+                                        });
                                     }
                                 });
                             }else{

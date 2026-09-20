@@ -161,24 +161,17 @@ class ImportLocalDoc(APIView):
             sort_data = json.loads(sort_data)
         except Exception:
             return JsonResponse({'code': 5, 'data': _('文档参数错误')})
-        # 文档排序
-        n = 10
-        # 第一级文档
-        for data in sort_data:
-            Doc.objects.filter(id=data['id']).update(sort=n, status=1)
-            n += 10
-            # 存在第二级文档
-            if 'children' in data.keys():
-                n1 = 10
-                for c1 in data['children']:
-                    Doc.objects.filter(id=c1['id']).update(sort=n1, parent_doc=data['id'], status=1)
-                    n1 += 10
-                    # 存在第三级文档
-                    if 'children' in c1.keys():
-                        n2 = 10
-                        for c2 in c1['children']:
-                            Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'], status=1)
+        # 递归保存不限层级的文档排序与上级归属，同时发布文档
+        def save_doc_sort(items, parent_doc_id=0):
+            sort_num = 10
+            for item in items:
+                doc_id = int(item['id'])
+                Doc.objects.filter(id=doc_id).update(sort=sort_num, parent_doc=parent_doc_id, status=1)
+                sort_num += 10
+                if item.get('children'):
+                    save_doc_sort(item['children'], parent_doc_id=doc_id)
 
+        save_doc_sort(sort_data)
         return Response({'code':0,'data':'ok'})
 
 
@@ -210,24 +203,17 @@ def project_doc_sort(request):
         intro = desc,
         role = role
     )
-    # 文档排序
-    n = 10
-    # 第一级文档
-    for data in sort_data:
-        Doc.objects.filter(id=data['id']).update(sort = n,status=doc_status)
-        n += 10
-        # 存在第二级文档
-        if 'children' in data.keys():
-            n1 = 10
-            for c1 in data['children']:
-                Doc.objects.filter(id=c1['id']).update(sort = n1,parent_doc=data['id'],status=doc_status)
-                n1 += 10
-                # 存在第三级文档
-                if 'children' in c1.keys():
-                    n2 = 10
-                    for c2 in c1['children']:
-                        Doc.objects.filter(id=c2['id']).update(sort=n2,parent_doc=c1['id'],status=doc_status)
+    # 递归保存不限层级的文档排序与上级归属
+    def save_doc_sort(items, parent_doc_id=0):
+        sort_num = 10
+        for item in items:
+            doc_id = int(item['id'])
+            Doc.objects.filter(id=doc_id).update(sort=sort_num, parent_doc=parent_doc_id, status=doc_status)
+            sort_num += 10
+            if item.get('children'):
+                save_doc_sort(item['children'], parent_doc_id=doc_id)
 
+    save_doc_sort(sort_data)
     return JsonResponse({'status':True,'data':'ok'})
 
 

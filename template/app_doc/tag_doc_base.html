@@ -275,10 +275,8 @@
             if (lochref.indexOf(mehref) != -1) {
                 // console.log($me,lochref,mehref)
                 $me.closest("li").addClass("active");
-                //展开当前文档的上级目录
-                $me.parent("li").parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开二级目录
-                $me.parent("div").parent('li').parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开还有子级的二级目录
-                $me.parent("li").parent('ul').parent('li').parent('ul.sub-menu').toggleClass("toc-close toc-open"); //展开三级目录
+                //展开当前文档的全部上级目录（不限层级）
+                $me.parents("ul.sub-menu").removeClass("toc-close").addClass("toc-open");
                 $me.parents("ul.sub-menu").prevAll("div").children("i").toggleClass("fa-chevron-left fa-chevron-down");//切换图标
             } else {
                 // console.log(lochref,mehref)

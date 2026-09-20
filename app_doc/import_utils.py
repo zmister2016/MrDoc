@@ -104,13 +104,14 @@ class ImportDocxAsProject:
         container = soup.body or soup
 
         BLOCK_TAGS = {'p', 'ul', 'ol','li', 'pre', 'table', 'blockquote', 'img'}
+        # 支持h1~h6的标题层级，拆分出不限层级的文档结构
+        HEADING_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 
-        headings = container.find_all(['h1', 'h2', 'h3'])
+        headings = container.find_all(HEADING_TAGS)
         if not headings:
             return []
 
         min_level = min(int(h.name[1]) for h in headings)
-        max_level = min(min_level + 2, 3)
 
         nodes = []
         stack = [{'level': 0, 'children': nodes}]
@@ -123,9 +124,9 @@ class ImportDocxAsProject:
                 tag = elem.name.lower()
 
                 # —— 标题处理 ——
-                if tag in ['h1', 'h2', 'h3']:
+                if tag in HEADING_TAGS:
                     raw = int(tag[1])
-                    if raw < min_level or raw > max_level:
+                    if raw < min_level:
                         continue
 
                     level = raw - min_level + 1

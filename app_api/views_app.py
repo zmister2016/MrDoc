@@ -21,6 +21,7 @@ from app_api.serializers_app import *
 from app_api.auth_app import AppAuth,AppMustAuth
 from app_ai.utils import ai_sync_doc,ai_del_doc # AI知识库同步
 from app_doc.views import validateTitle
+from app_doc.utils import get_doc_children_ids
 from app_doc.util_upload_img import img_upload,base_img_upload
 from loguru import logger
 import datetime
@@ -614,12 +615,10 @@ class DocView(APIView):
                     doc.save()
                     # AI知识库同步删除切片
                     ai_del_doc(doc.id)
-                    # 修改其下级所有文档状态为删除
-                    chr_doc = Doc.objects.filter(parent_doc=doc_id)  # 获取下级文档
-                    chr_doc_ids = chr_doc.values_list('id', flat=True)  # 提取下级文档的ID
-                    chr_doc.update(status=3, modify_time=datetime.datetime.now())  # 修改下级文档的状态为删除
-                    Doc.objects.filter(parent_doc__in=chr_doc_ids).update(status=3,
-                                                                          modify_time=datetime.datetime.now())  # 修改下级文档的下级文档状态
+                    # 递归获取其全部下级文档（不限层级），统一修改状态为删除
+                    children_ids = get_doc_children_ids(doc_id)
+                    if children_ids:
+                        Doc.objects.filter(id__in=children_ids).update(status=3, modify_time=datetime.datetime.now())
 
                     return Response({'code': 0, 'data': _('删除完成')})
                 else:

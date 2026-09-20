@@ -24,7 +24,8 @@ from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from app_api.serializers_app import *
 from app_doc.report_utils import *
-from app_doc.utils import check_user_project_writer_role, EDITOR_MODE_ICON_MAP, check_user_project_view_role
+from app_doc.utils import check_user_project_writer_role, EDITOR_MODE_ICON_MAP, check_user_project_view_role, \
+    build_doc_tree, get_doc_children_ids, check_doc_parent_valid
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 from app_admin.utils import is_zip_bomb
@@ -109,75 +110,19 @@ def remove_markdown_tag(docs):
         except Exception as e:
             doc.pre_content = doc.pre_content[:201]
 
-# 获取文集的文档目录
+# 获取文集的文档目录（支持不限层级）
 def get_pro_toc(pro_id):
-    # 查询存在上级文档的文档
-    parent_id_list = Doc.objects.filter(
-        top_doc=pro_id,
-        status=1
-    ).exclude(parent_doc=0).values_list('parent_doc',flat=True)
-    # 获取存在上级文档的上级文档ID
-    # print(parent_id_list)
-    doc_list = []
-    n = 0
-    # 获取一级文档
-    top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name','open_children','editor_mode').order_by('sort')
-    # 遍历一级文档
-    for doc in top_docs:
-        top_item = {
-            'id': doc['id'],
-            'name': doc['name'],
-            'open_children':doc['open_children'],
-            'editor_mode':doc['editor_mode'],
-            'editor_icon': EDITOR_MODE_ICON_MAP[doc['editor_mode']]
-        }
-        # 如果一级文档存在下级文档，查询其二级文档
-        if doc['id'] in parent_id_list:
-            # 获取二级文档
-            sec_docs = Doc.objects.filter(
-                top_doc=pro_id,
-                parent_doc=doc['id'],
-                status=1
-            ).values('id', 'name','open_children','editor_mode').order_by('sort')
-            top_item['sub'] = []
-            for doc in sec_docs:
-                sec_item = {
-                    'id': doc['id'],
-                    'name': doc['name'],
-                    'open_children': doc['open_children'],
-                    'editor_mode': doc['editor_mode'],
-                    'editor_icon' : EDITOR_MODE_ICON_MAP[doc['editor_mode']]
-                }
-                # 如果二级文档存在下级文档，查询第三级文档
-                if doc['id'] in parent_id_list:
-                    # 获取三级文档
-                    thr_docs = Doc.objects.filter(
-                        top_doc=pro_id,
-                        parent_doc=doc['id'],
-                        status=1
-                    ).values('id','name','editor_mode').order_by('sort')
-                    sec_item['sub'] = []
-                    for doc in thr_docs:
-                        item = {
-                            'id': doc['id'],
-                            'name': doc['name'],
-                            'editor_mode': doc['editor_mode'],
-                            'editor_icon': EDITOR_MODE_ICON_MAP[doc['editor_mode']]
-                        }
-                        sec_item['sub'].append(item)
-                        n += 1
-                    top_item['sub'].append(sec_item)
-                    n += 1
-                else:
-                    top_item['sub'].append(sec_item)
-                    n += 1
-            doc_list.append(top_item)
-            n += 1
-        # 如果一级文档没有下级文档，直接保存
-        else:
-            doc_list.append(top_item)
-            n += 1
-    return (doc_list,n)
+    # 一次查询文集下的全部已发布文档，再在内存中构建不限层级的文档树
+    doc_list = list(
+        Doc.objects.filter(
+            top_doc=pro_id,
+            status=1
+        ).values('id', 'name', 'open_children', 'editor_mode', 'parent_doc').order_by('sort')
+    )
+    for doc in doc_list:
+        doc['editor_icon'] = EDITOR_MODE_ICON_MAP[doc['editor_mode']]
+    toc_list = build_doc_tree(doc_list, child_key='sub')
+    return (toc_list, len(doc_list))
 
 
 # 文集列表（首页）
@@ -680,58 +625,30 @@ def manage_project_doc_sort(request,pro_id):
         pro_colla = ProjectCollaborator.objects.filter(project=pro,user=request.user,role=1)
         # 文集的创建者和文集高级权限协作者允许操作
         if (pro.create_user == request.user) or pro_colla.count() > 0:
-            # 查询存在上级文档的文档
-            parent_id_list = Doc.objects.filter(top_doc=pro_id, status=1).exclude(parent_doc=0).values_list(
-                'parent_doc', flat=True)
-            # 获取存在上级文档的上级文档ID
-            doc_list = []
-            # 获取一级文档
-            top_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=0, status=1).values('id', 'name').order_by('sort')
-            # 遍历一级文档
-            for doc in top_docs:
-                top_item = {
-                    'id': doc['id'],
-                    'field': doc['name'],
-                    'title': doc['name'],
-                    'spread': True,
-                    'level': 1
-                }
-                # 如果一级文档存在下级文档，查询其二级文档
-                if doc['id'] in parent_id_list:
-                    # 获取二级文档
-                    sec_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=doc['id'], status=1).values('id',
-                                                                                                         'name').order_by(
-                        'sort')
-                    top_item['children'] = []
-                    for doc in sec_docs:
-                        sec_item = {
-                            'id': doc['id'],
-                            'field': doc['name'],
-                            'title': doc['name'],
-                            'level': 2
-                        }
-                        # 如果二级文档存在下级文档，查询第三级文档
-                        if doc['id'] in parent_id_list:
-                            # 获取三级文档
-                            thr_docs = Doc.objects.filter(top_doc=pro_id, parent_doc=doc['id'], status=1).values('id',
-                                                                                                                 'name').order_by(
-                                'sort')
-                            sec_item['children'] = []
-                            for doc in thr_docs:
-                                item = {
-                                    'id': doc['id'],
-                                    'field': doc['name'],
-                                    'title': doc['name'],
-                                    'level': 3
-                                }
-                                sec_item['children'].append(item)
-                            top_item['children'].append(sec_item)
-                        else:
-                            top_item['children'].append(sec_item)
-                    doc_list.append(top_item)
-                # 如果一级文档没有下级文档，直接保存
-                else:
-                    doc_list.append(top_item)
+            # 一次查询文集下的全部已发布文档，再在内存中构建不限层级的文档树
+            doc_nodes = list(
+                Doc.objects.filter(top_doc=pro_id, status=1).values('id', 'name', 'parent_doc').order_by('sort')
+            )
+            for doc in doc_nodes:
+                doc['field'] = doc['name']
+                doc['title'] = doc['name']
+            doc_list = build_doc_tree(doc_nodes, child_key='children', level_key='level')
+            # 一级文档默认展开
+            for item in doc_list:
+                item['spread'] = True
+            # 文档数量过大时，排序页只渲染一级目录，其余层级在展开时按需加载，
+            # 避免一次性渲染数千个节点、创建大量拖拽实例导致页面卡顿
+            lazy_mode = len(doc_nodes) > 300
+            lazy_tree = {}
+            if lazy_mode:
+                pending = list(doc_list)
+                while pending:
+                    node = pending.pop()
+                    if node['children']:
+                        lazy_tree[str(node['id'])] = [
+                            {'id': child['id'], 'name': child['name']} for child in node['children']
+                        ]
+                        pending.extend(node['children'])
             return render(request,'app_doc/manage/manage_project_doc_sort.html',locals())
         else:
             return render(request, '403.html')
@@ -753,26 +670,21 @@ def manage_project_doc_sort(request,pro_id):
         pro_colla = ProjectCollaborator.objects.filter(project=pro, user=request.user, role=1)
         # 文集的创建者和文集高级权限协作者允许操作
         if (pro.create_user == request.user) or pro_colla.count() > 0:
-            # 文档排序
-            n = 10
-            # 第一级文档
-            for data in sort_data:
-                # print(data)
-                Doc.objects.filter(id=data['id']).update(sort=n,parent_doc=0)
-                n += 10
-                # 存在第二级文档
-                if 'children' in data.keys():
-                    n1 = 10
-                    for c1 in data['children']:
-                        Doc.objects.filter(id=c1['id']).update(sort=n1, parent_doc=data['id'])
-                        n1 += 10
-                        # 存在第三级文档
-                        if 'children' in c1.keys():
-                            n2 = 10
-                            for c2 in c1['children']:
-                                Doc.objects.filter(id=c2['id']).update(sort=n2, parent_doc=c1['id'])
-                                n2 += 10
+            # 递归保存不限层级的文档排序与上级归属
+            # ancestors 记录当前路径上的文档ID，用于识别提交数据中的循环引用
+            def save_doc_sort(items, parent_doc_id=0, ancestors=()):
+                sort_num = 10
+                for item in items:
+                    doc_id = int(item['id'])
+                    # 该文档又出现在自己的下级中，跳过以避免写入循环引用导致文档树断裂
+                    if doc_id in ancestors:
+                        continue
+                    Doc.objects.filter(id=doc_id).update(sort=sort_num, parent_doc=parent_doc_id)
+                    sort_num += 10
+                    if item.get('children'):
+                        save_doc_sort(item['children'], parent_doc_id=doc_id, ancestors=ancestors + (doc_id,))
 
+            save_doc_sort(sort_data)
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
             return JsonResponse({'status':False,'data':_('无权操作')})
@@ -1260,6 +1172,9 @@ def modify_doc(request,doc_id):
                     is_pro_colla = False
                 # 验证用户有权限修改文档 - 文档的创建者或文集的高级协作者
                 if (request.user == doc.create_user) or (is_pro_colla is True) or (request.user == project.create_user):
+                    # 校验上级文档设置，避免把文档挂到自己的下级文档中形成循环引用
+                    if parent_doc not in ['', '0'] and not check_doc_parent_valid(doc_id, parent_doc):
+                        return JsonResponse({'status': False, 'data': _('不能将文档的上级文档设置为其下级文档')})
                     # 开启事务
                     with transaction.atomic():
                         save_id = transaction.savepoint()
@@ -1356,11 +1271,10 @@ def del_doc(request):
                     doc.status = 3
                     doc.modify_time = datetime.datetime.now()
                     doc.save()
-                    # 修改其下级所有文档状态为删除
-                    chr_doc = Doc.objects.filter(parent_doc=doc_id) # 获取下级文档
-                    chr_doc_ids = chr_doc.values_list('id',flat=True) # 提取下级文档的ID
-                    chr_doc.update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的状态为删除
-                    Doc.objects.filter(parent_doc__in=list(chr_doc_ids)).update(status=3,modify_time=datetime.datetime.now()) # 修改下级文档的下级文档状态
+                    # 递归获取其全部下级文档（不限层级），统一修改状态为删除
+                    children_ids = get_doc_children_ids(doc_id)
+                    if children_ids:
+                        Doc.objects.filter(id__in=children_ids).update(status=3,modify_time=datetime.datetime.now())
                     # AI知识库同步删除切片
                     ai_del_doc(doc.id)
 
@@ -1373,10 +1287,12 @@ def del_doc(request):
                     # 管理员无需验证权限
                     if request.user.is_superuser:
                         Doc.objects.filter(id__in=docs).update(status=3,modify_time=datetime.datetime.now())
-                        Doc.objects.filter(parent_doc__in=docs).update(status=3, modify_time=datetime.datetime.now())
                     else:
                         Doc.objects.filter(id__in=docs,create_user=request.user).update(status=3,modify_time=datetime.datetime.now())
-                        Doc.objects.filter(parent_doc__in=docs).update(status=3,modify_time=datetime.datetime.now())
+                    # 递归获取其全部下级文档（不限层级），统一修改状态为删除
+                    children_ids = get_doc_children_ids(docs)
+                    if children_ids:
+                        Doc.objects.filter(id__in=children_ids).update(status=3,modify_time=datetime.datetime.now())
                     for id in docs:
                         # AI知识库同步删除切片
                         ai_del_doc(id)
@@ -1527,6 +1443,10 @@ def move_doc(request):
             parent = Doc.objects.get(id=int(parent_id), top_doc=pro_id, status=1)
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('上级文档不存在')})
+    # 移动文档时校验上级文档的合法性，避免将文档移动到自身的下级文档中形成循环引用
+    if move_type in ['1', '2'] and str(parent_id) != '0':
+        if not check_doc_parent_valid(doc_id, parent_id):
+            return JsonResponse({'status':False,'data':_('不能将文档移动到其下级文档中')})
     # 复制文档
     if move_type == '0':
         copy_doc = Doc.objects.create(
@@ -1559,12 +1479,10 @@ def move_doc(request):
         try:
             # 修改文档的所属文集和上级文档实现移动文档
             Doc.objects.filter(id=int(doc_id)).update(parent_doc=int(parent_id), top_doc=int(pro_id))
-            # 修改其子文档的文集归属
-            child_doc = Doc.objects.filter(parent_doc=doc_id)
-            child_doc.update(top_doc=int(pro_id))
-            # 遍历子文档，如果其存在下级文档，那么继续修改所属文集
-            for child in child_doc:
-                Doc.objects.filter(parent_doc=child.id).update(top_doc=int(pro_id))
+            # 递归获取其全部下级文档，统一修改所属文集
+            children_ids = get_doc_children_ids(doc_id)
+            if children_ids:
+                Doc.objects.filter(id__in=children_ids).update(top_doc=int(pro_id))
             return JsonResponse({'status': True, 'data':{'pro_id':pro_id,'doc_id':doc_id}})
         except:
             logger.exception(_("移动包含下级的文档异常"))
@@ -2087,7 +2005,11 @@ def get_pro_doc(request):
         if not check_user_project_view_role(request.user.id,pro_id):
             return JsonResponse({'status':False,'data':'您没有权限查看该文集的文档树数据'})
         # 获取文集所有文档的id、name和parent_doc3个字段
-        doc_list = Doc.objects.filter(top_doc=int(pro_id),status=1).values_list('id','name','parent_doc').order_by('parent_doc')
+        doc_list = list(
+            Doc.objects.filter(top_doc=int(pro_id),status=1).values_list('id','name','parent_doc').order_by('parent_doc')
+        )
+        # 构建文档ID到文档信息的映射，便于逐级回溯上级文档名称
+        doc_map = {doc[0]: doc for doc in doc_list}
         item_list = []
         # 遍历文档
         for doc in doc_list:
@@ -2100,17 +2022,19 @@ def get_pro_doc(request):
                 item_list.append(item)
             # 如果文档不是顶级文档
             else:
-                # 查询文档的上级文档
-                try:
-                    parent = Doc.objects.get(id=doc[2])
-                except ObjectDoesNotExist:
-                    return JsonResponse({'status':False,'data':'文档id不存在'})
-                # 如果文档上级文档的上级是顶级文档，那么将其添加到列表
-                if parent.parent_doc == 0: # 只要二级目录
-                    item = [
-                        doc[0],doc[1],doc[2],parent.name+' --> '
-                    ]
-                    item_list.append(item)
+                # 逐级回溯，拼接不限层级的完整上级文档路径
+                path = []
+                parent_id = doc[2]
+                visited = set()
+                while parent_id and parent_id not in visited and parent_id in doc_map:
+                    visited.add(parent_id)
+                    parent = doc_map[parent_id]
+                    path.insert(0,parent[1])
+                    parent_id = parent[2]
+                item = [
+                    doc[0],doc[1],doc[2],' --> '.join(path) + ' --> ' if path else ''
+                ]
+                item_list.append(item)
         return JsonResponse({'status':True,'data':list(item_list)})
     else:
         return JsonResponse({'status':False,'data':_('参数错误')})
@@ -2167,66 +2091,21 @@ def get_pro_doc_tree(request):
     if pro_id:
         if not check_user_project_writer_role(request.user.id,pro_id):
             return JsonResponse({'status':False,'data':'您没有权限查看该文集的文档树数据'})
-        # 查询存在上级文档的文档
-        parent_id_list = Doc.objects.filter(top_doc=pro_id,status=1).exclude(parent_doc=0).values_list('parent_doc',flat=True)
-        # 获取存在上级文档的上级文档ID
-        # print(parent_id_list)
-        doc_list = []
-        # 获取一级文档
-        top_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=0,status=1).values('id','name','modify_time').order_by('sort')
-        # 遍历一级文档
-        for doc in top_docs:
-            top_item = {
-                'id':doc['id'],
-                'field':doc['name'],
-                'title':doc['name'],
-                'name':doc['name'],
-                'lable':doc['name'],
-                'url': _build_url(doc),
-                'modify_time':doc['modify_time'],
-                'spread':True,
-                'level':1
-            }
-            # 如果一级文档存在下级文档，查询其二级文档
-            if doc['id'] in parent_id_list:
-                # 获取二级文档
-                sec_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name','modify_time').order_by('sort')
-                top_item['children'] = []
-                for doc in sec_docs:
-                    sec_item = {
-                        'id': doc['id'],
-                        'field': doc['name'],
-                        'title': doc['name'],
-                        'name': doc['name'],
-                        'lable': doc['name'],
-                        'url': _build_url(doc),
-                        'modify_time': doc['modify_time'],
-                        'level':2
-                    }
-                    # 如果二级文档存在下级文档，查询第三级文档
-                    if doc['id'] in parent_id_list:
-                        # 获取三级文档
-                        thr_docs = Doc.objects.filter(top_doc=pro_id,parent_doc=doc['id'],status=1).values('id','name','modify_time').order_by('sort')
-                        sec_item['children'] = []
-                        for doc in thr_docs:
-                            item = {
-                                'id': doc['id'],
-                                'field': doc['name'],
-                                'title': doc['name'],
-                                'name': doc['name'],
-                                'lable': doc['name'],
-                                'url': _build_url(doc),
-                                'modify_time': doc['modify_time'],
-                                'level': 3
-                            }
-                            sec_item['children'].append(item)
-                        top_item['children'].append(sec_item)
-                    else:
-                        top_item['children'].append(sec_item)
-                doc_list.append(top_item)
-            # 如果一级文档没有下级文档，直接保存
-            else:
-                doc_list.append(top_item)
+        # 一次查询文集下的全部已发布文档，再在内存中构建不限层级的文档树
+        doc_nodes = list(
+            Doc.objects.filter(top_doc=pro_id, status=1).values(
+                'id', 'name', 'parent_doc', 'modify_time'
+            ).order_by('sort')
+        )
+        for doc in doc_nodes:
+            doc['field'] = doc['name']
+            doc['title'] = doc['name']
+            doc['lable'] = doc['name']
+            doc['url'] = _build_url(doc)
+        doc_list = build_doc_tree(doc_nodes, child_key='children', level_key='level')
+        # 一级文档默认展开
+        for item in doc_list:
+            item['spread'] = True
         doc_list = jsonXssFilter(doc_list)
         if is_page is False:
             return JsonResponse({'status':True,'data':doc_list})

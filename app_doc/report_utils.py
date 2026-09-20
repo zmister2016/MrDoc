@@ -24,6 +24,7 @@ application = get_wsgi_application()
 import django
 django.setup()
 from app_doc.models import *
+from app_doc.utils import build_doc_tree
 from subprocess import Popen
 from loguru import logger
 from app_doc.report_html2pdf import convert
@@ -351,14 +352,19 @@ class ReportEPUB():
                     logger.error(f"EPUB导出：复制文件失败: {e}")
 
         # 创建写入临时HTML文件
-        temp_file_path = self.base_path + '/OEBPS/Text/{0}.xhtml'.format(d.id)
+        temp_file_path = self.base_path + '/OEBPS/Text/{0}.xhtml'.format(d['id'])
         with open(temp_file_path, 'a+', encoding='utf-8') as htmlfile:
             htmlfile.write('<?xml version="1.0" encoding="UTF-8"?>' + str(html_soup))
 
     # 生成文档HTML
     def generate_html(self):
-        # 查询文档
-        data = Doc.objects.filter(top_doc=self.project.id, parent_doc=0, status=1).order_by("sort")
+        # 一次查询文集下的全部已发布文档，再构建不限层级的文档树
+        doc_nodes = list(
+            Doc.objects.filter(top_doc=self.project.id, status=1).values(
+                'id', 'name', 'parent_doc', 'pre_content', 'content'
+            ).order_by("sort")
+        )
+        toc_tree = build_doc_tree(doc_nodes, child_key='children')
         self.toc_list = [
             {
                 'id': 0,
@@ -367,9 +373,6 @@ class ReportEPUB():
                 'title': _('目录')
             }
         ]
-        nav_str = '''<navMap>'''
-        toc_summary_str = '''<ul>'''
-        nav_num = 1
         # content.opf相关
         manifest = '''<item id="book_cover" href="Text/book_cover.xhtml" media-type="application/xhtml+xml"/>
         <item id="book_title" href="Text/book_title.xhtml" media-type="application/xhtml+xml"/>
@@ -377,132 +380,67 @@ class ReportEPUB():
         <item id="toc_summary" href="Text/toc_summary.xhtml" media-type="application/xhtml+xml"/>
         '''
         spine = '<itemref idref="book_cover" linear="no"/><itemref idref="book_title"/><itemref idref="book_desc"/><itemref idref="toc_summary"/>'
+        # 导航序号，使用列表便于在递归中累加
+        nav_num = [1]
 
-        for d in data:
-            # 拼接HTML字符串
-            html_str = "<h1 style='page-break-before: always;'>{}</h1>".format(html.escape(d.name))
-            if d.content is None:
-                d.content = markdown.markdown(
-                    d.pre_content,
-                    extensions=['markdown.extensions.fenced_code','markdown.extensions.tables']
-                )
-            html_str += d.content
-            self.write_html(d=d,html_str=html_str) # 生成HTML
-            # 生成HTML的目录位置
-            toc = {
-                'id':d.id,
-                'link':'{}.xhtml'.format(d.id),
-                'pid':d.parent_doc,
-                'title':html.escape(d.name)
-            }
-            self.toc_list.append(toc)
-
-            # nav
-            toc_nav = '''<navPoint id="np_{nav_num}" playOrder="{nav_num}">
-                    <navLabel><text>{title}</text></navLabel>
-                    <content src="Text/{file}"/>
-                '''.format(nav_num=nav_num,title=html.escape(d.name),file=toc['link'])
-            nav_str += toc_nav
-
-            # toc_summary
-            toc_summary_str += '''<li><a href="./{}">{}</a>'''.format(toc['link'],toc['title'])
-            # content.opf
-            manifest += '<item id="{}" href="Text/{}.xhtml" media-type="application/xhtml+xml"/>'.format(d.id, d.id)
-            spine += '<itemref idref="{}"/>'.format(d.id)
-
-            nav_num += 1
-
-            # 获取第二级文档
-            data_2 = Doc.objects.filter(parent_doc=d.id,status=1).order_by("sort")
-            if data_2.count() > 0:
-                toc_summary_str += '<ul>'
-            for d2 in data_2:
-                html_str = "<h1>{}</h1>".format(html.escape(d2.name))
-                if d2.content is None:
-                    d2.content = markdown.markdown(
-                        d2.pre_content,
+        def walk(docs, level):
+            """递归生成不限层级的文档HTML与导航节点"""
+            nav_str = ''
+            for d in docs:
+                # 按文档层级使用对应的标题标签，最深层级使用h6
+                heading_tag = 'h{}'.format(min(level, 6))
+                html_str = "<{} style='page-break-before: always;'>{}</{}>".format(
+                    heading_tag, html.escape(d['name']), heading_tag)
+                # 如果文档没有HTML内容，将Markdown转换为HTML
+                if d['content'] is None:
+                    d['content'] = markdown.markdown(
+                        d['pre_content'],
                         extensions=['markdown.extensions.fenced_code', 'markdown.extensions.tables']
                     )
-                html_str += d2.content
-                self.write_html(d=d2,html_str=html_str)
+                html_str += d['content']
+                self.write_html(d=d, html_str=html_str)  # 生成HTML
                 # 生成HTML的目录位置
                 toc = {
-                    'id': d2.id,
-                    'link': '{}.xhtml'.format(d2.id),
-                    'pid': d2.parent_doc,
-                    'title': html.escape(d2.name)
+                    'id': d['id'],
+                    'link': '{}.xhtml'.format(d['id']),
+                    'pid': d['parent_doc'],
+                    'title': html.escape(d['name'])
                 }
                 self.toc_list.append(toc)
-                toc_nav = '''<navPoint id="np_{nav_num}" playOrder="{nav_num}">
-                                    <navLabel><text>{title}</text></navLabel>
-                                    <content src="Text/{file}"/>
-                                '''.format(nav_num=nav_num, title=html.escape(d2.name), file=toc['link'])
-                nav_str += toc_nav
 
-                # toc_summary
-                toc_summary_str += '''<li><a href="./{}">{}</a>'''.format(toc['link'], toc['title'])
-                # content.opf
-                manifest += '<item id="{}" href="Text/{}.xhtml" media-type="application/xhtml+xml"/>'.format(d2.id, d2.id)
-                spine += '<itemref idref="{}"/>'.format(d2.id)
+                # nav
+                num = nav_num[0]
+                nav_num[0] += 1
+                nav_str += '''<navPoint id="np_{nav_num}" playOrder="{nav_num}">
+                    <navLabel><text>{title}</text></navLabel>
+                    <content src="Text/{file}"/>
+                '''.format(nav_num=num, title=toc['title'], file=toc['link'])
+                # 递归生成下级文档的导航节点
+                nav_str += walk(d['children'], level + 1)
+                nav_str += '</navPoint>'
+            return nav_str
 
-                nav_num += 1
-
-                # 获取第三级文档
-                data_3 = Doc.objects.filter(parent_doc=d2.id,status=1).order_by("sort")
-                if data_3.count() > 0:
-                    toc_summary_str += '<ul>'
-                for d3 in data_3:
-                    html_str = "<h1>{}</h1>".format(html.escape(d3.name))
-                    # 如果文档没有HTML内容，将Markdown转换为HTML
-                    if d3.content is None:
-                        d3.content = markdown.markdown(
-                            d3.pre_content,
-                            extensions=['markdown.extensions.fenced_code', 'markdown.extensions.tables']
-                        )
-                    html_str += d3.content
-                    self.write_html(d=d3,html_str=html_str)
-                    # 生成HTML的目录位置
-                    toc = {
-                        'id': d3.id,
-                        'link': '{}.xhtml'.format(d3.id),
-                        'pid': d3.parent_doc,
-                        'title': html.escape(d3.name)
-                    }
-                    self.toc_list.append(toc)
-
-                    toc_nav = '''<navPoint id="np_{nav_num}" playOrder="{nav_num}">
-                                    <navLabel><text>{title}</text></navLabel>
-                                    <content src="Text/{file}"/>
-                                </navPoint>
-                        '''.format(nav_num=nav_num, title=html.escape(d3.name), file=toc['link'])
-                    nav_str += toc_nav
-
-                    # toc_summary
-                    toc_summary_str += '''<li><a href="./{}">{}</a></li>'''.format(toc['link'], toc['title'])
-                    # content.opf
-                    manifest += '<item id="{}" href="Text/{}.xhtml" media-type="application/xhtml+xml"/>'.format(d3.id,
-                                                                                                                d3.id)
-                    spine += '<itemref idref="{}"/>'.format(d3.id)
-
-                    nav_num += 1
-
-                nav_str += "</navPoint>"
-                if data_3.count() > 0:
-                    toc_summary_str += "</ul></li>"
+        def build_summary(docs):
+            """递归生成目录页的嵌套列表"""
+            summary = ''
+            for d in docs:
+                link = '{}.xhtml'.format(d['id'])
+                title = html.escape(d['name'])
+                if d['children']:
+                    summary += '<li><a href="./{link}">{title}</a><ul>{sub}</ul></li>'.format(
+                        link=link, title=title, sub=build_summary(d['children']))
                 else:
-                    toc_summary_str += "</li>"
+                    summary += '<li><a href="./{link}">{title}</a></li>'.format(link=link, title=title)
+            return summary
 
-            nav_str += "</navPoint>"
-            if data_2.count() > 0:
-                toc_summary_str += "</ul></li>"
-            else:
-                toc_summary_str += "</li>"
+        nav_str = '<navMap>' + walk(toc_tree, 1) + '</navMap>'
+        toc_summary_str = '<ul>' + build_summary(toc_tree) + '</ul>'
 
-        nav_str += '</navMap>'
-        toc_summary_str += '</ul>'
+        # content.opf中的manifest与spine按文档目录顺序生成
+        for toc in self.toc_list[1:]:
+            manifest += '<item id="{}" href="Text/{}.xhtml" media-type="application/xhtml+xml"/>'.format(toc['id'], toc['id'])
+            spine += '<itemref idref="{}"/>'.format(toc['id'])
 
-        # print(nav_str)
-        # print(toc_summary_str)
         self.nav_str = nav_str
         self.toc_summary_str = toc_summary_str
         # self.config_json['toc'] = self.toc_list
@@ -804,35 +742,27 @@ class ReportPDF():
         except:
             logger.exception("未知异常")
             return False
-        # 拼接文档的HTML字符串
-        data = Doc.objects.filter(top_doc=self.pro_id,parent_doc=0,status=1).order_by("sort")
-        toc_list = {'1':[],'2':[],'3':[]}
-        for d in data:
-            self.content_str += "<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d.name)
-            if d.editor_mode in [1,2]:
-                self.content_str += d.pre_content + '\n'
-            elif d.editor_mode == 3:
-                self.content_str += d.content + '\n'
-            toc_list['1'].append({'id':d.id,'name':d.name})
-            # 获取第二级文档
-            data_2 = Doc.objects.filter(parent_doc=d.id,status=1).order_by("sort")
-            for d2 in data_2:
-                self.content_str += "\n\n<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d2.name)
-                if d2.editor_mode in [1, 2]:
-                    self.content_str += d2.pre_content + '\n'
-                elif d2.editor_mode == 3:
-                    self.content_str += d2.content + '\n'
-                toc_list['2'].append({'id':d2.id,'name':d2.name,'parent':d.id})
-                # 获取第三级文档
-                data_3 = Doc.objects.filter(parent_doc=d2.id,status=1).order_by("sort")
-                for d3 in data_3:
-                    # print(d3.name,d3.content)
-                    self.content_str += "\n\n<h1 style='page-break-before: always;'>{}</h1>\n\n".format(d3.name)
-                    if d3.editor_mode in [1, 2]:
-                        self.content_str += d3.pre_content + '\n'
-                    elif d3.editor_mode == 3:
-                        self.content_str += d3.content + '\n'
-                    toc_list['3'].append({'id':d3.id,'name':d3.name,'parent':d2.id})
+        # 一次查询文集下的全部已发布文档，再构建不限层级的文档树
+        doc_nodes = list(
+            Doc.objects.filter(top_doc=self.pro_id, status=1).values(
+                'id', 'name', 'parent_doc', 'editor_mode', 'pre_content', 'content'
+            ).order_by("sort")
+        )
+        toc_tree = build_doc_tree(doc_nodes, child_key='children')
+
+        def walk_docs(docs, level):
+            """递归拼接不限层级的文档HTML，按文档层级使用对应的标题标签"""
+            heading_tag = 'h{}'.format(min(level, 6))
+            for d in docs:
+                self.content_str += "\n\n<{} style='page-break-before: always;'>{}</{}>\n\n".format(
+                    heading_tag, d['name'], heading_tag)
+                if d['editor_mode'] in [1, 2]:
+                    self.content_str += (d['pre_content'] or '') + '\n'
+                elif d['editor_mode'] == 3:
+                    self.content_str += (d['content'] or '') + '\n'
+                walk_docs(d['children'], level + 1)
+
+        walk_docs(toc_tree, 1)
 
         # 替换所有媒体文件链接
         self.content_str = self.content_str.replace('![](/media/','![](../../media/')
@@ -985,23 +915,28 @@ class ReportDocx():
         """
 
     def work(self):
-        # 拼接HTML字符串
-        data = Doc.objects.filter(top_doc=self.project.id,parent_doc=0,status=1).order_by("sort")
-        for d in data:
-            # print(d.name,d.content)
-            self.content_str += "<h1 style='page-break-before: always;'>{}</h1>".format(d.name)
-            self.content_str += d.content
-            # 获取第二级文档
-            data_2 = Doc.objects.filter(parent_doc=d.id).order_by("sort")
-            for d2 in data_2:
-                self.content_str += "<h1>{}</h1>".format(d2.name)
-                self.content_str += d2.content
-                # 获取第三级文档
-                data_3 = Doc.objects.filter(parent_doc=d2.id).order_by("sort")
-                for d3 in data_3:
-                    # print(d3.name,d3.content)
-                    self.content_str += "<h1>{}</h1>".format(d3.name)
-                    self.content_str += d3.content
+        # 一次查询文集下的全部已发布文档，再构建不限层级的文档树
+        doc_nodes = list(
+            Doc.objects.filter(top_doc=self.project.id, status=1).values(
+                'id', 'name', 'parent_doc', 'content'
+            ).order_by("sort")
+        )
+        toc_tree = build_doc_tree(doc_nodes, child_key='children')
+
+        def walk_docs(docs, level):
+            """递归拼接不限层级的文档HTML，按文档层级使用对应的标题标签"""
+            heading_tag = 'h{}'.format(min(level, 6))
+            for d in docs:
+                # 一级文档标题单独分页
+                if level == 1:
+                    self.content_str += "<{} style='page-break-before: always;'>{}</{}>".format(
+                        heading_tag, d['name'], heading_tag)
+                else:
+                    self.content_str += "<{}>{}</{}>".format(heading_tag, d['name'], heading_tag)
+                self.content_str += d['content'] or ''
+                walk_docs(d['children'], level + 1)
+
+        walk_docs(toc_tree, 1)
 
         # 使用BeautifulSoup解析拼接好的HTML文本
         soup = BeautifulSoup(self.content_str,'lxml')

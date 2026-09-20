@@ -1,0 +1,24 @@
+{% load i18n %}<!-- 文档目录节点，递归渲染不限层级 -->
+{% for docs in toc_list %}
+    <li>
+        {% if docs.children %}
+            <div style="display:flex;justify-content:space-between;">
+                <a href="{% url 'doc_id' doc_id=docs.id %}" title="{{docs.name}}">{% if docs.editor_mode == 4 %}<i class="layui-icon layui-icon-table"></i>{% else %}<i class="iconfont mrdoc-icon-wendang"></i>{% endif %} {{ docs.name }}</a>
+                {% if docs.open_children %}
+                    <i class="layui-icon layui-icon-down switch-toc"></i>
+                {% else %}
+                    <i class="layui-icon layui-icon-left switch-toc"></i>
+                {% endif %}
+            </div>
+            {% if docs.open_children %}
+                <ul class="sub-menu">
+            {% else %}
+                <ul class="sub-menu toc-close">
+            {% endif %}
+            {% include 'app_doc/docs_base_toc.html' with toc_list=docs.children only %}
+            </ul>
+        {% else %}
+            <a href="{% url 'doc_id' doc_id=docs.id %}" title="{{docs.name}}"><i class="{% if docs.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ docs.name }}</a>
+        {% endif %}
+    </li>
+{% endfor %}

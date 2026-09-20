@@ -123,58 +123,8 @@
         <!-- 文档数量小于999，使用同步加载文集目录 -->
         <nav>
             <ul class="summary">
-            <!-- 一级目录 -->
-            {% for docs in toc_list %}
-                <li>
-                    {% if docs.children %}
-                        <div style="display:flex;justify-content:space-between;">
-                            <a href="{% url 'doc_id' doc_id=docs.id %}" title="{{docs.name}}">{% if docs.editor_mode == 4 %}<i class="layui-icon layui-icon-table"></i>{% else %}<i class="iconfont mrdoc-icon-wendang"></i>{% endif %} {{ docs.name }}</a>
-                            {% if docs.open_children %}
-                                <i class="layui-icon layui-icon-down switch-toc"></i>
-                            {% else %}
-                                <i class="layui-icon layui-icon-left switch-toc"></i>
-                            {% endif %}
-                        </div>
-                        {% if docs.open_children %}
-                            <ul class="sub-menu">
-                        {% else %}
-                            <ul class="sub-menu toc-close">
-                        {% endif %}
-
-                        <!-- 二级目录 -->
-                        {% for node in docs.children %}
-                            <li>
-                                {% if node.id|get_next_doc %}
-                                    <div style="display:flex;justify-content:space-between;">
-                                        <a href="{% url 'doc_id' doc_id=node.id %}" title="{{node.name}}"><i class="{% if node.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ node.name }}</a>
-                                        {% if node.open_children %}
-                                            <i class="layui-icon layui-icon-down switch-toc"></i>
-                                        {% else %}
-                                            <i class="layui-icon layui-icon-left switch-toc"></i>
-                                        {% endif %}
-                                    </div>
-                                    {% if node.open_children %}
-                                        <ul class="sub-menu">
-                                    {% else %}
-                                        <ul class="sub-menu toc-close">
-                                    {% endif %}
-
-                                    <!-- 三级目录 -->
-                                    {% for doc in node.children %}
-                                        <li><a href="{% url 'doc_id' doc_id=doc.id %}" title="{{doc.name}}"><i class="{% if doc.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ doc.name }}</a></li>
-                                    {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <a href="{% url 'doc_id' doc_id=node.id %}" title="{{node.name}}"><i class="{% if node.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ node.name }}</a>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    {% else %}
-                        <a href="{% url 'doc_id' doc_id=docs.id %}" title="{{docs.name}}"><i class="{% if docs.editor_mode == 4 %}layui-icon layui-icon-table {% else %}iconfont mrdoc-icon-wendang{% endif %}"></i> {{ docs.name }}</a>
-                    {% endif %}
-                </li>
-            {% endfor %}
+            <!-- 文档目录，递归渲染不限层级 -->
+            {% include 'app_doc/docs_base_toc.html' with toc_list=toc_list only %}
             </ul>
         </nav>
         {% endif %}
@@ -331,7 +281,7 @@
             var toc_str = ""
             layui.each(tree,function(index,item){
                 toc_str += "<li>"
-                if(item['children'] != undefined){ // 存在下级文档
+                if(item['children'] != undefined && item['children'].length > 0){ // 存在下级文档
                     li = '<div style="display:flex;justify-content:space-between;">' +
                         '<a href="/doc/'+item.id +'/" title="' +
                         item.title +

@@ -24,41 +24,21 @@
                 <span style="font-size:18px;">{% trans "文集：" %}{{pro.name}}</span>
                 <button class="pear-btn pear-btn-primary pear-btn-sm" style="float: right;" id="save-sort-btn">{% trans "保存排序" %}</button>
             </div>
+            {% if lazy_mode %}
+            <div style="color:#999;font-size:12px;margin-top:5px;">{% trans "文档较多，目录按需展开加载：点击节点右侧箭头展开子目录后，再进行拖拽排序。" %}</div>
+            {% endif %}
         </div>
 
         <div class="layui-row">
             <div id="nested" class="row">
                 <ul id="nestedDemo" class="list-group col nested-sortable">
-                    {% for docs in doc_list %}
-                    <li data-sortable-id="{{docs.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{docs.title}}
-                        {% if docs.children %}
-                        <i class="layui-icon layui-icon-down switch-toc"></i>
-                        <ul class="list-group nested-sortable">
-                            {% for node in docs.children %}
-                            <li data-sortable-id="{{node.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{node.title}}
-                                {% if node.children %}
-                                <i class="layui-icon layui-icon-down switch-toc"></i>
-                                <ul class="list-group nested-sortable">
-                                    {% for doc in node.children %}
-                                    <li data-sortable-id="{{doc.id}}" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> {{doc.title}}
-                                        <ul class="list-group nested-sortable"></ul>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                                {% else %}
-                                <ul class="list-group nested-sortable"></ul>
-                                {% endif %}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        {% else %}
-                        <ul class="list-group nested-sortable"></ul>
-                        {% endif %}
-                    </li>
+                    {% for node in doc_list %}
+                    {% include 'app_doc/manage/manage_project_doc_sort_node.html' with node=node lazy_mode=lazy_mode only %}
                     {% endfor %}
                 </ul>
             </div>
         </div>
+        {{ lazy_tree|json_script:"lazy-tree-data" }}
     </div>
 </div>
 {% endblock %}
@@ -133,6 +113,13 @@
     .toc-close {
         display: none;
     }
+    /* 空的嵌套列表高度为 0，拖拽时无法命中，导致无法拖入成为子级；拖拽过程中给它一个可见可命中的落点 */
+    body.doc-sort-dragging .nested-sortable:empty {
+        min-height: 30px;
+        background-color: rgba(0, 0, 0, .02);
+        border: 1px dashed rgba(0, 0, 0, .15);
+        border-radius: 4px;
+    }
 </style>
 <script src="{% static 'jquery/3.5.0/jquery.min.js' %}"></script>
 <script src="{% static 'layui/layui.js' %}"></script>
@@ -142,38 +129,103 @@
     $.ajaxSetup({
         data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
     });
-    // 文档动态排序
-    function docSort(){
-        // Nested demo
-        var nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
-        // Loop through each nested sortable element
-        for (var i = 0; i < nestedSortables.length; i++) {
-            new Sortable(nestedSortables[i], {
-                group: {
-                    name:'docsort',
-                    pull: function(event) {
-                        var deep = event.el.parentNode.parentNode.parentNode.parentNode.className
-                        if(deep == 'list-group nested-sortable') return false;
-                        return true;
-                    },
+    // 文档动态排序：为单个已渲染的列表创建拖拽实例
+    function initSortable(el){
+        // 已初始化过的列表不重复创建实例
+        if (Sortable.get(el)) return;
+        return new Sortable(el, {
+            group: {
+                name:'docsort',
+                // 允许拖动到任意层级，不再限制文档层级
+                pull: function(event) {
+                    return true;
                 },
-                animation: 150,//定义排序动画的时间
-                fallbackOnBody: true, // 将cloned DOM 元素挂到body元素上
-                invertSwap:true,
-                swapThreshold: 0.65,
-                onAdd:function(evt){
-                    console.log(evt)
-                    // console.log(evt.to)
-                    let current_ele = $(evt.item)
-                    console.log(current_ele[0])
-                }
-            });
+            },
+            animation: 150,//定义排序动画的时间
+            fallbackOnBody: true, // 将cloned DOM 元素挂到body元素上
+            invertSwap:true,
+            swapThreshold: 0.65,
+            onStart:function(evt){
+                // 拖拽中放大空的子级列表落点，否则其高度为 0 无法命中
+                document.body.classList.add('doc-sort-dragging')
+            },
+            onEnd:function(evt){
+                document.body.classList.remove('doc-sort-dragging')
+            },
+            onAdd:function(evt){
+                console.log(evt)
+                // console.log(evt.to)
+                let current_ele = $(evt.item)
+                console.log(current_ele[0])
+            }
+        });
+    };
+    // 只为已渲染的列表创建实例，未展开的目录不占用实例
+    function docSort(){
+        [].slice.call(document.querySelectorAll('.nested-sortable')).forEach(initSortable);
+    };
+    // 大文集懒加载：未展开的目录不在 DOM 中，展开时再按需生成节点
+    function buildSortNode(node){
+        var li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.dataset.sortableId = node.id;
+        var icon = document.createElement('i');
+        icon.className = 'iconfont mrdoc-icon-wendang';
+        li.appendChild(icon);
+        li.appendChild(document.createTextNode(' ' + node.name));
+        var ul = document.createElement('ul');
+        var sub = lazyTree[node.id];
+        if (sub && sub.length) {
+            var arrow = document.createElement('i');
+            arrow.className = 'layui-icon layui-icon-right switch-toc';
+            li.appendChild(arrow);
+            ul.className = 'list-group nested-sortable-lazy toc-close';
+            ul.dataset.parent = node.id;
+        } else {
+            ul.className = 'list-group nested-sortable';
         }
+        li.appendChild(ul);
+        return li;
+    };
+    function expandLazyNode(ul){
+        var children = lazyTree[ul.dataset.parent] || [];
+        ul.innerHTML = '';
+        // 只把占位标记换成真实列表，保留展开收起用的样式类
+        ul.classList.remove('nested-sortable-lazy');
+        ul.classList.add('nested-sortable');
+        var sortables = [ul];
+        children.forEach(function(node){
+            var li = buildSortNode(node);
+            if (li.lastElementChild.classList.contains('nested-sortable')) {
+                sortables.push(li.lastElementChild);
+            }
+            ul.appendChild(li);
+        });
+        sortables.forEach(initSortable);
     };
     // 获取排序值
-    const nestedQuery = '.nested-sortable';
+    const nestedQuery = '.nested-sortable, .nested-sortable-lazy';
     const identifier = 'sortableId';
     const root = document.getElementById('nestedDemo');
+    // 懒加载目录数据：既用于展开时渲染子级，也用于保存时回填未渲染的层级
+    const lazyTree = JSON.parse(document.getElementById('lazy-tree-data').textContent);
+    // 未展开的目录不在 DOM 中，按原始结构回填，避免保存时丢失层级
+    function serializeLazy(parentId) {
+      var children = lazyTree[parentId] || [];
+      return children.map(function(node){
+        var sub = lazyTree[node.id];
+        return {
+          id: node.id,
+          children: sub && sub.length ? serializeLazy(node.id) : []
+        };
+      });
+    }
+    function serializeNested(nested) {
+      if (nested.classList.contains('nested-sortable-lazy')) {
+        return serializeLazy(nested.dataset.parent);
+      }
+      return serialize(nested);
+    }
     function serialize(sortable) {
       var serialized = [];
       var children = [].slice.call(sortable.children);
@@ -181,7 +233,7 @@
         var nested = children[i].querySelector(nestedQuery);
         serialized.push({
           id: children[i].dataset[identifier],
-          children: nested ? serialize(nested) : []
+          children: nested ? serializeNested(nested) : []
         });
       }
       return serialized
@@ -194,10 +246,15 @@
         $("body").on('click','.switch-toc',SwitchToc)
     });
     function SwitchToc(i){
-        console.log("点击了")
         var $me = $(this);
-        $(this).next("ul").toggleClass("toc-close"); //切换展开收起样式
-        $(this).toggleClass("layui-icon-left layui-icon-down");//切换图标
+        var $ul = $me.next("ul");
+        // 懒加载目录在首次展开时才生成子级节点
+        if ($ul.hasClass("nested-sortable-lazy")) {
+            expandLazyNode($ul[0]);
+        }
+        var collapsed = $ul.toggleClass("toc-close").hasClass("toc-close"); //切换展开收起样式
+        // 根据展开状态明确设置箭头图标，避免残留多个图标类
+        $me.toggleClass("layui-icon-right", collapsed).toggleClass("layui-icon-down", !collapsed);
     };
     // 保存排序
     $("#save-sort-btn").on('click',function(){

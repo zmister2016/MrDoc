@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload,img_upload
 from app_doc.util_upload_file import handle_attachment_upload
-from app_doc.utils import find_doc_next,find_doc_previous
+from app_doc.utils import find_doc_next,find_doc_previous,build_doc_tree,check_doc_parent_valid
 from app_api.models import UserToken
 from app_ai.utils import ai_sync_doc,ai_del_doc # AI知识库同步
 from app_doc.models import Project, Doc, DocHistory, Image, ProjectCollaborator
@@ -273,61 +273,16 @@ def get_level_docs(request):
         if int(pid) not in view_list:
             return JsonResponse({'status': False, 'data': _('无文集权限')})
 
-        # 查询存在上级文档的文档
-        parent_id_list = Doc.objects.filter(top_doc=pid,status=1).exclude(parent_doc=0).values_list('parent_doc',flat=True)
-        # 获取存在上级文档的上级文档ID
-        # print(parent_id_list)
-        doc_list = []
-        doc_cnt = 0
-        # 获取一级文档
-        top_docs = Doc.objects.filter(top_doc=pid,parent_doc=0,status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
-        # 遍历一级文档
-        for doc in top_docs:
-            top_item = {
-                'id':doc['id'],
-                'name':doc['name'],
-                'editor_mode':doc['editor_mode'],
-                'parent_doc':doc['parent_doc'],
-                'top_doc':pid,
-                'sub':[]
-            }
-            doc_cnt += 1
-            # 如果一级文档存在下级文档，查询其二级文档
-            if doc['id'] in parent_id_list:
-                # 获取二级文档
-                sec_docs = Doc.objects.filter(top_doc=pid,parent_doc=doc['id'],status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
-                for doc in sec_docs:
-                    sec_item = {
-                        'id': doc['id'],
-                        'name': doc['name'],
-                        'editor_mode':doc['editor_mode'],
-                        'parent_doc': doc['parent_doc'],
-                        'top_doc':pid,
-                        'sub': []
-                    }
-                    doc_cnt += 1
-                    # 如果二级文档存在下级文档，查询第三级文档
-                    if doc['id'] in parent_id_list:
-                        # 获取三级文档
-                        thr_docs = Doc.objects.filter(top_doc=pid,parent_doc=doc['id'],status=1).values('id','name','editor_mode','parent_doc').order_by('sort')
-                        for doc in thr_docs:
-                            item = {
-                                'id': doc['id'],
-                                'name': doc['name'],
-                                'editor_mode': doc['editor_mode'],
-                                'parent_doc': doc['parent_doc'],
-                                'top_doc':pid,
-                                'sub': []
-                            }
-                            doc_cnt += 1
-                            sec_item['sub'].append(item)
-                        top_item['sub'].append(sec_item)
-                    else:
-                        top_item['sub'].append(sec_item)
-                doc_list.append(top_item)
-            # 如果一级文档没有下级文档，直接保存
-            else:
-                doc_list.append(top_item)
+        # 一次查询文集下的全部已发布文档，再在内存中构建不限层级的文档树
+        doc_nodes = list(
+            Doc.objects.filter(top_doc=pid, status=1).values(
+                'id', 'name', 'editor_mode', 'parent_doc'
+            ).order_by('sort')
+        )
+        for doc in doc_nodes:
+            doc['top_doc'] = pid
+        doc_list = build_doc_tree(doc_nodes, child_key='sub')
+        doc_cnt = len(doc_nodes)
 
         # 不需要分页
         if is_page is False:
@@ -649,6 +604,10 @@ def modify_doc(request):
         # 验证权限
         if not is_edit_authorized(token, doc):
             return JsonResponse({'status': False, 'data': '非法请求'})
+
+        # 校验上级文档设置，避免把文档挂到自己的下级文档中形成循环引用
+        if parent_doc not in ['', '0'] and not check_doc_parent_valid(doc_id, parent_doc):
+            return JsonResponse({'status': False, 'data': '不能将文档的上级文档设置为其下级文档'})
 
         # 将现有文档内容写入到文档历史中
         parent_id = doc.parent_doc if parent_doc == '' else parent_doc
