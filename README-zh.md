@@ -122,6 +122,15 @@ git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chm
 
 如果有版本更新，直接在觅思文档项目目录下运行`docker-update.sh`脚本即可完成更新。
 
+## Windows 部署面板
+
+没有 Linux 服务器、没有专门的技术人员，也可以在 Windows 上搭建自己的 MrDoc AI知识库。
+
+可视化操作界面，无需额外安装任何环境和依赖，无需输入任何命令，支持 runserver/Waitress 模式运行，提供生产级部署能力。
+
+使用文档：https://mrdoc.pro/d/windows-deploy-panel/
+下载地址及更新动态：https://mrdoc.pro/d/windows-panel-log/
+
 ### 更多部署方式
 
 详见部署文档：https://mrdoc.pro/doc/1362/
@@ -132,7 +141,7 @@ git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chm
 - [Docker Compose 一键部署](https://mrdoc.pro/doc/45758/)
 - [Docker镜像 By jonnyan404 ](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
 - [~~Linux 一键部署脚本 By jonnyan404~~](https://gitee.com/jonnyan404/oh-my-mrdoc)
-- [Windows 部署面板 By 小肥羊](https://gitee.com/debj031634/win-django)
+- [Windows 部署面板](https://mrdoc.pro/d/windows-deploy-panel/)
 - [VirtualBox/VmWare 虚拟机镜像 By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
 ## 文档导入工具
