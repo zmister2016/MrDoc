@@ -10,6 +10,7 @@ import os
 import io
 import subprocess
 import shutil
+import tempfile
 
 # 编辑模式与图标class映射
 EDITOR_MODE_ICON_MAP = {
@@ -296,6 +297,9 @@ _wmf_extensions = {
     "image/x-emf": ".emf",
 }
 
+# Word导入过程中产生的中间文件目录：放在系统临时目录下，避免中间文件被 /media/ 无鉴权对外服务
+DOCX_IMPORT_TMP_DIR = os.path.join(tempfile.gettempdir(), 'mrdoc_import_docx_imgs')
+
 
 def libreoffice_wmf_conversion(image, post_process=None):
     if post_process is None:
@@ -306,9 +310,8 @@ def libreoffice_wmf_conversion(image, post_process=None):
         return image
     else:
         # 定义临时文件夹
-        temporary_directory = os.path.join(settings.MEDIA_ROOT,'import_docx_imgs')
-        if os.path.exists(temporary_directory) is False:
-            os.mkdir(temporary_directory)
+        temporary_directory = DOCX_IMPORT_TMP_DIR
+        os.makedirs(temporary_directory, exist_ok=True)
         try:
             timestamp = str(time.time())
             # 将 docx 内嵌图片文件存为wmf、emf等文件
@@ -354,7 +357,7 @@ def image_trim(old_image):
 
     # 获取时间戳作为文件名的一部分
     timestamp = str(time.time())
-    temporary_directory = os.path.join(settings.MEDIA_ROOT, 'import_docx_imgs')
+    temporary_directory = DOCX_IMPORT_TMP_DIR
     output_path = os.path.join(temporary_directory, f"trim_image_{timestamp}.png")
 
     def open_image():
