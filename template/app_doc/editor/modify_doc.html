@@ -108,7 +108,7 @@
             
             <div class="layui-row">
                 <div class="layui-col-md12" style="margin-bottom: 10px;">
-                    <span>点击文档树选择上级（可选）或</span>
+                    <span>文档树右键菜单可设置上级或</span>
                     <button class="layui-btn layui-btn-xs layui-btn-primary" id="clearParentDoc">取消上级</button>
                     <input type="text" id="parent-doc" hidden> 
                 </div>
@@ -118,7 +118,9 @@
             </div>
             
             <div class="layui-colla-content layui-show" style="max-height: 100%;overflow: hidden;overflow-y: hidden;overflow-x: scroll;">
-                <div id="doc-tree"></div>
+                <div id="doc-jstree">
+                    <ul id="doc-tree"></ul>
+                </div>
             </div>
         </div>
         
@@ -184,47 +186,17 @@
 
 
 
+        var pro_id = '{{ doc.top_doc }}'; // 当前文档所属文集ID
+        var doc_parent_id = '{{ doc.parent_doc }}'; // 当前文档的上级文档ID
+
         //获取文档数和上级文档信息
         $(function(){
             layer.load(1);
-            var doc_parent_id = '{{ doc.parent_doc }}';
             $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':$("#project").val()},function(r){
                 if(r.status){
                     layer.closeAll("loading");
-                    var doc_tree = tree.render({
-                        elem:"#doc-tree",
-                        id:'docTree',
-                        onlyIconControl:true,
-                        data:r.data,
-                        click: function(obj){
-                            console.log(obj.data.id,doc_parent_id)
-                            if(obj.data.id != '{{ doc.id }}' ){
-                                $('#parent-doc').val(obj.data.id);// 设置上级文档
-                                $("div.layui-tree-set").each(function(i){
-                                    var $me = $(this)
-                                    if($me.data('id') == obj.data.id){
-                                        // console.log('点击了')
-                                        layer.msg("你选择了上级文档："+obj.data.title)
-                                        $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                                    }else{
-                                        $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                                    }
-                                });
-                            }else{
-                                layer.msg("不可选择自己作为上级")
-                            };
-                            
-                        }
-                    });
                     $('#parent-doc').val(doc_parent_id);// 设置上级文档
-                    $("div.layui-tree-set").each(function(i){
-                        var $me = $(this)
-                        if($me.data('id') == doc_parent_id){
-                            $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                        }else{
-                            $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                        }
-                    });
+                    initJsTree(r);
                 }else{
                     layer.msg("获取下级文档失败！")
                 }
@@ -411,10 +383,10 @@
         //清除所选上级文档
         $("#clearParentDoc").click(function(){
             $('#parent-doc').val("");
-            $("span.layui-tree-txt").each(function(i){
-                var $me = $(this)
-                $me.removeClass('selected-parent-doc')
-            });
+            var jstree_obj = $('#doc-jstree').jstree(true);
+            if(jstree_obj){
+                jstree_obj.deselect_all();// 取消文档树的选中状态
+            }
         });
         // 插入历史版本
         insertHistory = function(doc_id,history_id){

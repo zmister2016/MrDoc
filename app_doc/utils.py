@@ -231,6 +231,36 @@ def check_user_project_writer_role(user_id,project_id):
         logger.error(e)
         return False
 
+# 验证用户是否有文档的编辑权限
+def check_user_doc_edit(user_id,doc_id):
+    """
+    判断用户是否可编辑指定文档：
+    文档创建者、文档所属文集创建者、文档所属文集的高级协作成员（role=1）均视为有权限。
+    """
+    if not user_id or not doc_id:
+        return False
+    try:
+        user = User.objects.get(id=user_id)
+        doc = Doc.objects.get(id=doc_id)
+    except Exception as e:
+        logger.error(e)
+        return False
+
+    # 文档创建者
+    if doc.create_user == user:
+        return True
+
+    project = Project.objects.filter(id=doc.top_doc).first()
+    if project is None:
+        return False
+    # 文档所属文集的创建者
+    if project.create_user == user:
+        return True
+
+    # 文档所属文集的高级协作成员
+    colla = ProjectCollaborator.objects.filter(project=project,user=user,role=1)
+    return colla.exists()
+
 # 验证用户是否有文集的访问权限
 def check_user_project_view_role(user_id,project_id):
     if user_id == '' or project_id == '':

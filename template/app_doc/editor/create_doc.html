@@ -111,7 +111,7 @@
             <!-- 设置文档排序 -->
             <div class="layui-row">
                 <div class="layui-col-md12" style="margin-bottom: 10px;">
-                    <span>点击文档树选择上级（可选）或</span>
+                    <span>文档树右键菜单可设置上级或</span>
                     <button class="layui-btn layui-btn-xs layui-btn-primary" id="clearParentDoc">取消上级</button>
                     <input type="text" id="parent-doc" hidden> 
                 </div>
@@ -121,7 +121,9 @@
             </div>
 
             <div class="layui-colla-content layui-show" style="max-height: 100%;overflow: hidden;overflow-y: hidden;overflow-x: scroll;">
-                <div id="doc-tree"></div>
+                <div id="doc-jstree">
+                    <ul id="doc-tree"></ul>
+                </div>
             </div>
         </div>
     </div>
@@ -179,9 +181,11 @@
         })
         var tree = layui.tree;
         var upload = layui.upload;
+        var pro_id; //当前选择的文集ID
         //选择文集
         form.on('select(project)', function(data){
             console.log('选择文集：',data.value); //得到被选中的值
+            pro_id = data.value;
             if(data.value == -1){ //新建文集
                 layer.open({
                     type:1,
@@ -203,6 +207,11 @@
                                 //创建成功，更新文集select
                                 $("#self-project").append("<option value="+r.data.id+">["+role_str+"]《"+r.data.name+"》</option>");
                                 $("#project").val(r.data.id);
+                                pro_id = r.data.id;
+                                // 新建文集暂无文档，销毁旧文集残留的文档树
+                                if($('#doc-jstree').jstree(true)){
+                                    $('#doc-jstree').jstree('destroy');
+                                }
                                 form.render();
                                 layer.close(index);
                             }else{
@@ -213,35 +222,13 @@
                     },
                 });
             }else{//获取文集的下级文档
+                // 切换文集时先销毁旧的文档树
+                if($('#doc-jstree').jstree(true)){
+                    $('#doc-jstree').jstree('destroy');
+                }
                 $.post("{% url 'get_pro_doc_tree' %}",{'pro_id':data.value},function(r){
                     if(r.status){
-                        var doc_tree = tree.render({
-                            elem:"#doc-tree",
-                            id:'docTree',
-                            // showCheckbox:true,
-                            onlyIconControl:true,
-                            data:r.data,
-                            text: {
-                                defaultNodeName: '未命名' //节点默认名称
-                                ,none: '文集暂无文档' //数据为空时的提示文本
-                                },
-                            click: function(obj){
-                                //console.log(obj.data); //得到当前点击的节点数据
-                                // console.log(obj.state); //得到当前节点的展开状态：open、close、normal
-                                // console.log(obj.elem); //得到当前节点元素
-                                $('#parent-doc').val(obj.data.id);// 设置上级文档
-                                $("div.layui-tree-set").each(function(i){
-                                    var $me = $(this)
-                                    if($me.data('id') == obj.data.id){
-                                        // console.log('点击了')
-                                        layer.msg("你选择了上级文档："+obj.data.title)
-                                        $me.find('span.layui-tree-txt').first().addClass('selected-parent-doc')
-                                    }else{
-                                        $me.find('span.layui-tree-txt').first().removeClass('selected-parent-doc')
-                                    }
-                                });
-                            }
-                        });
+                        initJsTree(r);
                     }else{
                         layer.msg("获取下级文档失败！")
                     }
@@ -368,10 +355,10 @@
         //清除所选上级文档
         $("#clearParentDoc").click(function(){
             $('#parent-doc').val("");
-            $("span.layui-tree-txt").each(function(i){
-                var $me = $(this)
-                $me.removeClass('selected-parent-doc')
-            });
+            var jstree_obj = $('#doc-jstree').jstree(true);
+            if(jstree_obj){
+                jstree_obj.deselect_all();// 取消文档树的选中状态
+            }
             layer.msg("你取消了当前文档的上级文档")
         });
         //插入模板
