@@ -2094,18 +2094,24 @@ def get_pro_doc_tree(request):
         # 一次查询文集下的全部已发布文档，再在内存中构建不限层级的文档树
         doc_nodes = list(
             Doc.objects.filter(top_doc=pro_id, status=1).values(
-                'id', 'name', 'parent_doc', 'modify_time'
+                'id', 'name', 'parent_doc', 'top_doc', 'sort', 'open_children',
+                'editor_mode', 'modify_time'
             ).order_by('sort')
         )
         for doc in doc_nodes:
             doc['field'] = doc['name']
             doc['title'] = doc['name']
             doc['lable'] = doc['name']
+            # jsTree 渲染所需字段
+            doc['text'] = doc['name']
+            doc['icon'] = EDITOR_MODE_ICON_MAP.get(doc['editor_mode'], '')
             doc['url'] = _build_url(doc)
         doc_list = build_doc_tree(doc_nodes, child_key='children', level_key='level')
         # 一级文档默认展开
         for item in doc_list:
             item['spread'] = True
+            # jsTree 下的一级文档默认展开
+            item['state'] = {'opened': True}
         doc_list = jsonXssFilter(doc_list)
         if is_page is False:
             return JsonResponse({'status':True,'data':doc_list})

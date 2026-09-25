@@ -15,14 +15,82 @@ from loguru import logger
 from markdownify import markdownify
 from bs4 import BeautifulSoup,Tag
 from app_admin.models import SysSetting
+from PIL import Image as PILImage
 import mammoth
 import shutil
+import zipfile
 import os
+import io
 import time
 import re
 import yaml
 import sys
 import datetime
+import xml.etree.ElementTree as ET
+
+# 允许保留的外部关系类型后缀：超链接等属于正常文档内容，不属于本漏洞的拦截范围
+_ALLOWED_EXTERNAL_RELATION_SUFFIXES = ("/hyperlink",)
+
+# 允许落盘的图片格式（PIL format 与文件扩展名的映射）
+_IMAGE_FORMAT_EXT = {
+    "PNG": "png",
+    "JPEG": "jpg",
+    "GIF": "gif",
+    "BMP": "bmp",
+    "WEBP": "webp",
+    "TIFF": "tiff",
+}
+
+# 单张图片的字节上限，避免读取 /dev/zero 之类的特殊文件造成资源耗尽
+MAX_IMAGE_BYTES = 20 * 1024 * 1024
+
+
+# 扫描docx内所有.rels，找出"外部引用的媒体资源"关系
+# 即 TargetMode="External" 且关系类型不是超链接类的关系
+# 返回 [(rels文件名, 关系类型, 目标地址), ...]
+def find_external_media_relationships(docx_file_path):
+    found = []
+    try:
+        with zipfile.ZipFile(docx_file_path) as docx_zip:
+            for name in docx_zip.namelist():
+                if not name.endswith('.rels'):
+                    continue
+                try:
+                    root = ET.fromstring(docx_zip.read(name))
+                except ET.ParseError:
+                    continue
+                for rel in root.iter():
+                    if not rel.tag.endswith('Relationship'):
+                        continue
+                    if rel.get('TargetMode') != 'External':
+                        continue
+                    rel_type = rel.get('Type', '')
+                    if rel_type.endswith(_ALLOWED_EXTERNAL_RELATION_SUFFIXES):
+                        continue
+                    found.append((name, rel_type, rel.get('Target')))
+    except zipfile.BadZipFile:
+        # 非法的docx（不是zip包），放行给转换环节处理，由转换环节返回读取异常
+        return []
+    return found
+
+
+# 读取图片字节并校验其确实为图片
+# 返回 (图片字节, 文件扩展名)，非图片内容返回 (None, None)
+def read_valid_image(image, max_bytes=MAX_IMAGE_BYTES):
+    with image.open() as image_file:
+        image_data = image_file.read(max_bytes + 1)
+    if len(image_data) > max_bytes:
+        return None, None
+    try:
+        with PILImage.open(io.BytesIO(image_data)) as pil_image:
+            image_format = pil_image.format
+            pil_image.verify()
+    except Exception:
+        return None, None
+    file_suffix = _IMAGE_FORMAT_EXT.get(image_format)
+    if file_suffix is None:
+        return None, None
+    return image_data, file_suffix
 
 # 导入Word文档(.docx)
 class ImportDocxDoc():
@@ -39,26 +107,30 @@ class ImportDocxDoc():
             alt = image.alt_text.replace('\n', '').replace('\r', '')
         else:
             alt = ''
-        with image.open() as image_bytes:
-            file_suffix = image.content_type.split("/")[1]
-            file_time_name = str(time.time())
-            dir_name = upload_generation_dir()  # 获取当月文件夹名称
-            # 图片在媒体文件夹内的路径，形如 /202012/12542542.jpg
-            copy2_filename = dir_name + '/' + file_time_name + '.' + file_suffix
-            # 文件的绝对路径 形如/home/MrDoc/media/202012/12542542.jpg
-            new_media_file_path = settings.MEDIA_ROOT + copy2_filename
-            # 图片文件的相对url路径
-            file_url = '/media' + copy2_filename
+        # 校验内容确实为图片，并以真实图片格式决定文件后缀，避免任意文件被写入媒体目录
+        image_data,file_suffix = read_valid_image(image)
+        if image_data is None:
+            logger.warning(f"导入Word文档：跳过非图片内容 content_type={image.content_type}")
+            return {"src":"","alt_text":alt,"alt":alt}
+        file_time_name = str(time.time())
+        dir_name = upload_generation_dir()  # 获取当月文件夹名称
+        # 图片在媒体文件夹内的路径，形如 /202012/12542542.jpg
+        copy2_filename = os.path.join(dir_name, file_time_name + '.' + file_suffix)
+        # 文件的绝对路径 形如/home/MrDoc/media/202012/12542542.jpg
+        new_media_file_path = os.path.join(settings.MEDIA_ROOT, copy2_filename.lstrip('/'))
+        # 图片文件的相对url路径
+        file_url = '/media' + copy2_filename
 
-            # 图片数据写入数据库
-            Image.objects.create(
-                user=self.create_user,
-                file_path=file_url,
-                file_name=file_time_name + '.' + file_suffix,
-                remark=_('本地上传'),
-            )
-            with open(new_media_file_path, 'wb') as f:
-                f.write(image_bytes.read())
+        # 先落盘，再登记数据库，避免产生无效的图片记录
+        with open(new_media_file_path, 'wb') as f:
+            f.write(image_data)
+        # 图片数据写入数据库
+        Image.objects.create(
+            user=self.create_user,
+            file_path=file_url,
+            file_name=file_time_name + '.' + file_suffix,
+            remark=_('本地上传'),
+        )
         return {"src": file_url,"alt_text":alt,"alt":alt}
 
     # 转换docx文件内容为HTML和Markdown
@@ -66,7 +138,12 @@ class ImportDocxDoc():
         # 读取Word文件
         with open(self.docx_file_path, "rb") as docx_file:
             # 转化Word文档为HTML
-            result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(self.convert_img))
+            result = mammoth.convert_to_html(
+                docx_file,
+                convert_image=mammoth.images.img_element(self.convert_img),
+                # 禁止解析文档中声明的外部（file:/http:等）资源
+                external_file_access=False,
+            )
             # 获取HTML内容
             html = result.value
             if self.editor_mode in [1,2]:
@@ -77,6 +154,13 @@ class ImportDocxDoc():
                 return html
 
     def run(self):
+        # 拒绝包含外部媒体引用的文档，阻断服务端读取任意文件的链路
+        external_media = find_external_media_relationships(self.docx_file_path)
+        if external_media:
+            logger.warning(f"拒绝导入包含外部媒体引用的Word文档：{external_media}")
+            if os.path.exists(self.docx_file_path):
+                os.remove(self.docx_file_path)
+            return {'status':False,'data':_('文档包含外部资源引用，出于安全考虑已拒绝导入')}
         try:
             result = self.convert_docx()
             os.remove(self.docx_file_path)
@@ -161,31 +245,32 @@ class ImportDocxAsProject:
             alt = image.alt_text.replace('\n', '').replace('\r', '')
         else:
             alt = ''
-        with image.open() as image_bytes:
-            file_suffix = image.content_type.split("/")[1]
-            file_time_name = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
-            # 本地存储
-            if self.storage_type == '0':
-                dir_name = upload_generation_dir()  # 获取当月文件夹名称
-                # 图片在媒体文件夹内的路径，形如 /202012/12542542.jpg
-                copy2_filename = dir_name + file_time_name + '.' + file_suffix
-                # 文件的绝对路径 形如/home/MrDoc/media/202012/12542542.jpg
-                new_media_file_path = settings.MEDIA_ROOT + copy2_filename
-                # 图片文件的相对url路径
-                file_url = '/media' + copy2_filename
+        # 非本地存储时不转存图片
+        if self.storage_type != '0':
+            return {"src": ''}
+        # 校验内容确实为图片，并以真实图片格式决定文件后缀，避免任意文件被写入媒体目录
+        image_data,file_suffix = read_valid_image(image)
+        if image_data is None:
+            logger.warning(f"导入Word文档：跳过非图片内容 content_type={image.content_type}")
+            return {"src": "", "alt_text": alt, "alt": alt}
+        file_time_name = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
+        dir_name = upload_generation_dir()  # 获取当月文件夹名称
+        # 图片在媒体文件夹内的路径，形如 /202012/12542542.jpg
+        copy2_filename = os.path.join(dir_name, file_time_name + '.' + file_suffix)
+        # 文件的绝对路径 形如/home/MrDoc/media/202012/12542542.jpg
+        new_media_file_path = os.path.join(settings.MEDIA_ROOT, copy2_filename.lstrip('/'))
+        # 图片文件的相对url路径
+        file_url = '/media' + copy2_filename
 
-                # 图片数据写入数据库
-                Image.objects.create(
-                    user=self.create_user,
-                    file_path=file_url,
-                    file_name=file_time_name + '.' + file_suffix,
-                    remark=_('本地上传'),
-                )
-                with open(new_media_file_path, 'wb') as f:
-                    f.write(image_bytes.read())
-            else:
-                return {"src": ''}
-
+        # 先落盘，再登记数据库，避免产生无效的图片记录
+        with open(new_media_file_path, 'wb') as f:
+            f.write(image_data)
+        Image.objects.create(
+            user=self.create_user,
+            file_path=file_url,
+            file_name=file_time_name + '.' + file_suffix,
+            remark=_('本地上传'),
+        )
         return {"src": file_url, "alt_text": alt, "alt": alt}
 
     @transaction.atomic
@@ -218,11 +303,20 @@ class ImportDocxAsProject:
         return created_docs
 
     def run(self):
+        # 拒绝包含外部媒体引用的文档，阻断服务端读取任意文件的链路
+        external_media = find_external_media_relationships(self.docx_file_path)
+        if external_media:
+            logger.warning(f"拒绝导入包含外部媒体引用的Word文档：{external_media}")
+            if os.path.exists(self.docx_file_path):
+                os.remove(self.docx_file_path)
+            return {'status': False, 'data': _('文档包含外部资源引用，出于安全考虑已拒绝导入')}
         try:
             with open(self.docx_file_path, "rb") as docx_file:
                 result = mammoth.convert_to_html(
                     docx_file,
-                    convert_image=mammoth.images.img_element(self.convert_img)
+                    convert_image=mammoth.images.img_element(self.convert_img),
+                    # 禁止解析文档中声明的外部（file:/http:等）资源
+                    external_file_access=False,
                 )
             html = result.value
 

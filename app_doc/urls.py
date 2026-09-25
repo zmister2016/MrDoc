@@ -1,5 +1,5 @@
 from django.urls import path,re_path,include
-from app_doc import views,views_user,views_search,util_upload_img,views_import
+from app_doc import views,views_user,views_search,util_upload_img,views_import,views_api
 
 urlpatterns = [
     path('',views.project_list,name='pro_list'),# 文档首页
@@ -74,4 +74,6 @@ urlpatterns = [
     path('manage_collect/',views.manage_collect,name="manage_collect"), # 收藏管理
     path('get_version/',views.get_version,name="get_version"), # 获取当前版本
     path('api/usergroups/userlist', views.UserGroupUserList.as_view(), name="api_usergroups_userlist"),  # 用户分组的用户列表接口
+    path('api/move_doc_node/', views_api.DocNodeMoveApi.as_view(), name="api_move_doc_node"),  # 文档节点拖拽排序接口
+    path('api/doc_structure_update/', views_api.DocStructureUpdateApi.as_view(), name="api_doc_structure_update"),  # 修改文档上级和排序值接口
 ]

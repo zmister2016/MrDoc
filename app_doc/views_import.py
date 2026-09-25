@@ -35,6 +35,20 @@ import re
 import os.path
 import json
 import uuid
+import tempfile
+
+# 导入Word文档的临时目录：放在系统临时目录下，避免中间文件被 /media/ 无鉴权对外服务
+WORD_IMPORT_TEMP_DIR = os.path.join(tempfile.gettempdir(), 'mrdoc_word_import_temp')
+
+
+# 将上传的docx保存到MEDIA_ROOT之外的临时目录，返回临时文件绝对路径
+def save_temp_docx(file_obj):
+    os.makedirs(WORD_IMPORT_TEMP_DIR, exist_ok=True)
+    temp_file_path = os.path.join(WORD_IMPORT_TEMP_DIR, uuid.uuid4().hex + '.docx')
+    with open(temp_file_path, 'wb+') as docx_file:
+        for chunk in file_obj:
+            docx_file.write(chunk)
+    return temp_file_path
 
 
 # 导入文集
@@ -105,14 +119,7 @@ class ImportLocalDoc(APIView):
             }
         # Word 文件
         elif file_name.endswith('.docx'):
-            if os.path.exists(os.path.join(settings.MEDIA_ROOT, 'import_temp')) is False:
-                os.mkdir(os.path.join(settings.MEDIA_ROOT, 'import_temp'))
-
-            temp_file_name = str(time.time()) + '.docx'
-            temp_file_path = os.path.join(settings.MEDIA_ROOT, 'import_temp/' + temp_file_name)
-            with open(temp_file_path, 'wb+') as docx_file:
-                for chunk in file:
-                    docx_file.write(chunk)
+            temp_file_path = save_temp_docx(file)
             if os.path.exists(temp_file_path):
                 docx_file_content = ImportDocxDoc(
                     docx_file_path=temp_file_path,
@@ -234,14 +241,7 @@ def import_doc_docx(request):
                 return JsonResponse({'status': False, 'data': _('文件大小超出限制')})
             # 限制文件格式为.zip
             if file_name.endswith('.docx'):
-                if os.path.exists(os.path.join(settings.MEDIA_ROOT, 'import_temp')) is False:
-                    os.mkdir(os.path.join(settings.MEDIA_ROOT, 'import_temp'))
-
-                temp_file_name = str(time.time()) + '.docx'
-                temp_file_path = os.path.join(settings.MEDIA_ROOT, 'import_temp/' + temp_file_name)
-                with open(temp_file_path, 'wb+') as docx_file:
-                    for chunk in import_file:
-                        docx_file.write(chunk)
+                temp_file_path = save_temp_docx(import_file)
                 if os.path.exists(temp_file_path):
                     import_file = ImportDocxDoc(
                         docx_file_path=temp_file_path,
@@ -260,6 +260,7 @@ def import_doc_docx(request):
 
 
 # 导入docx格式Word文档为文集
+@login_required()
 @require_POST
 def import_word_project(request):
     docx = request.FILES.get('docx')
@@ -272,13 +273,7 @@ def import_word_project(request):
         return JsonResponse({'status': False, 'data': '仅支持.docx格式'})
 
     # 保存临时文件
-    tmp_dir = os.path.join(settings.MEDIA_ROOT, 'tmp')
-    os.makedirs(tmp_dir, exist_ok=True)
-
-    tmp_path = os.path.join(tmp_dir, f'{uuid.uuid4()}.docx')
-    with open(tmp_path, 'wb+') as f:
-        for chunk in docx.chunks():
-            f.write(chunk)
+    tmp_path = save_temp_docx(docx)
 
     # 调用导入逻辑
     importer = ImportDocxAsProject(

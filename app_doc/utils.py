@@ -10,6 +10,7 @@ import os
 import io
 import subprocess
 import shutil
+import tempfile
 
 # 编辑模式与图标class映射
 EDITOR_MODE_ICON_MAP = {
@@ -230,6 +231,36 @@ def check_user_project_writer_role(user_id,project_id):
         logger.error(e)
         return False
 
+# 验证用户是否有文档的编辑权限
+def check_user_doc_edit(user_id,doc_id):
+    """
+    判断用户是否可编辑指定文档：
+    文档创建者、文档所属文集创建者、文档所属文集的高级协作成员（role=1）均视为有权限。
+    """
+    if not user_id or not doc_id:
+        return False
+    try:
+        user = User.objects.get(id=user_id)
+        doc = Doc.objects.get(id=doc_id)
+    except Exception as e:
+        logger.error(e)
+        return False
+
+    # 文档创建者
+    if doc.create_user == user:
+        return True
+
+    project = Project.objects.filter(id=doc.top_doc).first()
+    if project is None:
+        return False
+    # 文档所属文集的创建者
+    if project.create_user == user:
+        return True
+
+    # 文档所属文集的高级协作成员
+    colla = ProjectCollaborator.objects.filter(project=project,user=user,role=1)
+    return colla.exists()
+
 # 验证用户是否有文集的访问权限
 def check_user_project_view_role(user_id,project_id):
     if user_id == '' or project_id == '':
@@ -296,6 +327,9 @@ _wmf_extensions = {
     "image/x-emf": ".emf",
 }
 
+# Word导入过程中产生的中间文件目录：放在系统临时目录下，避免中间文件被 /media/ 无鉴权对外服务
+DOCX_IMPORT_TMP_DIR = os.path.join(tempfile.gettempdir(), 'mrdoc_import_docx_imgs')
+
 
 def libreoffice_wmf_conversion(image, post_process=None):
     if post_process is None:
@@ -306,9 +340,8 @@ def libreoffice_wmf_conversion(image, post_process=None):
         return image
     else:
         # 定义临时文件夹
-        temporary_directory = os.path.join(settings.MEDIA_ROOT,'import_docx_imgs')
-        if os.path.exists(temporary_directory) is False:
-            os.mkdir(temporary_directory)
+        temporary_directory = DOCX_IMPORT_TMP_DIR
+        os.makedirs(temporary_directory, exist_ok=True)
         try:
             timestamp = str(time.time())
             # 将 docx 内嵌图片文件存为wmf、emf等文件
@@ -354,7 +387,7 @@ def image_trim(old_image):
 
     # 获取时间戳作为文件名的一部分
     timestamp = str(time.time())
-    temporary_directory = os.path.join(settings.MEDIA_ROOT, 'import_docx_imgs')
+    temporary_directory = DOCX_IMPORT_TMP_DIR
     output_path = os.path.join(temporary_directory, f"trim_image_{timestamp}.png")
 
     def open_image():

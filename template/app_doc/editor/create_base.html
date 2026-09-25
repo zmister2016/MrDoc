@@ -32,6 +32,10 @@
         <link href="{% static 'mrdoc/mrdoc-editor.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
         <link href="{% static 'prismjs/prism.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+        <!-- jsTree 文集目录树 -->
+        <link href="{% static 'jstree/dist/themes/default/custom.style.css' %}?version={{mrdoc_version}}" rel="stylesheet">
+        <!-- 图标字体 -->
+        <link href="{% static 'iconFont/iconfont.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         <style>
             i.iconfont{
                 padding-right: 6px;
@@ -213,6 +217,7 @@
         </div>
 
         <script src="{% static 'jquery/3.5.0/jquery.min.js' %}"></script>
+        <script src="{% static 'jstree/dist/jstree.min.js' %}?version={{mrdoc_version}}"></script>
         <script src="{% static 'layui/layui.js' %}?version={{mrdoc_version}}"></script>
         <script>
             var tree = layui.tree;
@@ -223,6 +228,7 @@
             var md_changed = false; //初始化一个变量，用于判断编辑器是否修改
             var screen_width = window.matchMedia('(max-width: 768px)'); // 获取屏幕宽度
             var editor_mode = {{ editor_mode }};
+            var current_doc_id = '{{doc.id}}'; // 当前文档ID，新建文档页面为空
         </script>
         <!-- 标签输入 -->
         <script src="{% static '/tagsInput/tagsinput.js' %}?version={{mrdoc_version}}" type="text/javascript" charset="utf-8"></script>
@@ -251,6 +257,7 @@
         <script>
             $.ajaxSetup({
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+                headers: {"X-CSRFToken": '{{ csrf_token }}'},
             });
     
             //未保存离开提示
@@ -265,6 +272,251 @@
         <script src="{% static 'mrdoc/mrdoc.editor.js' %}?version={{mrdoc_version}}"></script>
         <script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
         <script src="{% static 'prismjs/prism.js' %}?version={{mrdoc_version}}"></script>
+        <!-- jsTree文集目录相关功能 -->
+        <script>
+            // 获取URL查询参数
+            function getQueryVariable(variable) {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] === variable) {
+                        return decodeURIComponent(pair[1]);
+                    }
+                }
+                return "";
+            };
+
+            // jsTree文集目录树初始化
+            function initJsTree(r) {
+                $("#doc-jstree").jstree({
+                    "core" : {
+                        "data" : r.data,
+                        "check_callback" : true
+                    },
+                    "plugins" : [ "contextmenu","dnd","wholerow"],
+                    "contextmenu" : {
+                        "items" : function(node) {
+                            return {
+                                view: {
+                                    "label"	: "查看文档",
+                                    "icon"	: "layui-icon layui-icon-read",
+                                    "separator_after":true,
+                                    "action" : function (obj) {
+                                        window.open('/doc/'+node.id+'/', '_blank');
+                                    }
+                                },
+                                create: {
+                                    "label"	: "新建下级文档",
+                                    "icon"	: "layui-icon layui-icon-add-1",
+                                    "separator_after":false,
+                                    "action" : function (obj) {
+                                        let url = `/create_doc/?pid=${pro_id}&parent_id=${node.id}`;
+                                        window.open(url,'_blank');
+                                    }
+                                },
+                                parent: {
+                                    "label"	: "设为上级文档",
+                                    "icon"	: "layui-icon layui-icon-util",
+                                    "separator_after":true,
+                                    "action" : function (obj) {
+                                        selectJstreeParentDoc(node.id,node.text)
+                                    }
+                                },
+                                modify: {
+                                    "label"	: "修改文档",
+                                    "icon"	: "layui-icon layui-icon-edit",
+                                    "separator_after":false,
+                                    "action": function (obj) {
+                                        window.open('/modify_doc/' + node.id + '/','_blank');
+                                    }
+                                },
+                            }
+                        }
+                    },
+                })
+            };
+
+            // jsTree 加载完成事件
+            $('#doc-jstree').on('ready.jstree', function (e, data) {
+                if(current_doc_id){ // 修改文档页面
+                    activeJsTreeCurrentNode();
+                }else{ // 新增文档页面
+                    setJsTreeDefaultParent();
+                }
+            });
+
+            // jsTree节点拖放事件
+            $('#doc-jstree').on('move_node.jstree', function (e, data) {
+                const tree = $('#doc-jstree').jstree(true);
+
+                const nodeId = data.node.id; // 节点ID
+                const parentId = data.parent === '#' ? 0 : data.parent; // 父节点ID
+                const position = data.position; // 新位置索引号
+
+                const siblings = tree.get_node(data.parent).children; // 兄弟节点ID
+
+                const prevId = position > 0 ? siblings[position - 1] : null;
+                const nextId = position < siblings.length - 1 ? siblings[position + 1] : null;
+
+                layer.load(1);
+                $.ajax({
+                    url: "{% url 'api_move_doc_node' %}",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        id: nodeId,
+                        pro_id: pro_id,
+                        parent_id: parentId,
+                        prev_id: prevId,
+                        next_id: nextId
+                    }),
+                    success(r) {
+                        layer.closeAll('loading')
+                        if(r.code != 0){
+                            layer.msg(r.data);
+                            tree.refresh(); // 防止前后端不一致
+                        }
+                    },
+                    error() {
+                        layer.closeAll('loading')
+                        layer.msg('文档排序更新失败');
+                        tree.refresh(); // 防止前后端不一致
+                    }
+                });
+
+            });
+
+            // jstree 设置默认上级文档
+            setJsTreeDefaultParent = function () {
+                var parent_id = getQueryVariable("parent_id");
+                if (parent_id && parent_id !== "") {
+                    // 赋值隐藏字段
+                    $('#parent-doc').val(parent_id);
+
+                    var tree = $('#doc-jstree').jstree(true);
+                    if (!tree) {
+                        console.warn("jstree 实例未找到");
+                        return;
+                    }
+                    var parent_node = tree.get_node(parent_id); // 获取parent_id的节点
+                    if (!parent_node) {
+                        return;
+                    }
+                    var parents = getParentsChain(tree, parent_id); // 所有上级
+                    openParentsChain(tree, parents, function () {
+                        tree.open_node(parent_id); // 展开下级
+                        tree.select_node(parent_id); // 默认选中
+                        var elem = document.getElementById(parent_id);
+                        if (elem) {
+                            elem.scrollIntoView({
+                                block: "center",
+                                behavior: "smooth"
+                            });
+                        }
+                        layer.msg("已设置上级文档为：" + parent_node.text, { icon: 1 });
+                    });
+
+                }
+            };
+
+            // jsTree 高亮当前文档 - 修改文档时调用
+            function activeJsTreeCurrentNode() {
+                if (current_doc_id && current_doc_id !== "") {
+                    // 赋值隐藏字段
+                    $('#parent-doc').val(doc_parent_id);
+
+                    var tree = $('#doc-jstree').jstree(true);
+                    if (!tree) {
+                        console.warn("jstree 实例未找到");
+                        return;
+                    }
+                    var parents = getParentsChain(tree, doc_parent_id); // 所有上级
+                    openParentsChain(tree, parents, function () {
+                        tree.open_node(current_doc_id); // 展开下级
+                        tree.select_node(current_doc_id); // 默认选中
+                        var elem = document.getElementById(current_doc_id);
+                        if (elem) {
+                            elem.scrollIntoView({
+                                block: "center",
+                                behavior: "smooth"
+                            });
+                        }
+                    });
+
+                }
+            };
+
+            // jsTree 获取所有父级节点
+            function getParentsChain(tree, nodeId) {
+                var parents = [];
+                var current = nodeId;
+
+                while (true) {
+                    var parent = tree.get_parent(current);
+                    if (!parent || parent === '#') break;
+                    parents.unshift(parent); // 从根到叶
+                    current = parent;
+                }
+
+                return parents;
+            };
+
+            // jsTree展开所有父级
+            function openParentsChain(tree, parents, done) {
+                if (!parents.length) {
+                    done && done();
+                    return;
+                }
+
+                var id = parents.shift();
+                tree.open_node(id, function () {
+                    openParentsChain(tree, parents, done);
+                });
+            };
+
+            // 选择上级文档 - jstree
+            function selectJstreeParentDoc(doc_id,doc_name){
+                if(!current_doc_id){ // 没有当前文档ID说明是新建文档，直接设置上级文档表单
+                    $('#parent-doc').val(doc_id);
+                    layer.msg("设置上级文档为：" + doc_name,{icon:1})
+                    return
+                }
+                if(doc_id == current_doc_id){
+                    layer.msg("不能选择自身作为上级",{icon:2})
+                    return
+                }
+                var tree = $('#doc-jstree').jstree(true);
+                // 判断所选文档是否为当前文档的下级文档
+                if(tree){
+                    var children_list = tree.get_node(current_doc_id).children_d || [];
+                    if(children_list.indexOf(doc_id.toString()) !== -1){
+                        layer.msg("不能设置文档的下级作为上级",{icon:2})
+                        return
+                    }
+                }
+                $('#parent-doc').val(doc_id);// 设置上级文档
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'api_doc_structure_update' %}",
+                    data: {id:current_doc_id,parent_id:doc_id,pro_id:pro_id},
+                    dataType: "json",
+                    success: function(data){
+                        if(data.code == 0){
+                            layer.msg("修改上级文档为：" + doc_name,{icon:1})
+                            if(tree){
+                                tree.move_node(current_doc_id,doc_id);
+                            }
+                        }else{
+                            layer.msg(data.data,{icon:2})
+                        }
+                    },
+                    error: function () {
+                        layer.msg("修改上级文档请求异常",{icon:2})
+                    }
+                });
+            };
+        </script>
         {% block custom_script %}
         {% endblock %}
     </body>
