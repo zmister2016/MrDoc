@@ -43,11 +43,7 @@ Capture → Store → Organize → Use with AI → Publish → Keep Accumulating
 
 You can simply think of MrDoc as a "self-hosted Yuque" and an "online-editable GitBook".
 
-- 🌐Web:[instructions](https://mrdoc.io/p/deploy_guide/)；
-- 💻Browser Extensions:Supported Chromium Browser,Firefox Browser [Download](https://gitee.com/zmister/mrdoc-webclipper)/[Chrome](https://chromewebstore.google.com/detail/mrdoc-%E9%80%9F%E8%AE%B0/aenkcglddghpaemlhefmhkdnhfceflcj)/[Edge](https://microsoftedge.microsoft.com/addons/detail/dihimgafbjljdfanobikhnolpmjjhpic)/[Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/mrdoc-webclipper/)
-- 🗔Desktop: Supported Windows,macOS,Linux [Download](https://gitee.com/zmister/mrdoc-desktop-release/releases/)
-- 📱Mobile APP:supported Android [Download](https://gitee.com/zmister/mrdoc-app-release)
-- Obsidian Plugin：[Instructions](https://mrdoc.pro/doc/45650/)
+Supports Web, browser extensions, desktop client, mobile client and Obsidian sync plugin, and can be used for personal knowledge bases, team knowledge bases, product documentation and other scenarios.
 
 MrDoc currently provides the following clients and extensions:
 
@@ -144,8 +140,8 @@ See the deployment documentation for details: https://mrdoc.pro/doc/1362/
 - [Official Docker Image](https://hub.docker.com/r/zmister/mrdoc)
 - [Docker Compose One-Click Deployment](https://mrdoc.pro/doc/45758/)
 - [Docker Image By jonnyan404](https://registry.hub.docker.com/r/jonnyan404/mrdoc-nginx)
-- [Linux Deployment Script](https://gitee.com/jonnyan404/oh-my-mrdoc)
-- [Windows Deployment Panel By 小肥羊](https://gitee.com/debj031634/win-django)
+- [~~Linux Deployment Script By jonnyan404~~](https://gitee.com/jonnyan404/oh-my-mrdoc)
+- [Windows Deployment Panel](https://mrdoc.pro/d/windows-deploy-panel/)
 - [VirtualBox/VmWare Image By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
 
 ## Document Import Tools
