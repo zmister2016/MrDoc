@@ -51,7 +51,7 @@ else:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug',fallback=False)
 
-VERSIONS = '1.1.0'
+VERSIONS = '1.1.1'
 
 ALLOWED_HOSTS = ['*']
 
