@@ -45,10 +45,10 @@ case "$SERVER_TYPE" in
   gunicorn)
     if [ -f /app/MrDoc/config/gunicorn_custom.conf.py ]; then
       warn "使用自定义 Gunicorn 配置: config/gunicorn_custom.conf.py"
-      gunicorn -c /app/MrDoc/config/gunicorn_custom.conf.py MrDocPro.wsgi:application
+      gunicorn -c /app/MrDoc/config/gunicorn_custom.conf.py MrDoc.wsgi:application
     else
       info "使用默认 Gunicorn 配置: config/gunicorn.conf.py"
-      gunicorn -c /app/MrDoc/config/gunicorn.conf.py MrDocPro.wsgi:application
+      gunicorn -c /app/MrDoc/config/gunicorn.conf.py MrDoc.wsgi:application
     fi
     ;;
   *)
