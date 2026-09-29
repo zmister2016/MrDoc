@@ -1,4 +1,4 @@
-<h1 align="center">MrDoc - Writing documents, Gathering ideas</h1>
+<h1 align="center">MrDoc - Your Self-Hosted Document & Knowledge Base</h1>
 
 <p align="center">A self-hosted notes, documents and knowledge management solution for individuals and small teams</p>
 
@@ -21,11 +21,11 @@
 
 <p align="center">
 <a href="https://mrdoc.io">Home</a> | 
-<a href="https://mrdoc.pro">Official Site</a> | 
-<a href="http://mrdoc.zmister.com/">Demo Site</a> |
-<a href="https://mrdoc.pro/p/deploy/">Deployment Guide</a> | 
-<a href="https://mrdoc.pro/p/user-guide/">User Manual</a> |
-<a href="https://mrdoc.pro/p/example/">Document Examples</a>
+<a href="https://mrdoc.io">Official Site</a> | 
+<a href="https://demo.mrdoc.io/">OSS Demo Site</a> |
+<a href="https://mrdoc.io/p/deploy/">Deployment Guide</a> | 
+<a href="https://mrdoc.io/p/user-guide/">User Manual</a> |
+<a href="https://mrdoc.io/p/example/">Document Examples</a>
 </p>
 
 <p align="center">Source code：<a href="https://gitee.com/zmister/MrDoc">Gitee</a> | 
@@ -105,9 +105,9 @@ For the complete update record, see: [CHANGES.md](./CHANGES.md)
 
 ## Example Site
 
-Open Source Edition: [http://demo.mrdoc.pro](http://demo.mrdoc.pro)　Professional Edition: [https://mrdoc.pro](https://mrdoc.pro)
+Open Source Edition: [https://demo.mrdoc.io](http://demo.mrdoc.io)　Professional Edition: [https://pro.mrdoc.io](https://pro.mrdoc.io)
 
-Comparison between the Open Source Edition and the Professional Edition - [https://mrdoc.pro/doc/3441/](https://mrdoc.pro/doc/3441/)
+Comparison between the Open Source Edition and the Professional Edition - [https://mrdoc.io/doc/362/](https://mrdoc.io/doc/362/)
 
 username: test1　password: 123456
 
