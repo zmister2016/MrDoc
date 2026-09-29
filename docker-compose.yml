@@ -1,6 +1,7 @@
 version: '3'
 services:
   mrdoc:
+    container_name: mrdoc
     image: zmister/mrdoc:v9.7  # 镜像名称和标签
     volumes:
       - ${PWD}:/app/MrDoc  # 挂载代码目录
