@@ -300,7 +300,7 @@ class ReportEPUB():
         for iframe in iframe_tag:
             iframe_src = iframe.get('src')
             iframe.name = 'p'
-            iframe.string = "本格式不支持iframe视频显示，视频地址为：{}".format(str(iframe_src))
+            iframe.string = _("本格式不支持iframe视频显示，视频地址为：{}").format(str(iframe_src))
 
         # 替换HTML文本中静态文件的相对链接为绝对链接
         for src in src_tag:
@@ -452,23 +452,26 @@ class ReportEPUB():
         title_str = '''<?xml version="1.0" encoding="UTF-8"?>
             <html xmlns="http://www.w3.org/1999/xhtml">
               <head>
-                <title>书籍标题</title>
+                <title>{book_title}</title>
                 <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
                 <link href="../Styles/style.css" rel="stylesheet" type="text/css"/>
               </head>
               <body class="bookname">
                   <div class="main">
                     <h1 class="title"">{title}</h1>
-                    <p class="author"><b>{author} 著</b></p><br>
+                    <p class="author"><b>{author} {author_suffix}</b></p><br>
                     <p class="author">{create_time}</p>
-                    <p class="book-src">本书籍由<a href='http://mrdoc.zmister.com'>MrDoc(mrdoc.zmister.com)</a>生成</p>
+                    <p class="book-src">{book_source}</p>
                   </div>
             </body>
             </html>
         '''.format(
             title=html.escape(self.project.name),
             author=html.escape(str(self.project.create_user)),
-            create_time = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日')
+            book_title=_("书籍标题"),
+            author_suffix=_("著"),
+            book_source=_("本书籍由<a href='http://mrdoc.zmister.com'>MrDoc(mrdoc.zmister.com)</a>生成"),
+            create_time = time.strftime('%Y{y}%m{m}%d{d}').format(y=_('年'),m=_('月'),d=_('日'))
         )
         with open(self.base_path+'/OEBPS/Text/book_title.xhtml','a+',encoding='utf-8') as file:
             file.write(title_str)
@@ -476,18 +479,22 @@ class ReportEPUB():
         desc_str = '''<?xml version="1.0" encoding="UTF-8"?>
             <html xmlns="http://www.w3.org/1999/xhtml">
               <head>
-                <title>简介</title>
+                <title>{book_intro_title}</title>
                 <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
                 <link href="../Styles/style.css" rel="stylesheet" type="text/css"/>
               </head>
               <body class="bookdesc">
                   <div class="main">
-                    <p class="title">书籍简介</p>
+                    <p class="title">{book_intro_heading}</p>
                     <p class="subtitle">{desc}</p>
                   </div>
             </body>
             </html>
-        '''.format(desc=html.escape(self.project.intro or ''))
+        '''.format(
+            desc=html.escape(self.project.intro or ''),
+            book_intro_title=_("简介"),
+            book_intro_heading=_("书籍简介"),
+        )
         with open(self.base_path+'/OEBPS/Text/book_desc.xhtml','a+',encoding='utf-8') as file:
             file.write(desc_str)
 
@@ -514,7 +521,7 @@ class ReportEPUB():
         xml_str = '''<?xml version="1.0" encoding="utf-8"?>
             <!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh">
             <head>
-              <title>封面</title>
+              <title>''' + _("封面") + '''</title>
             <style type="text/css">
             svg {padding: 0pt; margin:0pt}
             body { text-align: center; padding:0pt; margin: 0pt; }
@@ -559,18 +566,22 @@ class ReportEPUB():
             <html lang="zh-CN">
             <head>
                 <meta charset="utf-8">
-                <title>目录</title>
+                <title>%(toc_title)s</title>
                 <style>
                     body{margin: 0px;padding: 0px;}h1{text-align: center;padding: 0px;margin: 0px;}ul,li{list-style: none;}ul{padding-left:0px;}li>ul{padding-left: 2em;}
                     a{text-decoration: none;color: #4183c4;text-decoration: none;font-size: 16px;line-height: 28px;}
                 </style>
             </head>
             <body>
-                <h1>目&nbsp;&nbsp;&nbsp;&nbsp;录</h1>
-                %s
+                <h1>%(toc_heading)s</h1>
+                %(summary)s
             </body>
             </html>
-        ''' % (self.toc_summary_str)
+        ''' % {
+            "toc_title": _("目录"),
+            "toc_heading": _("目&nbsp;&nbsp;&nbsp;&nbsp;录"),
+            "summary": self.toc_summary_str,
+        }
 
         with open(self.base_path+'/OEBPS/Text/toc_summary.xhtml','a+',encoding='utf-8') as file:
             file.write(summary)
@@ -584,7 +595,7 @@ class ReportEPUB():
                 <dc:language>zh</dc:language>
                 <dc:creator>{creator}</dc:creator>
                 <dc:identifier id="bookid">urn:uuid:12345</dc:identifier>
-                <dc:publisher>MrDoc制作</dc:publisher>
+                <dc:publisher>{publisher}</dc:publisher>
                 <dc:date opf:event="publication">{create_time}</dc:date>
                 <dc:description>{desc}</dc:description>
                 <meta name="cover" content="cover_img" />
@@ -601,8 +612,8 @@ class ReportEPUB():
                   {spine}
               </spine>
               <guide>
-                <reference type="toc" title="目录" href="Text/toc_summary.xhtml" />
-                <reference href="Text/book_cover.xhtml" type="cover" title="封面"/>
+                <reference type="toc" title="{toc_title}" href="Text/toc_summary.xhtml" />
+                <reference href="Text/book_cover.xhtml" type="cover" title="{cover_title}"/>
               </guide>
             </package>
             '''
@@ -616,6 +627,9 @@ class ReportEPUB():
                     desc=html.escape(self.project.intro or ''),
                     manifest=self.manifest,
                     spine = self.spine,
+                    publisher=_("MrDoc制作"),
+                    toc_title=_("目录"),
+                    cover_title=_("封面"),
                 )
             )
 
@@ -705,12 +719,12 @@ class ReportPDF():
             </head>
             <body>
                 <div style="position: fixed;font-size:8px; bottom: 5px;padding: 5px; right: 10px; color: white;background: black; z-index: 10000">
-                    本文件由MrDoc觅思文档生成
+                    {generated_by}
                 </div>
                 <div style="text-align:center;margin-top:400px;">
                     <h1>{project_name}</h1>
-                    <p>作者：{author}</p>
-                    <p>日期：{create_time}</p>
+                    <p>{author_label}{author}</p>
+                    <p>{date_label}{create_time}</p>
                 </div>\n
                 <div class="markdown-body" id="content" style="padding:0px;font-family:宋体;">
                     <textarea style="display: none;">{pre_content}</textarea>
@@ -793,7 +807,10 @@ class ReportPDF():
                     pre_content=html.escape(self.content_str),
                     project_name=html.escape(project.name),
                     author=html.escape(project.create_user.first_name if project.create_user.first_name != '' else project.create_user.username),
-                    create_time=str(datetime.date.today())
+                    create_time=str(datetime.date.today()),
+                    generated_by=_("本文件由MrDoc觅思文档生成"),
+                    author_label=_("作者："),
+                    date_label=_("日期："),
                 )
             )
 

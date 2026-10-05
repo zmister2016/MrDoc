@@ -8,7 +8,7 @@
     <div class="layui-card-body">
         <div class="layui-card-header" style="margin-bottom: 10px;">
             <span style="font-size:18px;">{% trans "导入本地文档到文集" %}</span>
-            <span>（Markdown文集、Word批量、印象笔记、Joplin等导入请使用<a href="https://gitee.com/zmister/mrdoc-import-toolbox" target="_blank">「觅思文档导入工具箱」</a>）</span>
+            <span>（{% trans "Markdown文集、Word批量、印象笔记、Joplin等导入请使用" %}<a href="https://gitee.com/zmister/mrdoc-import-toolbox" target="_blank">「{% trans "觅思文档导入工具箱" %}」</a>）</span>
         </div>
         <div>
             <a style="width: 142px;cursor: pointer;display: inline-block;" href="{% url 'import_doc_to_project' %}">
@@ -16,8 +16,8 @@
                     <img src="{% static 'icon_img/file-doc.svg' %}">
                 </div>
                 <div style="text-align: center;">
-                    <div style="color: #262626;font-size:14px;">本地文本文档</div>
-                    <div style="color: #8c8c8c;font-size:12px;">支持Markdown、TXT、Word等格式文件</div>
+                    <div style="color: #262626;font-size:14px;">{% trans "本地文本文档" %}</div>
+                    <div style="color: #8c8c8c;font-size:12px;">{% trans "支持Markdown、TXT、Word等格式文件" %}</div>
                 </div>
             </a>
             <a style="width: 142px;cursor: pointer;display: inline-block;" href="javascript:void(0);" id="importWordProject">
@@ -25,8 +25,8 @@
                     <img src="{% static 'icon_img/office-word.svg' %}" style="width: 70px;height: 70px;">
                 </div>
                 <div style="text-align: center;">
-                    <div style="color: #262626;font-size:14px;">Word文集</div>
-                    <div style="color: #8c8c8c;font-size:12px;">将Word文档导入为文集并按层级标题拆分为文档</div>
+                    <div style="color: #262626;font-size:14px;">{% trans "Word文集" %}</div>
+                    <div style="color: #8c8c8c;font-size:12px;">{% trans "将Word文档导入为文集并按层级标题拆分为文档" %}</div>
                 </div>
             </a>
         </div>
@@ -47,14 +47,14 @@
 $('#importWordProject').on('click', function () {
     layer.open({
         type: 1,
-        title: '导入 Word 文集',
+        title: '{% trans "导入 Word 文集" %}',
         area: ['450px', '350px'],
         content: `
             <div style="padding:20px;">
-                <div style="padding-bottom:10px;">支持设置了规范标题样式的docx格式Word文档，最多拆分6层层级文档；如果文档内未识别出规范样式的标题，将导入为单篇文档。</div>
+                <div style="padding-bottom:10px;">{% trans "支持设置了规范标题样式的docx格式Word文档，最多拆分6层层级文档；如果文档内未识别出规范样式的标题，将导入为单篇文档。" %}</div>
                 <form class="layui-form" id="importWordProjectForm">
                     <div class="layui-form-item">
-                        <label class="layui-form-label">Word文件</label>
+                        <label class="layui-form-label">{% trans "Word文件" %}</label>
                         <div class="layui-input-block">
                             <input type="file" name="docx"
                                    accept=".docx"
@@ -64,11 +64,11 @@ $('#importWordProject').on('click', function () {
                     </div>
 
                     <div class="layui-form-item">
-                        <label class="layui-form-label">编辑器</label>
+                        <label class="layui-form-label">{% trans "编辑器" %}</label>
                         <div class="layui-input-block">
                             <select name="editor_mode">
                                 <option value="1">Markdown（Editor.md）</option>
-                                <option value="3">富文本</option>
+                                <option value="3">{% trans "富文本" %}</option>
                             </select>
                         </div>
                     </div>
@@ -79,7 +79,7 @@ $('#importWordProject').on('click', function () {
             var form = layui.form;
             form.render();
         },
-        btn: ['开始导入', '取消'],
+        btn: ['{% trans "开始导入" %}', '{% trans "取消" %}'],
         yes: function (index) {
             submitImportWordProject(index);
         }
@@ -103,9 +103,9 @@ function submitImportWordProject(layerIndex) {
             layer.closeAll('loading');
             if (res.status) {
                 layer.open({
-                    title: '导入成功',
-                    content: '文集导入成功',
-                    btn:['好的','查看文集'],
+                    title: '{% trans "导入成功" %}',
+                    content: '{% trans "文集导入成功" %}',
+                    btn:['{% trans "好的" %}','{% trans "查看文集" %}'],
                     btn1: function (index, layero) {
                         layer.closeAll();
                         location.reload();
@@ -117,12 +117,12 @@ function submitImportWordProject(layerIndex) {
                     }
                 });
             } else {
-                layer.msg(res.data || '导入失败', {icon: 2});
+                layer.msg(res.data || '{% trans "导入失败" %}', {icon: 2});
             }
         },
         error: function () {
             layer.closeAll('loading');
-            layer.msg('服务器异常', {icon: 2});
+            layer.msg('{% trans "服务器异常" %}', {icon: 2});
         }
     });
 }

@@ -69,32 +69,32 @@
 <div id="show-share-info-div" style="margin:10px;display: none;">
     <div class="layui-form" lay-filter="show-share-form">
         <div class="layui-form-item">
-            <label class="layui-form-label">文档名称</label>
+            <label class="layui-form-label">{% trans "文档名称" %}</label>
             <div class="layui-input-block">
               <input type="text" name="doc_name" readonly  lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item" style="display: none;">
-            <label class="layui-form-label">分享类型</label>
+            <label class="layui-form-label">{% trans "分享类型" %}</label>
             <div class="layui-input-block">
               <input type="text" name="share_type" readonly lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">分享链接</label>
+            <label class="layui-form-label">{% trans "分享链接" %}</label>
             <div class="layui-input-block">
               <input type="text" name="share_url" readonly lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item" id="share-code-input">
-            <label class="layui-form-label">分享码</label>
+            <label class="layui-form-label">{% trans "分享码" %}</label>
             <div class="layui-input-block">
               <input type="text" name="share_pwd" readonly lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button class="layui-btn layui-btn-sm layui-btn-normal" id="copyShareInfo">复制链接</button>
+                <button class="layui-btn layui-btn-sm layui-btn-normal" id="copyShareInfo">{% trans "复制链接" %}</button>
               </div>
         </div>
     </div>
@@ -115,14 +115,14 @@
         let cols = [
                 [
                     {type: 'checkbox'},
-                    {title: '文档名称',field: 'doc_name',align: 'left'},
-                    {title: '分享类型',field: 'share_type',align: 'left',width: 100,templet:"#share-type"},
-                    {title: '分享码',field: 'share_value',align: 'left',width: 100},
-                    {title: '有效期',field: 'expire_date',align: 'left',templet:"#expire-date"},
-                    {title: '作者',field: 'create_user',align: 'left',},
-                    {title: '分享时间',field: 'create_time',align: 'left',width: 150,templet:"#share-create-time"},
-                    {title: '状态',field: 'share_status',align: 'left',width: 100,templet:"#share-enable"},
-                    {title: '操作',toolbar: '#share-doc-bar',align: 'left',minWidth:200}
+                    {title: '{% trans "文档名称" %}',field: 'doc_name',align: 'left'},
+                    {title: '{% trans "分享类型" %}',field: 'share_type',align: 'left',width: 100,templet:"#share-type"},
+                    {title: '{% trans "分享码" %}',field: 'share_value',align: 'left',width: 100},
+                    {title: '{% trans "有效期" %}',field: 'expire_date',align: 'left',templet:"#expire-date"},
+                    {title: '{% trans "作者" %}',field: 'create_user',align: 'left',},
+                    {title: '{% trans "分享时间" %}',field: 'create_time',align: 'left',width: 150,templet:"#share-create-time"},
+                    {title: '{% trans "状态" %}',field: 'share_status',align: 'left',width: 100,templet:"#share-enable"},
+                    {title: '{% trans "操作" %}',toolbar: '#share-doc-bar',align: 'left',minWidth:200}
                 ]
             ]
         // 渲染表格
@@ -153,9 +153,9 @@
             }
             $.post("{% url 'manage_doc_share' %}",data,function(r){
                 if(r.status){
-                    layer.msg("设置成功")
+                    layer.msg("{% trans '设置成功' %}")
                 }else{
-                    layer.msg("设置失败")
+                    layer.msg("{% trans '设置失败' %}")
                 }
             })
         })
@@ -190,7 +190,7 @@
             layer.open({
                 type:1,
                 area:["500px"],
-                title:"查看文档分享信息",
+                title:"{% trans '查看文档分享信息' %}",
                 content:$("#show-share-info-div"),
             })
         };
@@ -201,18 +201,18 @@
                 if(share_val['share_type'] == 0){
                     return share_val['share_url']
                 }else{
-                    return '链接：' + share_val['share_url'] + " 分享码：" + share_val['share_pwd']
+                    return '{% trans "链接：" %}' + share_val['share_url'] + " {% trans '分享码：' %}" + share_val['share_pwd']
                 }
             }
         });
         copy_share_link.on('success', function(e) {
-            layer.msg("复制成功！")
+            layer.msg("{% trans '复制成功！' %}")
         });
         // 删除文档分享
         window.remove = function(obj) {
-            layer.confirm('确定要删除该分享？', {
+            layer.confirm('{% trans "确定要删除该分享？" %}', {
                 icon: 3,
-                title: '提示'
+                title: '{% trans "提示" %}'
             }, function(index) {
                 layer.close(index);
                 let loading = layer.load();
@@ -224,7 +224,7 @@
                     success: function(r) {
                         layer.close(loading);
                         if (r.status) {
-                            layer.msg("删除成功", {
+                            layer.msg("{% trans '删除成功' %}", {
                                 icon: 1,
                                 time: 1000
                             }, function() {
@@ -249,7 +249,7 @@
         window.batchRemove = function(obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
-                layer.msg("未选中数据", {
+                layer.msg("{% trans '未选中数据' %}", {
                     icon: 3,
                     time: 1000
                 });
@@ -261,9 +261,9 @@
             }
             tokens = tokens.substr(0, tokens.length - 1);
             console.log(tokens)
-            layer.confirm('确定要删除这些分享？', {
+            layer.confirm('{% trans "确定要删除这些分享？" %}', {
                 icon: 3,
-                title: '提示'
+                title: '{% trans "提示" %}'
             }, function(index) {
                 layer.close(index);
                 let loading = layer.load();
@@ -275,7 +275,7 @@
                     success: function(r) {
                         layer.close(loading);
                         if (r.status) {
-                            layer.msg("删除成功", {
+                            layer.msg("{% trans '删除成功' %}", {
                                 icon: 1,
                                 time: 1000
                             }, function() {

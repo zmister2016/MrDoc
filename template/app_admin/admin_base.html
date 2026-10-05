@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html>
+<html lang="{{ LANGUAGE_CODE }}">
 	<head>
 		<meta charset="utf-8">
 		<title>{% block title %}{% endblock %}</title>
@@ -12,6 +12,7 @@
         <link href="{% static 'mrdoc/mrdoc-admin.css' %}?version={{mrdoc_version}}" rel="stylesheet">
         {% block custom_element %}
         {% endblock %}
+		<script src="{% url 'javascript-catalog' %}"></script>
 	</head>
 	<body class="pear-container">
 		{% if debug %}
@@ -28,8 +29,8 @@
 			<div class="layui-card-body">
 				<div class="layui-card-header">
 					<span style="color:red;font-weight:700;"><i class="layui-icon layui-icon-tips"></i> {% trans "MrDoc 已发布新版本，点击查看" %}
-						<a href="https://gitee.com/zmister/MrDoc/blob/master/CHANGES.md" target="_blank" style="text-decoration:underline;">《更新内容》</a>，
-						点击查看 <a href="https://mrdoc.pro/doc/1395/" target="_blank" style="text-decoration:underline;">《更新指南》</a>
+						<a href="https://gitee.com/zmister/MrDoc/blob/master/CHANGES.md" target="_blank" style="text-decoration:underline;">{% trans "《更新内容》" %}</a>{% trans "，" %}
+						{% trans "点击查看" %} <a href="https://mrdoc.pro/doc/1395/" target="_blank" style="text-decoration:underline;">{% trans "《更新指南》" %}</a>
 					</span>
 				</div>
 			</div>
@@ -60,14 +61,14 @@
 								layer.open({
 									title:"{% trans '版本更新' %}",
 									content:"{% trans '觅思文档已发布新版本，请及时更新' %}",
-									btn:['知道了','了解如何更新'],
+									btn:['{% trans "知道了" %}','{% trans "了解如何更新" %}'],
 									btn2:function(){
 										window.open("https://mrdoc.pro/doc/1395/");
 									},
 								})
 							}else{
 								if(silence == false){
-									layer.msg("当前已是最新版本！")
+									layer.msg("{% trans '当前已是最新版本！' %}")
 								}
 							}
 						}      

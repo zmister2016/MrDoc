@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <title>{% trans "无权访问" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</title>
@@ -67,8 +67,8 @@
     <img src="{% static 'PearAdminLayui/admin/images/403.svg' %}" alt="">
     <div class="content-r">
         <h1>403</h1>
-        <p>抱歉，你无权访问此页面</p>
-        <a class="btn" href="/">返回首页</a>
+        <p>{% trans "抱歉，你无权访问此页面" %}</p>
+        <a class="btn" href="/">{% trans "返回首页" %}</a>
     </div>
 </div>
 

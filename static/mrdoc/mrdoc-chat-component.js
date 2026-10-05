@@ -12,7 +12,7 @@ class EnhancedDifyChatComponent extends HTMLElement {
         this.isTyping = false;
         this.apiEndpoint = this.getAttribute('api-endpoint') || '/ai/chat/stream/';
         this.textGenerateEndpoint = this.getAttribute('text-generate-endpoint') || '/ai_text_genarate/';
-        this.welcome_str = this.getAttribute('welcome_str') || '你好！我是AI智能助手，有什么可以帮助你的吗？'
+        this.welcome_str = this.getAttribute('welcome_str') || gettext('你好！我是AI智能助手，有什么可以帮助你的吗？')
         this.avatar_icon = this.getAttribute('avatar_icon')
         // 新增：存储思考过程的完整内容
         this.currentReasoning = '';
@@ -100,7 +100,7 @@ class EnhancedDifyChatComponent extends HTMLElement {
         const avatar = document.createElement('div');
         avatar.className = 'message-avatar';
         if (role === 'user') {
-            avatar.textContent = '我';
+            avatar.textContent = gettext('我');
         } else {
             if(this.avatar_icon){
                 // AI 使用图片头像
@@ -209,7 +209,7 @@ updateLastMessage(content) {
         // 创建标题
         const title = document.createElement('div');
         title.className = 'source-title';
-        title.innerHTML = '<strong>参考文档：</strong>';
+        title.innerHTML = '<strong>' + gettext('参考文档：') + '</strong>';
         
         // 创建链接容器
         const linksContainer = document.createElement('div');
@@ -275,7 +275,7 @@ updateLastMessage(content) {
                 // 创建标题
                 const title = document.createElement('div');
                 title.className = 'reasoning-title';
-                title.innerHTML = '<strong>思考过程：</strong> <span class="reasoning-toggle">收起</span>';
+                title.innerHTML = '<strong>' + gettext('思考过程：') + '</strong> <span class="reasoning-toggle">' + gettext('收起') + '</span>';
                 
                 // 创建内容容器
                 const contentElement = document.createElement('div');
@@ -290,9 +290,9 @@ updateLastMessage(content) {
                     contentElement.classList.toggle('collapsed');
                     const toggle = title.querySelector('.reasoning-toggle');
                     if (contentElement.classList.contains('collapsed')) {
-                        toggle.textContent = '展开';
+                        toggle.textContent = gettext('展开');
                     } else {
-                        toggle.textContent = '收起';
+                        toggle.textContent = gettext('收起');
                     }
                 });
             }
@@ -316,7 +316,7 @@ updateLastMessage(content) {
 
         const statusEl = document.createElement('div');
         statusEl.className = 'stream-status searching';
-        statusEl.innerHTML = '<span class="status-spinner"></span><span class="status-text">正在处理...</span>';
+        statusEl.innerHTML = '<span class="status-spinner"></span><span class="status-text">' + gettext('正在处理...') + '</span>';
         lastMessage.appendChild(statusEl);
         this.scrollToBottom();
     }
@@ -342,7 +342,7 @@ updateLastMessage(content) {
             textEl.className = 'status-text';
             statusEl.appendChild(textEl);
         }
-        textEl.textContent = message || '处理中...';
+        textEl.textContent = message || gettext('处理中...');
         this.scrollToBottom();
     }
 
@@ -376,11 +376,11 @@ updateLastMessage(content) {
                     }),
                 });
             }catch(error){
-                throw new Error('接口网络请求失败');
+                throw new Error(gettext('接口网络请求失败'));
             }
 
             if (!response.ok) {
-                throw new Error(`接口响应错误: ${response.status}`);
+                throw new Error(interpolate(gettext('接口响应错误: %(status)s'), {status: response.status}, true));
             }
 
             // ✅ 先检查是不是 JSON 响应
@@ -388,7 +388,7 @@ updateLastMessage(content) {
             if (contentType.includes("application/json")) {
                 const data = await response.json();
                 if (!data.status) {
-                    throw new Error(data.data || "请求失败");
+                    throw new Error(data.data || gettext("请求失败"));
                 }
                 return; // JSON 响应处理完毕，直接返回
             }
@@ -457,12 +457,12 @@ updateLastMessage(content) {
 
                                 console.log('对话结束:', data);
                             } else if (data.event === 'error') {
-                                this.updateLastMessage(data.message || '发生未知错误');
+                                this.updateLastMessage(data.message || gettext('发生未知错误'));
                                 // throw new Error(data.message || '发生未知错误');
                             }
                         } catch (e) {
                             console.warn('JSON解析错误:', e, 'line:', line);
-                            this.updateLastMessage(`JSON响应解析错误：${e}`);
+                            this.updateLastMessage(interpolate(gettext('JSON响应解析错误：%(error)s'), {error: e}, true));
                         }
                     }
                 }
@@ -504,7 +504,7 @@ updateLastMessage(content) {
     }
 
     clearConversation() {
-        if (confirm('确定要清空当前对话吗？')) {
+        if (confirm(gettext('确定要清空当前对话吗？'))) {
             this.messages = [];
             this.conversationId = '';
             this.messagesContainer.innerHTML = '';
@@ -515,16 +515,16 @@ updateLastMessage(content) {
 
     exportConversation() {
         if (this.messages.length === 0) {
-            alert('没有对话内容可以导出');
+            alert(gettext('没有对话内容可以导出'));
             return;
         }
 
-        let exportText = '# AI对话记录\n\n';
-        exportText += `导出时间: ${new Date().toLocaleString('zh-CN')}\n\n`;
+        let exportText = gettext('# AI对话记录') + '\n\n';
+        exportText += interpolate(gettext('导出时间: %(time)s'), {time: new Date().toLocaleString('zh-CN')}, true) + '\n\n';
         exportText += '---\n\n';
 
         this.messages.forEach((message, index) => {
-            const role = message.role === 'user' ? '用户' : 'AI助手';
+            const role = message.role === 'user' ? gettext('用户') : gettext('AI助手');
             const time = message.timestamp ? message.timestamp.toLocaleTimeString('zh-CN') : '';
             exportText += `## ${role} ${time}\n\n${message.content}\n\n`;
         });
@@ -534,7 +534,7 @@ updateLastMessage(content) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `AI对话记录_${new Date().toISOString().slice(0, 10)}.md`;
+        a.download = interpolate(gettext('AI对话记录_%(date)s'), {date: new Date().toISOString().slice(0, 10)}, true) + '.md';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -595,7 +595,7 @@ class ConversationManager {
     createNewConversation() {
         const conversation = {
             id: this.generateId(),
-            title: '新对话',
+            title: gettext('新对话'),
             createdAt: new Date(),
             messages: []
         };
@@ -627,7 +627,7 @@ class ConversationManager {
     deleteConversation(conversationId, event) {
         event.stopPropagation();
         
-        if (confirm('确定要删除这个对话吗？')) {
+        if (confirm(gettext('确定要删除这个对话吗？'))) {
             this.conversations = this.conversations.filter(conv => conv.id !== conversationId);
             this.saveConversations();
             this.renderConversations();
@@ -693,14 +693,14 @@ class ConversationManager {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
         if (diffDays === 1) {
-            return '今天 ' + conversationDate.toLocaleTimeString('zh-CN', { 
+            return gettext('今天') + ' ' + conversationDate.toLocaleTimeString('zh-CN', { 
                 hour: '2-digit', 
                 minute: '2-digit' 
             });
         } else if (diffDays === 2) {
-            return '昨天';
+            return gettext('昨天');
         } else if (diffDays <= 7) {
-            return `${diffDays - 1}天前`;
+            return interpolate(gettext('%(days)s天前'), {days: diffDays - 1}, true);
         } else {
             return conversationDate.toLocaleDateString('zh-CN');
         }

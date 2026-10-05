@@ -26,42 +26,42 @@
                 <div>
                     <div class="layui-form" lay-filter="project-settings">
                         <div class="layui-form-item">
-                            <label class="layui-form-label">选择文集</label>
+                            <label class="layui-form-label">{% trans "选择文集" %}</label>
                             <div class="layui-input-inline">
                               <select name="project" lay-verify="required">
-                                <option value="">请选择一个文集（必选）</option>
+                                <option value="">{% trans "请选择一个文集（必选）" %}</option>
                                 <!-- 自己的文集 -->
-                                <optgroup label="自有文集" id="self-project">
+                                <optgroup label="{% trans '自有文集' %}" id="self-project">
                                 {% for p in project_list %}
                                     {% if p.role == 1 %}
-                                    <option value="{{ p.id }}">[私密]《{{ p.name }}》</option>
+                                    <option value="{{ p.id }}">[{% trans "私密" %}]《{{ p.name }}》</option>
                                     {% elif p.role == 2 %}
-                                    <option value="{{ p.id }}" >[指定用户]《{{ p.name }}》</option>
+                                    <option value="{{ p.id }}" >[{% trans "指定用户" %}]《{{ p.name }}》</option>
                                     {% elif p.role == 3 %}
-                                    <option value="{{ p.id }}" >[访问码]《{{ p.name }}》</option>
+                                    <option value="{{ p.id }}" >[{% trans "访问码" %}]《{{ p.name }}》</option>
                                     {% else %}
-                                    <option value="{{ p.id }}" >[公开]《{{ p.name }}》</option>
+                                    <option value="{{ p.id }}" >[{% trans "公开" %}]《{{ p.name }}》</option>
                                     {% endif %}
                                 {% endfor %}
                                 </optgroup>
                                 <!-- 协作的文集 -->
                                 {% if colla_project_list.count > 0 %}
-                                <optgroup label="协作文集">
+                                <optgroup label="{% trans '协作文集' %}">
                                 {% for p in colla_project_list %}
-                                    <option value="{{ p.project.id }}">[协作]《{{ p.project.name }}》</option>
+                                    <option value="{{ p.project.id }}">[{% trans "协作" %}]《{{ p.project.name }}》</option>
                                 {% endfor %}
                                 </optgroup>
                                 {% endif %}
                               </select>
                             </div>
-                            <div class="layui-form-mid layui-word-aux"><span style="color:red;">*必选</span></div>
+                            <div class="layui-form-mid layui-word-aux"><span style="color:red;">{% trans "*必选" %}</span></div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">文档模式</label>
+                            <label class="layui-form-label">{% trans "文档模式" %}</label>
                             <div class="layui-input-block">
-                              <input type="radio" name="editor_mode" value="0" title="自动选择" checked>
+                              <input type="radio" name="editor_mode" value="0" title="{% trans '自动选择' %}" checked>
                               <input type="radio" name="editor_mode" value="1" title="Markdown">
-                              <input type="radio" name="editor_mode" value="3" title="富文本">
+                              <input type="radio" name="editor_mode" value="3" title="{% trans '富文本' %}">
                             </div>
                           </div>
                     </div>
@@ -79,7 +79,7 @@
                 <div>
                     <button style="width: 100%;min-height: 113px;border-style:dashed;border-color: #999;cursor: pointer;" type="button" id="import-local-doc">
                         <i class="layui-icon layui-icon-addition" style="font-size: 40px;color:#999"></i><br>
-                        点击上传本地文档，支持.md、.docx、.txt格式文件
+                        {% trans "点击上传本地文档，支持.md、.docx、.txt格式文件" %}
                     </button>
                 </div>
             </div>
@@ -133,7 +133,7 @@
                     + res.data['doc_id'] 
                     + '" class="list-group-item"><i class="iconfont mrdoc-icon-wendang"></i> '
                     + res.data['doc_name'] 
-                    + '&nbsp;<a class="table-col-link" target="_blank" href="/doc/' + res.data['doc_id'] + '/">预览</a>'
+                    + '&nbsp;<a class="table-col-link" target="_blank" href="/doc/' + res.data['doc_id'] + '/">{% trans "预览" %}</a>'
                     + '<ul class="list-group nested-sortable"></ul></li>'
                 $("#nestedDemo").append(doc_toc_str);
                 docSort();// 动态添加元素之后，调用一次
@@ -144,7 +144,7 @@
         error: function(){
             layer.closeAll();
             //请求异常回调
-            layer.msg("上传失败",{icon:2});
+            layer.msg("{% trans '上传失败' %}",{icon:2});
         }
     });
     // 发布文档
@@ -161,7 +161,7 @@
             success:function(r){
                 layer.closeAll();
                 if(r.code == 0){
-                    layer.msg("发布成功",{icon:1},function(){
+                    layer.msg("{% trans '发布成功' %}",{icon:1},function(){
                         window.location.reload();
                     })
                 }else{
@@ -170,7 +170,7 @@
             },
             error:function(){
                 layer.closeAll();
-                layer.msg("发布失败",{icon:2})
+                layer.msg("{% trans '发布失败' %}",{icon:2})
             }
 
         });
@@ -249,21 +249,21 @@
 </style>
 <div id="import-project-sort" style="display: none;margin: 10px;" class="layui-form">
     <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">
-        <input class="layui-input" placeholder="请输入文集名称" name="project-name">
+        <input class="layui-input" placeholder="{% trans '请输入文集名称' %}" name="project-name">
     </div>
     <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">
-        <input class="layui-input" placeholder="请输入文集简介" name="project-desc">
+        <input class="layui-input" placeholder="{% trans '请输入文集简介' %}" name="project-desc">
     </div>
     <div class="layui-row" style="">
         <div class="layui-form-item">
-            <label class="layui-form-label" style="width: auto;">文集状态</label>
+            <label class="layui-form-label" style="width: auto;">{% trans "文集状态" %}</label>
             <div class="layui-input-block">
-                <input type="radio" name="role" value="1" title="私密" checked>
-                <input type="radio" name="role" value="0" title="公开">
+                <input type="radio" name="role" value="1" title="{% trans '私密' %}" checked>
+                <input type="radio" name="role" value="0" title="{% trans '公开' %}">
             </div>
           </div>
     </div>
-    <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">文档拖拽排序</div>
+    <div class="layui-row" style="padding-left: 14px;padding-bottom: 10px;">{% trans "文档拖拽排序" %}</div>
     <div id="nested" class="row">
         <ul id="nestedDemo" class="list-group col nested-sortable"></ul>
     </div>

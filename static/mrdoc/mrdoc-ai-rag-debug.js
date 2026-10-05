@@ -40,11 +40,11 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
 
     // 展示本次检索实际生效的过滤范围
     function formatScope(scope) {
-      if (!scope) return '全部（未过滤）';
+      if (!scope) return gettext('全部（未过滤）');
       var parts = [];
-      if (scope.project_ids && scope.project_ids.length) parts.push('文集 ' + scope.project_ids.join(','));
-      if (scope.doc_ids && scope.doc_ids.length) parts.push('文档 ' + scope.doc_ids.join(','));
-      return parts.length ? parts.join(' + ') : '全部（未过滤）';
+      if (scope.project_ids && scope.project_ids.length) parts.push(interpolate(gettext('文集 %(ids)s'), { ids: scope.project_ids.join(',') }, true));
+      if (scope.doc_ids && scope.doc_ids.length) parts.push(interpolate(gettext('文档 %(ids)s'), { ids: scope.doc_ids.join(',') }, true));
+      return parts.length ? parts.join(' + ') : gettext('全部（未过滤）');
     }
 
     // 格式化 JSON 数组为标签串
@@ -116,19 +116,19 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         <div class="layui-form">
           <div class="rag-input-inline">
             <div class="layui-input-block" style="flex:3;">
-              <input type="text" name="query" placeholder="输入搜索关键词..." autocomplete="off" class="layui-input" id="ragQueryInput">
+              <input type="text" name="query" placeholder="${gettext('输入搜索关键词...')}" autocomplete="off" class="layui-input" id="ragQueryInput">
             </div>
             <div class="layui-input-block" style="flex:1;min-width:110px;">
-              <input type="number" name="doc_id" placeholder="文档ID（可选）" autocomplete="off" class="layui-input">
+              <input type="number" name="doc_id" placeholder="${gettext('文档ID（可选）')}" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-input-block" style="flex:1;min-width:110px;">
-              <input type="number" name="project_id" placeholder="文集ID（可选）" autocomplete="off" class="layui-input">
+              <input type="number" name="project_id" placeholder="${gettext('文集ID（可选）')}" autocomplete="off" class="layui-input">
             </div>
             <button class="layui-btn layui-btn-normal layui-btn-xs" id="ragSearchBtn">
-              <i class="layui-icon layui-icon-search"></i> 检索
+              <i class="layui-icon layui-icon-search"></i> ${gettext('检索')}
             </button>
             <button class="layui-btn layui-btn-normal layui-btn-xs" id="ragSearchRankingBtn">
-              <i class="layui-icon layui-icon-search"></i> 检索 + 重排
+              <i class="layui-icon layui-icon-search"></i> ${gettext('检索 + 重排')}
             </button>
           </div>
         </div>
@@ -139,7 +139,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
     // ---------- 渲染结果 ----------
     function renderResults($container, data, query, debug) {
       if (!data || data.length === 0) {
-        $container.html('<div class="no-result">无匹配结果</div>');
+        $container.html('<div class="no-result">' + gettext('无匹配结果') + '</div>');
         return;
       }
 
@@ -152,12 +152,12 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         var totalTime = debug.total_time_ms != null ? debug.total_time_ms : '-';
 
         html += '<div class="debug-info" style="background:#fff3cd;padding:10px 15px;border-radius:6px;margin-bottom:16px;font-size:13px;">';
-        html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-time" style="color:#ff9800;"></i> 检索耗时：<strong>' + searchTime + ' ms</strong></span>';
+        html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-time" style="color:#ff9800;"></i> ' + gettext('检索耗时：') + '<strong>' + searchTime + ' ms</strong></span>';
         if (rerankTime !== '-') {
-          html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-refresh" style="color:#1e9fff;"></i> 重排耗时：<strong>' + rerankTime + ' ms</strong></span>';
+          html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-refresh" style="color:#1e9fff;"></i> ' + gettext('重排耗时：') + '<strong>' + rerankTime + ' ms</strong></span>';
         }
-        html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-ok-circle" style="color:#5fb878;"></i> 总耗时：<strong>' + totalTime + ' ms</strong></span>';
-        html += '<span><i class="layui-icon layui-icon-set" style="color:#888;"></i> 过滤范围：<strong>' + formatScope(debug.scope) + '</strong></span>';
+        html += '<span style="margin-right:20px;"><i class="layui-icon layui-icon-ok-circle" style="color:#5fb878;"></i> ' + gettext('总耗时：') + '<strong>' + totalTime + ' ms</strong></span>';
+        html += '<span><i class="layui-icon layui-icon-set" style="color:#888;"></i> ' + gettext('过滤范围：') + '<strong>' + formatScope(debug.scope) + '</strong></span>';
         html += '</div>';
       }
 
@@ -205,9 +205,9 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         html += '<div class="result-header">';
         html += '<div class="result-title">' + docLinkHtml + (hlSectionTitle ? ' / ' + hlSectionTitle : '') + '</div>';
         html += '<div class="result-badges">';
-        html += '<span class="score-badge">融合 ' + rrfScore + '</span>';
+        html += '<span class="score-badge">' + interpolate(gettext('融合 %(score)s'), { score: rrfScore }, true) + '</span>';
         if (rerankScore !== null) {
-          html += '<span class="score-badge rerank-badge">重排 ' + rerankScore + '</span>';
+          html += '<span class="score-badge rerank-badge">' + interpolate(gettext('重排 %(score)s'), { score: rerankScore }, true) + '</span>';
         }
         html += '</div>';
         html += '</div>';
@@ -215,11 +215,11 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         // 分路命中情况：一眼看出是向量语义命中还是关键词命中
         html += '<div class="channel-line">';
         html += vectorRank !== null
-          ? '<span class="channel-badge hit-vector">向量 #' + vectorRank + ' · 相似度 ' + vectorScore + '</span>'
-          : '<span class="channel-badge miss">向量 未命中</span>';
+          ? '<span class="channel-badge hit-vector">' + interpolate(gettext('向量 #%(rank)s · 相似度 %(score)s'), { rank: vectorRank, score: vectorScore }, true) + '</span>'
+          : '<span class="channel-badge miss">' + gettext('向量 未命中') + '</span>';
         html += bm25Rank !== null
-          ? '<span class="channel-badge hit-bm25">BM25 #' + bm25Rank + ' · 得分 ' + bm25Score + '</span>'
-          : '<span class="channel-badge miss">BM25 未命中</span>';
+          ? '<span class="channel-badge hit-bm25">' + interpolate(gettext('BM25 #%(rank)s · 得分 %(score)s'), { rank: bm25Rank, score: bm25Score }, true) + '</span>'
+          : '<span class="channel-badge miss">' + gettext('BM25 未命中') + '</span>';
         html += '</div>';
 
         // 面包屑
@@ -231,32 +231,32 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         html += '<div class="content-preview">' + hlShortContent + '</div>';
 
         // 展开详情按钮
-        html += '<span class="detail-toggle"><i class="layui-icon layui-icon-down"></i> 查看详情</span>';
+        html += '<span class="detail-toggle"><i class="layui-icon layui-icon-down"></i> ' + gettext('查看详情') + '</span>';
 
         // 详情面板（默认隐藏）
         html += '<div class="detail-panel">';
 
         // 完整内容
-        html += '<div class="detail-field"><div class="detail-field-label">📄 完整内容</div><div class="detail-field-value">' + hlContent + '</div></div>';
+        html += '<div class="detail-field"><div class="detail-field-label">📄 ' + gettext('完整内容') + '</div><div class="detail-field-value">' + hlContent + '</div></div>';
 
         // 向量化文本
         if (embeddingText) {
-          html += '<div class="detail-field"><div class="detail-field-label">🔢 向量化文本</div><div class="detail-field-value">' + highlightText(embeddingText, query) + '</div></div>';
+          html += '<div class="detail-field"><div class="detail-field-label">🔢 ' + gettext('向量化文本') + '</div><div class="detail-field-value">' + highlightText(embeddingText, query) + '</div></div>';
         }
 
         // 摘要
         if (summary) {
-          html += '<div class="detail-field"><div class="detail-field-label">📝 LLM 摘要</div><div class="detail-field-value">' + escapeHtml(summary) + '</div></div>';
+          html += '<div class="detail-field"><div class="detail-field-label">📝 ' + gettext('LLM 摘要') + '</div><div class="detail-field-value">' + escapeHtml(summary) + '</div></div>';
         }
 
         // 关键词
         if (keywords.length > 0) {
-          html += '<div class="detail-field"><div class="detail-field-label">🏷️ 关键词</div><div class="detail-field-value">' + formatTags(keywords) + '</div></div>';
+          html += '<div class="detail-field"><div class="detail-field-label">🏷️ ' + gettext('关键词') + '</div><div class="detail-field-value">' + formatTags(keywords) + '</div></div>';
         }
 
         // 标签
         if (tags.length > 0) {
-          html += '<div class="detail-field"><div class="detail-field-label">📌 标签</div><div class="detail-field-value">' + formatTags(tags) + '</div></div>';
+          html += '<div class="detail-field"><div class="detail-field-label">📌 ' + gettext('标签') + '</div><div class="detail-field-value">' + formatTags(tags) + '</div></div>';
         }
 
         // FAQ
@@ -265,25 +265,25 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         }
 
         // 召回得分明细
-        html += '<div class="detail-field"><div class="detail-field-label">🎯 召回得分明细</div><div class="detail-field-value">';
-        html += '向量召回：' + (vectorRank !== null
-          ? '排名 #' + vectorRank + '，余弦相似度 ' + vectorScore
-          : '未命中（该切片不在向量路 top 结果中）') + '<br>';
-        html += 'BM25 召回：' + (bm25Rank !== null
-          ? '排名 #' + bm25Rank + '，BM25 得分 ' + bm25Score
-          : '未命中（该切片不在关键词路 top 结果中）') + '<br>';
-        html += 'RRF 融合分：' + rrfScore + '（向量权重 0.6 / BM25 权重 0.4）';
+        html += '<div class="detail-field"><div class="detail-field-label">🎯 ' + gettext('召回得分明细') + '</div><div class="detail-field-value">';
+        html += gettext('向量召回：') + (vectorRank !== null
+          ? interpolate(gettext('排名 #%(rank)s，余弦相似度 %(score)s'), { rank: vectorRank, score: vectorScore }, true)
+          : gettext('未命中（该切片不在向量路 top 结果中）')) + '<br>';
+        html += gettext('BM25 召回：') + (bm25Rank !== null
+          ? interpolate(gettext('排名 #%(rank)s，BM25 得分 %(score)s'), { rank: bm25Rank, score: bm25Score }, true)
+          : gettext('未命中（该切片不在关键词路 top 结果中）')) + '<br>';
+        html += interpolate(gettext('RRF 融合分：%(score)s（向量权重 0.6 / BM25 权重 0.4）'), { score: rrfScore }, true);
         if (rerankScore !== null) {
-          html += '<br>重排得分：' + rerankScore + '，融合后最终分：' + finalScore;
+          html += '<br>' + interpolate(gettext('重排得分：%(rerank)s，融合后最终分：%(final)s'), { rerank: rerankScore, final: finalScore }, true);
         }
         html += '</div></div>';
 
         // 其他元数据
-        html += '<div class="detail-field"><div class="detail-field-label">ℹ️ 元信息</div><div class="detail-field-value">';
-        if (sourceType) html += '来源类型：' + escapeHtml(sourceType) + '<br>';
-        if (order !== '') html += '排序：' + order + '<br>';
-        if (llmStatus) html += 'LLM 状态：' + escapeHtml(llmStatus) + '<br>';
-        if (embeddingStatus) html += '向量状态：' + escapeHtml(embeddingStatus);
+        html += '<div class="detail-field"><div class="detail-field-label">ℹ️ ' + gettext('元信息') + '</div><div class="detail-field-value">';
+        if (sourceType) html += gettext('来源类型：') + escapeHtml(sourceType) + '<br>';
+        if (order !== '') html += gettext('排序：') + order + '<br>';
+        if (llmStatus) html += gettext('LLM 状态：') + escapeHtml(llmStatus) + '<br>';
+        if (embeddingStatus) html += gettext('向量状态：') + escapeHtml(embeddingStatus);
         html += '</div></div>';
 
         html += '</div>'; // end detail-panel
@@ -300,10 +300,10 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
         var $btn = $(this);
         if ($panel.hasClass('show')) {
           $panel.removeClass('show');
-          $btn.html('<i class="layui-icon layui-icon-down"></i> 查看详情');
+          $btn.html('<i class="layui-icon layui-icon-down"></i> ' + gettext('查看详情'));
         } else {
           $panel.addClass('show');
-          $btn.html('<i class="layui-icon layui-icon-up"></i> 收起详情');
+          $btn.html('<i class="layui-icon layui-icon-up"></i> ' + gettext('收起详情'));
         }
       });
 
@@ -322,7 +322,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
 
       layer.open({
         type: 1,
-        title: '🔍 RAG 调试器',
+        title: '🔍 ' + gettext('RAG 调试器'),
         area: ['940px', '700px'],
         shadeClose: true,
         content: buildDialogHTML(),
@@ -336,7 +336,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
             var projectId = $layer.find('input[name="project_id"]').val().trim();
 
             if (!queryVal) {
-              layer.msg('请输入查询关键词', { icon: 0, time: 1500 });
+              layer.msg(gettext('请输入查询关键词'), { icon: 0, time: 1500 });
               return;
             }
 
@@ -344,7 +344,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
             if (docId) payload.doc_id = docId;
             if (projectId) payload.project_id = projectId;
 
-            $container.html('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 搜索中...</div>');
+            $container.html('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> ' + gettext('搜索中...') + '</div>');
 
             $.ajax({
               url: apiUrl,
@@ -356,12 +356,12 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
                 if (res && res.status && res.data) {
                   renderResults($container, res.data, queryVal, res.debug);
                 } else {
-                  $container.html('<div class="no-result">接口返回异常</div>');
+                  $container.html('<div class="no-result">' + gettext('接口返回异常') + '</div>');
                 }
               },
               error: function () {
-                $container.html('<div class="no-result">请求失败，请检查接口或稍后重试</div>');
-                layer.msg('搜索请求失败', { icon: 2, time: 2000 });
+                $container.html('<div class="no-result">' + gettext('请求失败，请检查接口或稍后重试') + '</div>');
+                layer.msg(gettext('搜索请求失败'), { icon: 2, time: 2000 });
               }
             });
           });
@@ -372,7 +372,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
             var projectId = $layer.find('input[name="project_id"]').val().trim();
 
             if (!queryVal) {
-              layer.msg('请输入查询关键词', { icon: 0, time: 1500 });
+              layer.msg(gettext('请输入查询关键词'), { icon: 0, time: 1500 });
               return;
             }
 
@@ -380,7 +380,7 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
             if (docId) payload.doc_id = docId;
             if (projectId) payload.project_id = projectId;
 
-            $container.html('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 检索+重排中...</div>');
+            $container.html('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> ' + gettext('检索+重排中...') + '</div>');
 
             $.ajax({
               url: apiUrl,
@@ -392,12 +392,12 @@ const DEFAULT_RAG_DEBUG_API = '/ai/rag-search-debug/';
                 if (res && res.status && res.data) {
                   renderResults($container, res.data, queryVal, res.debug);
                 } else {
-                  $container.html('<div class="no-result">接口返回异常</div>');
+                  $container.html('<div class="no-result">' + gettext('接口返回异常') + '</div>');
                 }
               },
               error: function () {
-                $container.html('<div class="no-result">请求失败，请检查接口或稍后重试</div>');
-                layer.msg('搜索请求失败', { icon: 2, time: 2000 });
+                $container.html('<div class="no-result">' + gettext('请求失败，请检查接口或稍后重试') + '</div>');
+                layer.msg(gettext('搜索请求失败'), { icon: 2, time: 2000 });
               }
             });
           });

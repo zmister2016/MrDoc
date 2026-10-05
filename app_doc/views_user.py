@@ -229,13 +229,13 @@ def user_center_menu(request):
         },
         {
             "id": "common",
-            "title": "使用帮助",
+            "title": _("使用帮助"),
             "icon": "layui-icon layui-icon-template-1",
             "type": 0,
             "href": "",
             "children": [{
                 "id": 802,
-                "title": "使用手册",
+                "title": _("使用手册"),
                 "icon": "layui-icon layui-icon-face-smile",
                 "type": 1,
                 "openType": "_blank",

@@ -43,8 +43,8 @@ def send_email(to_email,vcode_str):
             sitename = SysSetting.objects.get(types="basic",name="site_name").value
         except:
             sitename = "MrDoc"
-        subject = "MrDoc - 重置密码验证码"
-        content = "你的验证码为：{}，验证码30分钟内有效！".format(vcode_str)
+        subject = _("MrDoc - 重置密码验证码")
+        content = _("你的验证码为：{}，验证码30分钟内有效！").format(vcode_str)
         msg = MIMEText(content, _subtype='html', _charset='utf-8')
         msg['Subject'] = subject
         msg['From'] = Header(sitename,'utf-8').encode() + " <{}>".format(msg_from)

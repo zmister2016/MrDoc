@@ -1,7 +1,7 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}站点设置{% endblock %}
+{% block title %}{% trans "站点设置" %}{% endblock %}
 {% block custom_element %}
 <link href="{% static 'tagsInput/tagsinput.css' %}" rel="stylesheet" type="text/css"/>
 {% endblock %}
@@ -10,125 +10,133 @@
   <div class="layui-card-body">
     <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
-          <span style="font-size:18px;">站点设置
+          <span style="font-size:18px;">{% trans "站点设置" %}
           </span>
       </div>
     </div>
     <div class="layui-row">
         <div class="layui-tab">
           <ul class="layui-tab-title">
-            <li class="layui-this">基础设置</li>
-            <li>邮箱设置</li>
-            <li>文档设置</li>
-            <li>站点数据管理</li>
+            <li class="layui-this">{% trans "基础设置" %}</li>
+            <li>{% trans "邮箱设置" %}</li>
+            <li>{% trans "文档设置" %}</li>
+            <li>{% trans "站点数据管理" %}</li>
           </ul>
           <div class="layui-tab-content">
               <!-- 网站设置 -->
             <div class="layui-tab-item layui-show">
                <form class="layui-form" lay-filter="meta_config">
                    <div class="layui-card settings-card">
-                    <div class="layui-card-header">站点元信息</div>
+                    <div class="layui-card-header">{% trans "站点元信息" %}</div>
                     <div class="layui-card-body">
                       <!-- 站点名称 -->
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">站点名称</label>
+                        <label class="layui-form-label">{% trans "站点名称" %}</label>
                         <div class="layui-input-inline">
-                          <input name="site_name" placeholder="请输入站点标题" class="layui-input" value="{% if site_name != None %}{{site_name}}{% endif %}"></input>
+                          <input name="site_name" placeholder="{% trans '请输入站点标题' %}" class="layui-input" value="{% if site_name != None %}{{site_name}}{% endif %}"></input>
                         </div>
                       </div>
                       <!-- 站点子标题 -->
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">子标题</label>
+                        <label class="layui-form-label">{% trans "子标题" %}</label>
                         <div class="layui-input-block">
-                          <input name="site_sub_name" placeholder="请输入站点的子标题" class="layui-input" value="{% if site_sub_name != None %}{{site_sub_name}}{% endif %}"></input>
+                          <input name="site_sub_name" placeholder="{% trans '请输入站点的子标题' %}" class="layui-input" value="{% if site_sub_name != None %}{{site_sub_name}}{% endif %}"></input>
                         </div>
                       </div>
                       <!-- 站点关键词 -->
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">关键词</label>
+                        <label class="layui-form-label">{% trans "关键词" %}</label>
                         <div class="layui-input-block">
-                          <input name="site_keywords" placeholder="多个关键词请使用使用英文逗号,进行分隔" class="layui-input" value="{% if site_keywords != None %}{{site_keywords}}{% endif %}"></input>
+                          <input name="site_keywords" placeholder="{% trans '多个关键词请使用使用英文逗号,进行分隔' %}" class="layui-input" value="{% if site_keywords != None %}{{site_keywords}}{% endif %}"></input>
                         </div>
                       </div>
                       <!-- 站点描述 -->
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">站点描述</label>
+                        <label class="layui-form-label">{% trans "站点描述" %}</label>
                         <div class="layui-input-block">
-                          <input name="site_desc" placeholder="请用简短的文字描述你的觅思文档站点" class="layui-input" value="{% if site_desc != None %}{{site_desc}}{% endif %}"></input>
+                          <input name="site_desc" placeholder="{% trans '请用简短的文字描述你的觅思文档站点' %}" class="layui-input" value="{% if site_desc != None %}{{site_desc}}{% endif %}"></input>
                         </div>
                       </div>
                       <!-- 备案号 -->
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">备案号</label>
+                        <label class="layui-form-label">{% trans "备案号" %}</label>
                         <div class="layui-input-inline">
-                          <input name="beian_code" placeholder="请输入网站的备案号" class="layui-input" value="{% if beian_code != None %}{{beian_code}}{% endif %}"></input>
+                          <input name="beian_code" placeholder="{% trans '请输入网站的备案号' %}" class="layui-input" value="{% if beian_code != None %}{{beian_code}}{% endif %}"></input>
                         </div>
                       </div>
-                        <div><button id="updateMetaBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                        <div><button id="updateMetaBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                    </div>
                </form>
                 <!-- 首页模式 -->
                 <form class="layui-form" lay-filter="index_mode_config">
                   <div class="layui-card settings-card">
-                    <div class="layui-card-header">首页模板</div>
+                    <div class="layui-card-header">{% trans "首页模板" %}</div>
                     <div class="layui-card-body">
                       <!-- 首页文集排序 -->
                       <div class="layui-form-item">
-                        <label class="layui-form-label">首页排序</label>
+                        <label class="layui-form-label">{% trans "首页排序" %}</label>
                         <div class="layui-input-inline">
                           {% if index_project_sort == '-1' %}
-                          <input type="radio" name="index_project_sort"" value="1" title="升序" >
-                          <input type="radio" name="index_project_sort" value="-1" title="降序" checked>
+                          <input type="radio" name="index_project_sort"" value="1" title="{% trans '升序' %}" >
+                          <input type="radio" name="index_project_sort" value="-1" title="{% trans '降序' %}" checked>
                           {% else %}
-                          <input type="radio" name="index_project_sort"" value="1" title="升序" checked>
-                          <input type="radio" name="index_project_sort" value="-1" title="降序" >
+                          <input type="radio" name="index_project_sort"" value="1" title="{% trans '升序' %}" checked>
+                          <input type="radio" name="index_project_sort" value="-1" title="{% trans '降序' %}" >
                           {% endif %}
                         </div>
-                        <div class="layui-form-mid layui-word-aux">首页文集列表的排序方式</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "首页文集列表的排序方式" %}</div>
                       </div>
-                      <div><button id="updateIndexModeBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                      <div><button id="updateIndexModeBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                   </div>
                 </form>
 
                 <form class="layui-form" lay-filter="siteCtrlConfig">
                    <div class="layui-card settings-card">
-                    <div class="layui-card-header">站点管控</div>
+                    <div class="layui-card-header">{% trans "站点管控" %}</div>
                     <div class="layui-card-body">
                       <!-- 站点注册开关 -->
                       <div class="layui-form-item">
-                        <label class="layui-form-label">禁止注册</label>
+                        <label class="layui-form-label">{% trans "禁止注册" %}</label>
                         <div class="layui-input-inline">
-                          <input type="checkbox" name="close_register" lay-skin="switch" lay-text="开启|关闭"  {% if close_register %}checked{% endif %}>
+                          <input type="checkbox" name="close_register" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if close_register %}checked{% endif %}>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">开启此选项将禁止新用户注册</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "开启此选项将禁止新用户注册" %}</div>
                       </div>
                       <!-- 站点强制登录开关 -->
                        <div class="layui-form-item">
-                        <label class="layui-form-label">全站登录</label>
+                        <label class="layui-form-label">{% trans "全站登录" %}</label>
                         <div class="layui-input-inline">
-                          <input type="checkbox" name="require_login" lay-skin="switch" lay-text="开启|关闭"  {% if require_login %}checked{% endif %}>
+                          <input type="checkbox" name="require_login" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if require_login %}checked{% endif %}>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">开启此选项，除注册、登录页面外的所有页面的访问都需要登录</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "开启此选项，除注册、登录页面外的所有页面的访问都需要登录" %}</div>
                       </div>
                       <!-- 站点注册码开关 -->
                       <div class="layui-form-item">
-                        <label class="layui-form-label">启用注册码</label>
+                        <label class="layui-form-label">{% trans "启用注册码" %}</label>
                         <div class="layui-input-inline">
-                          <input type="checkbox" name="enable_register_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_register_code %}checked{% endif %}>
+                          <input type="checkbox" name="enable_register_code" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if enable_register_code %}checked{% endif %}>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">开启此选项，新用户注册将需要填写注册码</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "开启此选项，新用户注册将需要填写注册码" %}</div>
                       </div>
                       <!-- 登录验证码开关 -->
                       <div class="layui-form-item">
-                        <label class="layui-form-label">登录验证码</label>
+                        <label class="layui-form-label">{% trans "登录验证码" %}</label>
                         <div class="layui-input-inline">
-                          <input type="checkbox" name="enable_login_check_code" lay-skin="switch" lay-text="开启|关闭"  {% if enable_login_check_code %}checked{% endif %}>
+                          <input type="checkbox" name="enable_login_check_code" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if enable_login_check_code %}checked{% endif %}>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">开启此选项，登录将需要填写验证码</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "开启此选项，登录将需要填写验证码" %}</div>
                       </div>
-                        <div><button id="updateCtrlBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                      <!-- 语言切换入口开关 -->
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">{% trans "语言切换" %}</label>
+                        <div class="layui-input-inline">
+                          <input type="checkbox" name="enable_lang_switch" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if enable_lang_switch %}checked{% endif %}>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "开启后，顶部导航栏显示语言切换入口（默认关闭）" %}</div>
+                      </div>
+                        <div><button id="updateCtrlBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                    </div>
                 </form>
@@ -136,56 +144,56 @@
                 <!-- 版本更新检测 -->
                 <form class="layui-form" lay-filter="version_check_config">
                   <div class="layui-card settings-card">
-                    <div class="layui-card-header">版本更新检测</div>
+                    <div class="layui-card-header">{% trans "版本更新检测" %}</div>
                     <div class="layui-card-body">
                     <div class="layui-form-item">
-                      <label class="layui-form-label">禁止更新检测</label>
+                      <label class="layui-form-label">{% trans "禁止更新检测" %}</label>
                       <div class="layui-input-inline">
-                        <input type="checkbox" name="disable_update_check" lay-skin="switch" lay-text="开启|关闭"  {% if disable_update_check %}checked{% endif %}>
+                        <input type="checkbox" name="disable_update_check" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if disable_update_check %}checked{% endif %}>
                       </div>
-                      <div class="layui-form-mid layui-word-aux">开启后，后台将不会主动检测应用是否存在新的版本，默认关闭。</div>
+                      <div class="layui-form-mid layui-word-aux">{% trans "开启后，后台将不会主动检测应用是否存在新的版本，默认关闭。" %}</div>
                     </div>
-                    <div><button id="updateVersionCheckBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                    <div><button id="updateVersionCheckBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                   </div>
                 </form>
                 <form class="layui-form" lay-filter="ad_config">
                   <div class="layui-card settings-card">
-                    <div class="layui-card-header">页面信息块配置</div>
+                    <div class="layui-card-header">{% trans "页面信息块配置" %}</div>
                     <div class="layui-card-body">
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">统计代码</label>
+                        <label class="layui-form-label">{% trans "统计代码" %}</label>
                         <div class="layui-input-block">
-                          <textarea name="static_code" placeholder="如果需要调用第三方的统计功能，请将第三方统计工具代码输入至此，可以包含<script>标签" class="layui-textarea">{{static_code}}</textarea>
+                          <textarea name="static_code" placeholder="{% trans '如果需要调用第三方的统计功能，请将第三方统计工具代码输入至此，可以包含<script>标签' %}" class="layui-textarea">{{static_code}}</textarea>
                         </div>
                       </div>
 
                        <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">广告位1</label>
+                        <label class="layui-form-label">{% trans "广告位1" %}</label>
                         <div class="layui-input-block">
-                          <textarea name="ad_code" placeholder="如果需要在文档正文上方添加广告，请将广告相关代码输入至此，可以包含<script>标签" class="layui-textarea">{{ad_code}}</textarea>
+                          <textarea name="ad_code" placeholder="{% trans '如果需要在文档正文上方添加广告，请将广告相关代码输入至此，可以包含<script>标签' %}" class="layui-textarea">{{ad_code}}</textarea>
                         </div>
                       </div>
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">广告位2</label>
+                        <label class="layui-form-label">{% trans "广告位2" %}</label>
                         <div class="layui-input-block">
-                          <textarea name="ad_code_2" placeholder="此广告位位于文档下方、分享按钮上方，可以包含<script>标签" class="layui-textarea">{{ad_code_2}}</textarea>
+                          <textarea name="ad_code_2" placeholder="{% trans '此广告位位于文档下方、分享按钮上方，可以包含<script>标签' %}" class="layui-textarea">{{ad_code_2}}</textarea>
                         </div>
                       </div>
 
                       <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">广告位3</label>
+                        <label class="layui-form-label">{% trans "广告位3" %}</label>
                         <div class="layui-input-block">
-                          <textarea name="ad_code_3" placeholder="此广告位位于文档左侧目录栏下方，可以包含<script>标签" class="layui-textarea">{{ad_code_3}}</textarea>
+                          <textarea name="ad_code_3" placeholder="{% trans '此广告位位于文档左侧目录栏下方，可以包含<script>标签' %}" class="layui-textarea">{{ad_code_3}}</textarea>
                         </div>
                       </div>
                      <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">广告位4</label>
+                        <label class="layui-form-label">{% trans "广告位4" %}</label>
                         <div class="layui-input-block">
-                          <textarea name="ad_code_4" placeholder="此广告位位于文档左侧目录栏上方，可以包含<script>标签" class="layui-textarea">{{ad_code_4}}</textarea>
+                          <textarea name="ad_code_4" placeholder="{% trans '此广告位位于文档左侧目录栏上方，可以包含<script>标签' %}" class="layui-textarea">{{ad_code_4}}</textarea>
                         </div>
                       </div>
-                      <div><button id="updateAdBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                      <div><button id="updateAdBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                   </div>
                 </form>
@@ -193,21 +201,21 @@
                 <!-- 默认搜索方式 -->
                 <form class="layui-form" lay-filter="search_config">
                   <div class="layui-card settings-card">
-                    <div class="layui-card-header">站点搜索配置</div>
+                    <div class="layui-card-header">{% trans "站点搜索配置" %}</div>
                     <div class="layui-card-body">
                       <div class="layui-form-item">
-                        <label class="layui-form-label">搜索方式</label>
+                        <label class="layui-form-label">{% trans "搜索方式" %}</label>
                         <div class="layui-input-block">
                           {% if search_type == '1' %}
-                          <input type="radio" name="search_type"" value="0" title="精准搜索" >
-                          <input type="radio" name="search_type" value="1" title="全文搜索" checked>
+                          <input type="radio" name="search_type"" value="0" title="{% trans '精准搜索' %}" >
+                          <input type="radio" name="search_type" value="1" title="{% trans '全文搜索' %}" checked>
                           {% else %}
-                          <input type="radio" name="search_type"" value="0" title="精准搜索" checked>
-                          <input type="radio" name="search_type" value="1" title="全文搜索" >
+                          <input type="radio" name="search_type"" value="0" title="{% trans '精准搜索' %}" checked>
+                          <input type="radio" name="search_type" value="1" title="{% trans '全文搜索' %}" >
                           {% endif %}
                         </div>
                       </div>
-                      <div><button id="updateSearchBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                      <div><button id="updateSearchBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                   </div>
                 </form>
@@ -215,16 +223,16 @@
                 <!-- 页面链接 -->
                 <form class="layui-form" lay-filter="page_link_config">
                   <div class="layui-card settings-card">
-                    <div class="layui-card-header">页面链接</div>
+                    <div class="layui-card-header">{% trans "页面链接" %}</div>
                     <div class="layui-card-body">
                       <div class="layui-form-item">
-                        <label class="layui-form-label">单标签</label>
+                        <label class="layui-form-label">{% trans "单标签" %}</label>
                         <div class="layui-input-inline">
-                          <input type="checkbox" name="single_tab_link" lay-skin="switch" lay-text="开启|关闭"  {% if single_tab_link %}checked{% endif %}>
+                          <input type="checkbox" name="single_tab_link" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if single_tab_link %}checked{% endif %}>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">开启后，页面所有链接都将在同一个标签页内打开，默认关闭。</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "开启后，页面所有链接都将在同一个标签页内打开，默认关闭。" %}</div>
                       </div>
-                      <div><button id="updatePageLinkBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                      <div><button id="updatePageLinkBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                     </div>
                   </div>
                 </form>
@@ -236,58 +244,58 @@
                 <form class="layui-form" lay-filter="emailConfig">
                   <!-- 邮箱开关 -->
                   <div class="layui-form-item">
-                    <label class="layui-form-label">启用邮箱</label>
+                    <label class="layui-form-label">{% trans "启用邮箱" %}</label>
                     <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_email" lay-skin="switch" lay-text="开启|关闭"  {% if enable_email %}checked{% endif %}>
+                      <input type="checkbox" name="enable_email" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if enable_email %}checked{% endif %}>
                     </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项后还需进行邮箱信息配置</div>
+                    <div class="layui-form-mid layui-word-aux">{% trans "开启此选项后还需进行邮箱信息配置" %}</div>
                   </div>
                   <div class="layui-form-item">
-                    <label class="layui-form-label">发件邮箱</label>
+                    <label class="layui-form-label">{% trans "发件邮箱" %}</label>
                     <div class="layui-input-block">
                       <input type="email" name="send_emailer" class="layui-input" required value="{{emailer.value}}">
                     </div>
                   </div>
 
                    <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">SMTP 主机</label>
+                    <label class="layui-form-label">{% trans "SMTP 主机" %}</label>
                     <div class="layui-input-block">
                       <input type="text" name="smtp_host" class="layui-input" required value="{{email_host.value}}">
                     </div>
                   </div>
 
                     <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">SMTP 端口</label>
+                    <label class="layui-form-label">{% trans "SMTP 端口" %}</label>
                     <div class="layui-input-block">
                       <input type="number" name="smtp_port" class="layui-input" required value="{{email_port.value}}">
                     </div>
                   </div>
 
                    <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">SMTP 用户名</label>
+                    <label class="layui-form-label">{% trans "SMTP 用户名" %}</label>
                     <div class="layui-input-block">
                       <input type="text" name="username" class="layui-input" required value="{{email_username.value}}">
                     </div>
                   </div>
 
                     <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">SMTP 密码</label>
+                    <label class="layui-form-label">{% trans "SMTP 密码" %}</label>
                     <div class="layui-input-block">
                       <input type="password" name="pwd" class="layui-input" required value="{{email_dec_pwd}}">
                     </div>
                   </div>
 
                     <div class="layui-form-item">
-                    <label class="layui-form-label">使用SSL</label>
+                    <label class="layui-form-label">{% trans "使用SSL" %}</label>
                     <div class="layui-input-block">
-                      <input type="checkbox" name="smtp_ssl" lay-skin="switch" lay-text="开启|关闭"  {% if email_ssl.value %}checked{% endif %}>
+                      <input type="checkbox" name="smtp_ssl" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if email_ssl.value %}checked{% endif %}>
                     </div>
                   </div>
 
                   <div class="layui-form-item">
                     <div class="layui-input-block">
-                      <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="updateEmailBtn">保存邮箱设置</button>
-                      <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="checkEmail">验证邮箱设置</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="updateEmailBtn">{% trans "保存邮箱设置" %}</button>
+                      <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="checkEmail">{% trans "验证邮箱设置" %}</button>
                     </div>
                   </div>
                 </form>
@@ -298,82 +306,82 @@
             <div class="layui-tab-item">
                 <form class="layui-form" lay-filter="global_doc_config">
                 <div class="layui-card settings-card">
-                  <div class="layui-card-header">文集、文档配置</div>
+                  <div class="layui-card-header">{% trans "文集、文档配置" %}</div>
                   <div class="layui-card-body">
                     <!-- 文集导出开关 -->
                    <div class="layui-form-item">
-                    <label class="layui-form-label">文集下载</label>
+                    <label class="layui-form-label">{% trans "文集下载" %}</label>
                     <div class="layui-input-inline">
-                      <input type="checkbox" name="enable_project_report" lay-skin="switch" lay-text="开启|关闭"  {% if enable_project_report %}checked{% endif %}>
+                      <input type="checkbox" name="enable_project_report" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if enable_project_report %}checked{% endif %}>
                     </div>
-                    <div class="layui-form-mid layui-word-aux">开启此选项，文集允许导出为EPUB和DOCX等格式文件以供下载，文集拥有者可进行进一步控制特定文集是否开放导出</div>
+                    <div class="layui-form-mid layui-word-aux">{% trans "开启此选项，文集允许导出为EPUB和DOCX等格式文件以供下载，文集拥有者可进行进一步控制特定文集是否开放导出" %}</div>
                   </div>
                   <div class="layui-form-item">
-                      <label class="layui-form-label">目录点击行为</label>
+                      <label class="layui-form-label">{% trans "目录点击行为" %}</label>
                       <div class="layui-input-block">
                         <input type="radio" name="doc_tree_click_mode" value="open" title="{% trans '点击标题打开文档' %}" lay-filter="doc_tree_click_mode">
                         <input type="radio" name="doc_tree_click_mode" value="expand" title="{% trans '点击标题展开目录' %}" lay-filter="doc_tree_click_mode">
                       </div>
-                      <div class="layui-form-mid layui-word-aux">影响文集左侧目录树包含子文档的文档标题点击操作方式</div>
+                      <div class="layui-form-mid layui-word-aux">{% trans "影响文集左侧目录树包含子文档的文档标题点击操作方式" %}</div>
                     </div>
                     <hr>
 
                   <!-- 图片缩略开关 -->
                   <div class="layui-form-item">
-                    <label class="layui-form-label">图片缩略</label>
+                    <label class="layui-form-label">{% trans "图片缩略" %}</label>
                     <div class="layui-input-inline">
-                      <input type="checkbox" name="img_scale" lay-skin="switch" lay-text="开启|关闭"  {% if img_scale %}checked{% endif %}>
+                      <input type="checkbox" name="img_scale" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if img_scale %}checked{% endif %}>
                     </div>
-                    <div class="layui-form-mid layui-word-aux">开启后文档中的图片将显示为最大宽度350px的缩略图</div>
+                    <div class="layui-form-mid layui-word-aux">{% trans "开启后文档中的图片将显示为最大宽度350px的缩略图" %}</div>
                   </div>
                   <hr>
                   <!-- 长代码展开 -->
                   <div class="layui-form-item">
-                    <label class="layui-form-label">长代码展开</label>
+                    <label class="layui-form-label">{% trans "长代码展开" %}</label>
                     <div class="layui-input-inline">
-                      <input type="checkbox" name="long_code" lay-skin="switch" lay-text="开启|关闭"  {% if long_code %}checked{% endif %}>
+                      <input type="checkbox" name="long_code" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}"  {% if long_code %}checked{% endif %}>
                     </div>
-                    <div class="layui-form-mid layui-word-aux">文档页面代码块默认最高500px，超出将滚动显示，开启后代码块将按原高度显示。</div>
+                    <div class="layui-form-mid layui-word-aux">{% trans "文档页面代码块默认最高500px，超出将滚动显示，开启后代码块将按原高度显示。" %}</div>
                   </div>
-                  <div><button id="updateDocBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                  <div><button id="updateDocBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                   </div>
                 </div>
                 </form>
 
               <form class="layui-form" lay-filter="media_config">
                 <div class="layui-card settings-card">
-                  <div class="layui-card-header">素材配置</div>
+                  <div class="layui-card-header">{% trans "素材配置" %}</div>
                   <div class="layui-card-body">
                     <div class="layui-form-item" style="" id="role-user">
-                      <label class="layui-form-label">图片大小</label>
+                      <label class="layui-form-label">{% trans "图片大小" %}</label>
                       <div class="layui-input-inline">
                           <div class="tagsinput-primary form-group">
                               <input class="layui-input" type="number" name="img_size" id="img_size" value="{% if img_size != '' %}{{img_size}}{% endif %}" placeholder="">
                           </div>
                       </div>
-                      <div class="layui-form-mid layui-word-aux">默认限制图片大小10MB，单位MB</div>
+                      <div class="layui-form-mid layui-word-aux">{% trans "默认限制图片大小10MB，单位MB" %}</div>
                     </div>
 
                     <div class="layui-form-item" style="" id="role-user">
-                      <label class="layui-form-label">附件格式</label>
+                      <label class="layui-form-label">{% trans "附件格式" %}</label>
                       <div class="layui-input-inline">
                           <div class="tagsinput-primary form-group">
-                              <input name="attachment_suffix" id="attachment_suffix" class="tagsinput" data-role="tagsinput" value="{% if attachment_suffix != '' %}{{attachment_suffix}}{% endif %}" placeholder="不带.号的格式后缀">
+                              <input name="attachment_suffix" id="attachment_suffix" class="tagsinput" data-role="tagsinput" value="{% if attachment_suffix != '' %}{{attachment_suffix}}{% endif %}" placeholder="{% trans '不带.号的格式后缀' %}">
                           </div>
                       </div>
-                      <div class="layui-form-mid layui-word-aux">默认支持zip文件格式</div>
+                      <div class="layui-form-mid layui-word-aux">{% trans "默认支持zip文件格式" %}</div>
                     </div>
 
                     <div class="layui-form-item" style="" id="role-user">
-                      <label class="layui-form-label">附件大小</label>
+                      <label class="layui-form-label">{% trans "附件大小" %}</label>
                       <div class="layui-input-inline">
                           <div class="tagsinput-primary form-group">
                               <input class="layui-input" type="number" name="attachment_size" id="attachment_size" value="{% if attachment_size != '' %}{{attachment_size}}{% endif %}" placeholder="">
                           </div>
                       </div>
-                      <div class="layui-form-mid layui-word-aux">默认限制附件文件大小50MB，单位MB</div>
+                      <div class="layui-form-mid layui-word-aux">{% trans "默认限制附件文件大小50MB，单位MB" %}</div>
                     </div>
-                    <div><button id="updateMediaBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">更新</button></div>
+                    <div><button id="updateMediaBtn" type="button" class="pear-btn pear-btn-primary pear-btn-sm">{% trans "更新" %}</button></div>
                   </div>
                 </div>
                 </form>
@@ -436,13 +444,13 @@
         data:{"data":JSON.stringify(data)},
         success:function(r){
           if(r.code === 0){
-            layer.msg("更新成功")
+            layer.msg("{% trans '更新成功' %}")
           }else{
             layer.msg(r.data)
           }
         },
         error:function(){
-          layer.msg("更新异常")
+          layer.msg("{% trans '更新异常' %}")
         }
       })
   }
@@ -494,6 +502,11 @@
       data_list.push({'type':'basic','name':'enable_register_code','value':null})
     }else{
       data_list.push({'type':'basic','name':'enable_register_code','value':formdata.enable_register_code})
+    }
+    if(formdata.enable_lang_switch == undefined){
+      data_list.push({'type':'basic','name':'enable_lang_switch','value':null})
+    }else{
+      data_list.push({'type':'basic','name':'enable_lang_switch','value':formdata.enable_lang_switch})
     }
     updateConfig(data_list);
   };
@@ -576,9 +589,9 @@
   function checkEmailConfig(){
     layer.open({
       type:1,
-      title:"验证邮箱配置",
-      content:"<div style='padding:10px;'>将以现有配置发送一封测试邮件给发件邮箱，以检测邮箱配置是否正确！</div>",
-      btn:['发送','取消'],
+      title:"{% trans '验证邮箱配置' %}",
+      content:"<div style='padding:10px;'>{% trans '将以现有配置发送一封测试邮件给发件邮箱，以检测邮箱配置是否正确！' %}</div>",
+      btn:['{% trans "发送" %}','{% trans "取消" %}'],
       yes:function(){
         sendEmailTest();
       },
@@ -599,14 +612,14 @@
       success:function(r){
         layer.closeAll()
         if(r.status){
-          layer.msg("测试邮件发送成功",{icon:1})
+          layer.msg("{% trans '测试邮件发送成功' %}",{icon:1})
         }else{
-          layer.msg("测试邮件发送失败"+r.data,{icon:2})
+          layer.msg("{% trans '测试邮件发送失败' %}"+r.data,{icon:2})
         }
       },
       error:function(){
         layer.closeAll()
-        layer.msg("测试邮件发送异常",{icon:2})
+        layer.msg("{% trans '测试邮件发送异常' %}",{icon:2})
       }
     })
   };
@@ -656,12 +669,12 @@
   backupData = function(mode = 'data'){
     var layer_content;
     if(mode == 'data'){
-      layer_content = "你正在导出站点数据至本地，根据站点的数据量大小，此操作可能会消耗一定时间，请耐心等待，不要关闭或刷新页面！"
+      layer_content = "{% trans '你正在导出站点数据至本地，根据站点的数据量大小，此操作可能会消耗一定时间，请耐心等待，不要关闭或刷新页面！' %}"
     }else if(mode == 'media'){
-      layer_content = "你正在导出站点媒体文件至本地，根据站点的数据量大小，此操作可能会消耗一定时间，请耐心等待，不要关闭或刷新页面！"
+      layer_content = "{% trans '你正在导出站点媒体文件至本地，根据站点的数据量大小，此操作可能会消耗一定时间，请耐心等待，不要关闭或刷新页面！' %}"
     }
     layer.open({
-      title:"导出站点数据",
+      title:"{% trans '导出站点数据' %}",
       content:layer_content,
       yes:function(){
         layer.load(1);
@@ -674,12 +687,12 @@
             if(r.status){
               downloadZip(r.data)
             }else{
-              layer.msg('导出站点数据失败:' + r.data);
+              layer.msg('{% trans "导出站点数据失败:" %}' + r.data);
             }
           },
           error: function(xhr, status, error) {
             layer.closeAll();
-              layer.msg('导出站点数据请求异常:' + error);
+              layer.msg('{% trans "导出站点数据请求异常:" %}' + error);
           }
         })
       }
@@ -689,10 +702,10 @@
   downloadZip = function(download_link){
         layer.open({
             type:1,
-            title:"下载文件",
+            title:"{% trans '下载文件' %}",
             area:"300px",
             id:"downloadMd",
-            content:'<div style="margin:10px;"><p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_backup.zip" >点击下载文件(zip)</a></div>',
+            content:'<div style="margin:10px;"><p style="text-align:center;color:red;">{% trans "请尽快下载，避免失效！" %}</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_backup.zip" >{% trans "点击下载文件(zip)" %}</a></div>',
             //btn:['确定','取消'], //添加按钮
             //btnAlign:'c', //按钮居中
             success: function (layero, index) {

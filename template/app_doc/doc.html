@@ -103,7 +103,7 @@
             <i class="layui-icon layui-icon-star" id="collect_doc"></i> {% trans "收藏文档" %}
             {% endif %}
         {% else %}
-            <i class="layui-icon layui-icon-star" title="请登录后收藏"></i> {% trans "收藏文档" %}
+            <i class="layui-icon layui-icon-star" title="{% trans '请登录后收藏' %}"></i> {% trans "收藏文档" %}
         {% endif %}
     </span>
 
@@ -495,7 +495,7 @@
 <script src="{% static 'luckysheet/dist/exportexcel.js' %}?version={{mrdoc_version}} charset="utf-8"></script>
 <script>
 $("#download-doc-xls").click(function(){
-    layer.load("Excel生成中……")
+    layer.load("{% trans 'Excel生成中……' %}")
     // console.log(luckysheet.getAllSheets())
     exportExcel(luckysheet.getAllSheets(),"{{doc.name}}");
     layer.closeAll();

@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn" style="font-size: 15px;">
+<html lang="{{ LANGUAGE_CODE }}" style="font-size: 15px;">
 <head>
     <meta charset="UTF-8">
     <meta name=renderer  content=webkit>
@@ -96,12 +96,12 @@
             </a>
             {% if request.user.is_authenticated %}
                 {% if is_collect_pro %}
-                    <i class="layui-icon layui-icon-star-fill collected" style="cursor: pointer;" title="已收藏文集，点击取消" id="collect_pro"></i>
+                    <i class="layui-icon layui-icon-star-fill collected" style="cursor: pointer;" title="{% trans '已收藏文集，点击取消' %}" id="collect_pro"></i>
                 {% else %}
-                    <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="收藏文集" id="collect_pro"></i>
+                    <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="{% trans '收藏文集' %}" id="collect_pro"></i>
                 {% endif %}
             {% else %}
-                <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="请登录后收藏"></i>
+                <i class="layui-icon layui-icon-star" style="cursor: pointer;" title="{% trans '请登录后收藏' %}"></i>
             {% endif %}
             <p>
                 {% if colla_user > 0 %}
@@ -252,7 +252,7 @@
         </div>
         <div class="layui-tab-item mrdoc-margin-1" align='center'>
             <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
-            <button class="layui-btn layui-btn-xs" title="复制链接到粘贴板" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
+            <button class="layui-btn layui-btn-xs" title="{% trans '复制链接到粘贴板' %}" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
         </div>
     </div>
     </div> 
@@ -266,6 +266,7 @@
 <script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'darkmode-js/darkmode-js.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static '/markjs/mark.min.js' %}?version={{mrdoc_version}}" charset="UTF-8"></script>
+<script src="{% url 'javascript-catalog' %}"></script>
 <script src="{% static 'mrdoc/mrdoc-docs.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'iconFont/iconfont.js' %}?version={{mrdoc_version}}"></script>
 <script>
@@ -321,12 +322,12 @@
                         projectsTocPager(r.total,r.current);
                         tagCurrentDoc();
                     }else{
-                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                        layer.msg("{% trans '文集目录大纲加载失败，请刷新重试！' %}")
                     }
                 },
                 error:function(){
                     $("#loading-project-toc").hide();
-                    layer.msg("文集目录大纲加载异常");
+                    layer.msg("{% trans '文集目录大纲加载异常' %}");
                 }
             });
         };
@@ -361,13 +362,13 @@
                         $('#project-toc').append(toc_str);
                         tagCurrentDoc();
                     }else{
-                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                        layer.msg("{% trans '文集目录大纲加载失败，请刷新重试！' %}")
                     }
 
                 },
                 error:function(){
                     $("#loading-project-toc").hide();
-                    layer.msg("文集目录大纲加载异常");
+                    layer.msg("{% trans '文集目录大纲加载异常' %}");
                 }
             });
         }

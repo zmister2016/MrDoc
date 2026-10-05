@@ -155,7 +155,7 @@
                 title:'{% trans "新建文集" %}',
                 area:'300px;',
                 id:'createPro',//配置ID
-                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea"></textarea></div>',
+                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="{% trans '输入文集名' %}" required  lay-verify="required"><textarea name="desc" id="desc" placeholder="{% trans '输入文集简介' %}" class="layui-textarea"></textarea></div>',
                 btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
@@ -186,7 +186,7 @@
                 title:'{% trans "修改文集" %}',
                 area:'300px;',
                 id:'modifyPro',//配置ID
-                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="输入文集名" required  lay-verify="required" value="'+pro_name+'"><textarea name="desc" id="desc" placeholder="输入文集简介" class="layui-textarea">'+pro_intro+'</textarea></div>',
+                content:'<div style="padding: 20px;"><input class="layui-input" type="text" id="pname" style="margin-bottom:10px;" placeholder="{% trans '输入文集名' %}" required  lay-verify="required" value="'+pro_name+'"><textarea name="desc" id="desc" placeholder="{% trans '输入文集简介' %}" class="layui-textarea">'+pro_intro+'</textarea></div>',
                 btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
@@ -218,7 +218,7 @@
                 title:'{% trans "删除文集" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">你正在删除：<span style="font-weight:700;color:red;">【'+pro_name+'】</span><br><br>警告！此操作将<span style="font-weight:700;color:red;">删除此文集及文集下所有文档！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_delete_project" placeholder="DELETE"></div>',
+                content:'<div style="margin-left:10px;">{% trans "你正在删除：" %}<span style="font-weight:700;color:red;">【'+pro_name+'】</span><br><br>{% trans "警告！此操作将" %}<span style="font-weight:700;color:red;">{% trans "删除此文集及文集下所有文档！" %}</span>{% trans "并且" %}<span style="font-weight:700;color:red;">{% trans "不可恢复！" %}</span><br><br>{% trans "请输入“DELETE”以再次确认删除。" %}<br><input class="layui-input" style="width:95%;" id="confirm_delete_project" placeholder="DELETE"></div>',
                 btn:['{% trans "删除" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
@@ -244,7 +244,7 @@
                             }
                         })
                     }else{
-                        layer.msg("输入错误！")
+                        layer.msg("{% trans '输入错误！' %}")
                     }
                 },
             });
@@ -270,7 +270,7 @@
                 title:'{% trans "删除文集" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">你正在批量删除文集！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选文集及文集下所有文档！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
+                content:'<div style="margin-left:10px;">{% trans "你正在批量删除文集！" %}<br><br>{% trans "警告！此操作将" %}<span style="font-weight:700;color:red;">{% trans "删除所选文集及文集下所有文档！" %}</span>{% trans "并且" %}<span style="font-weight:700;color:red;">{% trans "不可恢复！" %}</span><br><br>{% trans "请输入“DELETE”以再次确认删除。" %}<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
                 btn:['{% trans "批量删除" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
@@ -300,7 +300,7 @@
                             }
                         })
                     }else{
-                        layer.msg("输入错误！")
+                        layer.msg("{% trans '输入错误！' %}")
                     }
                 }
             });
@@ -326,8 +326,8 @@
                 title:"{% trans '打包文集' %}",
                 area:"300px",
                 id:"reportMd",
-                content:'<div style="margin-left:10px;">确定打包导出所选的文集？</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "确定打包导出所选的文集？" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     var load = layer.load()
@@ -357,7 +357,7 @@
                 title:"{% trans '下载导出文档' %}",
                 area:"300px",
                 id:"downloadMd",
-                content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a>',
+                content:'<p style="text-align:center;color:red;">{% trans "请尽快下载，避免失效！" %}</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >{% trans "点击下载文件(zip)" %}</a>',
                 //btn:['确定','取消'], //添加按钮
                 //btnAlign:'c', //按钮居中
                 success: function (layero, index) {

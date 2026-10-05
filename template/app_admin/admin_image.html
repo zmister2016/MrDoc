@@ -1,7 +1,7 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}图片管理{% endblock %}
+{% block title %}{% trans "图片管理" %}{% endblock %}
 {% block custom_element %}
 <link href="{% static 'viewerjs/viewer.css' %}?version={{mrdoc_version}}" rel="stylesheet">
 {% endblock %}
@@ -10,25 +10,25 @@
     <div class="layui-card-body">
         <div class="layui-card-header" style="margin-bottom: 10px;">
             <div class="layui-row">
-                <span style="font-size:18px;">图片管理
+                <span style="font-size:18px;">{% trans "图片管理" %}
                 </span>
             </div>
         </div>
 
         <div class="layui-form">
             <div class="layui-form-item">
-              <label class="layui-form-label">关键词</label>
+              <label class="layui-form-label">{% trans "关键词" %}</label>
               <div class="layui-input-inline">
-                <input type="text" name="kw"  placeholder="请输入图片名称" autocomplete="off" class="layui-input">
+                <input type="text" name="kw"  placeholder="{% trans '请输入图片名称' %}" autocomplete="off" class="layui-input">
               </div>
-              <button class="pear-btn pear-btn-primary pear-btn-sm" id="search">搜索</button>
+              <button class="pear-btn pear-btn-primary pear-btn-sm" id="search">{% trans "搜索" %}</button>
             </div>
             <div class="layui-form-item">
-              <label class="layui-form-label">用户</label>
+              <label class="layui-form-label">{% trans "用户" %}</label>
               <div class="layui-input-inline">
                 <div id="select-user"></div>
               </div>
-              <button class="pear-btn pear-btn-primary pear-btn-sm" id="searchUser">筛选</button>
+              <button class="pear-btn pear-btn-primary pear-btn-sm" id="searchUser">{% trans "筛选" %}</button>
             </div>
         </div>
 
@@ -41,10 +41,10 @@
 <!-- 表格工具栏 -->
 <script type="text/html" id="img-toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="scanImg">
-        扫描未使用图片
+        {% trans "扫描未使用图片" %}
     </button>
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i> 批量删除
+        <i class="layui-icon layui-icon-delete"></i> {% trans "批量删除" %}
     </button>
 </script>
 
@@ -115,11 +115,11 @@
                             autoRow: true,
                         })
                     }else{
-                        layer.msg("用户列表获取出错")
+                        layer.msg("{% trans '用户列表获取出错' %}")
                     }
                 },
                 error:function(){
-                    layer.msg("用户列表获取异常")
+                    layer.msg("{% trans '用户列表获取异常' %}")
                 }
             })
         };
@@ -135,12 +135,12 @@
             toolbar: '#img-toolbar',
             cols: [[
                 {type: 'checkbox',width:20},
-                {field:'file_name',title:'图片名称',templet:'#imgShow'},
-                {field:'file_path',title:'图片路径',},
-                {field:'remark',title:'备注',width:100,},
-                {field:'username',title:'用户',width:140,},
-                {field:'create_time',title:'上传时间',width:160,templet:'#registerTime'},
-                {field:'oprate',title:'操作',width:180,templet:'#userOpera'},
+                {field:'file_name',title:'{% trans "图片名称" %}',templet:'#imgShow'},
+                {field:'file_path',title:'{% trans "图片路径" %}',},
+                {field:'remark',title:'{% trans "备注" %}',width:100,},
+                {field:'username',title:'{% trans "用户" %}',width:140,},
+                {field:'create_time',title:'{% trans "上传时间" %}',width:160,templet:'#registerTime'},
+                {field:'oprate',title:'{% trans "操作" %}',width:180,templet:'#userOpera'},
             ]],
             skin: 'line',
         });
@@ -160,8 +160,8 @@
         // 扫描未使用图片
         scanImg = function(obj){
             layer.open({
-                title:"扫描未使用图片",
-                content:"扫描站点已上传但未在文档中引用的图片，此操作可能会花费一些时间，请耐心等待扫描完成。",
+                title:"{% trans '扫描未使用图片' %}",
+                content:"{% trans '扫描站点已上传但未在文档中引用的图片，此操作可能会花费一些时间，请耐心等待扫描完成。' %}",
                 yes:function(){
                     // layer.load();
                     table.reload('img-list',{
@@ -178,11 +178,11 @@
         delImg = function(id){
             layer.open({
                 type:1,
-                title:'删除文档',
+                title:'{% trans "删除文档" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：操作将<span style="font-weight:700;color:red;">删除此图片且不可恢复！</span></div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：操作将" %}<span style="font-weight:700;color:red;">{% trans "删除此图片且不可恢复！" %}</span></div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     $.ajax({
@@ -191,7 +191,7 @@
                         success:function(r){
                             layer.closeAll()
                             if(r.code == 0){
-                                layer.msg("删除成功",{icon:1},function(){
+                                layer.msg("{% trans '删除成功' %}",{icon:1},function(){
                                     table.reload('img-list',{page:{curr:1}});
                                 })
                                 
@@ -201,7 +201,7 @@
                         },
                         error:function(){
                             layer.closeAll()
-                            layer.mag("删除异常",{icon:2,})
+                            layer.mag("{% trans '删除异常' %}",{icon:2,})
                         }
                     })
                 },
@@ -229,7 +229,7 @@
                 title:'{% trans "删除图片" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">你正在批量删除图片！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选图片！</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
+                content:'<div style="margin-left:10px;">{% trans "你正在批量删除图片！" %}<br><br>{% trans "警告！此操作将" %}<span style="font-weight:700;color:red;">{% trans "删除所选图片！" %}</span>{% trans "并且" %}<span style="font-weight:700;color:red;">{% trans "不可恢复！" %}</span><br><br>{% trans "请输入“DELETE”以再次确认删除。" %}<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_project" placeholder="DELETE"></div>',
                 btn:['{% trans "批量删除" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
@@ -259,7 +259,7 @@
                             }
                         })
                     }else{
-                        layer.msg("输入错误！")
+                        layer.msg("{% trans '输入错误！' %}")
                     }
                 }
             });

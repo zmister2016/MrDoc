@@ -1,26 +1,26 @@
 {% extends 'app_doc/user/user_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}用户Token管理{% endblock %}
+{% block title %}{% trans "用户Token管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <blockquote class="layui-elem-quote layui-quote-nm" style="font-size: 12px;color: #999;">
-            借助Token，你可以无需打开网站，即可通过更加自动化的方式进行文档编写；桌面客户端、手机APP和浏览器扩展均需使用此 Token 实现用户认证。
+            {% trans "借助Token，你可以无需打开网站，即可通过更加自动化的方式进行文档编写；桌面客户端、手机APP和浏览器扩展均需使用此 Token 实现用户认证。" %}
             </blockquote>
             <div class="layui-row">
                 <form>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">Token值</label>
+                        <label class="layui-form-label">{% trans "Token值" %}</label>
                         <div class="layui-input-inline" style="width:450px;">
                             <input type="text" name="token" id="token" value="{{token}}" autocomplete="off" class="layui-input" readonly>
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">操作</label>
-                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="copy-token" onclick="copyToken()">复制</button>
-                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="qrcode-token"><i class="pear-icon pear-icon-scanning"></i> 二维码</button>
-                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="generaToken()">重新生成Token</button>
+                        <label class="layui-form-label">{% trans "操作" %}</label>
+                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="copy-token" onclick="copyToken()">{% trans "复制" %}</button>
+                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="qrcode-token"><i class="pear-icon pear-icon-scanning"></i> {% trans "二维码" %}</button>
+                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="generaToken()">{% trans "重新生成Token" %}</button>
                     </div>
                     <div class="layui-form-item">
                         <div id="token_qrcode" style="display: none;margin-left: 110px;"></div>
@@ -46,17 +46,17 @@
             var token_val = document.getElementById("token");
             token_val.select();
             document.execCommand("Copy");
-            layer.msg("已复制！")
+            layer.msg("{% trans '已复制！' %}")
         };
         //生成Token
         generaToken = function(){
             layer.open({
                 type:1,
-                title:'重置Token',
+                title:'{% trans "重置Token" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin:10px;">警告：此操作将重新为你的账户生成Token，旧Token将失效！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin:10px;">{% trans "警告：此操作将重新为你的账户生成Token，旧Token将失效！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -68,7 +68,7 @@
                             $('#token').val(r.data);
                             layer.close(index)
                             doc_qrcode();
-                            layer.msg("生成成功！",{offset: 't'})
+                            layer.msg("{% trans '生成成功！' %}",{offset: 't'})
                         }else{
                             //生成失败，提示
                             //console.log(r)

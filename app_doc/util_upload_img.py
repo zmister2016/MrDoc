@@ -215,7 +215,7 @@ def img_upload(files, dir_name, user, group_id=None):
         # print(repr(e))
         allow_img_size = 10485760
     if files.size > allow_img_size:
-        return {"success": 0, "message": _("图片大小超出{}MB".format(allow_img_size / 1048576))}
+        return {"success": 0, "message": _("图片大小超出{}MB").format(allow_img_size / 1048576)}
 
     relative_path = upload_generation_dir(dir_name)
     file_name = files.name.replace(file_suffix,'').replace('.','') + '_' +str(int(time.time())) + '.' + file_suffix

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from app_doc.models import Doc
 import uuid
 
@@ -34,8 +35,8 @@ class DocAISection(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "文档AI切片"
-        verbose_name_plural = "文档AI切片"
+        verbose_name = _("文档AI切片")
+        verbose_name_plural = _("文档AI切片")
 
 
 # AI 模型供应商
@@ -44,31 +45,31 @@ class AIProvider(models.Model):
     provider = models.CharField(max_length=50)  # openai, deepseek, 硅基流动、模力方舟...
     api_key = models.CharField(max_length=200)
     base_url = models.URLField(blank=True, null=True)  # 有些厂商需要
-    model_type = models.CharField(verbose_name="模型类型", default='text_generate', max_length=100)  # 模型类型，默认文本生成
-    model_name = models.CharField(max_length=100, verbose_name="模型名称", blank=True, null=True)
-    is_active = models.BooleanField(default=True, verbose_name="是否启用")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
+    model_type = models.CharField(verbose_name=_("模型类型"), default='text_generate', max_length=100)  # 模型类型，默认文本生成
+    model_name = models.CharField(max_length=100, verbose_name=_("模型名称"), blank=True, null=True)
+    is_active = models.BooleanField(default=True, verbose_name=_("是否启用"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("创建时间"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("更新时间"))
 
     def __str__(self):
         return self.provider
 
     class Meta:
-        verbose_name = "AI 模型提供商"
-        verbose_name_plural = "AI 模型提供商"
+        verbose_name = _("AI 模型提供商")
+        verbose_name_plural = _("AI 模型提供商")
 
 
 # Prompt 管理
 class Prompt(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Prompt 名称", unique=True)
-    desc = models.TextField(verbose_name="Prompt 描述", blank=True, default="")
-    value = models.TextField(verbose_name="Prompt 内容")
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-    modify_time = models.DateTimeField(auto_now=True, verbose_name="修改时间")
+    name = models.CharField(max_length=100, verbose_name=_("Prompt 名称"), unique=True)
+    desc = models.TextField(verbose_name=_("Prompt 描述"), blank=True, default="")
+    value = models.TextField(verbose_name=_("Prompt 内容"))
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name=_("创建时间"))
+    modify_time = models.DateTimeField(auto_now=True, verbose_name=_("修改时间"))
 
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name = "Prompt"
-        verbose_name_plural = "Prompt 管理"
+        verbose_name_plural = _("Prompt 管理")

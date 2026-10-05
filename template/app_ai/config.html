@@ -1,7 +1,7 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}AI功能接入配置{% endblock %}
+{% block title %}{% trans "AI功能接入配置" %}{% endblock %}
 {% block custom_element %}
 {% endblock %}
 {% block content %}
@@ -9,40 +9,40 @@
   <div class="layui-card-body">
     <div class="layui-card-header" style="margin-bottom: 10px;">
       <div class="layui-row">
-          <span style="font-size:18px;">AI功能接入配置
+          <span style="font-size:18px;">{% trans "AI功能接入配置" %}
           </span>
       </div>
     </div>
     <div class="layui-row">
         <div class="layui-tab">
           <ul class="layui-tab-title">
-            <li class="layui-this">基础配置</li>
-            <li>AI模型供应商</li>
-            <li>Prompt 管理</li>
-            <li>文档索引管理</li>
+            <li class="layui-this">{% trans "基础配置" %}</li>
+            <li>{% trans "AI模型供应商" %}</li>
+            <li>{% trans "Prompt 管理" %}</li>
+            <li>{% trans "文档索引管理" %}</li>
           </ul>
           <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
                 <div class="layui-form" lay-filter="ai-basic-config">
                     <div class="layui-card settings-card">
-                      <div class="layui-card-header">基础信息</div>
+                      <div class="layui-card-header">{% trans "基础信息" %}</div>
                       <div class="layui-card-body">
                         <!-- 启用状态 -->
                         <div class="layui-form-item">
-                            <label class="layui-form-label">状态</label>
+                            <label class="layui-form-label">{% trans "状态" %}</label>
                             <div class="layui-input-block">
                             {% if ai_status == '1' %}
-                            <input type="radio" name="ai_status" value="1" title="启用" checked>
-                            <input type="radio" name="ai_status" value="0" title="关闭">
+                            <input type="radio" name="ai_status" value="1" title="{% trans '启用' %}" checked>
+                            <input type="radio" name="ai_status" value="0" title="{% trans '关闭' %}">
                             {% else %}
-                            <input type="radio" name="ai_status" value="1" title="启用" >
-                            <input type="radio" name="ai_status" value="0" title="关闭" checked>
+                            <input type="radio" name="ai_status" value="1" title="{% trans '启用' %}" >
+                            <input type="radio" name="ai_status" value="0" title="{% trans '关闭' %}" checked>
                             {% endif %}
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                            <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_basic_config">保存</button>
+                            <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_basic_config">{% trans "保存" %}</button>
                             </div>
                         </div>
                       </div>
@@ -51,54 +51,54 @@
 
                 <div class="layui-form" lay-filter="ai-chat-config">
                     <div class="layui-card settings-card">
-                      <div class="layui-card-header">聊天助手</div>
+                      <div class="layui-card-header">{% trans "聊天助手" %}</div>
                       <div class="layui-card-body">
                         <!-- 网页聊天对话框显示 -->
                         <div class="layui-form-item">
-                            <label class="layui-form-label">状态</label>
+                            <label class="layui-form-label">{% trans "状态" %}</label>
                             <div class="layui-input-block">
-                                <input type="radio" name="ai_chat_status" value="1" title="启用" {% if ai_chat_status == '1' %}checked{% endif %}>
-                                <input type="radio" name="ai_chat_status" value="0" title="关闭" {% if ai_chat_status != '1' %}checked{% endif %}>
+                                <input type="radio" name="ai_chat_status" value="1" title="{% trans '启用' %}" {% if ai_chat_status == '1' %}checked{% endif %}>
+                                <input type="radio" name="ai_chat_status" value="0" title="{% trans '关闭' %}" {% if ai_chat_status != '1' %}checked{% endif %}>
                             </div>
                         </div>
                         <!-- 聊天对话框权限 -->
                         <div class="layui-form-item">
-                            <label class="layui-form-label">可见范围</label>
+                            <label class="layui-form-label">{% trans "可见范围" %}</label>
                             <div class="layui-input-block">
-                                <input type="radio" name="ai_chat_role" value="1" title="所有访客" {% if ai_chat_role == '1' %}checked{% endif %}>
-                                <input type="radio" name="ai_chat_role" value="2" title="已登录用户" {% if ai_chat_role != '1' %}checked{% endif %}>
+                                <input type="radio" name="ai_chat_role" value="1" title="{% trans '所有访客' %}" {% if ai_chat_role == '1' %}checked{% endif %}>
+                                <input type="radio" name="ai_chat_role" value="2" title="{% trans '已登录用户' %}" {% if ai_chat_role != '1' %}checked{% endif %}>
                             </div>
                         </div>
                         <div class="layui-form-item">
-                          <label class="layui-form-label">对话频率限制</label>
+                          <label class="layui-form-label">{% trans "对话频率限制" %}</label>
                           <div class="layui-input-inline">
                             <select name="ai_chat_rate_limit" lay-verify="required">
-                              <option value="-1">无限制</option>
-                              <option value="1">每分钟1次</option>
-                              <option value="5">每分钟5次</option>
-                              <option value="10">每分钟10次</option>
-                              <option value="20">每分钟20次</option>
-                              <option value="30">每分钟30次</option>
-                              <option value="40">每分钟40次</option>
+                              <option value="-1">{% trans "无限制" %}</option>
+                              <option value="1">{% trans "每分钟1次" %}</option>
+                              <option value="5">{% trans "每分钟5次" %}</option>
+                              <option value="10">{% trans "每分钟10次" %}</option>
+                              <option value="20">{% trans "每分钟20次" %}</option>
+                              <option value="30">{% trans "每分钟30次" %}</option>
+                              <option value="40">{% trans "每分钟40次" %}</option>
                             </select>
                           </div>
-                          <div class="layui-form-mid layui-word-aux">以用户为对象进行对 AI 接口对话请求频率进行限制。</div>
+                          <div class="layui-form-mid layui-word-aux">{% trans "以用户为对象进行对 AI 接口对话请求频率进行限制。" %}</div>
                         </div>
                         <!-- Prompt 选择 -->
                         <div class="layui-form-item">
                           <label class="layui-form-label">Prompt</label>
                           <div class="layui-input-block">
                             <select name="ai_chat_prompt_id">
-                              <option value="">（不选择，使用系统默认 Prompt）</option>
+                              <option value="">{% trans "（不选择，使用系统默认 Prompt）" %}</option>
                             </select>
                             <div style="margin-top: 6px; font-size: 12px; color: #999;">
-                              不选择 Prompt 时，将使用系统默认 Prompt。
+                              {% trans "不选择 Prompt 时，将使用系统默认 Prompt。" %}
                             </div>
                           </div>
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                            <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_chat_config">保存</button>
+                            <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_chat_config">{% trans "保存" %}</button>
                             </div>
                         </div>
                         </div>
@@ -107,34 +107,34 @@
 
                 <div class="layui-form" lay-filter="ai-write-config">
                   <div class="layui-card settings-card">
-                    <div class="layui-card-header">AI辅助写作</div>
+                    <div class="layui-card-header">{% trans "AI辅助写作" %}</div>
                     <div class="layui-card-body">
                       <!-- AI写作辅助 -->
                       <div class="layui-form-item">
-                          <label class="layui-form-label">状态</label>
+                          <label class="layui-form-label">{% trans "状态" %}</label>
                           <div class="layui-input-block">
-                              <input type="radio" name="ai_write_status" value="1" title="启用" {% if ai_write_status == '1' %}checked{% endif %}>
-                              <input type="radio" name="ai_write_status" value="0" title="关闭" {% if ai_write_status != '1' %}checked{% endif %}>
+                              <input type="radio" name="ai_write_status" value="1" title="{% trans '启用' %}" {% if ai_write_status == '1' %}checked{% endif %}>
+                              <input type="radio" name="ai_write_status" value="0" title="{% trans '关闭' %}" {% if ai_write_status != '1' %}checked{% endif %}>
                           </div>
                       </div>
                       <div class="layui-form-item">
-                        <label class="layui-form-label">请求频率限制</label>
+                        <label class="layui-form-label">{% trans "请求频率限制" %}</label>
                         <div class="layui-input-inline">
                           <select name="ai_write_rate_limit" lay-verify="required">
-                            <option value="-1">无限制</option>
-                            <option value="1">每分钟1次</option>
-                            <option value="5">每分钟5次</option>
-                            <option value="10">每分钟10次</option>
-                            <option value="20">每分钟20次</option>
-                            <option value="30">每分钟30次</option>
-                            <option value="40">每分钟40次</option>
+                            <option value="-1">{% trans "无限制" %}</option>
+                            <option value="1">{% trans "每分钟1次" %}</option>
+                            <option value="5">{% trans "每分钟5次" %}</option>
+                            <option value="10">{% trans "每分钟10次" %}</option>
+                            <option value="20">{% trans "每分钟20次" %}</option>
+                            <option value="30">{% trans "每分钟30次" %}</option>
+                            <option value="40">{% trans "每分钟40次" %}</option>
                           </select>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">以用户为对象进行对 AI 接口请求频率进行限制。</div>
+                        <div class="layui-form-mid layui-word-aux">{% trans "以用户为对象进行对 AI 接口请求频率进行限制。" %}</div>
                       </div>
                       <div class="layui-form-item">
                           <div class="layui-input-block">
-                          <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_write_config">保存</button>
+                          <button class="pear-btn pear-btn-primary pear-btn-sm" id="save_write_config">{% trans "保存" %}</button>
                           </div>
                       </div>
                       </div>
@@ -146,7 +146,7 @@
              <div class="layui-tab-item">
               <div class="layui-row">
                 <div style="padding: 10px;">
-                  <button class="pear-btn pear-btn-primary pear-btn-sm" id="addProviderBtn">新增AI模型</button>
+                  <button class="pear-btn pear-btn-primary pear-btn-sm" id="addProviderBtn">{% trans "新增AI模型" %}</button>
                 </div>
                 <table id="providerTable" lay-filter="providerTableFilter"></table>
               </div>
@@ -157,7 +157,7 @@
              <div class="layui-tab-item">
               <div class="layui-row">
                 <div style="padding: 10px;">
-                  <button class="pear-btn pear-btn-primary pear-btn-sm" id="addPromptBtn">新建 Prompt</button>
+                  <button class="pear-btn pear-btn-primary pear-btn-sm" id="addPromptBtn">{% trans "新建 Prompt" %}</button>
                 </div>
                 <table id="promptTable" lay-filter="promptTableFilter"></table>
               </div>
@@ -169,16 +169,16 @@
               <div class="layui-row layui-form" style="padding: 10px 0;">
                 <div class="layui-form-item">
                   <div class="layui-inline">
-                    <label class="layui-form-label">搜索文档：</label>
+                    <label class="layui-form-label">{% trans "搜索文档：" %}</label>
                     <div class="layui-input-inline" style="width: 200px;">
-                      <input type="text" id="searchDoc" name="searchDoc" placeholder="输入文档名称" class="layui-input">
+                      <input type="text" id="searchDoc" name="searchDoc" placeholder="{% trans '输入文档名称' %}" class="layui-input">
                     </div>
                   </div>
                   <div class="layui-inline">
-                    <button class="layui-btn layui-btn-sm layui-btn-normal" id="searchBtn">搜索</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-primary" id="resetBtn">重置</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-warm" id="rebuildAllBtn">重建全站索引</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="openRagDebug()">检索调试器</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" id="searchBtn">{% trans "搜索" %}</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-primary" id="resetBtn">{% trans "重置" %}</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-warm" id="rebuildAllBtn">{% trans "重建全站索引" %}</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="openRagDebug()">{% trans "检索调试器" %}</button>
                   </div>
                 </div>
               </div>
@@ -199,12 +199,12 @@
 </style>
 <!-- 操作列模板 -->
 <script type="text/html" id="providerOperationBar">
-  <a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit">编辑</a>
-  <a class="pear-btn pear-btn-danger pear-btn-xs" lay-event="delete">删除</a>
+  <a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit">{% trans "编辑" %}</a>
+  <a class="pear-btn pear-btn-danger pear-btn-xs" lay-event="delete">{% trans "删除" %}</a>
 </script>
 <script type="text/html" id="promptOperationBar">
-  <a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit">编辑</a>
-  <a class="pear-btn pear-btn-danger pear-btn-xs" lay-event="delete">删除</a>
+  <a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit">{% trans "编辑" %}</a>
+  <a class="pear-btn pear-btn-danger pear-btn-xs" lay-event="delete">{% trans "删除" %}</a>
 </script>
 <!-- 创建时间 -->
 <script type="text/html" id="create-time">
@@ -339,13 +339,13 @@
         data:{'data':JSON.stringify(data)},
         success:function(r){
           if(r.code === 0){
-            layer.msg("保存成功")
+            layer.msg("{% trans '保存成功' %}")
           }else{
             layer.msg(r.data)
           }
         },
         error:function(){
-          layer.msg("保存异常")
+          layer.msg("{% trans '保存异常' %}")
         }
       })
   };
@@ -362,15 +362,15 @@
         page: true, // 开启分页
         skin: 'line',
         cols: [[
-            { field: 'model_name', title: '模型名称', },
-            { field: 'model_type', title: '模型类型', },
-            { field: 'provider', title: '供应商', },
+            { field: 'model_name', title: '{% trans "模型名称" %}', },
+            { field: 'model_type', title: '{% trans "模型类型" %}', },
+            { field: 'provider', title: '{% trans "供应商" %}', },
             { field: 'api_key', title: 'APIKey', },
-            { field: 'base_url', title: '基础URL', },
-            { field: 'is_active', title: '是否启用', templet: d => d.is_active ? '<span style="color:green;">已启用</span>' : '<span style="color:red;">已禁用</span>', width: 100 },
-            { field: 'created_at', title: '创建时间', width: 180, templet:"#create-time" },
-            { field: 'updated_at', title: '更新时间', width: 180,templet:"#update-time" },
-            { fixed: 'right', title: '操作', toolbar: '#providerOperationBar', width: 150 }
+            { field: 'base_url', title: '{% trans "基础URL" %}', },
+            { field: 'is_active', title: '{% trans "是否启用" %}', templet: d => d.is_active ? '<span style="color:green;">{% trans "已启用" %}</span>' : '<span style="color:red;">{% trans "已禁用" %}</span>', width: 100 },
+            { field: 'created_at', title: '{% trans "创建时间" %}', width: 180, templet:"#create-time" },
+            { field: 'updated_at', title: '{% trans "更新时间" %}', width: 180,templet:"#update-time" },
+            { fixed: 'right', title: '{% trans "操作" %}', toolbar: '#providerOperationBar', width: 150 }
         ]],
         parseData: function (res) {
             // 解析返回的数据，适配 LayUI 的表格格式
@@ -395,16 +395,16 @@
         if (event === 'edit') {
             openEditModal(data);
         } else if (event === 'delete') {
-            layer.confirm('确定要删除该模型吗？', function (index) {
+            layer.confirm('{% trans "确定要删除该模型吗？" %}', function (index) {
                 $.ajax({
                     url: `/ai/model-providers/${data.id}/`,
                     method: 'DELETE',
                     success: function () {
-                        layer.msg('删除成功');
+                        layer.msg('{% trans "删除成功" %}');
                         table.reload('providerTable');
                     },
                     error: function () {
-                        layer.msg('删除失败');
+                        layer.msg('{% trans "删除失败" %}');
                     }
                 });
                 layer.close(index);
@@ -415,7 +415,7 @@
     function openEditModal(data = {}) {
       layer.open({
           type: 1,
-          title: data.id ? '编辑 AI 模型' : '新增 AI 模型',
+          title: data.id ? '{% trans "编辑 AI 模型" %}' : '{% trans "新增 AI 模型" %}',
           area: ['600px', '700px'],
           content: `
               <form class="layui-form" style="padding: 20px;">
@@ -423,68 +423,68 @@
 
                   <!-- 模型供应商 -->
                   <div class="layui-form-item">
-                      <label class="layui-form-label">模型供应商</label>
+                      <label class="layui-form-label">{% trans "模型供应商" %}</label>
                       <div class="layui-input-block">
                           <select name="provider" lay-verify="required">
                             <option value=""></option>
-                            <option value="giteeai">模力方舟（Gitee AI）</option>
-                            <option value="siliconflow">硅基流动（SiliconFlow）</option>
+                            <option value="giteeai">{% trans "模力方舟（Gitee AI）" %}</option>
+                            <option value="siliconflow">{% trans "硅基流动（SiliconFlow）" %}</option>
                             <option value="ollama">Ollama</option>
-                            <option value="openai">通用OpenAI接口</option>
+                            <option value="openai">{% trans "通用OpenAI接口" %}</option>
                           </select>
                       </div>
                   </div>
 
                   <!-- 密钥 -->
                   <div class="layui-form-item">
-                      <label class="layui-form-label">密钥</label>
+                      <label class="layui-form-label">{% trans "密钥" %}</label>
                       <div class="layui-input-block">
-                          <input type="text" name="api_key" required lay-verify="required" placeholder="请输入密钥" class="layui-input" value="${data.api_key || ''}">
+                          <input type="text" name="api_key" required lay-verify="required" placeholder="{% trans '请输入密钥' %}" class="layui-input" value="${data.api_key || ''}">
                       </div>
                   </div>
 
                   <!-- 基础 URL -->
                   <div class="layui-form-item">
-                      <label class="layui-form-label">基础 URL</label>
+                      <label class="layui-form-label">{% trans "基础 URL" %}</label>
                       <div class="layui-input-block">
-                          <input type="url" name="base_url" required lay-verify="required|url" placeholder="请输入基础 URL" class="layui-input" value="${data.base_url || ''}">
+                          <input type="url" name="base_url" required lay-verify="required|url" placeholder="{% trans '请输入基础 URL' %}" class="layui-input" value="${data.base_url || ''}">
                       </div>
                   </div>
 
                   <!-- 模型名称 -->
                   <div class="layui-form-item">
-                      <label class="layui-form-label">模型名称</label>
+                      <label class="layui-form-label">{% trans "模型名称" %}</label>
                       <div class="layui-input-block">
-                          <input type="text" name="model_name" required lay-verify="required" placeholder="请输入模型名称" class="layui-input" value="${data.model_name || ''}">
+                          <input type="text" name="model_name" required lay-verify="required" placeholder="{% trans '请输入模型名称' %}" class="layui-input" value="${data.model_name || ''}">
                       </div>
                   </div>
 
                   <!-- 模型类型 -->
                   <div class="layui-form-item">
-                      <label class="layui-form-label">模型类型</label>
+                      <label class="layui-form-label">{% trans "模型类型" %}</label>
                       <div class="layui-input-block">
                           <select name="model_type" lay-verify="required">
                             <option value=""></option>
-                            <option value="text_generate">文本生成</option>
-                            <option value="embedding">向量化</option>
-                            <option value="reranker">重排</option>
+                            <option value="text_generate">{% trans "文本生成" %}</option>
+                            <option value="embedding">{% trans "向量化" %}</option>
+                            <option value="reranker">{% trans "重排" %}</option>
                           </select>
                       </div>
                   </div>
 
                   <!-- 是否启用 -->
                   <div class="layui-form-item">
-                      <label class="layui-form-label">是否启用</label>
+                      <label class="layui-form-label">{% trans "是否启用" %}</label>
                       <div class="layui-input-block">
-                          <input type="checkbox" name="is_active" lay-skin="switch" lay-text="启用|禁用" ${data.is_active ? 'checked' : ''}>
+                          <input type="checkbox" name="is_active" lay-skin="switch" lay-text="{% trans '启用' %}|{% trans '禁用' %}" ${data.is_active ? 'checked' : ''}>
                       </div>
                   </div>
 
                   <!-- 提交和取消按钮 -->
                   <div class="layui-form-item">
                       <div class="layui-input-block">
-                          <button class="pear-btn pear-btn-primary" lay-submit lay-filter="saveModel">保存</button>
-                          <button class="pear-btn pear-btn-normal" type="button" onclick="layer.closeAll()">取消</button>
+                          <button class="pear-btn pear-btn-primary" lay-submit lay-filter="saveModel">{% trans "保存" %}</button>
+                          <button class="pear-btn pear-btn-normal" type="button" onclick="layer.closeAll()">{% trans "取消" %}</button>
                       </div>
                   </div>
               </form>
@@ -508,12 +508,12 @@
                       method: method,
                       data: formValues,
                       success: function () {
-                          layer.msg('保存成功');
+                          layer.msg('{% trans "保存成功" %}');
                           layui.table.reload('providerTable'); // 重新加载表格
                           layer.close(index);
                       },
                       error: function () {
-                          layer.msg('保存失败');
+                          layer.msg('{% trans "保存失败" %}');
                       }
                   });
                   return false;
@@ -697,14 +697,14 @@
   // 重建全站索引：引导使用manage命令（Web端同步执行耗时长，易超时）
   document.getElementById('rebuildAllBtn').addEventListener('click', function() {
     layer.alert(
-      '全站索引重建涉及大量文档的切片与向量化计算，耗时较长，不建议在Web端执行。<br><br>' +
-      '请管理员使用命令行方式重建：<br><br>' +
+      '{% trans "全站索引重建涉及大量文档的切片与向量化计算，耗时较长，不建议在Web端执行。" %}<br><br>' +
+      '{% trans "请管理员使用命令行方式重建：" %}<br><br>' +
       '<code style="display:block;padding:10px;background:#f8f8f8;border-radius:4px;word-break:break-all;">python manage.py rebuild_ai_index --projects=all</code><br><br>' +
-      '其他可选参数：<br>' +
-      '--projects=1,2,3（指定文集ID）<br>' +
-      '--roles=0,1（指定文集权限，0公开,1私密,2指定用户可见,3访问码可见）<br>' +
-      '--dry-run（仅预览执行范围，不实际执行）',
-      {title: '重建全站索引', icon: 0}
+      '{% trans "其他可选参数：" %}<br>' +
+      '--projects=1,2,3{% trans "（指定文集ID）" %}<br>' +
+      '--roles=0,1{% trans "（指定文集权限，0公开,1私密,2指定用户可见,3访问码可见）" %}<br>' +
+      '--dry-run{% trans "（仅预览执行范围，不实际执行）" %}',
+      {title: '{% trans "重建全站索引" %}', icon: 0}
     );
   });
 
@@ -715,10 +715,10 @@
     page: true,
     skin: 'line',
     cols: [[
-      {field: 'doc_title', title: '文档'},
-      {field: 'chunk_count', title: '切片数', width: 120},
-      {field: 'updated_at', title: '更新时间', width: 200},
-      {fixed: 'right', title: '操作', toolbar: '#docActions'}
+      {field: 'doc_title', title: '{% trans "文档" %}'},
+      {field: 'chunk_count', title: '{% trans "切片数" %}', width: 120},
+      {field: 'updated_at', title: '{% trans "更新时间" %}', width: 200},
+      {fixed: 'right', title: '{% trans "操作" %}', toolbar: '#docActions'}
     ]]
   });
   // 监听文档索引行操作
@@ -726,7 +726,7 @@
     var data = obj.data;
 
     if (obj.event === 'del') {
-      layer.confirm('确认删除？', function (index) {
+      layer.confirm('{% trans "确认删除？" %}', function (index) {
         $.ajax({
           url: '{% url "api-ai-doc-sections" %}',
           type: 'DELETE',
@@ -738,14 +738,14 @@
             table.reload('docIndexTable');
           },
           error: function () {
-            layer.msg('删除失败');
+            layer.msg('{% trans "删除失败" %}');
           }
         });
       });
     }
 
     if (obj.event === 'rebuild') {
-      layer.confirm('确认重建此文档的AI切片索引和向量存储？', function (index) {
+      layer.confirm('{% trans "确认重建此文档的AI切片索引和向量存储？" %}', function (index) {
         layer.load(2);
         $.ajax({
           url: '{% url "ai-rebuild-doc" %}',
@@ -760,7 +760,7 @@
           },
           error: function () {
             layer.closeAll('loading');
-            layer.msg('重建失败');
+            layer.msg('{% trans "重建失败" %}');
           }
         });
       })

@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn" style="font-size: 15px;">
+<html lang="{{ LANGUAGE_CODE }}" style="font-size: 15px;">
 <head>
     <meta charset="UTF-8">
     <meta name=renderer  content=webkit>
@@ -312,7 +312,7 @@
         </div>
         <div class="layui-tab-item mrdoc-margin-1" align='center'>
             <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
-            <button class="layui-btn layui-btn-xs" title="复制链接到粘贴板" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
+            <button class="layui-btn layui-btn-xs" title="{% trans '复制链接到粘贴板' %}" style="background-color: #333;" id="copy_doc_url"">{% trans "复制链接" %}</button>
         </div>
     </div>
     </div> 
@@ -366,12 +366,12 @@
                         activeCurrentDoc();
                         renderTocDropDown();
                     }else{
-                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                        layer.msg("{% trans '文集目录大纲加载失败，请刷新重试！' %}")
                     }
                 },
                 error:function(){
                     $("#loading-project-toc").hide();
-                    layer.msg("文集目录大纲加载异常");
+                    layer.msg("{% trans '文集目录大纲加载异常' %}");
                 }
             });
         };
@@ -408,13 +408,13 @@
                         activeCurrentDoc();
                         renderTocDropDown();
                     }else{
-                        layer.msg("文集目录大纲加载失败，请刷新重试！")
+                        layer.msg("{% trans '文集目录大纲加载失败，请刷新重试！' %}")
                     }
                     
                 },
                 error:function(){
                     $("#loading-project-toc").hide();
-                    layer.msg("文集目录大纲加载异常");
+                    layer.msg("{% trans '文集目录大纲加载异常' %}");
                 }
             });
         }
@@ -444,9 +444,9 @@
             elem: '.doctree-item-btn',
             trigger:'hover',
             data: [
-                {title:'修改文档',id:'modify'},
-                {title:'新增文档',id:'add'},
-                {title:'复制链接',id:'copy'},
+                {title:'{% trans "修改文档" %}',id:'modify'},
+                {title:'{% trans "新增文档" %}',id:'add'},
+                {title:'{% trans "复制链接" %}',id:'copy'},
             ],
             click:function(obj){
                 // console.log(obj)
@@ -539,7 +539,7 @@
         {% if request.user.is_authenticated %}
             var watermark_value = "{{request.user.username}}" + new Date().Format("yyyyMMddhhmmss");
         {% else %}
-            var watermark_value = "游客" + new Date().Format("yyyyMMddhhmmss");
+            var watermark_value = "{% trans '游客' %}" + new Date().Format("yyyyMMddhhmmss");
         {% endif %}
         initWhterMark(watermark_value)
     {% endif %}

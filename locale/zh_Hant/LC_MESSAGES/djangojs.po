@@ -1,4 +1,4 @@
-# English (en) translation for MrDoc.
+# Traditional Chinese (zh_Hant) translation for MrDoc.
 # Copyright (C) MrDoc
 # This file is distributed under the same license as the MrDoc package.
 # MrDoc Community, 2026.
@@ -8,420 +8,420 @@ msgstr ""
 "Project-Id-Version: MrDoc 1.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-04 10:55+0800\n"
-"PO-Revision-Date: 2026-10-04 10:55+0800\n"
+"PO-Revision-Date: 2026-10-04 14:00+0800\n"
 "Last-Translator: MrDoc Community\n"
 "Language-Team: MrDoc Community\n"
-"Language: en\n"
+"Language: zh_Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Django 4.2 makemessages\n"
 
 #: .\static\mrdoc\mrdoc.js
 msgid "修改密码"
-msgstr "Change Password"
+msgstr "修改密碼"
 
 #: .\static\mrdoc\mrdoc.js
 msgid "修改用户[%(username)s]的密码："
-msgstr "Change the password for user [%(username)s]:"
+msgstr "修改使用者[%(username)s]的密碼："
 
 #: .\static\mrdoc\mrdoc.js
 msgid "输入新密码"
-msgstr "Enter new password"
+msgstr "輸入新密碼"
 
 #: .\static\mrdoc\mrdoc.js
 msgid "再次确认新密码"
-msgstr "Confirm new password"
+msgstr "再次確認新密碼"
 
 #: .\static\mrdoc\mrdoc.js
 msgid "确认修改"
-msgstr "Confirm"
+msgstr "確認修改"
 
 #: .\static\mrdoc\mrdoc.js
 msgid "取消"
-msgstr "Cancel"
+msgstr "取消"
 
 #: .\static\toc\doctoc.js
 msgid "收起目录"
-msgstr "Collapse table of contents"
+msgstr "收起目錄"
 
 #: .\static\toc\doctoc.js
 msgid "文档目录"
-msgstr "Document outline"
+msgstr "文件目錄"
 
 #: .\static\mrdoc\mrdoc-docs.js
 msgid "查看文档"
-msgstr "View document"
+msgstr "查看文件"
 
 #: .\static\mrdoc\mrdoc-docs.js
 msgid "文档链接已复制到剪贴板"
-msgstr "Document link copied to clipboard"
+msgstr "文件連結已複製到剪貼簿"
 
 #: .\static\mrdoc\mrdoc-docs.js
 msgid "切换至夜间模式"
-msgstr "Switch to dark mode"
+msgstr "切換至夜間模式"
 
 #: .\static\mrdoc\mrdoc-docs.js
 msgid "切换至日间模式"
-msgstr "Switch to light mode"
+msgstr "切換至日間模式"
 
 #: .\static\mrdoc\mrdoc-docs.js
 msgid "链接复制成功！"
-msgstr "Link copied successfully!"
+msgstr "連結複製成功！"
 
 #: .\static\mrdoc\mrdoc-docs.js
 msgid "操作异常"
-msgstr "Operation failed"
+msgstr "操作異常"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "列名"
-msgstr "Column"
+msgstr "列名"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "表格"
-msgstr "Table"
+msgstr "表格"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "序号"
-msgstr "No."
+msgstr "序號"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "浏览器文档缓存"
-msgstr "Browser document cache"
+msgstr "瀏覽器文件快取"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "使用缓存"
-msgstr "Use cache"
+msgstr "使用快取"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "删除缓存"
-msgstr "Delete cache"
+msgstr "刪除快取"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "暂无本地缓存"
-msgstr "No local cache"
+msgstr "暫無本機快取"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "获取图片失败"
-msgstr "Failed to get images"
+msgstr "取得圖片失敗"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "获取分组图片失败"
-msgstr "Failed to get group images"
+msgstr "取得分組圖片失敗"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "[附件]"
-msgstr "[Attachment]"
+msgstr "[附件]"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "【附件】"
-msgstr "Attachment"
+msgstr "【附件】"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "上传成功"
-msgstr "Uploaded successfully"
+msgstr "上傳成功"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "系统异常，请稍后再试！"
-msgstr "System error, please try again later!"
+msgstr "系統異常，請稍後再試！"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "导入成功"
-msgstr "Imported successfully"
+msgstr "匯入成功"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "文档标签设置"
-msgstr "Document tag settings"
+msgstr "文件標籤設定"
 
 #: .\static\mrdoc\mrdoc.editor.js
 msgid "确定"
-msgstr "OK"
+msgstr "確定"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "你好！我是AI智能助手，有什么可以帮助你的吗？"
-msgstr "Hello! I am an AI assistant. How can I help you?"
+msgstr "你好！我是AI智慧助理，有什麼可以幫助你的嗎？"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "我"
-msgstr "Me"
+msgstr "我"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "参考文档："
-msgstr "References:"
+msgstr "參考文件："
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "思考过程："
-msgstr "Reasoning:"
+msgstr "思考過程："
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "收起"
-msgstr "Collapse"
+msgstr "收起"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "展开"
-msgstr "Expand"
+msgstr "展開"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "正在处理..."
-msgstr "Processing..."
+msgstr "正在處理..."
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "处理中..."
-msgstr "Processing..."
+msgstr "處理中..."
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "接口网络请求失败"
-msgstr "Network request failed"
+msgstr "介面網路請求失敗"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "接口响应错误: %(status)s"
-msgstr "API response error: %(status)s"
+msgstr "介面回應錯誤: %(status)s"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "请求失败"
-msgstr "Request failed"
+msgstr "請求失敗"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "发生未知错误"
-msgstr "An unknown error occurred"
+msgstr "發生未知錯誤"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "JSON响应解析错误：%(error)s"
-msgstr "JSON response parsing error: %(error)s"
+msgstr "JSON回應解析錯誤：%(error)s"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "确定要清空当前对话吗？"
-msgstr "Are you sure you want to clear the current conversation?"
+msgstr "確定要清空目前對話嗎？"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "没有对话内容可以导出"
-msgstr "No conversation content to export"
+msgstr "沒有對話內容可以匯出"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "# AI对话记录"
-msgstr "# AI Conversation Log"
+msgstr "# AI對話記錄"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "导出时间: %(time)s"
-msgstr "Export time: %(time)s"
+msgstr "匯出時間: %(time)s"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "用户"
-msgstr "User"
+msgstr "使用者"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "AI助手"
-msgstr "AI Assistant"
+msgstr "AI助理"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "AI对话记录_%(date)s"
-msgstr "AI_conversation_log_%(date)s"
+msgstr "AI對話記錄_%(date)s"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "新对话"
-msgstr "New conversation"
+msgstr "新對話"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "确定要删除这个对话吗？"
-msgstr "Are you sure you want to delete this conversation?"
+msgstr "確定要刪除這個對話嗎？"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "今天"
-msgstr "Today"
+msgstr "今天"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "昨天"
-msgstr "Yesterday"
+msgstr "昨天"
 
 #: .\static\mrdoc\mrdoc-chat-component.js
 msgid "%(days)s天前"
-msgstr "%(days)s days ago"
+msgstr "%(days)s天前"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "全部（未过滤）"
-msgstr "All (unfiltered)"
+msgstr "全部（未過濾）"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "文集 %(ids)s"
-msgstr "Notebooks %(ids)s"
+msgstr "文集 %(ids)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "文档 %(ids)s"
-msgstr "Documents %(ids)s"
+msgstr "文件 %(ids)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "输入搜索关键词..."
-msgstr "Enter search keywords..."
+msgstr "輸入搜尋關鍵字..."
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "文档ID（可选）"
-msgstr "Document ID (optional)"
+msgstr "文件ID（可選）"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "文集ID（可选）"
-msgstr "Notebook ID (optional)"
+msgstr "文集ID（可選）"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "检索"
-msgstr "Search"
+msgstr "檢索"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "检索 + 重排"
-msgstr "Search + Rerank"
+msgstr "檢索 + 重排"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "无匹配结果"
-msgstr "No matching results"
+msgstr "無符合結果"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "检索耗时："
-msgstr "Search time: "
+msgstr "檢索耗時："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "重排耗时："
-msgstr "Rerank time: "
+msgstr "重排耗時："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "总耗时："
-msgstr "Total time: "
+msgstr "總耗時："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "过滤范围："
-msgstr "Filter scope: "
+msgstr "過濾範圍："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "融合 %(score)s"
-msgstr "Fused %(score)s"
+msgstr "融合 %(score)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "重排 %(score)s"
-msgstr "Rerank %(score)s"
+msgstr "重排 %(score)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "向量 #%(rank)s · 相似度 %(score)s"
-msgstr "Vector #%(rank)s · Similarity %(score)s"
+msgstr "向量 #%(rank)s · 相似度 %(score)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "向量 未命中"
-msgstr "Vector: no match"
+msgstr "向量 未命中"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "BM25 #%(rank)s · 得分 %(score)s"
-msgstr "BM25 #%(rank)s · Score %(score)s"
+msgstr "BM25 #%(rank)s · 得分 %(score)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "BM25 未命中"
-msgstr "BM25: no match"
+msgstr "BM25 未命中"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "查看详情"
-msgstr "View details"
+msgstr "檢視詳情"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "完整内容"
-msgstr "Full content"
+msgstr "完整內容"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "向量化文本"
-msgstr "Embedding text"
+msgstr "向量化文字"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "LLM 摘要"
-msgstr "LLM summary"
+msgstr "LLM 摘要"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "关键词"
-msgstr "Keywords"
+msgstr "關鍵字"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "标签"
-msgstr "Tags"
+msgstr "標籤"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "召回得分明细"
-msgstr "Retrieval score details"
+msgstr "召回得分明細"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "向量召回："
-msgstr "Vector retrieval: "
+msgstr "向量召回："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "排名 #%(rank)s，余弦相似度 %(score)s"
-msgstr "Rank #%(rank)s, cosine similarity %(score)s"
+msgstr "排名 #%(rank)s，餘弦相似度 %(score)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "未命中（该切片不在向量路 top 结果中）"
-msgstr "No match (this chunk is not in the vector path top results)"
+msgstr "未命中（該切片不在向量路 top 結果中）"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "BM25 召回："
-msgstr "BM25 retrieval: "
+msgstr "BM25 召回："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "排名 #%(rank)s，BM25 得分 %(score)s"
-msgstr "Rank #%(rank)s, BM25 score %(score)s"
+msgstr "排名 #%(rank)s，BM25 得分 %(score)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "未命中（该切片不在关键词路 top 结果中）"
-msgstr "No match (this chunk is not in the keyword path top results)"
+msgstr "未命中（該切片不在關鍵字路 top 結果中）"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "RRF 融合分：%(score)s（向量权重 0.6 / BM25 权重 0.4）"
-msgstr "RRF fused score: %(score)s (vector weight 0.6 / BM25 weight 0.4)"
+msgstr "RRF 融合分：%(score)s（向量權重 0.6 / BM25 權重 0.4）"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "重排得分：%(rerank)s，融合后最终分：%(final)s"
-msgstr "Rerank score: %(rerank)s, final fused score: %(final)s"
+msgstr "重排得分：%(rerank)s，融合後最終分：%(final)s"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "元信息"
-msgstr "Metadata"
+msgstr "中繼資訊"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "来源类型："
-msgstr "Source type: "
+msgstr "來源類型："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "排序："
-msgstr "Sort: "
+msgstr "排序："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "LLM 状态："
-msgstr "LLM status: "
+msgstr "LLM 狀態："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "向量状态："
-msgstr "Embedding status: "
+msgstr "向量狀態："
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "收起详情"
-msgstr "Collapse details"
+msgstr "收合詳情"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "RAG 调试器"
-msgstr "RAG Debugger"
+msgstr "RAG 偵錯工具"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "请输入查询关键词"
-msgstr "Please enter search keywords"
+msgstr "請輸入查詢關鍵字"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "搜索中..."
-msgstr "Searching..."
+msgstr "搜尋中..."
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "接口返回异常"
-msgstr "The API returned an error"
+msgstr "介面回應異常"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "请求失败，请检查接口或稍后重试"
-msgstr "Request failed, please check the API or try again later"
+msgstr "請求失敗，請檢查介面或稍後重試"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "搜索请求失败"
-msgstr "Search request failed"
+msgstr "搜尋請求失敗"
 
 #: .\static\mrdoc\mrdoc-ai-rag-debug.js
 msgid "检索+重排中..."
-msgstr "Searching + reranking..."
+msgstr "檢索+重排中..."

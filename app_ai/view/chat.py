@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from django.utils.translation import gettext_lazy as _
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from app_ai.utils import get_sys_value
@@ -47,7 +48,7 @@ class ChatSessionAuthentication(SessionAuthentication):
 
 def chat_index(request):
     # Web聊天助手不开放欢迎语配置，使用固定默认欢迎语
-    ai_chat_welcome = '你好！我是AI智能助手，有什么可以帮助你的吗？'
+    ai_chat_welcome = _('你好！我是AI智能助手，有什么可以帮助你的吗？')
     ai_chat_avatar = get_sys_value(types='ai', name='ai_chat_avatar', default='')
     return render(request, 'app_ai/chat.html', locals())
 
@@ -73,11 +74,11 @@ class AIChatStreamApi(APIView):
                     conversation_id = request_data.get('conversation_id', '')
 
                     if not user_input.strip():
-                        yield f"data: {json.dumps({'event': 'error', 'message': '消息内容不能为空'})}\n\n"
+                        yield f"data: {json.dumps({'event': 'error', 'message': str(_('消息内容不能为空'))})}\n\n"
                         return
 
                 except (json.JSONDecodeError, KeyError) as e:
-                    yield f"data: {json.dumps({'event': 'error', 'message': f'请求数据格式错误: {str(e)}'})}\n\n"
+                    yield f"data: {json.dumps({'event': 'error', 'message': _('请求数据格式错误: %(e)s') % {'e': str(e)}})}\n\n"
                     return
 
                 # 调用本地知识库
@@ -107,7 +108,7 @@ class AIChatStreamApi(APIView):
 
             except Exception as e:
                 logger.exception(f"AI聊天流式接口异常: {e}")
-                yield f"data: {json.dumps({'event': 'error', 'message': f'服务器内部错误: {str(e)}'})}\n\n"
+                yield f"data: {json.dumps({'event': 'error', 'message': _('服务器内部错误: %(e)s') % {'e': str(e)}})}\n\n"
 
         # 返回流式响应
         response = StreamingHttpResponse(
@@ -168,7 +169,7 @@ def ai_conversation_delete(request, conversation_id):
 
         return JsonResponse({
             'success': True,
-            'message': '对话已删除'
+            'message': _('对话已删除')
         })
 
     except Exception as e:

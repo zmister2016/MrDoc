@@ -35,7 +35,7 @@
             <div class="layui-input-block">
                 <input type="radio" name="editor_mode" value="1" title="EditorMD(Markdown)" {% if user_opt.editor_mode == 1 or user_opt.editor_mode is None %}checked{% endif %}>
                 <input type="radio" name="editor_mode" value="2" title="Vditor(Markdown)" {% if user_opt.editor_mode == 2 %}checked{% endif %}>
-                <input type="radio" name="editor_mode" value="3" title="iceEditor(富文本)" {% if user_opt.editor_mode == 3 %}checked{% endif %}>
+                <input type="radio" name="editor_mode" value="3" title="iceEditor({% trans '富文本' %})" {% if user_opt.editor_mode == 3 %}checked{% endif %}>
             </div>
             </div>
 
@@ -66,7 +66,7 @@
                 title:'{% trans "修改密码" %}',
                 area:'300px;',
                 id:'changePwd',
-                content:'<div style="padding:10px 0 0 20px;">修改用户密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="oldPwd" style="margin-bottom:10px;" placeholder="输入原密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
+                content:'<div style="padding:10px 0 0 20px;">{% trans "修改用户密码：" %}</div><div style="padding: 20px;"><input class="layui-input" type="password" id="oldPwd" style="margin-bottom:10px;" placeholder="{% trans '输入原密码' %}" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="{% trans '输入新密码' %}" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="{% trans '再次确认新密码' %}" required  lay-verify="required"></div>',
                 btn:['{% trans "确认修改" %}','{% trans "取消" %}'],
                 yes:function (index,layero) {
                     layer.load(1);
@@ -93,7 +93,7 @@
                         },
                         error:function(){
                             layer.closeAll('loading');
-                            layer.msg("修改异常",{icon:2})
+                            layer.msg("{% trans '修改异常' %}",{icon:2})
                         }
                     })
                 },

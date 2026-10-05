@@ -17,9 +17,9 @@
             <div class="layui-form-item">
               <label class="layui-form-label">{% trans "收藏类型" %}</label>
               <div class="layui-input-block">
-                <input type="radio" name="status" title="全部({{all_cnt}})" value="-1" lay-skin="primary" checked lay-filter="collect_type">
-                <input type="radio" name="status" title="文集({{collect_project_cnt}})" value="2"  lay-skin="primary" lay-filter="collect_type">
-                <input type="radio" name="status" title="文档({{collect_doc_cnt}})" value="1" lay-skin="primary" lay-filter="collect_type">
+                <input type="radio" name="status" title="{% trans '全部' %}({{all_cnt}})" value="-1" lay-skin="primary" checked lay-filter="collect_type">
+                <input type="radio" name="status" title="{% trans '文集' %}({{collect_project_cnt}})" value="2"  lay-skin="primary" lay-filter="collect_type">
+                <input type="radio" name="status" title="{% trans '文档' %}({{collect_doc_cnt}})" value="1" lay-skin="primary" lay-filter="collect_type">
               </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
 <!-- 表格工具栏 -->
 <script type="text/html" id="doc-toolbar">
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>取消收藏
+        <i class="layui-icon layui-icon-delete"></i>{% trans "取消收藏" %}
     </button>
 </script>
 
@@ -82,10 +82,10 @@
         let cols = [
             [
             {type: 'checkbox',width:20},
-                {title: '名称',field: 'name',align: 'left',templet:"#collect-name",minWidth:280},
-                {title: '归属',field: 'item_project_name',align: 'left',templet:"#project-role"},
-                {title: '收藏时间',field: 'create_time',align: 'left',templet:"#collect-create-time"},
-                {title: '操作',toolbar: '#doc-bar',align: 'left',}            ]
+                {title: '{% trans "名称" %}',field: 'name',align: 'left',templet:"#collect-name",minWidth:280},
+                {title: '{% trans "归属" %}',field: 'item_project_name',align: 'left',templet:"#project-role"},
+                {title: '{% trans "收藏时间" %}',field: 'create_time',align: 'left',templet:"#collect-create-time"},
+                {title: '{% trans "操作" %}',toolbar: '#doc-bar',align: 'left',}            ]
         ]
         // 渲染表格
         table.render({
@@ -105,11 +105,11 @@
         delCollect = function(collect_id){
             layer.open({
                 type:1,
-                title:'删除收藏',
+                title:'{% trans "删除收藏" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将删除此收藏！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：此操作将删除此收藏！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     let loading = layer.load();
@@ -121,7 +121,7 @@
                         success: function(r) {
                             layer.closeAll();
                             if (r.status) {
-                                layer.msg("取消成功", {
+                                layer.msg("{% trans '取消成功' %}", {
                                     icon: 1,
                                     time: 1000
                                 }, function() {
@@ -143,7 +143,7 @@
         batchRemoveCollect = function(obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
-                layer.msg("未选中任何收藏", {
+                layer.msg("{% trans '未选中任何收藏' %}", {
                     icon: 3,
                     time: 1000
                 });
@@ -155,9 +155,9 @@
             }
             collect_id = collect_id.substr(0, collect_id.length - 1);
             // console.log(pro_id)
-            layer.confirm('确定要取消这些收藏？', {
+            layer.confirm('{% trans "确定要取消这些收藏？" %}', {
                 icon: 3,
-                title: '提示'
+                title: '{% trans "提示" %}'
             }, function(index) {
                 layer.close(index);
                 let loading = layer.load();
@@ -169,7 +169,7 @@
                     success: function(r) {
                         layer.close(loading);
                         if (r.status) {
-                            layer.msg("取消成功", {
+                            layer.msg("{% trans '取消成功' %}", {
                                 icon: 1,
                                 time: 1000
                             }, function() {

@@ -1,20 +1,20 @@
 {% extends 'app_admin/admin_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}注册码管理{% endblock %}
+{% block title %}{% trans "注册码管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
     <div class="layui-card-body">
         <div class="layui-card-header" style="margin-bottom: 10px;">
         <div class="layui-row">
-            <span style="font-size:18px;">注册邀请码管理
+            <span style="font-size:18px;">{% trans "注册邀请码管理" %}
             </span>
         </div>
         </div>
         <div class="layui-row">
             <form action="{% url 'project_manage' %}" method="get">
             <div class="layui-form-item">
-                <button class="pear-btn pear-btn-primary pear-btn-sm" onclick="createRegisterCode()" type="button"><i class="layui-icon layui-icon-addition"></i>新增注册码</button>
+                <button class="pear-btn pear-btn-primary pear-btn-sm" onclick="createRegisterCode()" type="button"><i class="layui-icon layui-icon-addition"></i>{% trans "新增注册码" %}</button>
             </div>
             </form>
         </div>
@@ -42,13 +42,13 @@
 {% block custom_script %}
 <div style="margin:10px;display:none;" id="registerCodeDialog">
     <div class="layui-form-item">
-        <label class="layui-form-label">有效注册数</label>
+        <label class="layui-form-label">{% trans "有效注册数" %}</label>
         <div class="layui-input-block">
-            <input class="layui-input" id="regCodeCnt" type="number" value=1 placeholder="输入注册码最大使用次数"/>
+            <input class="layui-input" id="regCodeCnt" type="number" value=1 placeholder="{% trans '输入注册码最大使用次数' %}"/>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">有效期</label>
+        <label class="layui-form-label">{% trans "有效期" %}</label>
         <div class="layui-input-block">
             <input type="text" class="layui-input" id="registerCodeExpireDate">
         </div>
@@ -82,14 +82,14 @@
             page:true,
             cols: [[
                 // {type: 'checkbox',width:20},
-                {field:'code',title:'注册邀请码',templet:"#fileName"},
-                {field:'all_cnt',title:'有效注册数量',},
-                {field:'used_cnt',title:'已使用数量',},
-                {field:'expire_date',title:'有效期'},
-                {field:'status',title:'状态',templet:"#codeStatus"},
-                {field:'user_list',title:'用户列表',},
-                {field:'create_time',title:'创建时间',width:160,templet:'#registerTime'},
-                {field:'oprate',title:'操作',minWidth:200,templet:'#userOpera'},
+                {field:'code',title:'{% trans "注册邀请码" %}',templet:"#fileName"},
+                {field:'all_cnt',title:'{% trans "有效注册数量" %}',},
+                {field:'used_cnt',title:'{% trans "已使用数量" %}',},
+                {field:'expire_date',title:'{% trans "有效期" %}'},
+                {field:'status',title:'{% trans "状态" %}',templet:"#codeStatus"},
+                {field:'user_list',title:'{% trans "用户列表" %}',},
+                {field:'create_time',title:'{% trans "创建时间" %}',width:160,templet:'#registerTime'},
+                {field:'oprate',title:'{% trans "操作" %}',minWidth:200,templet:'#userOpera'},
             ]],
             skin: 'line',
             escape:true,
@@ -98,11 +98,11 @@
         createRegisterCode = function(){
             layer.open({
                 type:1,
-                title:'新增注册码',
+                title:'{% trans "新增注册码" %}',
                 area:'300px;',
                 id:'createRegCode',//配置ID
                 content:$("#registerCodeDialog"),
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -135,11 +135,11 @@
         delRegisterCode = function(code_id){
             layer.open({
                 type:1,
-                title:'删除文档',
+                title:'{% trans "删除文档" %}',
                 area:'300px;',
                 id:'delRegCode',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将删除此注册码！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：此操作将删除此注册码！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     $.ajax({

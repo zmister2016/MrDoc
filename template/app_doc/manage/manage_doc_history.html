@@ -92,11 +92,11 @@
         delDocHis = function(history_id){
         layer.open({
             type:1,
-            title:'删除历史记录',
+            title:'{% trans "删除历史记录" %}',
             area:'300px;',
             id:'delPro',//配置ID
-            content:'<div style="margin-left:10px;">警告：操作将删除此文档历史版本记录！</div>',
-            btn:['确定','取消'], //添加按钮
+            content:'<div style="margin-left:10px;">{% trans "警告：操作将删除此文档历史版本记录！" %}</div>',
+            btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
                 layer.load(1);

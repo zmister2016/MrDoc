@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <title>{% trans "404" %} - {% if site_name != None %}{{site_name}} {% else %}{% trans "觅思文档" %}{% endif %}</title>
@@ -72,8 +72,8 @@
     <img src="{% static 'PearAdminLayui/admin/images/404.svg' %}" alt="">
     <div class="content-r">
         <h1>404</h1>
-        <p>抱歉，没有找到相关资源</p>
-        <a class="btn" href="/">返回首页</a>
+        <p>{% trans "抱歉，没有找到相关资源" %}</p>
+        <a class="btn" href="/">{% trans "返回首页" %}</a>
     </div>
 </div>
 

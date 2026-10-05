@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn" style="font-size: 14px;">
+<html lang="{{ LANGUAGE_CODE }}" style="font-size: 14px;">
 <head>
     <meta charset="UTF-8">
     <meta name=renderer  content=webkit>
@@ -467,7 +467,7 @@
         {% if request.user.is_authenticated %}
             var watermark_value = "{{request.user.username}}" + new Date().Format("yyyyMMddhhmmss");
         {% else %}
-            var watermark_value = "游客" + new Date().Format("yyyyMMddhhmmss");
+            var watermark_value = "{% trans '游客' %}" + new Date().Format("yyyyMMddhhmmss");
         {% endif %}
         initWhterMark(watermark_value)
     {% endif %}

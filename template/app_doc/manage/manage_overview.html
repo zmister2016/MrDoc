@@ -107,7 +107,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">{% trans "标题" %}</label>
                             <div class="layui-input-block">
-                            <input type="text" id="doc_name" name="doc_name" required  lay-verify="required" placeholder="请输入文档标题" autocomplete="off" class="layui-input">
+                            <input type="text" id="doc_name" name="doc_name" required  lay-verify="required" placeholder="{% trans '请输入文档标题' %}" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -132,7 +132,7 @@
                         <div class="layui-form-item layui-form-text">
                             <label class="layui-form-label">{% trans "文本域" %}</label>
                             <div class="layui-input-block">
-                            <textarea name="pre_content" id="pre_content" placeholder="在想些什么呢？" class="layui-textarea"></textarea>
+                            <textarea name="pre_content" id="pre_content" placeholder="{% trans '在想些什么呢？' %}" class="layui-textarea"></textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -192,12 +192,12 @@
                 }
                 console.log(data)
                 if(data.doc_name == ""){
-                    layer.msg('请输入文档标题！');
+                    layer.msg('{% trans "请输入文档标题！" %}');
                     $('button.layui-btn').attr("disabled",false);
                     $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
                 else if(data.project == ""){
-                    layer.msg('请选择文集！');
+                    layer.msg('{% trans "请选择文集！" %}');
                     $('button.layui-btn').attr("disabled",false);
                     $('button.layui-btn').removeClass('layui-btn-disabled');
                 }
@@ -208,13 +208,13 @@
                             //保存成功
                             layer.closeAll("loading");
                             md_changed = false;
-                            layer.msg('保存草稿成功',function(){
+                            layer.msg('{% trans "保存草稿成功" %}',function(){
                                 window.location.reload()
                             });
                         }else{
                             //创建失败
                             layer.closeAll("loading");
-                            layer.msg('保存草稿失败:'+r.data);
+                            layer.msg('{% trans "保存草稿失败:" %}'+r.data);
                             $('button.layui-btn').attr("disabled",false);
                             $('button.layui-btn').removeClass('layui-btn-disabled');
                         }

@@ -15,7 +15,7 @@
         <form action="{% url 'manage_doctemp' %}" method="get">
         <div class="layui-form-item">
             <div class="layui-input-inline">
-                <input type="text" name="kw" id="kw"  placeholder="输入文档模板内容" autocomplete="off" class="layui-input">
+                <input type="text" name="kw" id="kw"  placeholder="{% trans '输入文档模板内容' %}" autocomplete="off" class="layui-input">
             </div>
             <button class="pear-btn pear-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>{% trans "搜索" %}</button>
             <a href="{% url 'create_doctemp' %}" target="_blank" class="pear-btn pear-btn-primary pear-btn-sm">
@@ -93,11 +93,11 @@
         delTemp = function(doctemp_id){
         layer.open({
             type:1,
-            title:'删除文档',
+            title:'{% trans "删除文档" %}',
             area:'300px;',
             id:'delPro',//配置ID
-            content:'<div style="margin-left:10px;">警告：此操作将删除此文档模板！</div>',
-            btn:['确定','取消'], //添加按钮
+            content:'<div style="margin-left:10px;">{% trans "警告：此操作将删除此文档模板！" %}</div>',
+            btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
                 layer.load(1);

@@ -346,8 +346,8 @@ def send_email_test(request):
         sitename = SysSetting.objects.get(types="basic", name="site_name").value
     except:
         sitename = "MrDoc"
-    subject = "{sitename} - 邮箱配置测试".format(sitename=sitename)
-    content = "此邮件由管理员配置【{sitename}】邮箱信息时发出！".format(sitename=sitename)
+    subject = _("{sitename} - 邮箱配置测试").format(sitename=sitename)
+    content = _("此邮件由管理员配置【{sitename}】邮箱信息时发出！").format(sitename=sitename)
     msg = MIMEText(content, _subtype='html', _charset='utf-8')
     msg['Subject'] = subject
     msg['From'] = Header(sitename, 'utf-8').encode() + " <{}>".format(msg_from)
@@ -502,7 +502,7 @@ class AdminUserDetail(APIView):
         if obj.replace(' ','') == '':
             resp = {
                 'code':5,
-                'data':'无效类型'
+                'data':_('无效类型')
             }
             return Response(resp)
         elif obj == 'info': # 修改资料
@@ -544,7 +544,7 @@ class AdminUserDetail(APIView):
         else:
             resp = {
                 'code': 5,
-                'data': '无效类型'
+                'data': _('无效类型')
             }
             return Response(resp)
 
@@ -864,7 +864,7 @@ def admin_doc(request):
             item = {
                 'id': doc.id,
                 'name': doc.name,
-                'parent': Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else '无',
+                'parent': Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else _('无'),
                 'project_id': Project.objects.get(id=doc.top_doc).id,
                 'project_name': Project.objects.get(id=doc.top_doc).name,
                 'status': doc.status,
@@ -1554,7 +1554,7 @@ def admin_site_config(request):
         return JsonResponse({'code':0})
     except:
         logger.exception("更新站点设置出错")
-        return JsonResponse({'code':2,'data':'更新出错'})
+        return JsonResponse({'code':2,'data':_('更新出错')})
 
 # 检测版本更新
 def check_update(request):
@@ -1635,7 +1635,7 @@ def admin_backup(request):
             backup_file_path = "/media/backup/" + zip_file_name
             return JsonResponse({'status': True, 'data': backup_file_path})
         except Exception as e:
-            return JsonResponse({'status': False, 'data': f"导出媒体文件失败: {str(e)}"})
+            return JsonResponse({'status': False, 'data': _("导出媒体文件失败: %(e)s") % {"e": str(e)}})
     else:
         return JsonResponse({'status':False,'data':_("不支持的类型")})
 

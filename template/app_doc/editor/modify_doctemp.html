@@ -1,17 +1,17 @@
 {% extends 'app_doc/editor/create_base.html' %}
 {% load static %}
 {% load i18n %}
-{% block title %}修改文档模板{% endblock %}
+{% block title %}{% trans "修改文档模板" %}{% endblock %}
 
 {% block head_toolbar %}
-    <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+    <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="{% trans '切换侧边栏' %}">
         <i class="layui-icon layui-icon-slider"></i>
     </a>
     <a class="btn pull-left" aria-label="" href="{% url 'create_doctemp' %}" target="_blank">
-        <span class="layui-hide-xs">新建模板</span>
+        <span class="layui-hide-xs">{% trans "新建模板" %}</span>
     </a>
     <a class="btn pull-left" aria-label="" href="{% url 'user_center' %}?tab=manage_doctemp" target="_blank">
-        <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">管理模板</span>
+        <i class="iconfont mrdoc-icon-manage"></i> <span class="layui-hide-xs">{% trans "管理模板" %}</span>
     </a>
 {% endblock %}
 
@@ -21,7 +21,7 @@
             <div class="layui-col-md12" style="margin-bottom: 10px;">
                 <label class="doc-form-label">
                     <button class="layui-btn layui-btn-normal layui-btn-fluid" onclick="modifyDocTemp()">
-                        保存模板
+                        {% trans "保存模板" %}
                     </button>
                 </label>
             </div>
@@ -29,17 +29,17 @@
         <div class="layui-col-md12" style="margin-bottom: 10px;">
             <label class="doc-form-label">
                 <button class="layui-btn layui-btn-primary layui-btn-fluid" id="doc-cache-btn">
-                    本地缓存
+                    {% trans "本地缓存" %}
                 </button>
             </label>
         </div>
         <!-- 已有模板 -->
         <div class="layui-row">
             <div class="layui-card">
-                <div class="layui-card-header">现有模板</div>
+                <div class="layui-card-header">{% trans "现有模板" %}</div>
                 <div class="layui-card-body">
                     {% for temp in doctemps %}
-                        <li><a href="{% url 'modify_doctemp' temp.id %}" target="_blank" title="点击查看修改《{{temp.name}}》的内容"><i class="layui-icon layui-icon-file"></i> {{temp.name}}</a></li>
+                        <li><a href="{% url 'modify_doctemp' temp.id %}" target="_blank" title="{% trans '点击查看修改《' %}{{temp.name}}{% trans '》的内容' %}"><i class="layui-icon layui-icon-file"></i> {{temp.name}}</a></li>
                     {% endfor %}
                 </div>
             </div>
@@ -51,7 +51,7 @@
     <div class="create-doc-form">
         <div class="layui-form" style="padding-bottom:10px;">
             <div class="layui-input-block" style="margin-left:0px;">
-              <input type="text" name="doc-name" id="doctemp-name" required lay-verify="required" value="{{doctemp.name}}" placeholder="请输入模板名称" autocomplete="off" class="layui-input">
+              <input type="text" name="doc-name" id="doctemp-name" required lay-verify="required" value="{{doctemp.name}}" placeholder="{% trans '请输入模板名称' %}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -82,13 +82,13 @@
                 if(r.status){
                     //修改成功
                     window.localStorage.removeItem('mrdoc_doc_cache') // 清空文档缓存
-                    layer.msg('修改成功，即将跳转',function(){
+                    layer.msg('{% trans "修改成功，即将跳转" %}',function(){
                         md_changed = false;
                         window.location.href = '/modify_doctemp/'+ '{{ doctemp.id }}/';
                     });
                 }else{
                     //创建失败
-                    layer.msg('保存失败');
+                    layer.msg('{% trans "保存失败" %}');
                     $('button.layui-btn').attr("disabled",false);
                     $('button.layui-btn').removeClass('layui-btn-disabled');
                 }

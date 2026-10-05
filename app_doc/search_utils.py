@@ -1,6 +1,8 @@
 # coding:utf-8
 # 用户可访问范围工具：供 AI 知识库检索（rag_search）按权限过滤文集/文档
 
+from django.utils.translation import gettext_lazy as _
+
 from app_doc.models import Project, ProjectCollaborator
 
 

@@ -90,11 +90,11 @@
         delDoc = function(doc_id){
             layer.open({
                 type:1,
-                title:'删除文档',
+                title:'{% trans "删除文档" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将彻底删除此文档！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：此操作将彻底删除此文档！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -121,11 +121,11 @@
         restoreDoc = function(doc_id){
             layer.open({
                 type:1,
-                title:'还原文档',
+                title:'{% trans "还原文档" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">提示：文档将还原为草稿状态！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "提示：文档将还原为草稿状态！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -152,11 +152,11 @@
         emptyDoc = function(){
             layer.open({
                 type:1,
-                title:'清空回收站',
+                title:'{% trans "清空回收站" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将彻底删除回收站所有文档！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：此操作将彻底删除回收站所有文档！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -182,11 +182,11 @@
         restoreAll = function(){
             layer.open({
                 type:1,
-                title:'还原回收站',
+                title:'{% trans "还原回收站" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：此操作将还原回收站所有文档为草稿状态！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：此操作将还原回收站所有文档为草稿状态！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);

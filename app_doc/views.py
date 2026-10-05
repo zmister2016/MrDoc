@@ -104,7 +104,7 @@ def remove_markdown_tag(docs):
             if doc.editor_mode == 3: # 富文本文档
                 doc.content = strip_tags(doc.content)[:201]
             elif doc.editor_mode == 4:
-                doc.pre_content = "此为表格文档，进入文档查看详细内容"
+                doc.pre_content = _("此为表格文档，进入文档查看详细内容")
             else: # 其他文档
                 doc.pre_content = strip_tags(markdown.markdown(doc.pre_content))[:201]
         except Exception as e:
@@ -1261,7 +1261,7 @@ def del_doc(request):
                     else:
                         colla_user_role = 0
                 except ObjectDoesNotExist:
-                    return JsonResponse({'status': False, 'data': '文档不存在'})
+                    return JsonResponse({'status': False, 'data': _('文档不存在')})
                 # 如果请求用户为站点管理员、文档创建者、高级权限的协作者、文集的创建者，可以删除
                 if (request.user == doc.create_user) \
                         or (colla_user_role == 1) \
@@ -1388,7 +1388,7 @@ def manage_doc(request):
             item = {
                 'id': doc.id,
                 'name': doc.name,
-                'parent':Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else '无',
+                'parent':Doc.objects.get(id=doc.parent_doc).name if doc.parent_doc != 0 else _('无'),
                 'project_id': Project.objects.get(id=doc.top_doc).id,
                 'project_name':Project.objects.get(id=doc.top_doc).name,
                 'status':doc.status,
@@ -2003,7 +2003,7 @@ def get_pro_doc(request):
     pro_id = request.POST.get('pro_id','')
     if pro_id != '':
         if not check_user_project_view_role(request.user.id,pro_id):
-            return JsonResponse({'status':False,'data':'您没有权限查看该文集的文档树数据'})
+            return JsonResponse({'status':False,'data':_('您没有权限查看该文集的文档树数据')})
         # 获取文集所有文档的id、name和parent_doc3个字段
         doc_list = list(
             Doc.objects.filter(top_doc=int(pro_id),status=1).values_list('id','name','parent_doc').order_by('parent_doc')
@@ -2090,7 +2090,7 @@ def get_pro_doc_tree(request):
     is_page = request.POST.get('is_page', False)
     if pro_id:
         if not check_user_project_writer_role(request.user.id,pro_id):
-            return JsonResponse({'status':False,'data':'您没有权限查看该文集的文档树数据'})
+            return JsonResponse({'status':False,'data':_('您没有权限查看该文集的文档树数据')})
         # 一次查询文集下的全部已发布文档，再在内存中构建不限层级的文档树
         doc_nodes = list(
             Doc.objects.filter(top_doc=pro_id, status=1).values(

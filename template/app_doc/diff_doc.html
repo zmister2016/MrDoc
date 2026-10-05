@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name=renderer  content=webkit>
@@ -224,6 +224,7 @@
         mergeView.wrap.style.height = height + "px";
         }
     </script>
+<script src="{% url 'javascript-catalog' %}"></script>
 <script src="{% static 'mrdoc/mrdoc.js' %}?version={{mrdoc_version}}"></script>
 {% block custom_script %}
 {% endblock %}

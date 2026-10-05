@@ -48,7 +48,7 @@ function Insertrow(obj) {
   var name=$(obj).attr("name");
   var width = $(table_id).width();
   var td1 = "<td><div contenteditable='true' ></div></td>"
-  var td = "<td><div contenteditable='true' style='float: left;width: 70%'>列名</div><img src='/static/mrdoc-editor/delete.gif'  name='" + name + "' style='cursor: pointer' onclick='Deleterow(this)'></td>"
+  var td = "<td><div contenteditable='true' style='float: left;width: 70%'>" + gettext("列名") + "</div><img src='/static/mrdoc-editor/delete.gif'  name='" + name + "' style='cursor: pointer' onclick='Deleterow(this)'></td>"
   for (var i = 0; i < $(table_id).find("tr").length; i++) {
       if (i == 0) {
           $(table_id).find("tr").eq(i).find("td").eq(ti).before(td);
@@ -66,7 +66,7 @@ function Insertrow(obj) {
 
 function addbutton() {
   var btn = $("#TableGroup").find("table").length;
-  var button = "<input type='button' value='表格" + btn + "' name='DataTable" + btn + "' id='DataBtn" + btn + "'\n" +
+  var button = "<input type='button' value='" + gettext("表格") + btn + "' name='DataTable" + btn + "' id='DataBtn" + btn + "'\n" +
       "style='float:left' class='btn table-btn' onclick='changetable(this)'>";
   $("#BtnGroup").append(button);
   addtable(btn);
@@ -82,9 +82,9 @@ function addtable(btn) {
   var body = "<table id='DataTable" + btn + "'  class='layui-table' style='text-align: center'><tr>";
   for (var i = 0; i <= col; i++) {
       if (i == 0) {
-          body += "<td>序号</td>"
+          body += "<td>" + gettext("序号") + "</td>"
       } else {
-          body += "<td><div contenteditable='true' style='float: left;width: 70%'>列名</div><img src='/static/mrdoc-editor/delete.gif' name='" + name + "' style='cursor: pointer' onclick='Deleterow(this)'></td>";
+          body += "<td><div contenteditable='true' style='float: left;width: 70%'>" + gettext("列名") + "</div><img src='/static/mrdoc-editor/delete.gif' name='" + name + "' style='cursor: pointer' onclick='Deleterow(this)'></td>";
 
       }
   }
@@ -217,12 +217,12 @@ $("#doc-cache-btn").click(function(){
         console.log("存在文档缓存")
         $("#doc-cache-content").val(editor_cache)
         layer.open({
-            title:"浏览器文档缓存",
+            title:gettext("浏览器文档缓存"),
             type:1,
             id:'doc-cache',
             area:['500px','500px'],
             content:$('#doc-cache-div'),
-            btn:['使用缓存',"删除缓存"],
+            btn:[gettext('使用缓存'),gettext("删除缓存")],
             success : function(index, layero) { // 成功弹出后回调
                 form.render();
             },
@@ -244,7 +244,7 @@ $("#doc-cache-btn").click(function(){
             }
         })
     }else{
-        layer.msg("暂无本地缓存")
+        layer.msg(gettext("暂无本地缓存"))
     }
 })
 
@@ -372,7 +372,7 @@ element.on('tab(img-tab)', function(data){
             layer.closeAll("loading");
         }else{
             layer.closeAll("loading");
-            layer.msg("获取图片失败")
+            layer.msg(gettext("获取图片失败"))
         }
     })
   }
@@ -434,7 +434,7 @@ switchImgGroup = function(e){
           layer.closeAll("loading"); //关闭加载提示
       } else {
           layer.closeAll("loading");
-          layer.msg("获取分组图片失败")
+          layer.msg(gettext("获取分组图片失败"))
       }
   })
 };
@@ -442,9 +442,9 @@ switchImgGroup = function(e){
 // 插入选择的附件到编辑器
 insertAttach = function(e){
     if(editor_mode == 3){ // ice富文本编辑器
-        editor.addValue('<a href= "/media/' + encodeURI($(e).data('path')) + '" download="' + $(e).data('name') + '">' + '[附件]' + $(e).data('name') + '</a>')
+        editor.addValue('<a href= "/media/' + encodeURI($(e).data('path')) + '" download="' + $(e).data('name') + '">' + gettext("[附件]") + $(e).data('name') + '</a>')
     }else{
-        editor.insertValue("\n[【附件】"+ $(e).data('name') + "](/media/" + encodeURI($(e).data('path')) + ")");
+        editor.insertValue("\n[" + gettext("【附件】") + $(e).data('name') + "](/media/" + encodeURI($(e).data('path')) + ")");
     }
     layer.closeAll();
     
@@ -484,7 +484,7 @@ upload.render({
             }
             
             layer.closeAll();
-            layer.msg("上传成功");
+            layer.msg(gettext("上传成功"));
         }else{
             layer.closeAll();
             layer.msg(res.message)
@@ -492,7 +492,7 @@ upload.render({
     },
     error:function(){
         layer.closeAll('loading'); //关闭loading
-        layer.msg("系统异常，请稍后再试！")
+        layer.msg(gettext("系统异常，请稍后再试！"))
     },
     accept: 'file', //允许上传的文件类型
     acceptMime:'image/*',
@@ -512,12 +512,12 @@ upload_attach.render({
         //上传成功，刷新页面
         if(res.status){
             if(editor_mode == 3){
-                editor.addValue('<a href= "/media/' + encodeURI(res.data.url) + '" download="' + res.data.name + '">' + '[附件]' + res.data.name + '</a>')
+                editor.addValue('<a href= "/media/' + encodeURI(res.data.url) + '" download="' + res.data.name + '">' + gettext("[附件]") + res.data.name + '</a>')
             }else{
-                editor.insertValue("\n[【附件】"+ res.data.name + "](/media/" + encodeURI(res.data.url) + ")");
+                editor.insertValue("\n[" + gettext("【附件】") + res.data.name + "](/media/" + encodeURI(res.data.url) + ")");
             }
             layer.closeAll();
-            layer.msg("上传成功");
+            layer.msg(gettext("上传成功"));
         }else{
             layer.closeAll('loading');
             layer.msg(res.data)
@@ -525,7 +525,7 @@ upload_attach.render({
     },
     error:function(){
         layer.closeAll('loading'); //关闭loading
-        layer.msg("系统异常，请稍后再试！")
+        layer.msg(gettext("系统异常，请稍后再试！"))
     },
     accept: 'file', //允许上传的文件类型
     field:'attachment_upload',
@@ -554,7 +554,7 @@ upload_docx_doc.render({
                 editor.setValue(res.data);
             }
             layer.closeAll();
-            layer.msg("导入成功");
+            layer.msg(gettext("导入成功"));
         }else{
             layer.closeAll('loading');
             layer.msg(res.data)
@@ -562,17 +562,17 @@ upload_docx_doc.render({
     },
     error:function(){
         layer.closeAll('loading'); //关闭loading
-        layer.msg("系统异常，请稍后再试！")
+        layer.msg(gettext("系统异常，请稍后再试！"))
     },
 });
 
 $("#doc-tag-set").click(function(){
     layer.open({
         type:1,
-        title:"文档标签设置",
+        title:gettext("文档标签设置"),
         content:$("#doc-tag-div"),
         area:['300px'],
-        btn:['确定']
+        btn:[gettext('确定')]
     })
 });
 

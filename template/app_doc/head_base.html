@@ -16,7 +16,7 @@
                   <g
                      id="layer1">
                     <g
-                       aria-label="觅思文档"
+                       aria-label="{% trans '觅思文档' %}"
                        id="text1017"
                        style="font-size:19.4028px;line-height:1.25;font-family:xiaowei;-inkscape-font-specification:'xiaowei, Normal';fill:#4d4d4d;stroke-width:0.264583">
                       <path
@@ -100,6 +100,7 @@
         <!-- 用户菜单 -->
         <div class="">
             <ul class="layui-nav layui-layout-right">
+                {% include 'app_doc/lang_switch.html' %}
                 {% if request.user.is_authenticated %}
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">
@@ -109,32 +110,32 @@
                 <dl class="layui-nav-child">
                     {% if request.user.is_superuser %}
                     <dd>
-                        <a href="{% url 'admin_center' %}" title="进入站点后台管理">
+                        <a href="{% url 'admin_center' %}" title="{% trans '进入站点后台管理' %}">
                             <i class="layui-icon layui-icon-console layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "进入后台" %}</span>
                         </a>
                     </dd>
                     {% endif %}
                     <dd class="layui-hide-md layui-hide-sm layui-hide-lg">
-                        <a href="{% url 'create_doc' %}" title="新建文档">
+                        <a href="{% url 'create_doc' %}" title="{% trans '新建文档' %}">
                             <i class="layui-icon layui-icon-add-1 layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "新建文档" %}</span>
                         </a>
                     </dd>
                     <dd>
-                        <a href="{% url 'user_center' %}" title="个人中心">
+                        <a href="{% url 'user_center' %}" title="{% trans '个人中心' %}">
                             <i class="layui-icon layui-icon-app layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "个人中心" %}</span>
                         </a>
                     </dd>
                     <dd>
-                        <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )" title="修改登录密码">
+                        <a href="javascript:void(0);" onclick="changePwd('{{ request.user.id }}','{{ request.user.username }}' )" title="{% trans '修改登录密码' %}">
                             <i class="layui-icon layui-icon-password layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "修改密码" %}</span>
                         </a>
                     </dd>
                     <dd>
-                        <a href="javascript:void(0)" title="退出登录" onclick="Logout()">
+                        <a href="javascript:void(0)" title="{% trans '退出登录' %}" onclick="Logout()">
                             <i class="layui-icon layui-icon-logout layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
@@ -185,11 +186,11 @@
                 if(r.status){
                     window.location.href = r.data
                 }else{
-                    layer.msg("注销失败")
+                    layer.msg("{% trans '注销失败' %}")
                 }
             },
             error:function(){
-                layer.msg("注销失败")
+                layer.msg("{% trans '注销失败' %}")
             }
         })
     }

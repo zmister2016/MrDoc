@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name=renderer  content=webkit>
@@ -35,14 +35,14 @@
             <div class="sou">
                 {% if search_type == '1' %}
                 <form action="{% url 'doc_search' %}" method="get" target="_self">
-                    <input class="wd" type="text" placeholder="请输入搜索内容" name="q" x-webkit-speech lang="zh-CN">
+                    <input class="wd" type="text" placeholder="{% trans '请输入搜索内容' %}" name="q" x-webkit-speech lang="zh-CN">
                     <!-- <input name="type" value="doc" hidden> -->
                     <input name="d_range" value="all" hidden>
                     <button type="submit" style="background-image: url(/static/search/search_btn.svg);"></button>
                 </form>
                 {% else %}
                 <form action="{% url 'search' %}" method="get" target="_self">
-                    <input class="wd" type="text" placeholder="请输入搜索内容" name="kw" x-webkit-speech lang="zh-CN">
+                    <input class="wd" type="text" placeholder="{% trans '请输入搜索内容' %}" name="kw" x-webkit-speech lang="zh-CN">
                     <input name="type" value="doc" hidden>
                     <input name="d_range" value="all" hidden>
                     <button type="submit" style="background-image: url(/static/search/search_btn.svg);"></button>
@@ -53,7 +53,7 @@
                 </ul>
             </div>
         </div>
-        <div class="foot">© 2019-2022 by <a href="https://zmister.com/">州的先生</a> . All rights reserved.</div>
+        <div class="foot">© 2019-2022 by <a href="https://zmister.com/">{% trans "州的先生" %}</a> . All rights reserved.</div>
     </div>
     <!--
 作者:D.Young

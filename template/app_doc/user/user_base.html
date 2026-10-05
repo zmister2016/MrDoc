@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html>
+<html lang="{{ LANGUAGE_CODE }}">
 	<head>
 		<meta charset="utf-8">
 		<title>{% block title %}{% endblock %}</title>
@@ -14,6 +14,7 @@
 		<link rel="icon" href="{% static 'search/mrdoc_logo_300.png' %}" sizes="192x192" />
         {% block custom_element %}
         {% endblock %}
+		<script src="{% url 'javascript-catalog' %}"></script>
 	</head>
 	<body class="pear-container">
         {% block content %}

@@ -447,7 +447,7 @@ def get_doc_previous_next(request):
         return JsonResponse({'status': True, 'data': {'next':next_doc_id,'previous':previous_doc_id}})
     except Exception as e:
         logger.exception("获取文档上下篇文档异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 # 获取图片列表
 def get_images(request):
@@ -608,11 +608,11 @@ def modify_doc(request):
 
         # 验证权限
         if not is_edit_authorized(token, doc):
-            return JsonResponse({'status': False, 'data': '非法请求'})
+            return JsonResponse({'status': False, 'data': _('非法请求')})
 
         # 校验上级文档设置，避免把文档挂到自己的下级文档中形成循环引用
         if parent_doc not in ['', '0'] and not check_doc_parent_valid(doc_id, parent_doc):
-            return JsonResponse({'status': False, 'data': '不能将文档的上级文档设置为其下级文档'})
+            return JsonResponse({'status': False, 'data': _('不能将文档的上级文档设置为其下级文档')})
 
         # 将现有文档内容写入到文档历史中
         parent_id = doc.parent_doc if parent_doc == '' else parent_doc
@@ -643,10 +643,10 @@ def modify_doc(request):
         return JsonResponse({'status': True, 'data': 'ok'})
 
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': 'token无效'})
+        return JsonResponse({'status': False, 'data': _('token无效')})
     except:
         logger.exception("token修改文档异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 # 上传图片
 @csrf_exempt
@@ -739,12 +739,12 @@ def delete_doc(request):
             ai_del_doc(doc_id)
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
-            return JsonResponse({'status':False,'data':'非法请求'})
+            return JsonResponse({'status':False,'data':_('非法请求')})
     except ObjectDoesNotExist:
-        return JsonResponse({'status': False, 'data': 'token无效'})
+        return JsonResponse({'status': False, 'data': _('token无效')})
     except:
         logger.exception("token修改文档异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 
 # AI流式对话接口的Token封装，内部调用 /ai/chat/stream/
@@ -767,7 +767,7 @@ def ai_chat_stream(request):
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
         logger.exception("token调用AI流式对话接口异常")
-        return JsonResponse({'status':False,'data':'系统异常'})
+        return JsonResponse({'status':False,'data':_('系统异常')})
 
 # 获取我的附件列表
 @require_http_methods(['GET'])

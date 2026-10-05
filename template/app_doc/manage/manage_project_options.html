@@ -58,21 +58,21 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">首页图标</label>
+                        <label class="layui-form-label">{% trans "首页图标" %}</label>
                         <div class="layui-input-block">
-                            <input type="radio" name="index_position" value="1" title="右侧（默认）" {% if pro.index_position == 1 %}checked{% endif %}>
-                            <input type="radio" name="index_position" value="2" title="左侧" {% if pro.index_position == 2 %}checked{% endif %}>
-                            <input type="radio" name="index_position" value="3" title="隐藏" {% if pro.index_position == 0 %}checked{% endif %}>
+                            <input type="radio" name="index_position" value="1" title="{% trans '右侧（默认）' %}" {% if pro.index_position == 1 %}checked{% endif %}>
+                            <input type="radio" name="index_position" value="2" title="{% trans '左侧' %}" {% if pro.index_position == 2 %}checked{% endif %}>
+                            <input type="radio" name="index_position" value="3" title="{% trans '隐藏' %}" {% if pro.index_position == 0 %}checked{% endif %}>
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">文集水印</label>
+                        <label class="layui-form-label">{% trans "文集水印" %}</label>
                         <div class="layui-input-block">
-                            <input type="checkbox" name="is_watermark" id="is_watermark" lay-skin="switch" lay-text="开启|关闭" {% if pro.is_watermark %}checked{% endif %}>
+                            <input type="checkbox" name="is_watermark" id="is_watermark" lay-skin="switch" lay-text="{% trans '开启' %}|{% trans '关闭' %}" {% if pro.is_watermark %}checked{% endif %}>
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">水印文字</label>
+                        <label class="layui-form-label">{% trans "水印文字" %}</label>
                         <div class="layui-input-inline">
                             <input type="input" class="layui-input" name="watermark_value" id="watermark_value" value="{{pro.watermark_value}}">
                         </div>
@@ -291,7 +291,7 @@
             if(r.status){
                 //修改成功
                 //window.location.reload();
-                layer.msg("修改成功")
+                layer.msg("{% trans '修改成功' %}")
             }else{
                 //修改失败，提示
                 // console.log(r)
@@ -315,7 +315,7 @@
             if(r.status){
                 //修改成功
                 //window.location.reload();
-                layer.msg("修改成功")
+                layer.msg("{% trans '修改成功' %}")
             }else{
                 //修改失败，提示
                 // console.log(r)
@@ -337,7 +337,7 @@
             layer.closeAll('loading'); //关闭loading
             if(r.status){
                 //修改成功
-                layer.msg("修改成功")
+                layer.msg("{% trans '修改成功' %}")
             }else{
                 //修改失败，提示
                 // console.log(r)
@@ -359,15 +359,15 @@
             success:function(r){
                 layer.closeAll('loading');
                 if(r.status){
-                    layer.msg("生成完成")
+                    layer.msg("{% trans '生成完成' %}")
                     window.location.reload();
                 }else{
-                    layer.msg("生成出错，请稍后重试")
+                    layer.msg("{% trans '生成出错，请稍后重试' %}")
                 }
             },
             error:function(){
                 layer.closeAll('loading');
-                layer.msg("服务器异常")
+                layer.msg("{% trans '服务器异常' %}")
             }
         })
     };
@@ -375,11 +375,11 @@
     delProject = function(pro_id){
         layer.open({
             type:1,
-            title:'删除文集',
+            title:'{% trans "删除文集" %}',
             area:'300px;',
             id:'delPro',//配置ID
-            content:'<div style="margin-left:10px;">警告：此操作将删除文集及文集下所有文档！</div>',
-            btn:['确定','取消'], //添加按钮
+            content:'<div style="margin-left:10px;">{% trans "警告：此操作将删除文集及文集下所有文档！" %}</div>',
+            btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
                 layer.load(1);
@@ -390,7 +390,7 @@
                     layer.closeAll('loading'); //关闭loading
                     if(r.status){
                         //删除成功
-                        layer.msg('删除成功，即将返回文集列表……',function(){
+                        layer.msg('{% trans "删除成功，即将返回文集列表……" %}',function(){
                             window.location.href = "{% url 'manage_project' %}"
                         })
                         //layer.close(index)
@@ -410,11 +410,11 @@
     reportMd = function(pro_id){
         layer.open({
             type:1,
-            title:"导出文集",
+            title:"{% trans '导出文集' %}",
             area:"300px",
             id:"reportMd",
-            content:'<div style="margin-left:10px;">将此文集下所有文档导出为MD文件并打包？</div>',
-            btn:['确定','取消'], //添加按钮
+            content:'<div style="margin-left:10px;">{% trans "将此文集下所有文档导出为MD文件并打包？" %}</div>',
+            btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
             btnAlign:'c', //按钮居中
             yes:function (index,layero) {
                 var load = layer.load()
@@ -444,10 +444,10 @@
     downloadMd = function(download_link){
         layer.open({
             type:1,
-            title:"下载导出文档",
+            title:"{% trans '下载导出文档' %}",
             area:"300px",
             id:"downloadMd",
-            content:'<div style="margin:10px;"><p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >点击下载文件(zip)</a></div>',
+            content:'<div style="margin:10px;"><p style="text-align:center;color:red;">{% trans "请尽快下载，避免失效！" %}</p><br><a class="layui-btn layui-btn-fluid download-md-link" href="'+ download_link + '" download="mrdoc_report_md.zip" >{% trans "点击下载文件(zip)" %}</a></div>',
             //btn:['确定','取消'], //添加按钮
             //btnAlign:'c', //按钮居中
             success: function (layero, index) {

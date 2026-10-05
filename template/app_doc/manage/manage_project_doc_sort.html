@@ -267,13 +267,13 @@
         $.post('{% url "manage_pro_doc_sort" pro.id %}',sort_data,function(r){
             if(r.status){
                 layer.closeAll('loading')
-                layer.msg("完成文集排序",function(){
+                layer.msg("{% trans '完成文集排序' %}",function(){
                     layer.close()
                 })
                 
             }else{
                 layer.closeAll('loading')
-                layer.msg("修改导入文集出错")
+                layer.msg("{% trans '修改导入文集出错' %}")
             }
         });
     })

@@ -84,13 +84,13 @@ class ImportLocalDoc(APIView):
         except:
             resp = {
                 'code':5,
-                'data':'必须选择文集'
+                'data':_('必须选择文集')
             }
             return Response(resp)
         if file is None:
             resp = {
                 'code':5,
-                'data':'文件未选择'
+                'data':_('文件未选择')
             }
         file_name = file.name
         # Markdown 文件和 TXT 文件
@@ -147,17 +147,17 @@ class ImportLocalDoc(APIView):
                 else:
                     resp = {
                         'code':4,
-                        'data': '{}读取失败'.format(file_name)
+                        'data': _('{}读取失败').format(file_name)
                     }
             else:
                 resp = {
                     'code': 4,
-                    'data': '{}上传失败'.format(file_name)
+                    'data': _('{}上传失败').format(file_name)
                 }
         else:
             resp = {
                 'code':5,
-                'data':'文件格式不支持'
+                'data':_('文件格式不支持')
             }
         return Response(resp)
 
@@ -267,10 +267,10 @@ def import_word_project(request):
     editor_mode = request.POST.get('editor_mode', 1)
 
     if not docx:
-        return JsonResponse({'status': False, 'data': '请选择Word文件'})
+        return JsonResponse({'status': False, 'data': _('请选择Word文件')})
 
     if not docx.name.endswith('.docx'):
-        return JsonResponse({'status': False, 'data': '仅支持.docx格式'})
+        return JsonResponse({'status': False, 'data': _('仅支持.docx格式')})
 
     # 保存临时文件
     tmp_path = save_temp_docx(docx)

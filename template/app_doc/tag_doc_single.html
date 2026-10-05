@@ -74,24 +74,24 @@
 </div>
 
 <div class="layui-row layui-col-space20" style="padding-left: 20px;">
-    <span tooltip="文档创建人">
+    <span tooltip="{% trans '文档创建人' %}">
         <i class="layui-icon layui-icon-user"></i> {{ doc.create_user.username }}
     </span>
 
-    <span tooltip="所属文集" >
+    <span tooltip="{% trans '所属文集' %}" >
         <i class="layui-icon layui-icon-list"></i> <a href="{% url 'pro_index' project.id %}">{{project.name}}</a>
     </span>
 
-    <span tooltip="文档更新时间">
+    <span tooltip="{% trans '文档更新时间' %}">
         <i class="layui-icon layui-icon-log"></i> {{ doc.modify_time }}
     </span>
 
-    <button id="share" class="doc-bottom-btn" tooltip="转发本文档">
+    <button id="share" class="doc-bottom-btn" tooltip="{% trans '转发本文档' %}">
         <i class="layui-icon layui-icon-share" ></i> {% trans "转发" %}
     </button>
 
     {% if request.user == doc.create_user or request.user.is_superuser %}
-    <button class="doc-bottom-btn" tooltip="下载文档Markdown" id="download_doc">
+    <button class="doc-bottom-btn" tooltip="{% trans '下载文档Markdown' %}" id="download_doc">
         <i class="layui-icon layui-icon-download-circle"></i> {% trans "下载" %}
     </button>
     {% endif %}

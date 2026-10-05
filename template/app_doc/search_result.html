@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
@@ -37,7 +37,7 @@
             <form method="get" action="">
             <div class="layui-input-inline">
                 <input class="layui-input mrdoc-search-input" 
-                    placeholder="搜索文集或文档" name="kw" style="width: 500px;border-radius:5px" value="{{kw}}"/>
+                    placeholder="{% trans '搜索文集或文档' %}" name="kw" style="width: 500px;border-radius:5px" value="{{kw}}"/>
                 <input name="type" value="{{search_type}}" hidden>
                 <button type="submit" 
                     style="position: absolute;top:12px;right: 8px;border: none;background-color: white;">
@@ -49,6 +49,7 @@
         <!-- 用户菜单 -->
         <div class="">
             <ul class="layui-nav layui-layout-right">
+                {% include 'app_doc/lang_switch.html' %}
                 {% if request.user.is_authenticated %}
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">
@@ -83,7 +84,7 @@
                         </a>
                     </dd>
                     <dd>
-                        <a href="javascript:void(0)" title="退出登录" onclick="Logout()">
+                        <a href="javascript:void(0)" title="{% trans '退出登录' %}" onclick="Logout()">
                             <i class="layui-icon layui-icon-release layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
@@ -120,7 +121,7 @@
             <div class="layui-inline">
                 <div class="layui-input-inline">
                     <input class="layui-input mrdoc-search-input" 
-                    placeholder="搜索文集或文档" name="kw" style="border-radius:5px" value="{{kw}}"/>
+                    placeholder="{% trans '搜索文集或文档' %}" name="kw" style="border-radius:5px" value="{{kw}}"/>
                     <input name="type" value="{{search_type}}" hidden>
                 </div>
                 <div class="layui-input-inline">
@@ -371,11 +372,11 @@
         changePwd = function(uid,username){
             layer.open({
                 type:1,
-                title:'修改密码',
+                title:'{% trans "修改密码" %}',
                 area:'300px;',
                 id:'changePwd',
-                content:'<div style="padding:10px 0 0 20px;">修改用户[' + username + ']的密码：</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="输入新密码" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="再次确认新密码" required  lay-verify="required"></div>',
-                btn:['确认修改','取消'],
+                content:'<div style="padding:10px 0 0 20px;">{% trans "修改用户" %}[' + username + ']{% trans "的密码：" %}</div><div style="padding: 20px;"><input class="layui-input" type="password" id="newPwd1" style="margin-bottom:10px;" placeholder="{% trans "输入新密码" %}" required  lay-verify="required"><input class="layui-input" type="password" id="newPwd2" placeholder="{% trans "再次确认新密码" %}" required  lay-verify="required"></div>',
+                btn:['{% trans "确认修改" %}','{% trans "取消" %}'],
                 yes:function (index,layero) {
                     layer.load(1);
                     data = {
@@ -405,11 +406,11 @@
                     if(r.status){
                         window.location.href = r.data
                     }else{
-                        layer.msg("注销失败")
+                        layer.msg("{% trans '注销失败' %}")
                     }
                 },
                 error:function(){
-                    layer.msg("注销失败")
+                    layer.msg("{% trans '注销失败' %}")
                 }
             })
         }

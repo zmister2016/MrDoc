@@ -347,7 +347,7 @@ class ImportDocxAsProject:
                     editor_mode=self.editor_mode,
                     status=1,
                 )
-                return {'status': True, 'data': '未检测到标题，已导入为单一文档','pid':project.id}
+                return {'status': True, 'data': _('未检测到标题，已导入为单一文档'),'pid':project.id}
 
             # 递归保存文档树，关联文集
             self.recursive_save_docs(structure, project.id)

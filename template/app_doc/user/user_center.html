@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html>
+<html lang="{{ LANGUAGE_CODE }}">
 	<head>
 		<meta charset="utf-8">
 		<meta name=renderer  content=webkit>
@@ -27,8 +27,9 @@
 				<!-- 顶 部 右 侧 菜 单 -->
 				<div id="control" class="layui-layout-control"></div>
 				<ul class="layui-nav layui-layout-right">
+					{% include 'app_doc/lang_switch.html' %}
 					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
-					<li class="layui-nav-item layui-hide-xs"><a href="{% url 'pro_list' %}" class="layui-icon layui-icon-home" title="回到首页"></a></li>
+					<li class="layui-nav-item layui-hide-xs"><a href="{% url 'pro_list' %}" class="layui-icon layui-icon-home" title="{% trans '回到首页' %}"></a></li>
 					<li class="layui-nav-item">
 						<!-- 头 像 -->
 						<a href="javascript:;">
@@ -41,7 +42,7 @@
 							<dd><a href="{% url 'admin_center' %}">{% trans "后台管理" %}</a></dd>
 							{% endif %}
 							<dd><a href="{% url 'pro_list' %}">{% trans "返回首页" %}</a></dd>
-						  	<dd><a href="javascript:void(0)" title="退出登录" onclick="Logout()">{% trans "退出登录" %}</a></dd>
+						  	<dd><a href="javascript:void(0)" title="{% trans '退出登录' %}" onclick="Logout()">{% trans "退出登录" %}</a></dd>
 						</dl>
 					</li>
 					<!-- 主 题 配 置 -->
@@ -183,16 +184,16 @@
 					switch(tabKw){
 						case 'manage_project':
 							var projectId = getQueryVariable('pid')
-							layui.tab.addTabOnlyByElem("content",{id:"manage_project",title:"文集管理",url:"{% url 'manage_project' %}?pid="+projectId,close:"true"})
+							layui.tab.addTabOnlyByElem("content",{id:"manage_project",title:"{% trans '文集管理' %}",url:"{% url 'manage_project' %}?pid="+projectId,close:"true"})
 							break;
 						case 'manage_doc':
-							layui.tab.addTabOnlyByElem("content",{id:"doc_manage",title:"文档管理",url:"{% url 'manage_doc' %}",close:"true"})
+							layui.tab.addTabOnlyByElem("content",{id:"doc_manage",title:"{% trans '文档管理' %}",url:"{% url 'manage_doc' %}",close:"true"})
 							break;
 						case 'manage_doctemp':
-							layui.tab.addTabOnlyByElem("content",{id:"doc_template",title:"文档模板管理",url:"{% url 'manage_doctemp' %}",close:"true"})
+							layui.tab.addTabOnlyByElem("content",{id:"doc_template",title:"{% trans '文档模板管理' %}",url:"{% url 'manage_doctemp' %}",close:"true"})
 							break;
 						case 'manage_attachment':
-							layui.tab.addTabOnlyByElem("content",{id:"my_attachment",title:"我的附件",url:"{% url 'manage_attachment' %}",close:"true"})
+							layui.tab.addTabOnlyByElem("content",{id:"my_attachment",title:"{% trans '我的附件' %}",url:"{% url 'manage_attachment' %}",close:"true"})
 							break;
 					}
 				}
@@ -210,11 +211,11 @@
 						if(r.status){
 							window.location.href = '/'
 						}else{
-							layer.msg("注销失败")
+							layer.msg("{% trans '注销失败' %}")
 						}
 					},
 					error:function(){
-						layer.msg("注销失败")
+						layer.msg("{% trans '注销失败' %}")
 					}
 				})
 			}

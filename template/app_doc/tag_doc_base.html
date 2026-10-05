@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn" style="font-size: 14px;">
+<html lang="{{ LANGUAGE_CODE }}" style="font-size: 14px;">
 <head>
     <meta charset="UTF-8">
     <meta name=renderer  content=webkit>
@@ -72,7 +72,7 @@
         <!-- 文档搜索 -->
         <form action="" method="get">
             <div id="doc-search-input">
-                <input type="text" name="kw" placeholder="输入并回车搜索" value="" class="layui-input doc-search-input">
+                <input type="text" name="kw" placeholder="{% trans '输入并回车搜索' %}" value="" class="layui-input doc-search-input">
             </div>
         </form>
         <!-- 文集名称 -->
@@ -80,7 +80,7 @@
             <svg t="1726495807304" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10999" width="200" height="200"><path d="M510.467066 220.742515m-220.742515 0a220.742515 220.742515 0 1 0 441.48503 0 220.742515 220.742515 0 1 0-441.48503 0Z" fill="#4C91FF" p-id="11000"></path><path d="M421.556886 1014.802395L13.796407 607.041916c-12.263473-12.263473-12.263473-30.658683 0-42.922156L531.928144 45.988024c6.131737-6.131737 12.263473-9.197605 21.461078-9.197605L985.676647 12.263473c18.39521 0 33.724551 15.329341 33.724551 33.724551l-24.526947 432.287425c0 6.131737-3.065868 15.329341-9.197604 21.461078L464.479042 1014.802395c-12.263473 12.263473-30.658683 12.263473-42.922156 0zM99.640719 607.041916l321.916167 321.916168c12.263473 12.263473 30.658683 12.263473 42.922156 0l459.880239-459.88024c6.131737-6.131737 9.197605-12.263473 9.197605-21.461078L955.017964 73.580838l-377.101796 21.461078c-6.131737 0-15.329341 3.065868-21.461078 9.197605l-459.88024 459.880239c-9.197605 12.263473-9.197605 30.658683 3.065869 42.922156z" fill="#231815" p-id="11001"></path><path d="M761.868263 285.125749m-64.383233 0a64.383234 64.383234 0 1 0 128.766467 0 64.383234 64.383234 0 1 0-128.766467 0Z" fill="#231815" p-id="11002"></path></svg>
             {% trans "标签：" %}<a href="{% url 'tag_docs' tag.id %}">{{ tag.name }}
                 {% if project.role == 1 %}
-                    <i class="layui-icon layui-icon-password" title="私密文档"></i>
+                    <i class="layui-icon layui-icon-password" title="{% trans '私密文档' %}"></i>
                 {% endif %}
             </a>
         </div>
@@ -135,16 +135,16 @@
     <div id="doc-container-body">
         <!-- 文档导航 -->
         <div class="doc-header" role="navigation">
-            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="切换侧边栏">
+            <a class="btn pull-left js-toolbar-action" aria-label="" href="javascript:void(0);" title="{% trans '切换侧边栏' %}">
                 <i class="layui-icon layui-icon-slider"></i>
             </a>
-            <a class="btn pull-left font-small"  href="javascript:void(0);" title="缩小字体">
+            <a class="btn pull-left font-small"  href="javascript:void(0);" title="{% trans '缩小字体' %}">
                 <i class="iconfont mrdoc-icon-font-size">-</i>
             </a>
-            <a class="btn pull-left font-large"  href="javascript:void(0);" title="放大字体">
+            <a class="btn pull-left font-large"  href="javascript:void(0);" title="{% trans '放大字体' %}">
                 <i class="iconfont mrdoc-icon-font-size">+</i>
             </a>
-            <a class="btn pull-left font-switch" href="javascript:void(0);" title="切换字体类型">
+            <a class="btn pull-left font-switch" href="javascript:void(0);" title="{% trans '切换字体类型' %}">
                 <i class="iconfont mrdoc-icon-font-type"></i>
             </a>
             <a class="btn pull-left theme-switch" href="javascript:void(0);" title="{% trans '切换至夜间模式' %}">
@@ -227,17 +227,17 @@
 <div id="share_div" style="display: none;">
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
         <ul class="layui-tab-title">
-            <li class="layui-this">手机扫码</li>
-            <li>复制链接</li>
+            <li class="layui-this">{% trans "手机扫码" %}</li>
+            <li>{% trans "复制链接" %}</li>
         </ul>
     <div class="layui-tab-content" style="height: 100px;">
         <div class="layui-tab-item layui-show" align='center'>
-            <p style="font-weight: 700;margin-bottom: 10px;">手机扫一扫转发分享</p>
+            <p style="font-weight: 700;margin-bottom: 10px;">{% trans "手机扫一扫转发分享" %}</p>
             <div id="url_qrcode"></div>
         </div>
         <div class="layui-tab-item" align='center'>
             <input type="text" id="copy_crt_url" name="current_url" class="layui-input" /><br>
-            <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" onclick="copyUrl();">复制链接</button>
+            <button class="layui-btn layui-btn-radius layui-btn-xs" style="background-color: #333;" onclick="copyUrl();">{% trans "复制链接" %}</button>
         </div>
     </div>
     </div>

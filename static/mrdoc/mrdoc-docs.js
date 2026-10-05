@@ -85,7 +85,7 @@ function renderDocOpenLink(item,clickMode,hasChildren) {
         <a href="${item.url}"
         class="doc-open-btn"
         data-id="${item.id}"
-        title="查看文档">↗</a>
+        title="${gettext("查看文档")}">↗</a>
     `;
     }
     return ``;
@@ -210,7 +210,7 @@ function copyToClipboard(text) {
       navigator.clipboard.writeText(text)
         .then(function() {
           console.log('文本已成功复制到剪贴板:', text);
-          layer.msg("文档链接已复制到剪贴板")
+          layer.msg(gettext("文档链接已复制到剪贴板"))
         })
         .catch(function(err) {
           console.error('无法复制文本到剪贴板:', err);
@@ -227,7 +227,7 @@ function copyToClipboard(text) {
         var success = document.execCommand('copy');
         if (success) {
           console.log('文本已成功复制到剪贴板:', text);
-          layer.msg("文档链接已复制到剪贴板")
+          layer.msg(gettext("文档链接已复制到剪贴板"))
         } else {
           console.error('复制失败');
         }
@@ -357,12 +357,12 @@ function toggleDark(){
         window.localStorage.removeItem("theme-dark")
         $(".theme-switch i").removeClass("mrdoc-icon-light")
         $(".theme-switch i").addClass("mrdoc-icon-night")
-        $("a.theme-switch").attr("title","切换至夜间模式")
+        $("a.theme-switch").attr("title",gettext("切换至夜间模式"))
     }else{
         window.localStorage.setItem("theme-dark","1")
         $(".theme-switch i").removeClass("mrdoc-icon-night")
         $(".theme-switch i").addClass("mrdoc-icon-light")
-        $("a.theme-switch").attr("title","切换至日间模式")
+        $("a.theme-switch").attr("title",gettext("切换至日间模式"))
     }
     $("html").toggleClass("theme-dark");
     console.log(darkmode.isActivated())
@@ -538,7 +538,7 @@ copyUrl = function(){
     crt_url_val.select();
     window.clipb
     document.execCommand("Copy");
-    layer.msg("链接复制成功！")
+    layer.msg(gettext("链接复制成功！"))
 };
 $("#copy_doc_url").click(function(){
     copyUrl();
@@ -598,7 +598,7 @@ function collect(id,type){
             layer.msg(r.data)
         },
         error:function(){
-            layer.msg("操作异常")
+            layer.msg(gettext("操作异常"))
         }
     });
 

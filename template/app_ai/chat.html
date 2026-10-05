@@ -2,11 +2,11 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI智能助手 - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
+    <title>{% trans "AI智能助手" %} - {% if site_name != None and site_name != '' %}{{site_name}} {% else %}{% trans "站点标题" %}{% endif %}</title>
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     <style>
@@ -151,8 +151,8 @@
             <div class="chat-header">
                 <div class="chat-avatar">AI</div>
                 <div class="chat-info">
-                    <div class="chat-title">{{site_name}} AI智能助手</div>
-                    <div class="chat-subtitle">基于AI + 知识库提供专业的AI对话服务</div>
+                    <div class="chat-title">{{site_name}} {% trans "AI智能助手" %}</div>
+                    <div class="chat-subtitle">{% trans "基于AI + 知识库提供专业的AI对话服务" %}</div>
                 </div>
 
                 <div class="chat-actions">  <!-- 功能未开发，暂时隐藏 -->
@@ -166,14 +166,14 @@
                     <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
-                    <div class="empty-title">开始对话</div>
-                    <div class="empty-subtitle">输入你的问题，AI助手将为你提供帮助</div>
+                    <div class="empty-title">{% trans "开始对话" %}</div>
+                    <div class="empty-subtitle">{% trans "输入你的问题，AI助手将为你提供帮助" %}</div>
                 </div>
             </div>
 
             <div class="typing-indicator" id="typingIndicator">
                 <div class="typing-content">
-                    <span class="typing-text">AI正在思考</span>
+                    <span class="typing-text">{% trans "AI正在思考" %}</span>
                     <div class="typing-dots">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
@@ -187,7 +187,7 @@
                     <textarea
                         id="chatInput"
                         class="chat-input"
-                        placeholder="输入你的问题..."
+                        placeholder="{% trans '输入你的问题...' %}"
                         rows="1"
                     ></textarea>
                     <div class="input-actions">
@@ -195,7 +195,7 @@
                             <svg class="send-icon" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                             </svg>
-                            发送
+                            {% trans "发送" %}
                         </button>
                     </div>
                 </div>
@@ -208,6 +208,7 @@
         var marked = new markedParse();
     </script>
     <!-- 引入聊天组件脚本 -->
+    <script src="{% url 'javascript-catalog' %}"></script>
     <script src="{% static 'mrdoc/mrdoc-chat-component.js' %}?version={{mrdoc_version}}"></script>
 
     <script>

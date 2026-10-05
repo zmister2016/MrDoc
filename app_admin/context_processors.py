@@ -15,6 +15,8 @@ def sys_setting(request):
     setting_dict['debug'] = settings.DEBUG
     # 站点地图状态
     setting_dict['sitemap'] = settings.SITEMAP
+    # 是否强制站点语言（为真时隐藏语言切换入口）
+    setting_dict['language_force'] = settings.LANGUAGE_FORCE
     # 获取系统设置状态
     datas = SysSetting.objects.filter(types__in=["basic","doc","ai"])
     for data in datas:

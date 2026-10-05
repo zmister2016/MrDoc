@@ -9,10 +9,10 @@
             <form action="{% url 'manage_attachment' %}" method="get">
             <div class="layui-form-item">
                 <div class="layui-input-inline">
-                    <input type="text" name="kw" id="kw"  placeholder="输入附件名称" autocomplete="off" class="layui-input">
+                    <input type="text" name="kw" id="kw"  placeholder="{% trans '输入附件名称' %}" autocomplete="off" class="layui-input">
                 </div>
                 <button class="pear-btn pear-btn-sm" type="submit"><i class="layui-icon layui-icon-search"></i>{% trans "搜索" %}</button>
-                <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="upload_attachment" title="支持Zip格式压缩文件">
+                <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="upload_attachment" title="{% trans '支持Zip格式压缩文件' %}">
                     <i class="layui-icon layui-icon-upload"></i>{% trans "上传附件" %}</button>
             </div>
             </form>
@@ -115,11 +115,11 @@
         delAttach = function(attach_id){
             layer.open({
                 type:1,
-                title:'删除附件',
+                title:'{% trans "删除附件" %}',
                 area:'300px;',
                 id:'delPro',//配置ID
-                content:'<div style="margin-left:10px;">警告：删除附件后，文档中引用的附件将失效！</div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "警告：删除附件后，文档中引用的附件将失效！" %}</div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);

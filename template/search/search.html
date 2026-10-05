@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
@@ -37,7 +37,7 @@
             <form method="get" action="">
             <div class="layui-input-inline">
                 <input class="layui-input mrdoc-search-input" 
-                    placeholder="搜索文集或文档" name="q" style="width: 500px;border-radius:5px" value="{{query}}"/>
+                    placeholder="{% trans '搜索文集或文档' %}" name="q" style="width: 500px;border-radius:5px" value="{{query}}"/>
                 <input name="type" value="{{search_type}}" hidden>
                 <button type="submit" 
                     style="position: absolute;top:12px;right: 8px;border: none;background-color: white;">
@@ -49,6 +49,7 @@
         <!-- 用户菜单 -->
         <div class="">
             <ul class="layui-nav layui-layout-right">
+                {% include 'app_doc/lang_switch.html' %}
                 {% if request.user.is_authenticated %}
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">
@@ -74,7 +75,7 @@
                         </a>
                     </dd>
                     <dd>
-                        <a href="javascript:void(0)" title="退出登录" onclick="Logout()">
+                        <a href="javascript:void(0)" title="{% trans '退出登录' %}" onclick="Logout()">
                             <i class="layui-icon layui-icon-release layui-hide-md"></i>
                             <span class="layui-hide-xs">{% trans "退出登录" %}</span>
                         </a>
@@ -116,7 +117,7 @@
             <div class="layui-inline">
                 <div class="layui-input-inline">
                     <input class="layui-input mrdoc-search-input" 
-                    placeholder="搜索文档" name="q" style="border-radius:5px" value="{{kw}}"/>
+                    placeholder="{% trans '搜索文档' %}" name="q" style="border-radius:5px" value="{{kw}}"/>
                     <input name="type" value="{{search_type}}" hidden>
                 </div>
                 <div class="layui-input-inline">
@@ -207,7 +208,7 @@
                         <a href="{% url 'pro_index' pro_id=result.object.top_doc %}" target="_blank">{{ result.object.top_doc | get_doc_top }}</a> - <span style="font-size: 14px;color: #999;">{{result.object.modify_time}}</span></p>
                 </div>
             {% empty %}
-                <p>{% trans "没有搜索结果。" %}试试<a href="{% url 'search' %}?kw={{query}}&type=doc&d_range={{d_range}}">精准搜索？</a></p>
+                <p>{% trans "没有搜索结果。" %}{% trans "试试" %}<a href="{% url 'search' %}?kw={{query}}&type=doc&d_range={{d_range}}">{% trans "精准搜索？" %}</a></p>
             {% endfor %}
         {% else %}
             {# Show some example queries to run, maybe query syntax, something else? #}
@@ -319,11 +320,11 @@
                     if(r.status){
                         window.location.href = r.data
                     }else{
-                        layer.msg("注销失败")
+                        layer.msg("{% trans '注销失败' %}")
                     }
                 },
                 error:function(){
-                    layer.msg("注销失败")
+                    layer.msg("{% trans '注销失败' %}")
                 }
             })
         }

@@ -18,9 +18,9 @@
                     <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="createImgGroup()">
                         <i class="layui-icon layui-icon-addition"></i>{% trans "新建分组" %}</button>
                     <a class="pear-btn pear-btn-primary pear-btn-sm" href="{% url 'manage_img_group' %}">{% trans "分组管理" %}</a>
-                    <button class="pear-btn pear-btn-sm" id="select-all-img" type="button">全选</button>
-                    <button class="pear-btn pear-btn-sm" id="batch-del-img" type="button">批量删除</button>
-                    <button class="pear-btn pear-btn-sm" id="batch-move-img" type="button">批量移动</button>
+                    <button class="pear-btn pear-btn-sm" id="select-all-img" type="button">{% trans "全选" %}</button>
+                    <button class="pear-btn pear-btn-sm" id="batch-del-img" type="button">{% trans "批量删除" %}</button>
+                    <button class="pear-btn pear-btn-sm" id="batch-move-img" type="button">{% trans "批量移动" %}</button>
                 </div>
             </form>
 
@@ -46,8 +46,8 @@
                     <img class="image-list-i" src="{{img.file_path}}"  title="{{img.file_name}}">
                     <div class="opera-img-btn">
                         <input type="checkbox" class="batch-image-checkbox" name="batch-image" value="{{img.id}}"></input>
-                        <a href="javascript:void(0);" class="move-img" title="移动分组" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-transfer"></i></a>
-                        <a href="javascript:void(0);" class="del-img" title="删除图片" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-delete"></i></a>
+                        <a href="javascript:void(0);" class="move-img" title="{% trans '移动分组' %}" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-transfer"></i></a>
+                        <a href="javascript:void(0);" class="del-img" title="{% trans '删除图片' %}" data-src="{{img.file_path}}" data-id="{{img.id}}"><i class="layui-icon layui-icon-delete"></i></a>
                     </div>
                 </li>
 
@@ -99,11 +99,11 @@
             var img_src = $(this).data("src");
             layer.open({
                 type:1,
-                title:'删除图片',
+                title:'{% trans "删除图片" %}',
                 area:'300px;',
                 id:'delImg',//配置ID
-                content:'<div style="margin:10px;"><img src="'+ img_src +'" style="width:50px;height:50px;margin:10px;"/><span>删除此图片后，文档中添加的该图片将不再显示！</span></div>',
-                btn:['确定','取消'], //添加按钮
+                content:'<div style="margin:10px;"><img src="'+ img_src +'" style="width:50px;height:50px;margin:10px;"/><span>{% trans "删除此图片后，文档中添加的该图片将不再显示！" %}</span></div>',
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -114,7 +114,7 @@
                     $.post("{% url 'manage_image' %}",data,function(r){
                         layer.closeAll('loading')
                         if(r.status){
-                            layer.msg('删除成功', {
+                            layer.msg('{% trans "删除成功" %}', {
                                 icon: 1,
                                 time: 1000
                             }, function() {
@@ -136,11 +136,11 @@
             var img_src = $(this).data("src");
             layer.open({
                 type:1,
-                title:'移动图片分组',
+                title:'{% trans "移动图片分组" %}',
                 area:['300px','300px'],
                 id:'moveImg',//配置ID
                 content:$("#move-group-layer"),
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -154,7 +154,7 @@
                         layer.closeAll('loading')
                         if(r.status){
                             //移动成功
-                            layer.msg('移动成功', {
+                            layer.msg('{% trans "移动成功" %}', {
                                     icon: 1,
                                     time: 1000
                                 }, function() {
@@ -187,11 +187,11 @@
         createImgGroup = function(){
             layer.open({
                 type:1,
-                title:'新建图片分组',
+                title:'{% trans "新建图片分组" %}',
                 area:'300px;',
                 id:'createImgGroup',//配置ID
                 content:'<div style="margin:10px;"><input type="text" id="img_group_name" class="layui-input" /></div>',
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1); //上传loading
@@ -233,7 +233,7 @@
             },
             error:function(){
                 layer.closeAll('loading'); //关闭loading
-                layer.msg("系统异常，请稍后再试！")
+                layer.msg("{% trans '系统异常，请稍后再试！' %}")
             },
             accept: 'file', //允许上传的文件类型
             acceptMime:'image/*',
@@ -242,12 +242,12 @@
         });
         // 全选图片
         $("#select-all-img").click(function(){
-            if($(this).text() === '全选'){
+            if($(this).text() === '{% trans "全选" %}'){
                 $("input[name='batch-image']").prop("checked","true");
-                $(this).text("取消全选");
+                $(this).text("{% trans '取消全选' %}");
             }else{
                 $("input[name='batch-image']").removeAttr("checked");
-                $(this).text("全选");
+                $(this).text("{% trans '全选' %}");
             }
             
         });
@@ -259,7 +259,7 @@
                 img_list.push($(this).val())
             })
             if(img_list.length === 0){
-                layer.msg("未选中任何图片", {
+                layer.msg("{% trans '未选中任何图片' %}", {
                     icon: 3,
                     time: 1000
                 });
@@ -272,11 +272,11 @@
             imgs_id = imgs_id.substr(0, imgs_id.length - 1);
             layer.open({
                 type:1,
-                title:'批量删除图片',
+                title:'{% trans "批量删除图片" %}',
                 area:'300px;',
                 id:'batchDelImg',//配置ID
-                content:'<div style="margin-left:10px;">你正在批量删除图片！<br><br>警告！此操作将<span style="font-weight:700;color:red;">删除所选图片，文档中所引用的图片将不再显示</span>并且<span style="font-weight:700;color:red;">不可恢复！</span><br><br>请输入“DELETE”以再次确认删除。<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_image" placeholder="DELETE"></div>',
-                btn:['确定删除','取消'], //添加按钮
+                content:'<div style="margin-left:10px;">{% trans "你正在批量删除图片！" %}<br><br>{% trans "警告！此操作将" %}<span style="font-weight:700;color:red;">{% trans "删除所选图片，文档中所引用的图片将不再显示" %}</span>{% trans "并且" %}<span style="font-weight:700;color:red;">{% trans "不可恢复！" %}</span><br><br>{% trans "请输入“DELETE”以再次确认删除。" %}<br><input class="layui-input" style="width:95%;" id="confirm_batch_delete_image" placeholder="DELETE"></div>',
+                btn:['{% trans "确定删除" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     var confirm_delete = $("#confirm_batch_delete_image").val()
@@ -291,7 +291,7 @@
                             layer.closeAll('loading')
                             if(r.status){
                                 //删除成功
-                                layer.msg('批量删除成功', {
+                                layer.msg('{% trans "批量删除成功" %}', {
                                     icon: 1,
                                     time: 1000
                                 }, function() {
@@ -304,7 +304,7 @@
                         })
 
                     }else{
-                        layer.msg("输入错误！")
+                        layer.msg("{% trans '输入错误！' %}")
                     }
                 },
 
@@ -318,7 +318,7 @@
                 img_list.push($(this).val())
             })
             if(img_list.length === 0){
-                layer.msg("未选中任何图片", {
+                layer.msg("{% trans '未选中任何图片' %}", {
                     icon: 3,
                     time: 1000
                 });
@@ -331,11 +331,11 @@
             imgs_id = imgs_id.substr(0, imgs_id.length - 1);
             layer.open({
                 type:1,
-                title:'批量移动图片',
+                title:'{% trans "批量移动图片" %}',
                 area:['300px','300px'],
                 id:'moveImg',//配置ID
                 content:$("#move-group-layer"),
-                btn:['确定','取消'], //添加按钮
+                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                 btnAlign:'c', //按钮居中
                 yes:function (index,layero) {
                     layer.load(1);
@@ -350,7 +350,7 @@
                         layer.closeAll('loading')
                         if(r.status){
                             //移动成功
-                            layer.msg('批量移动成功', {
+                            layer.msg('{% trans "批量移动成功" %}', {
                                     icon: 1,
                                     time: 1000
                                 }, function() {

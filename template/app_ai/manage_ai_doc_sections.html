@@ -31,8 +31,8 @@
 {% endblock %}
 {% block custom_script %}
 <script type="text/html" id="rowActions">
-  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="rebuild">重建</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="rebuild">{% trans "重建" %}</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">{% trans "删除" %}</a>
 </script>
 <script>
     layui.use(['table', 'form', 'jquery','layer','element'], function() {
@@ -55,28 +55,28 @@
             limit: 10,
             cols: [[
                 {field: 'id', title: 'ID', width: 80},
-                {field: 'chunk_index', title: '块序号', width: 100},
-                {field: 'section_title', title: '块标题', width: 200},
-                {field: 'content_preview', title: '块内容'},
-                {field: 'embedding_text', title: '向量化文本', width: 200},
-                {field: 'embedding_status', title: '状态', width: 100, templet: formatStatus},
-                {field: 'updated_at', title: '更新时间', width: 180},
-                {fixed: 'right', title: '操作', toolbar: '#rowActions', width: 180}
+                {field: 'chunk_index', title: '{% trans "块序号" %}', width: 100},
+                {field: 'section_title', title: '{% trans "块标题" %}', width: 200},
+                {field: 'content_preview', title: '{% trans "块内容" %}'},
+                {field: 'embedding_text', title: '{% trans "向量化文本" %}', width: 200},
+                {field: 'embedding_status', title: '{% trans "状态" %}', width: 100, templet: formatStatus},
+                {field: 'updated_at', title: '{% trans "更新时间" %}', width: 180},
+                {fixed: 'right', title: '{% trans "操作" %}', toolbar: '#rowActions', width: 180}
             ]]
         });
 
         // 状态格式化
         function formatStatus(d) {
-            if (d.embedding_status === 'done') return '<span style="color:green">成功</span>';
-            if (d.embedding_status === 'failed') return '<span style="color:red">失败</span>';
-            return '<span style="color:orange">未处理</span>';
+            if (d.embedding_status === 'done') return '<span style="color:green">{% trans "成功" %}</span>';
+            if (d.embedding_status === 'failed') return '<span style="color:red">{% trans "失败" %}</span>';
+            return '<span style="color:orange">{% trans "未处理" %}</span>';
         }
 
         // 监听操作
         table.on('tool(sectionTable)', function (obj) {
             var data = obj.data;
             if (obj.event === 'del') {
-                layer.confirm('确认删除此切片索引吗？', function (index) {
+                layer.confirm('{% trans "确认删除此切片索引吗？" %}', function (index) {
                     layer.load(2);
                     $.ajax({
                         url: "{% url 'api-ai-doc-sections' %}",
@@ -97,7 +97,7 @@
             }
 
             if (obj.event === 'rebuild') {
-                layer.confirm('确认重建此切片索引吗？', function (index) {
+                layer.confirm('{% trans "确认重建此切片索引吗？" %}', function (index) {
                     layer.load(2);
                     $.ajax({
                         url: "{% url 'ai-rebuild-section' %}",

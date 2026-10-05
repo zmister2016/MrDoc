@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <link rel="stylesheet" href="{% static 'mr-editor/mreditor.css' %}?version={{mrdoc_version}}" />
 <script src="{% static 'mr-marked/marked.min.js' %}?version={{mrdoc_version}}"></script>
 <script src="{% static 'mr-editor/mreditor.js' %}?version={{mrdoc_version}}"></script>
@@ -41,14 +42,14 @@
             {
                 name:'image',
                 svg:'<svg t="1726578280610" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14836" width="200" height="200"><path d="M478.1 327.9c-10-9.6-21.8-17.2-35.3-22.9-13.6-5.7-28-8.6-43.2-8.6-15.7 0-30.3 2.8-43.9 8.6-13.6 5.7-25.3 13.3-35.3 22.9-10 9.6-18 20.9-23.9 33.9-6 13-8.9 26.8-8.9 41.4 0 14.6 3 28.4 8.9 41.4 6 13 13.9 24.4 23.9 34.2 10 9.8 21.8 17.6 35.3 23.3 13.6 5.7 28.2 8.6 43.9 8.6 15.2 0 29.6-2.9 43.2-8.6 13.6-5.7 25.3-13.5 35.3-23.3 10-9.8 18-21.2 23.9-34.2 5.9-13 8.9-26.8 8.9-41.4 0-14.6-3-28.4-8.9-41.4-5.9-13.1-13.9-24.4-23.9-33.9z m391.3-203.3H152.5c-48.9 0-88.5 38-88.5 84.9V811c0 46.9 39.6 84.9 88.5 84.9h716.8c48.9 0 88.5-38 88.5-84.9V209.5c0.1-46.9-39.5-84.9-88.4-84.9z m-0.7 570.1c-9.5-21-20.6-42.4-33.2-64.3-12.6-21.9-26.4-41.7-41.4-59.5-15-17.8-31.3-32.3-48.9-43.5-17.6-11.2-35.9-16.8-55-16.8-22.4 0-41.4 4.2-57.1 12.6-15.7 8.5-29.3 19-40.7 31.8-11.4 12.8-21.7 26.5-30.7 41.1-9 14.6-18.1 28.3-27.1 41.1S515.7 660.6 505 669c-10.7 8.4-23.4 12.6-38.2 12.6-14.8 0-27.4-1-37.8-3.1-10.5-2.1-19.9-4.7-28.2-7.9s-16.1-6.7-23.2-10.6c-7.1-3.9-14.9-7.4-23.2-10.6-8.3-3.2-17.8-5.8-28.6-7.9-10.7-2.1-23.4-3.1-38.2-3.1-12.4 0-24.6 3.1-36.8 9.2-12.1 6.2-23.9 14-35.3 23.6-11.4 9.6-22.4 20.3-32.8 32.2-10.5 11.9-20 23.7-28.6 35.6V248c0-21 17.8-38 39.7-38H829c21.9 0 39.7 17 39.7 38v446.7z" fill="#383838" p-id="14837"></path></svg>',
-                title:'图片',
+                title:'{% trans "图片" %}',
                 action:function(cm){
                     layer.ready(function(){
                         element.init();
                     });
                     layer.open({
                         type:'1',
-                        title:'添加图片',
+                        title:'{% trans "添加图片" %}',
                         area:['800px','600px'],
                         id:'uploadImg',//配置ID,
                         content:$('#upload-img'),
@@ -58,14 +59,14 @@
             {
                 name:'attachment',
                 svg:'<svg t="1726626632269" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="24566" width="200" height="200"><path d="M919.893 209.92H529.067c-10.24 0-20.48-5.12-27.307-11.947L397.653 73.387c-6.826-8.534-17.066-11.947-27.306-11.947h-266.24c-37.547-1.707-69.974 29.013-69.974 68.267v764.586c0 39.254 32.427 69.974 69.974 69.974h814.08c39.253 0 69.973-32.427 69.973-69.974V281.6c1.707-39.253-30.72-71.68-68.267-71.68zM713.387 549.547l-204.8 204.8c-25.6 25.6-59.734 39.253-93.867 39.253s-68.267-13.653-93.867-39.253c-25.6-25.6-39.253-58.027-39.253-93.867s13.653-68.267 39.253-93.867L491.52 395.947c11.947-11.947 29.013-11.947 40.96 0s11.947 29.013 0 40.96L361.813 607.573C348.16 621.227 339.627 640 339.627 660.48c0 20.48 8.533 39.253 22.186 52.907 29.014 29.013 76.8 29.013 105.814 0L670.72 510.293c15.36-15.36 15.36-40.96 0-58.026-15.36-15.36-42.667-15.36-58.027 0L411.307 655.36c-1.707 1.707-1.707 6.827 0 8.533 1.706 1.707 6.826 1.707 8.533 0l170.667-170.666c11.946-11.947 29.013-11.947 40.96 0s11.946 29.013 0 40.96L460.8 704.853c-11.947 11.947-27.307 18.774-44.373 18.774S384 716.8 372.053 704.853c-11.946-11.946-18.773-27.306-18.773-44.373s6.827-32.427 18.773-44.373l203.094-203.094C593.92 394.24 617.813 384 645.12 384c25.6 0 51.2 10.24 69.973 29.013 35.84 35.84 35.84 98.987-1.706 136.534z" fill="#333333" p-id="24567"></path></svg>',
-                title:'附件',
+                title:'{% trans "附件" %}',
                 action:function(cm){
                     layer.ready(function(){
                         element.init();
                     });
                     layer.open({
                         type:'1',
-                        title:'添加附件',
+                        title:'{% trans "添加附件" %}',
                         area:['800px','600px'],
                         id:'uploadAttach',//配置ID,
                         content:$('#upload-attach'),
@@ -84,7 +85,7 @@
                                             $("#attach_table tbody").empty();
                                             var thisData = r.data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                                             layui.each(thisData, function(k, v){
-                                                var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>选择</button></td></tr>"
+                                                var row = "<tr><td>" + v.filename + "</td><td>"+ v.filesize +"</td><td>"+ v.filetime +"</td><td><button class='layui-btn layui-btn-normal layui-btn-sm' data-name='"+ v.filename +"'  data-path='"+ v.filepath +"' onclick='insertAttach(this)'>{% trans '选择' %}</button></td></tr>"
                                                 // arr.push(row);
                                                 $("#attach_table tbody").append(row)
                                             });
@@ -93,7 +94,7 @@
                                     layer.closeAll("loading");//关闭加载提示
                                 }else{
                                     layer.closeAll("loading");//关闭加载提示
-                                    layer.msg("获取附件失败，请稍后重试！")
+                                    layer.msg("{% trans '获取附件失败，请稍后重试！' %}")
                                 }
                             })
 
@@ -104,11 +105,11 @@
             {
                 name:'video',
                 svg:'<svg t="1726626731586" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="30109" width="200" height="200"><path d="M737.28 80.65024a30.72 30.72 0 0 1 11.24352 41.96352L689.2544 225.28H839.68a122.88 122.88 0 0 1 122.88 122.88v491.52a122.88 122.88 0 0 1-122.88 122.88H184.32a122.88 122.88 0 0 1-122.88-122.88V348.16a122.88 122.88 0 0 1 122.88-122.88h150.40512l-59.24864-102.66624a30.72 30.72 0 1 1 53.20704-30.72L405.68832 225.28H618.2912l77.02528-133.38624A30.72 30.72 0 0 1 737.28 80.62976z" fill="#131415" p-id="30110"></path><path d="M450.68288 456.3968l163.6352 100.43392c19.6608 12.06272 26.39872 38.8096 15.07328 59.74016-3.66592 6.7584-8.94976 12.36992-15.33952 16.22016l-163.6352 98.79552c-19.72224 11.91936-44.76928 4.52608-55.95136-16.4864A45.9776 45.9776 0 0 1 389.12 693.51424v-199.20896c0-24.1664 18.39104-43.74528 41.0624-43.74528 7.20896 0 14.27456 2.00704 20.50048 5.8368z" fill="#FFFFFF" p-id="30111"></path></svg>',
-                title:'视频',
+                title:'{% trans "视频" %}',
                 action:function(cm){
                     layer.open({
                         type:'1',
-                        title:'添加音视频外链',
+                        title:'{% trans "添加音视频外链" %}',
                         area:['800px','600px'],
                         id:'insertMultiMedia',//配置ID,
                         content:$('#insertMultimedia'),
@@ -118,7 +119,7 @@
             {
                 name:'table',
                 svg:'<svg t="1726628163710" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="31456" width="200" height="200"><path d="M960 591.424V368.96c0-0.288 0.16-0.512 0.16-0.768s-0.16-0.512-0.16-0.768V192a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v175.424c0 0.288-0.16 0.512-0.16 0.768s0.16 0.48 0.16 0.768v222.464c0 0.288-0.16 0.512-0.16 0.768s0.16 0.48 0.16 0.768V864a32 32 0 0 0 32 32h832a32 32 0 0 0 32-32V592.96c0-0.288 0.16-0.512 0.16-0.768s-0.16-0.512-0.16-0.768z m-560-31.232v-160h208v160H400z m208 64V832H400V624.192h208z m-480-224h208v160H128v-160z m544 0h224v160H672v-160zM896 224v112.192H128V224h768zM128 624.192h208V832H128V624.192zM672 832V624.192h224V832H672z" p-id="31457"></path></svg>',
-                title:'表格',
+                title:'{% trans "表格" %}',
                 action:function(cm){
                     layer.ready(function(){
                         element.init();
@@ -126,10 +127,10 @@
                     layer.open({
                         type:1,
                         id:'addTable',
-                        title:'添加表格',
+                        title:'{% trans "添加表格" %}',
                         area:['600px','400px'],
                         content:$("#layer-table"),
-                        btn:['确定','取消'], //添加按钮
+                        btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
                         yes:function(index,layero){
                             var current_tab_id = $("#insert-table-div .layui-tab-title .layui-this").attr("lay-id");
                             console.log(current_tab_id)
@@ -145,7 +146,7 @@
                                     editor.insertValue("\n" + table_md);
                                     layer.close(index)
                                 } catch (error) {
-                                    layer.msg("请生成表格")
+                                    layer.msg("{% trans '请生成表格' %}")
                                 }
                             }
 
@@ -169,25 +170,25 @@
     if(ai_write_status == '1'){
         toolbars.push({
             name: 'ai',
-            title: 'AI助手',
+            title: '{% trans "AI助手" %}',
             svg: '<svg t="1738736727063" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5387" width="200" height="200"><path d="M576 85.333333c0 18.944-8.234667 35.968-21.333333 47.701334V213.333333h213.333333a128 128 0 0 1 128 128v426.666667a128 128 0 0 1-128 128H256a128 128 0 0 1-128-128V341.333333a128 128 0 0 1 128-128h213.333333V133.034667A64 64 0 1 1 576 85.333333zM256 298.666667a42.666667 42.666667 0 0 0-42.666667 42.666666v426.666667a42.666667 42.666667 0 0 0 42.666667 42.666667h512a42.666667 42.666667 0 0 0 42.666667-42.666667V341.333333a42.666667 42.666667 0 0 0-42.666667-42.666666H256z m-170.666667 128H0v256h85.333333v-256z m853.333334 0h85.333333v256h-85.333333v-256zM384 618.666667a64 64 0 1 0 0-128 64 64 0 0 0 0 128z m256 0a64 64 0 1 0 0-128 64 64 0 0 0 0 128z" fill="#000000" p-id="5388"></path></svg>',
             type:'dropdown',
             actions:[
                 {
                     name: 'ai-write',
-                    title:'文档创作',
+                    title:'{% trans "文档创作" %}',
                     svg: '<svg t="1738931526526" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8593" width="200" height="200"><path d="M896 864a32 32 0 0 1 0 64H128a32 32 0 0 1 0-64z m-60.16-733.621333l15.093333 15.093333c45.866667 45.834667 45.866667 120.16 0 166.005333L418.794667 743.338667a160.192 160.192 0 0 1-78.122667 42.986666l-152.245333 34.197334c-23.84 5.365333-44.661333-16.853333-37.749334-40.288l43.338667-146.88a160.042667 160.042667 0 0 1 40.373333-67.925334l435.328-435.050666c45.866667-45.834667 120.245333-45.834667 166.112 0zM636.32 254.304L279.68 610.709333a96.021333 96.021333 0 0 0-24.213333 40.746667l-27.946667 94.656 99.093333-22.261333a96.117333 96.117333 0 0 0 46.869334-25.781334L726.933333 344.842667l-90.602666-90.538667z m78.698667-78.656l-33.397334 33.386667 90.602667 90.538666 33.386667-33.376a53.333333 53.333333 0 0 0 0-75.456l-15.093334-15.093333a53.408 53.408 0 0 0-75.498666 0z" fill="#000000" p-id="8594"></path></svg>',
                     action:function(cm){openAiDialog('write')}
                 },
                 {
                     name: 'ai-write',
-                    title:'文档续写',
+                    title:'{% trans "文档续写" %}',
                     svg: '<svg t="1738931438198" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6382" width="200" height="200"><path d="M795.712 99.456a96 96 0 0 1 35.2 131.136l-137.6 238.272a64 64 0 0 1-32.64 27.776l-49.856 19.072a61.824 61.824 0 0 1-83.136-48l-8.448-52.736a64 64 0 0 1 7.808-42.112l137.536-238.272a96 96 0 0 1 131.136-35.2zM720 166.592L582.4 404.864l8 50.048 47.488-18.048 137.536-238.272a32 32 0 1 0-55.424-32zM512 608a32 32 0 0 1 0 64H192a32 32 0 1 0 0 64h640a96 96 0 0 1 0 192H448a32 32 0 1 1 0-64h384a32 32 0 1 0 0-64H192a96 96 0 0 1 0-192h320z" fill="#606266" p-id="6383"></path></svg>',
                     action:function(cm){openAiDialog('continue')}
                 },
                 {
                     name: 'ai-write',
-                    title:'文档润色',
+                    title:'{% trans "文档润色" %}',
                     svg: '<svg t="1738931490061" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7534" width="200" height="200"><path d="M691.008 112.256l-44.672-67.84-44.608 67.84-78.336 21.504 50.752 63.36-3.776 81.152L646.4 249.6l75.968 28.672-3.712-81.088 50.688-63.424-78.272-21.504zM209.92 319.808l146.24-146.24L465.92 283.136l0.128-0.128 475.264 475.264-0.192 0.128 0.128 0.064-146.24 146.24-584.96-584.96z m146.24-55.744l64.384 64.32-55.744 55.744-64.384-64.32 55.744-55.744zM206.848 495.488l-31.808-48.384-31.808 48.384-55.808 15.36 36.16 45.12-2.688 57.856 54.144-20.48 54.144 20.48-2.624-57.856 36.096-45.184-55.808-15.36z m186.496 144.768l-18.944-28.672-18.88 28.672-33.152 9.088 21.504 26.88-1.6 34.304 32.128-12.16 32.192 12.16-1.6-34.304 21.44-26.88-33.088-9.088z" p-id="7535"></path></svg>',
                     action:function(cm){openAiDialog('polish')}
                 }
@@ -236,15 +237,15 @@
                                 editor.focus()
                             }else{
                                 layer.closeAll("loading");
-                                layer.msg("粘贴图片失败！")
+                                layer.msg("{% trans '粘贴图片失败！' %}")
                             }
                         },
                         error:function(xhr){
                             layer.closeAll('loading');
                             if(xhr.status == 403){
-                                layer.msg("上传图片失败，请确定拥有图片上传权限！")
+                                layer.msg("{% trans '上传图片失败，请确定拥有图片上传权限！' %}")
                             }else{
-                                layer.msg("粘贴上传图片失败，请稍后再试！")
+                                layer.msg("{% trans '粘贴上传图片失败，请稍后再试！' %}")
                             }
                         }
                     })
@@ -342,14 +343,14 @@
 
     // 打开AI助手对话框
     const openAiDialog = (actionType) => {
-        let title = '🤖 AI文档创作';
-        let btnTitle = '生成';
+        let title = '🤖 {% trans "AI文档创作" %}';
+        let btnTitle = '{% trans "生成" %}';
         if(actionType == 'continue'){
-            title = '🤖 AI文档续写'
-            btnTitle = '续写';
+            title = '🤖 {% trans "AI文档续写" %}'
+            btnTitle = '{% trans "续写" %}';
         }else if(actionType == 'polish'){
-            title = '🤖 AI文档润色';
-            btnTitle = '润色'
+            title = '🤖 {% trans "AI文档润色" %}';
+            btnTitle = '{% trans "润色" %}'
         }
 
         layer.open({
@@ -362,16 +363,16 @@
                     <div class="layui-form">
                         <div class="layui-form-item">
                             <div class="layui-input-inline" style="width:80%;">
-                                <textarea id="inputText" class="layui-textarea" placeholder="描述你的文档创作需求，例如“请为我生成一篇新兴产业调研报告结构大纲”..." rows="2"></textarea>
+                                <textarea id="inputText" class="layui-textarea" placeholder="{% trans '描述你的文档创作需求，例如“请为我生成一篇新兴产业调研报告结构大纲”...' %}" rows="2"></textarea>
                             </div>
                             <div class="layui-input-inline" style="width:80px;">
-                                <button class="layui-btn layui-btn-sm layui-btn-normal" id="submitText"">${btnTitle}文档</button>
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" id="submitText"">${btnTitle}{% trans "文档" %}</button>
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div id="chatHistory" class="layui-form-item markdown-body" style="height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; padding: 10px;"></div>
-                        <button class="layui-btn layui-btn-sm layui-btn-normal" id="insertText"">插入编辑器</button>
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" id="insertText"">{% trans "插入编辑器" %}</button>
                     </div>
                 </div>
             `,
@@ -398,9 +399,9 @@
                     // 获取编辑器文本
                     var editor_selected = editor.getSelectedValue();
                     if(editor_selected == ""){
-                        $("#inputText").val(`请对下面的文档进行续写：\n${editor.getMarkdown()}`)
+                        $("#inputText").val(`{% trans "请对下面的文档进行续写：" %}\n${editor.getMarkdown()}`)
                     }else{
-                        $("#inputText").val(`请对下面的文档进行续写：\n${editor_selected}`)
+                        $("#inputText").val(`{% trans "请对下面的文档进行续写：" %}\n${editor_selected}`)
                     };
                     // 插入文本到编辑器
                     $('#insertText').click(function(){
@@ -415,9 +416,9 @@
                     // 获取编辑器文本
                     var editor_selected = editor.getSelectedValue();
                     if(editor_selected == ""){
-                        $("#inputText").val(`请对下面的文档进行润色：\n${editor.getMarkdown()}`)
+                        $("#inputText").val(`{% trans "请对下面的文档进行润色：" %}\n${editor.getMarkdown()}`)
                     }else{
-                        $("#inputText").val(`请对下面的文档进行润色：\n${editor_selected}`)
+                        $("#inputText").val(`{% trans "请对下面的文档进行润色：" %}\n${editor_selected}`)
                     };
                     // 插入文本到编辑器
                     $('#insertText').click(function(){
@@ -460,7 +461,7 @@
             if (response.headers.get('Content-Type') && response.headers.get('Content-Type').includes('application/json')) {
                 return response.json().then(data => {
                     if (!data.status) {
-                        layer.msg('请求异常：'+data.data)
+                        layer.msg('{% trans "请求异常：" %}'+data.data)
                         $('#submitText').prop('disabled', false);
                         $('#submitText').removeClass('layui-btn-disabled')
                         return; // Early exit if there's an error

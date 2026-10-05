@@ -607,7 +607,7 @@ class DocView(APIView):
                     else:
                         colla_user_role = 0
                 except ObjectDoesNotExist:
-                    return Response({'code': 1, 'data': '文档不存在'})
+                    return Response({'code': 1, 'data': _('文档不存在')})
                 if (request.user == doc.create_user) or (colla_user_role == 1) or (request.user == project.create_user):
                     # 修改状态为删除
                     doc.status = 3

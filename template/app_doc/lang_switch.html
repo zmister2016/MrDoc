@@ -1,0 +1,31 @@
+{% load i18n %}
+{% get_current_language as MRDOC_CURRENT_LANGUAGE %}
+{% get_available_languages as MRDOC_AVAILABLE_LANGUAGES %}
+{% if enable_lang_switch == 'on' and not language_force and MRDOC_AVAILABLE_LANGUAGES|length > 1 %}
+<li class="layui-nav-item">
+    <a href="javascript:void(0);">
+        <i class="layui-icon layui-icon-website"></i>
+        <span class="layui-hide-xs">{% trans "语言" %}</span>
+    </a>
+    <dl class="layui-nav-child">
+        {% for lang_code, lang_name in MRDOC_AVAILABLE_LANGUAGES %}
+        <dd>
+            <a href="javascript:void(0);" onclick="mrdocSetLanguage('{{ lang_code }}');">
+                <span{% if lang_code == MRDOC_CURRENT_LANGUAGE %} style="font-weight:700;"{% endif %}>{{ lang_name }}</span>
+            </a>
+        </dd>
+        {% endfor %}
+    </dl>
+    <form id="mrdoc-setlang-form" action="{% url 'set_language' %}" method="post" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="language" id="mrdoc-setlang-language">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    </form>
+    <script>
+        function mrdocSetLanguage(code) {
+            document.getElementById('mrdoc-setlang-language').value = code;
+            document.getElementById('mrdoc-setlang-form').submit();
+        }
+    </script>
+</li>
+{% endif %}

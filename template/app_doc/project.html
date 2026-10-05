@@ -96,10 +96,10 @@
                     <span class="layui-breadcrumb" lay-separator="|">
                         {% if allow_download %}
                             {% if allow_download.allow_epub == 1 %}
-                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','epub')"><i class="layui-icon layui-icon-download-circle"></i> <u>EPUB电子书</u></a>
+                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','epub')"><i class="layui-icon layui-icon-download-circle"></i> <u>{% trans "EPUB电子书" %}</u></a>
                             {% endif %}
                             {% if allow_download.allow_pdf == 1 %}
-                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="layui-icon layui-icon-download-circle"></i> <u>PDF电子书</u></a>
+                                <a href="javascript:void(0);" onclick="reportFile('{{project.id}}','pdf')"><i class="layui-icon layui-icon-download-circle"></i> <u>{% trans "PDF电子书" %}</u></a>
                             {% endif %}
                             {% if allow_download.allow_pdf == 0 and allow_download.allow_epub == 0 %}
                                 <a>{% trans "文集作者未开放此文集的任何格式下载！" %}</a>
@@ -134,10 +134,10 @@
         downloadFile = function(download_link){
             layer.open({
                 type:1,
-                title:"下载导出文档",
+                title:"{% trans '下载导出文档' %}",
                 area:"300px",
                 id:"downloadMd",
-                content:'<p style="text-align:center;color:red;">请尽快下载，避免失效！</p><br><a class="layui-btn layui-btn-normal layui-btn-fluid download-md-link" href="'+ download_link + '" download="" >点击下载文件</a>',
+                content:'<p style="text-align:center;color:red;">{% trans "请尽快下载，避免失效！" %}</p><br><a class="layui-btn layui-btn-normal layui-btn-fluid download-md-link" href="'+ download_link + '" download="" >{% trans "点击下载文件" %}</a>',
                 //btn:['确定','取消'], //添加按钮
                 //btnAlign:'c', //按钮居中
                 success: function (layero, index) {
@@ -156,13 +156,13 @@
 <div class="layui-row layui-col-space20" style="padding-left: 20px;">
     <span >
         <i class="layui-icon layui-icon-user"></i>
-        <span tooltip="文集创建者">{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user.username}}{% endif %}</span>
+        <span tooltip="{% trans '文集创建者' %}">{% if project.create_user.first_name != '' %} {{project.create_user.first_name}} {% else %} {{project.create_user.username}}{% endif %}</span>
         {% for colla in colla_user_list %}
-        ,<span tooltip="文集成员">{% if colla.user.first_name != '' %} {{colla.user.first_name}} {% else %} {{colla.user.username}}{% endif %}</span>
+        ,<span tooltip="{% trans '文集成员' %}">{% if colla.user.first_name != '' %} {{colla.user.first_name}} {% else %} {{colla.user.username}}{% endif %}</span>
         {% endfor %}
     </span>
 
-    <button id="share" class="doc-bottom-btn" tooltip="转发本文集" style="padding-left: 20px;">
+    <button id="share" class="doc-bottom-btn" tooltip="{% trans '转发本文集' %}" style="padding-left: 20px;">
         <i class="layui-icon layui-icon-share" ></i> {% trans "转发" %}
     </button>
 </div>
@@ -191,12 +191,12 @@
                         $("#doc-tree").append(toc_str);
                         docTreePager(r.total);
                     }else{
-                        layer.msg("获取文集文档大纲失败！")
+                        layer.msg("{% trans '获取文集文档大纲失败！' %}")
                     }
                 },
                 error:function(){
                     layer.closeAll('loading')
-                    layer.msg("文集目录大纲加载异常");
+                    layer.msg("{% trans '文集目录大纲加载异常' %}");
                 }
             });
         };
@@ -229,12 +229,12 @@
                         $('#doc-tree').empty();
                         $("#doc-tree").append(toc_str);
                     }else{
-                        layer.msg("获取文集文档大纲失败！")
+                        layer.msg("{% trans '获取文集文档大纲失败！' %}")
                     }
                 },
                 error:function(){
                     layer.closeAll('loading')
-                    layer.msg("文集目录大纲加载异常");
+                    layer.msg("{% trans '文集目录大纲加载异常' %}");
                 }
             });
         };
@@ -276,7 +276,7 @@
             if(r.status){
                 $("#doc-tree").append(renderDocTree(r.data));
             }else{
-                layer.msg("获取文集文档大纲失败！")
+                layer.msg("{% trans '获取文集文档大纲失败！' %}")
             }
             layer.closeAll('loading')
         });

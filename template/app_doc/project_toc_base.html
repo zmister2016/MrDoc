@@ -1,4 +1,5 @@
 {% load doc_filter %}
+{% load i18n %}
 <!-- 一级目录 -->
 {% for docs in toc_list %}
     <li class="doctree-li">
@@ -21,7 +22,7 @@
                         <a href="{{docs | doc_url}}"
                         class="doc-open-btn"
                         data-id="{{docs.id}}"
-                        title="查看文档">
+                        title="{% trans '查看文档' %}">
                             ↗
                         </a>
                     {% endif %}

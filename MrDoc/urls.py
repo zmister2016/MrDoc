@@ -41,6 +41,7 @@ urlpatterns = [
     path('robots.txt',robots_txt_serve),# robots协议文件
     path('llms.txt',llms_txt_serve),# llms协议文件
     re_path(r'^jsi18n/', JavaScriptCatalog.as_view(),name="javascript-catalog"),
+    path('i18n/', include('django.conf.urls.i18n')), # 语言切换（set_language）
 ]
 
 if settings.SITEMAP:

@@ -1,5 +1,6 @@
 from app_doc.models import Project,ProjectCollaborator
 from django.utils.html import strip_tags
+from django.utils.translation import gettext_lazy as _
 import markdown
 
 # 验证用户对文档是否读写授权权限
@@ -44,7 +45,7 @@ def remove_doc_tag(doc):
         if doc.editor_mode == 3: # 富文本文档
             result = strip_tags(doc.content)[:100]
         elif doc.editor_mode == 4:
-            result = "此为表格文档，进入文档查看详细内容"
+            result = _("此为表格文档，进入文档查看详细内容")
         else: # 其他文档
             result = strip_tags(markdown.markdown(doc.pre_content))[:100]
     except Exception as e:

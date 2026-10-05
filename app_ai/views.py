@@ -96,7 +96,7 @@ def dynamic_rate_limit(view_func):
 
         # 检查请求次数是否超过限制
         if len(request_times) >= num_requests:
-            return JsonResponse({'status':False,'data':'已超过请求频率限制，请稍后再使用！'})
+            return JsonResponse({'status':False,'data':_('已超过请求频率限制，请稍后再使用！')})
 
         # 添加当前请求时间到记录中
         request_times.append(current_time)
@@ -149,7 +149,7 @@ def dynamic_rate_limit_chat(view_func):
 
         # 检查请求次数是否超过限制
         if len(request_times) >= num_requests:
-            return JsonResponse({'status':False,'data':'已超过对话频率限制，请稍后再使用！'})
+            return JsonResponse({'status':False,'data':_('已超过对话频率限制，请稍后再使用！')})
 
         # 添加当前请求时间到记录中
         request_times.append(current_time)
@@ -364,14 +364,14 @@ class DocAISectionView(APIView):
         if doc_id:
             doc = Doc.objects.filter(id=doc_id).first()
             if not doc:
-                return Response({'code':0,'msg':'文档不存在'})
+                return Response({'code':0,'msg':_('文档不存在')})
             doc_sections = DocAISection.objects.filter(doc=doc)
             for sec in doc_sections:
                 vector_store.delete_by_section(sec.id)
             doc_sections.delete()
             return Response({
                 "code": 0,
-                "msg": "文档索引删除成功"
+                "msg": _("文档索引删除成功")
             })
 
         section_id = request.data.get('id')
@@ -381,11 +381,11 @@ class DocAISectionView(APIView):
 
             return Response({
                 "code": 0,
-                "msg": "索引删除成功"
+                "msg": _("索引删除成功")
             })
         return Response({
             "code": 5,
-            "msg": "参数错误"
+            "msg": _("参数错误")
         })
 
 
@@ -433,20 +433,20 @@ class DocAIIndexListView(APIView):
 def rebuild_doc_index(request):
     doc_id = request.POST.get('doc_id')
     if not doc_id:
-        return JsonResponse({"status": False, "data": "缺少文档ID"})
+        return JsonResponse({"status": False, "data": _("缺少文档ID")})
     try:
         doc = Doc.objects.get(id=doc_id)
     except Doc.DoesNotExist:
-        return JsonResponse({"status": False, "data": "文档不存在"})
+        return JsonResponse({"status": False, "data": _("文档不存在")})
     try:
         # 同步重建索引
         result = build_sections_pipeline(doc)
         if result.get("skipped"):
-            return JsonResponse({"status": True, "data": "文档内容为空，未生成索引"})
-        return JsonResponse({"status": True, "data": f"索引文档重建成功，共 {result['total']} 个切片"})
+            return JsonResponse({"status": True, "data": _("文档内容为空，未生成索引")})
+        return JsonResponse({"status": True, "data": _("索引文档重建成功，共 %(total)s 个切片") % {"total": result['total']}})
     except Exception as e:
         logger.error(f"重建文档索引失败：{str(e)}")
-        return JsonResponse({"status": False, "data": f"索引重建失败：{str(e)}"})
+        return JsonResponse({"status": False, "data": _("索引重建失败：%(e)s") % {"e": str(e)}})
 
 
 # 重建片段索引
@@ -454,18 +454,18 @@ def rebuild_doc_index(request):
 def rebuild_section_index(request):
     section_id = request.POST.get('section_id')
     if not section_id:
-        return JsonResponse({"status": False, "data": "缺少片段ID"})
+        return JsonResponse({"status": False, "data": _("缺少片段ID")})
     try:
         section = DocAISection.objects.get(id=section_id)
     except DocAISection.DoesNotExist:
-        return JsonResponse({"status": False, "data": "片段不存在"})
+        return JsonResponse({"status": False, "data": _("片段不存在")})
     try:
         # 重建索引
         rebuild_section(section)
-        return JsonResponse({"status": True, "data": "索引重建成功"})
+        return JsonResponse({"status": True, "data": _("索引重建成功")})
     except Exception as e:
         logger.error(f"重建片段索引失败：{str(e)}")
-        return JsonResponse({"status": False, "data": f"索引重建失败：{str(e)}"})
+        return JsonResponse({"status": False, "data": _("索引重建失败：%(e)s") % {"e": str(e)}})
 
 
 # RAG调试接口
