@@ -155,10 +155,10 @@ git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chm
 ## 交流
 
 <p>
-<img src="https://mrdoc.pro/media/202609/MrDoc%E5%BC%80%E6%BA%90%E7%89%88%E7%94%A8%E6%88%B7%E4%BA%A4%E6%B5%81%E7%BE%A4_20260922194353167253.png" width="50%">
-<img src="https://mrdoc.pro/media/202505/1354bec77bdb4339a74a79397ca79f2d4926.png" width="50%">
+<img src="https://mrdoc.pro/media/public/mrdoc_mp_qrcode.png" width="50%">
 </p>
 
+关注公众号回复「交流群」，可加入「MrDoc开源版用户交流群」
 
 ## 依赖
 
