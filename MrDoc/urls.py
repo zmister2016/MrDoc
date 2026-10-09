@@ -19,10 +19,9 @@ from django.views.static import serve
 from django.conf import settings
 from django.contrib.sitemaps import views
 from django.views.i18n import JavaScriptCatalog
-from django.views.generic import TemplateView
 from app_doc.sitemaps import SitemapAll
 from app_admin import views as admin_views
-from .static import robots_txt_serve,llms_txt_serve
+from .static import robots_txt_serve,llms_txt_serve,extend_root_txt_serve
 
 sitemaps = SitemapAll()
 
@@ -54,7 +53,7 @@ if settings.SITEMAP:
 if settings.EXTEND_ROOT_TXT:
     for filename in settings.EXTEND_ROOT_TXT:
         urlpatterns.append(
-            path(filename,TemplateView.as_view(template_name=filename,content_type="text/plain")),  # 扩展媒体文件
+            path(filename,extend_root_txt_serve,{'filename':filename}),  # 扩展根目录文本文件
         )
 
 if settings.DEBUG:

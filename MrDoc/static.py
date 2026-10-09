@@ -36,3 +36,13 @@ def llms_txt_serve(request):
     if os.path.exists(config_llms):
         return FileResponse(open(config_llms, 'rb'), content_type="text/plain")
     return Http404(_("404 Not Found: /llms.txt 不存在"))
+
+# 扩展根目录文本文件：优先读取 config 目录下的指定文件，不存在时回退到 template 目录渲染
+def extend_root_txt_serve(request, filename):
+    config_file = os.path.join(settings.CONFIG_DIR, filename)
+    if os.path.exists(config_file):
+        return FileResponse(open(config_file, 'rb'), content_type="text/plain")
+    try:
+        return render(request, filename, content_type="text/plain")
+    except TemplateDoesNotExist:
+        raise Http404(_("404 Not Found: /%s 不存在") % filename)
