@@ -38,7 +38,7 @@
 MrDoc is a self-hostable online document and knowledge base system. It covers the full cycle of knowledge capture, document storage, knowledge organization, AI Q&A, content creation and knowledge sharing, helping individuals and small teams build a complete knowledge management loop.
 
 ```
-Capture → Store → Organize → Use with AI → Publish → Keep Accumulating
+Knowledge Creation → Document Accumulation → Knowledge Organization → AI Applications → Knowledge Publishing → Continuous Enrichment
 ```
 
 You can simply think of MrDoc as a "self-hosted Yuque" and an "online-editable GitBook".
