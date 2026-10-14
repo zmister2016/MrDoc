@@ -13,7 +13,7 @@
     <div class="layui-card-body">
     <div class="layui-row" style="padding-left:15px;">
         <span class="layui-breadcrumb" lay-separator=">">
-          <a href="{% url 'manage_project' %}">{% trans "文集管理" %}</a>
+          <a href="{{ crumb_parent_url }}">{% trans "文集管理" %}</a>
           <a><cite>{% trans "文集设置" %}</cite></a>
           <a><cite>{% trans "文集：" %}{{pro.name}}</cite></a>
         </span>
@@ -200,6 +200,16 @@
                     </div>
                     <button class="layui-btn layui-btn-primary" style="float: right;" id="export-project">{% trans "导出文集" %}</button>
                 </div>
+                {% if ai_status == '1' %}
+                <hr>
+                <div class="layui-row">
+                    <div style="float: left;">
+                        <strong>{% trans "重建AI索引" %}</strong>
+                        <p>{% trans "重建此文集下所有已发布文档的AI索引，用于AI知识库检索" %}</p>
+                    </div>
+                    <button class="layui-btn layui-btn-primary" style="float: right;" id="rebuild-ai-index">{% trans "重建AI索引" %}</button>
+                </div>
+                {% endif %}
                 <hr>
                 <div class="layui-row">
                     <div style="float: left;">
@@ -371,6 +381,30 @@
             }
         })
     };
+    // 重建文集AI索引
+    rebuildAiIndex = function(){
+        layer.confirm("{% trans '确认重建此文集下所有已发布文档的AI索引吗？该操作可能耗时较长，请耐心等待。' %}", {
+            icon: 3,
+            title: "{% trans '重建AI索引' %}"
+        }, function(index){
+            layer.close(index);
+            var load = layer.load(1);
+            $.post("{% url 'ai-rebuild-project' pro.id %}", {}, function(r){
+                layer.close(load);
+                if(r.status){
+                    layer.msg(r.data, {icon: 1, time: 2000});
+                }else{
+                    layer.msg(r.data, {icon: 2, time: 2000});
+                }
+            }).fail(function(){
+                layer.close(load);
+                layer.msg("{% trans '重建AI索引失败' %}", {icon: 2, time: 1000});
+            })
+        });
+    };
+    $('#rebuild-ai-index').click(function(){
+        rebuildAiIndex();
+    });
     // 删除文集
     delProject = function(pro_id){
         layer.open({

@@ -19,6 +19,7 @@ urlpatterns = [
     path('doc-index/',views.DocAIIndexListView.as_view(), name="api-ai-doc-index"), # 文档索引聚合列表接口
     path('rebuild-section/', views.rebuild_section_index, name='ai-rebuild-section'), # 重建片段索引接口
     path('rebuild-doc/', views.rebuild_doc_index, name='ai-rebuild-doc'), # 重建文档索引接口
+    path('rebuild-project/<int:pro_id>/', views.rebuild_project_index, name='ai-rebuild-project'), # 重建文集索引接口
     path('rag-search-debug/',views.RagSearchDebugView.as_view(),name="api-ai-rag-search-debug"), # RAG搜索调试接口
     path('prompts/api/', views.PromptApi.as_view(), name='api-prompt-list'), # Prompt 列表接口
     path('prompts/api/<int:pk>/', views.PromptDetailApi.as_view(), name='api-prompt-detail'), # Prompt 详情接口

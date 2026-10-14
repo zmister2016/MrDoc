@@ -406,6 +406,9 @@ def modify_project(request):
         pro_id = request.GET.get('pro_id', None)
         pro = Project.objects.get(id=pro_id)
         project_files = ProjectReportFile.objects.filter(project=pro) # 文集的导出文件列表
+        # 面包屑父级链接：后台入口指向后台文集管理，个人中心入口指向前台文集管理
+        from_admin = request.GET.get('from', '') == 'admin'
+        crumb_parent_url = reverse('project_manage') if from_admin else reverse('manage_project')
         # 验证用户有权限修改文集
         if (request.user == pro.create_user) or request.user.is_superuser:
             return render(request,'app_doc/manage/manage_project_options.html',locals())

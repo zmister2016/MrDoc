@@ -21,7 +21,7 @@ from app_admin.models import SysSetting
 from app_api.auth_app import AppMustAuth
 from app_api.permissions_app import SuperUserPermission
 from app_api.serializers_app import AIProviderSerializer, PromptSerializer
-from app_doc.models import Doc
+from app_doc.models import Doc, Project
 from app_ai.models import DocAISection, AIProvider, Prompt
 from app_ai.utils import get_sys_value
 from app_ai.services import ai_router
@@ -466,6 +466,40 @@ def rebuild_section_index(request):
     except Exception as e:
         logger.error(f"重建片段索引失败：{str(e)}")
         return JsonResponse({"status": False, "data": _("索引重建失败：%(e)s") % {"e": str(e)}})
+
+
+# 重建文集索引（同步执行）
+@login_required
+def rebuild_project_index(request, pro_id):
+    try:
+        pro = Project.objects.get(id=pro_id)
+    except Project.DoesNotExist:
+        return JsonResponse({"status": False, "data": _("文集不存在")})
+    # 验证用户有权限操作文集
+    if (request.user != pro.create_user) and (request.user.is_superuser is False):
+        return JsonResponse({"status": False, "data": _("非法请求")})
+    try:
+        # 仅重建已发布文档的索引
+        docs = Doc.objects.filter(top_doc=pro.id, status=1)
+        total = docs.count()
+        success = 0
+        failed = 0
+        for doc in docs:
+            try:
+                build_sections_pipeline(doc)
+                success += 1
+            except Exception:
+                logger.exception(_("重建文档AI索引出错"))
+                failed += 1
+        return JsonResponse({
+            "status": True,
+            "data": _("索引重建完成：共 %(total)s 个文档，成功 %(success)s 个，失败 %(failed)s 个") % {
+                "total": total, "success": success, "failed": failed
+            }
+        })
+    except Exception:
+        logger.exception(_("重建文集AI索引出错"))
+        return JsonResponse({"status": False, "data": _("请求出错")})
 
 
 # RAG调试接口
