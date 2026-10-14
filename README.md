@@ -1,6 +1,6 @@
 <h1 align="center">MrDoc - Your Self-Hosted Document & Knowledge Base</h1>
 
-<p align="center">A self-hosted notes, documents and knowledge management solution for individuals and small teams</p>
+<p align="center">An open-source knowledge base and document management system that enables private deployment for individuals, teams, and organizations.</p>
 
 <p align="center">
 <a href="./README-zh.md">中文介绍</a> |
@@ -35,13 +35,15 @@
 
 ## Introduce
 
-MrDoc is a self-hostable online document and knowledge base system. It covers the full cycle of knowledge capture, document storage, knowledge organization, AI Q&A, content creation and knowledge sharing, helping individuals and small teams build a complete knowledge management loop.
+MrDoc is a self-hostable online document and knowledge base system. It covers the full lifecycle of knowledge creation, document accumulation, knowledge organization, AI applications, knowledge publishing and continuous enrichment, helping teams and individuals build a complete knowledge management loop.
 
 ```
 Knowledge Creation → Document Accumulation → Knowledge Organization → AI Applications → Knowledge Publishing → Continuous Enrichment
 ```
 
-You can simply think of MrDoc as a "self-hosted Yuque" and an "online-editable GitBook".
+You can think of MrDoc as "Confluence without the per-seat billing, running from a single docker compose command" — one container, one mounted data directory, unlimited accounts on a one-time professional license.
+
+Everything you write can also become the knowledge source for your AI: retrieval and generation both run on your own infrastructure, with no data leaving your network.
 
 Supports Web, browser extensions, desktop client, mobile client and Obsidian sync plugin, and can be used for personal knowledge bases, team knowledge bases, product documentation and other scenarios.
 
@@ -55,7 +57,50 @@ MrDoc currently provides the following clients and extensions:
 
 ## Applicable Scenarios
 
-Self-hosted scenarios such as personal knowledge bases, internal team knowledge bases, product documentation, project documentation and online tutorials.
+MrDoc is designed for knowledge management and document collaboration scenarios for individuals, teams, and organizations. It has been adopted by many individual users, small and medium-sized teams, enterprises, research institutions, and organizations for knowledge management and document collaboration.
+
+### 👤 Personal Knowledge Management
+
+- Personal notes and knowledge bases
+- Learning material organization
+- Technical documentation management
+- Personal wikis
+
+### 🏢 Enterprise and Team Knowledge Management
+
+- Internal knowledge bases
+- Product documentation
+- Technical and development documentation
+- Project collaboration documents
+- Employee training materials
+- Customer service knowledge bases
+
+### 🔬 Research Institutions and Laboratories
+
+- Research project documentation management
+- Experimental records organization
+- Research knowledge preservation
+- Knowledge sharing within research groups
+
+### 🏛️ Government and Public Organizations
+
+- Departmental knowledge bases
+- Workflow documentation
+- Business document management
+- Organizational experience sharing
+
+### 🎓 Educational Institutions
+
+- Teaching material management
+- Course document sharing
+- Academic team collaboration
+
+### 🌐 Product and Content Publishing
+
+- Product documentation sites
+- Online help centers
+- Open-source project documentation
+- Technical blogs
 
 ## Feature Overview
 
