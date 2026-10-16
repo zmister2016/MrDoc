@@ -10,6 +10,10 @@ class EnhancedDifyChatComponent extends HTMLElement {
         this.messages = [];
         this.conversationId = '';
         this.isTyping = false;
+        // 已加载图片的原始尺寸：流式重渲染时用于提前占位，避免高度反复跳动
+        this.imageSizeCache = {};
+        // 上一次流式渲染的内容：内容未变化时跳过重渲染
+        this.lastRenderedContent = null;
         this.apiEndpoint = this.getAttribute('api-endpoint') || '/ai/chat/stream/';
         this.textGenerateEndpoint = this.getAttribute('text-generate-endpoint') || '/ai_text_genarate/';
         this.welcome_str = this.getAttribute('welcome_str') || gettext('你好！我是AI智能助手，有什么可以帮助你的吗？')
@@ -46,6 +50,32 @@ class EnhancedDifyChatComponent extends HTMLElement {
         // 自动调整输入框高度
         this.chatInput.addEventListener('input', () => {
             this.adjustTextareaHeight();
+        });
+
+        // 点击回答中的图片查看原图
+        this.messagesContainer.addEventListener('click', (e) => {
+            const img = e.target.closest ? e.target.closest('img') : null;
+            if (img && img.closest('.message-content')) {
+                this.openImageViewer(img.currentSrc || img.src);
+            }
+        });
+
+        // 记录图片原始尺寸：流式重渲染时给图片补上宽高，避免高度反复跳动
+        this.messagesContainer.addEventListener('load', (e) => {
+            const img = e.target;
+            if (img.tagName === 'IMG' && img.naturalWidth && img.naturalHeight) {
+                this.imageSizeCache[img.src] = {
+                    width: img.naturalWidth,
+                    height: img.naturalHeight
+                };
+            }
+        }, true);
+
+        // Esc 关闭图片查看器
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeImageViewer();
+            }
         });
 
         // 清空对话
@@ -94,6 +124,9 @@ class EnhancedDifyChatComponent extends HTMLElement {
     }
 
     addMessage(role, content, timestamp = new Date()) {
+        // 新消息开始，重置流式渲染状态
+        this.lastRenderedContent = null;
+
         const messageElement = document.createElement('div');
         messageElement.className = `message ${role}`;
         
@@ -121,6 +154,7 @@ class EnhancedDifyChatComponent extends HTMLElement {
         
         if (role === 'assistant') {
             contentElement.innerHTML = this.parseMarkdown(content);
+            this.applyImageSizes(contentElement);
         } else {
             contentElement.textContent = content;
         }
@@ -140,7 +174,7 @@ class EnhancedDifyChatComponent extends HTMLElement {
         this.messages.push({ role, content, timestamp });
     }
 
-updateLastMessage(content) {
+updateLastMessage(content, isFinal = false) {
     const messages = this.messagesContainer.querySelectorAll('.message.assistant');
     const lastMessage = messages[messages.length - 1];
     if (lastMessage) {
@@ -168,9 +202,18 @@ updateLastMessage(content) {
             }
         }
         
-        // 只更新回答内容，不触发其他元素的重排
-        answerContainer.innerHTML = this.parseMarkdown(content);
-        
+        // 流式过程中尾部可能是未写完的图片语法（如 ![图](/media/a.pn），
+        // 直接渲染会先出现一段文本、补全后才变成图片，这里先截掉待其完整
+        const renderContent = isFinal ? content : this.stripIncompleteImageTail(content);
+
+        // 内容没变化就跳过重渲染，避免图片元素被反复销毁重建导致闪屏；
+        // 收尾渲染（isFinal）强制重渲染，保证最终展示与完整内容一致
+        if (isFinal || renderContent !== this.lastRenderedContent) {
+            this.lastRenderedContent = renderContent;
+            answerContainer.innerHTML = this.parseMarkdown(renderContent);
+            this.applyImageSizes(answerContainer);
+        }
+
         // marked.hljsHandle();
 
         this.scrollToBottom();
@@ -188,6 +231,36 @@ updateLastMessage(content) {
     // Markdown解析
     parseMarkdown(text) {
         return marked.getHtml({value:text});
+    }
+
+    // 流式渲染时截掉"图片地址正在输入、尚未闭合"的尾部，避免图片先渲染成文字再变成图片。
+    // 只有尾部严格形如 ![alt](未闭合地址 时才处理；其他含 ![ 的内容（代码块、正文、全角括号等）一律原样保留。
+    stripIncompleteImageTail(text) {
+        const start = text.lastIndexOf('![');
+        if (start === -1) {
+            return text;
+        }
+        const tail = text.slice(start);
+        // 已是完整的 ![alt](url) 语法，不需要处理
+        if (/^!\[[^\]]*\]\([^)]*\)/.test(tail)) {
+            return text;
+        }
+        // 仅在尾部是"半截图片地址"时截断
+        if (!/^!\[[^\]\n]{0,200}\]\([^)\s]{0,500}$/.test(tail)) {
+            return text;
+        }
+        return text.slice(0, start);
+    }
+
+    // 重渲染后给已加载过的图片补回宽高，让浏览器在图片解码完成前就按比例占位
+    applyImageSizes(container) {
+        container.querySelectorAll('img').forEach((img) => {
+            const size = this.imageSizeCache[img.src];
+            if (size) {
+                img.setAttribute('width', size.width);
+                img.setAttribute('height', size.height);
+            }
+        });
     }
 
     formatTime(date) {
@@ -481,6 +554,11 @@ updateLastMessage(content) {
                 }
             }
 
+            // 流结束：用完整内容做一次收尾渲染，补齐流式中被暂时截断的尾部
+            if (fullResponse) {
+                this.updateLastMessage(fullResponse, true);
+            }
+
         } catch (error) {
             console.error('流式响应错误:', error);
             throw error;
@@ -501,6 +579,51 @@ updateLastMessage(content) {
         setTimeout(() => {
             this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
         }, 10);
+    }
+
+    // 图片查看器（懒创建）
+    ensureImageViewer() {
+        if (this.imageViewer) {
+            return this.imageViewer;
+        }
+
+        const viewer = document.createElement('div');
+        viewer.className = 'image-viewer';
+
+        const img = document.createElement('img');
+        img.alt = '';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'image-viewer-close';
+        closeBtn.textContent = '×';
+
+        viewer.appendChild(img);
+        viewer.appendChild(closeBtn);
+        this.shadowRoot.appendChild(viewer);
+
+        viewer.addEventListener('click', () => this.closeImageViewer());
+
+        this.imageViewer = viewer;
+        this.imageViewerImg = img;
+        return viewer;
+    }
+
+    openImageViewer(src) {
+        if (!src) {
+            return;
+        }
+        this.ensureImageViewer();
+        this.imageViewerImg.src = src;
+        this.imageViewer.classList.add('show');
+    }
+
+    closeImageViewer() {
+        if (!this.imageViewer || !this.imageViewer.classList.contains('show')) {
+            return;
+        }
+        this.imageViewer.classList.remove('show');
+        this.imageViewerImg.removeAttribute('src');
     }
 
     clearConversation() {
@@ -712,5 +835,12 @@ customElements.define('mrdoc-ai-chat', EnhancedDifyChatComponent);
 
 // 初始化对话管理器
 document.addEventListener('DOMContentLoaded', () => {
-    new ConversationManager();
+    // 仅当页面存在对话列表侧边栏时才初始化，
+    // 否则 newChatBtn / conversationsList 为 null，会在 setupEventListeners 抛异常
+    if (
+        document.getElementById('newChatBtn') &&
+        document.getElementById('conversationsList')
+    ) {
+        new ConversationManager();
+    }
 });

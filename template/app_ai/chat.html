@@ -145,8 +145,8 @@
 
     <!-- 聊天组件模板（mrdoc-chat-component.js 硬编码引用此模板ID） -->
     <template id="enhanced-dify-chat-template">
-        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}">
-        <link rel="stylesheet" href="{% static 'mrdoc/mrdoc-chat-component.css' %}">
+        <link rel="stylesheet" href="{% static 'mr-marked/marked.css' %}?version={{mrdoc_version}}">
+        <link rel="stylesheet" href="{% static 'mrdoc/mrdoc-chat-component.css' %}?version={{mrdoc_version}}">
         <div class="chat-container">
             <div class="chat-header">
                 <div class="chat-avatar">AI</div>

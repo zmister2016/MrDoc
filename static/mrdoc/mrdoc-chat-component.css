@@ -142,12 +142,65 @@
 
 .message-content {
     max-width: 100%;
+    min-width: 0;
     padding: 16px 20px;
     border-radius: 16px;
     font-size: 14px;
     line-height: 1.6;
     word-wrap: break-word;
     position: relative;
+}
+
+/* AI回答中的图片自适应：限制最大宽度避免大图影响阅读，点击可查看原图 */
+.message-content img {
+    max-width: min(100%, 320px);
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    cursor: zoom-in;
+}
+
+/* 图片查看器 */
+.image-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.image-viewer.show {
+    display: flex;
+}
+
+.image-viewer img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    cursor: zoom-out;
+}
+
+.image-viewer-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.image-viewer-close:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .message.user .message-content {
