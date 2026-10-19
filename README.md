@@ -1,8 +1,8 @@
 <h1 align="center">MrDoc - Your Self-Hosted Document & Knowledge Base</h1>
 
-<p align="center">An open-source knowledge base and document management system that enables private deployment for individuals, teams, and organizations.</p>
+<p align="center">An open-source knowledge base system for individuals and small to medium-sized teams, supporting self-hosting, team collaboration, documentation publishing, and AI-powered knowledge base Q&A.</p>
 
-<p align="center">
+<p align="center">An open-source knowledge base system that enables privat
 <a href="./README-zh.md">中文介绍</a> |
 <a href="./README.md">English Description</a> 
 </p>
@@ -13,7 +13,7 @@
 <a href='https://github.com/zmister2016/MrDoc/stargazers'><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zmister2016/MrDoc?style=flat&logo=github"></a>
 <a href='https://atomgit.com/zmister/MrDoc/stargazers'><img src='https://atomgit.com/zmister/MrDoc/star/badge.svg' alt='star'></img></a>
 <img src="https://img.shields.io/badge/MrDoc-v1.1.1-brightgreen.svg" title="MrDoc" />
-<img src="https://img.shields.io/badge/MrDocPro-v1.6.8-brightgreen.svg" title="MrDoc Professional" />
+<img src="https://img.shields.io/badge/MrDocPro-v1.7.0-brightgreen.svg" title="MrDoc Professional" />
 <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
 <a href="https://hellogithub.com/repository/6494f041e00d4b8481ed1114a0bd33c1" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=6494f041e00d4b8481ed1114a0bd33c1&claim_uid=3IU9mFeOVT0cXyw&theme=small" alt="Featured｜HelloGitHub" /></a>

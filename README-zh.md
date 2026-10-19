@@ -1,6 +1,6 @@
 <h1 align="center">觅思文档开源版</h1>
 
-<p align="center">开源知识库与文档管理系统，支持个人、团队及组织私有化部署</p>
+<p align="center">开源知识库系统，面向个人与中小团队，支持私有化部署、团队协作、文档发布与 AI 知识库问答。</p>
 
 <p align="center">
 <a href="./README-zh.md">中文介绍</a> |
@@ -13,7 +13,7 @@
 <a href='https://github.com/zmister2016/MrDoc/stargazers'><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/zmister2016/MrDoc?style=flat&logo=github"></a>
 <a href='https://atomgit.com/zmister/MrDoc/stargazers'><img src='https://atomgit.com/zmister/MrDoc/star/badge.svg' alt='star'></img></a>
 <img src="https://img.shields.io/badge/MrDoc-v1.1.1-brightgreen.svg" title="MrDoc" />
-<img src="https://img.shields.io/badge/MrDocPro-v1.6.8-brightgreen.svg" title="MrDoc专业版" />
+<img src="https://img.shields.io/badge/MrDocPro-v1.7.0-brightgreen.svg" title="MrDoc专业版" />
 <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" title="Python" />
 <img src="https://img.shields.io/badge/Django-v4.2-important.svg" title="Django" />
 <a href="https://hellogithub.com/repository/6494f041e00d4b8481ed1114a0bd33c1" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=6494f041e00d4b8481ed1114a0bd33c1&claim_uid=3IU9mFeOVT0cXyw&theme=small" alt="Featured｜HelloGitHub" /></a>
@@ -35,13 +35,17 @@
 
 ## 简介
 
-MrDoc（觅思文档）是一个私有部署的开源知识库系统。文档写在自己的服务器上，既能作为团队 Wiki 与产品文档站对外发布，也能直接成为 AI 的知识来源——检索与生成都跑在私有环境，数据不出内网。
+MrDoc（觅思文档）是一款开源知识库系统，面向重视数据自主的个人与中小团队。
+
+你可以使用 MrDoc 建立个人知识库或团队 Wiki，编写和组织文档，沉淀技术资料、项目经验与产品手册，并将知识库中的内容发布为在线文档站点。结合 AI 知识库问答，还可以基于已有文档检索和获取知识。
+
+MrDoc 支持私有化部署，让知识库运行在你自己的服务器或指定环境中，由你自主管理文档与相关数据。
 
 ```
 知识生产 → 文档沉淀 → 知识组织 → AI 应用 → 知识分享 → 持续迭代
 ```
 
-如果你熟悉语雀，可以把它理解为「装在自己机器上的语雀」：不限协作者数量、不按人头收年费，对外发布和搜索引擎收录也不需要开通会员。
+如果你熟悉语雀，可以把 MrDoc 理解为一套支持自行部署的知识库系统：不按协作者人数收取软件使用费，既能用于个人知识沉淀，也能用于团队知识协作与文档发布。
 
 支持 Web、浏览器扩展、桌面客户端、移动客户端及 Obsidian 同步插件，可用于个人知识库、团队知识库、产品文档等场景。
 
