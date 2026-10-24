@@ -37,7 +37,7 @@ import json
 import random
 import os.path
 import base64
-import hashlib
+import secrets
 import markdown
 import tempfile
 
@@ -1719,19 +1719,18 @@ def share_doc(request):
                 is_enable = False
             else:
                 is_enable = True
-            # 生成分享文档Token
-            share_token = hashlib.md5()
-            share_token.update("{}_{}".format(doc_id,request.user.username).encode())
-            share_token = share_token.hexdigest()
-            # 创建或更新分享信息
-            doc_share = DocShare.objects.update_or_create(
-                token=share_token,
-                defaults={'doc': doc,
-                          'share_type': share_type,
-                          'share_value':share_value,
-                          'is_enable':is_enable
-                          }
-            )
+            # 分享Token使用随机值生成，避免被他人根据文档ID和用户名离线推算
+            doc_share = DocShare.objects.filter(doc=doc).first()
+            if doc_share is None:
+                doc_share = DocShare(doc=doc, token=secrets.token_urlsafe(32))
+            elif not doc_share.token:
+                # 兼容历史空Token记录
+                doc_share.token = secrets.token_urlsafe(32)
+            doc_share.share_type = share_type
+            doc_share.share_value = share_value
+            doc_share.is_enable = is_enable
+            doc_share.save()
+            share_token = doc_share.token
             if int(share_type) == 0:
                 data = {
                     'doc':share_token
@@ -1749,22 +1748,22 @@ def share_doc(request):
 # 验证文档分享码
 def share_doc_check(request):
     doc_token = request.GET.get('surl', '')
+    # 只处理启用中的分享，避免已停用的分享仍可被验证分享码
+    doc_share = DocShare.objects.filter(token=doc_token, is_enable=True).first() if doc_token != '' else None
+    if doc_share is None:
+        return render(request, '404.html')
     if request.method == 'GET':
-        if doc_token != '':
-            doc_share = DocShare.objects.get(token=doc_token)
-            share_cookie_name = 'sharedoc-{}'.format(doc_token)
-            share_value = request.COOKIES.get(share_cookie_name) if share_cookie_name in request.COOKIES.keys() else 0
-            if doc_share.share_value == share_value:
-                return redirect("/share_doc/?token={}".format(doc_token))
-            else:
-                return render(request,'app_doc/share/share_check.html',locals())
+        share_cookie_name = 'sharedoc-{}'.format(doc_token)
+        share_value = request.COOKIES.get(share_cookie_name) if share_cookie_name in request.COOKIES.keys() else 0
+        if doc_share.share_value == share_value:
+            return redirect("/share_doc/?token={}".format(doc_token))
         else:
-            return render(request,'404.html')
+            return render(request,'app_doc/share/share_check.html',locals())
     else:
         # 接收参数值
         share_value = request.POST.get('share_value','')
-        # 查询数据
-        if DocShare.objects.filter(token=doc_token,share_type=1,share_value=share_value).exists():
+        # 校验分享码
+        if doc_share.share_type == 1 and doc_share.share_value == share_value:
             obj = redirect("/share_doc/?token={}".format(doc_token))
             obj.set_cookie('sharedoc-{}'.format(doc_token),share_value)
             return obj
@@ -1839,14 +1838,20 @@ def manage_doc_share(request):
             token = request.POST.get("token",'')
             name = request.POST.get('key','')
             value = request.POST.get('value','')
+            if not token:
+                return JsonResponse({'status':False,'data':_('参数错误')})
+            # 只能修改自己创建的文档分享
+            share = DocShare.objects.filter(token=token,doc__create_user=request.user).first()
+            if share is None:
+                return JsonResponse({'status':False,'data':_('无操作权限')})
             # 修改分享状态
             if name == 'share_status':
-                is_enable = True if value == 'true' else False
-                DocShare.objects.filter(token=token).update(is_enable=is_enable)
+                share.is_enable = True if value == 'true' else False
+                share.save(update_fields=['is_enable'])
             # 修改分享类型
             elif name == 'share_type':
-                share_type = 0 if value == '0' else 1
-                DocShare.objects.filter(token=token).update(share_type=share_type)
+                share.share_type = 0 if value == '0' else 1
+                share.save(update_fields=['share_type'])
             else:
                 return JsonResponse({'status':False,'data':_('参数错误')})
             return JsonResponse({'status':True,'data':'ok'})
