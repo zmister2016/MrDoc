@@ -1995,7 +1995,7 @@ def get_doctemp(request):
     try:
         doctemp_id = request.POST.get('doctemp_id','')
         if doctemp_id != '':
-            content = DocTemp.objects.get(id=int(doctemp_id)).serializable_value('content')
+            content = DocTemp.objects.get(id=int(doctemp_id),create_user=request.user).serializable_value('content')
             return JsonResponse({'status':True,'data':content})
         else:
             return JsonResponse({'status':False,'data':_('参数错误')})
