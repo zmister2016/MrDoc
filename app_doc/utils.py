@@ -112,6 +112,94 @@ def check_doc_parent_valid(doc_id, parent_id):
     return True
 
 
+# 解析文档排序树并做结构校验（ID 合法、不重复、层级不超限）
+def parse_doc_sort_tree(sort_data):
+    """
+    将前端提交的不限层级文档排序数据解析为 [(doc_id, parent_doc_id), ...]。
+
+    校验规则：
+    1. 每个节点必须是包含整数 id 的字典；
+    2. 同一文档不能在提交数据中重复出现（一个文档只能有一个上级）；
+    3. 层级深度做上限保护，避免恶意深递归触发 RecursionError。
+    校验不通过时抛出 ValueError。
+    """
+    pairs = []
+    seen = set()
+
+    def walk(items, parent_doc_id, depth):
+        if depth > 50 or not isinstance(items, list):
+            raise ValueError('invalid sort_data')
+        for item in items:
+            if not isinstance(item, dict):
+                raise ValueError('invalid sort_data')
+            try:
+                doc_id = int(item['id'])
+            except (KeyError, TypeError, ValueError):
+                raise ValueError('invalid sort_data')
+            # 重复出现的文档会形成脏树，直接拒绝
+            if doc_id <= 0 or doc_id in seen:
+                raise ValueError('invalid sort_data')
+            seen.add(doc_id)
+            pairs.append((doc_id, parent_doc_id))
+            children = item.get('children')
+            if children:
+                walk(children, doc_id, depth + 1)
+
+    walk(sort_data, 0, 0)
+    if not pairs:
+        raise ValueError('invalid sort_data')
+    return pairs
+
+
+# 校验用户是否有权对一批文档执行排序、发布、修改上级文档
+def check_user_can_sort_docs(user, doc_ids, project_id=None):
+    """
+    project_id 为 None（本地文档导入后的批量发布）：
+        文档必须全部属于同一个文集，且用户是该文集的创建者/高级协作成员，
+        或这些文档全部由该用户创建（role=0 协作者发布自己导入的文档）。
+    project_id 不为 None（文集文档排序）：
+        文档必须全部属于该文集，且用户是该文集的创建者或高级协作成员。
+    """
+    try:
+        doc_ids = {int(i) for i in doc_ids}
+    except (TypeError, ValueError):
+        return False
+    if not doc_ids:
+        return False
+
+    docs = list(
+        Doc.objects.filter(id__in=doc_ids).values('id', 'top_doc', 'create_user_id')
+    )
+    # 任何一个文档不存在，整个请求都拒绝，避免部分写入
+    if len(docs) != len(doc_ids):
+        return False
+
+    pro_ids = {doc['top_doc'] for doc in docs}
+    # 跨文集的排序请求一律拒绝
+    if len(pro_ids) != 1:
+        return False
+    top_doc = pro_ids.pop()
+
+    if project_id is not None:
+        try:
+            project_id = int(project_id)
+        except (TypeError, ValueError):
+            return False
+        if project_id != top_doc:
+            return False
+
+    # 文集创建者
+    if Project.objects.filter(id=top_doc, create_user=user).exists():
+        return True
+    # 文集高级协作成员（role=1）
+    if ProjectCollaborator.objects.filter(project_id=top_doc, user=user, role=1).exists():
+        return True
+    # 本地导入场景：文档创建者可以发布自己导入的文档
+    if project_id is None:
+        return all(doc['create_user_id'] == user.id for doc in docs)
+    return False
+
+
 # 查找文档的下级文档
 def find_doc_next(doc_id):
     doc = Doc.objects.get(id=int(doc_id))  # 当前文档

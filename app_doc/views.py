@@ -25,7 +25,8 @@ from loguru import logger
 from app_api.serializers_app import *
 from app_doc.report_utils import *
 from app_doc.utils import check_user_project_writer_role, EDITOR_MODE_ICON_MAP, check_user_project_view_role, \
-    build_doc_tree, get_doc_children_ids, check_doc_parent_valid
+    build_doc_tree, get_doc_children_ids, check_doc_parent_valid, \
+    parse_doc_sort_tree, check_user_can_sort_docs
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 from app_admin.utils import is_zip_bomb
@@ -661,6 +662,7 @@ def manage_project_doc_sort(request,pro_id):
         sort_data = request.POST.get('sort_data', '[]')  # 文档排序列表
         try:
             sort_data = json.loads(sort_data)
+            doc_pairs = parse_doc_sort_tree(sort_data)
         except Exception:
             return JsonResponse({'status': False, 'data': _('文档参数错误')})
 
@@ -673,21 +675,25 @@ def manage_project_doc_sort(request,pro_id):
         pro_colla = ProjectCollaborator.objects.filter(project=pro, user=request.user, role=1)
         # 文集的创建者和文集高级权限协作者允许操作
         if (pro.create_user == request.user) or pro_colla.count() > 0:
+            # 文档必须全部属于该文集，否则整单拒绝
+            if not check_user_can_sort_docs(request.user, [i[0] for i in doc_pairs], project_id=pro.id):
+                return JsonResponse({'status': False, 'data': _('无权操作')})
+
             # 递归保存不限层级的文档排序与上级归属
-            # ancestors 记录当前路径上的文档ID，用于识别提交数据中的循环引用
-            def save_doc_sort(items, parent_doc_id=0, ancestors=()):
+            def save_doc_sort(items, parent_doc_id=0):
                 sort_num = 10
                 for item in items:
                     doc_id = int(item['id'])
-                    # 该文档又出现在自己的下级中，跳过以避免写入循环引用导致文档树断裂
-                    if doc_id in ancestors:
-                        continue
-                    Doc.objects.filter(id=doc_id).update(sort=sort_num, parent_doc=parent_doc_id)
+                    # 写入时再次用 top_doc 收窄作用域，作为纵深防御
+                    Doc.objects.filter(id=doc_id, top_doc=pro.id).update(
+                        sort=sort_num, parent_doc=parent_doc_id
+                    )
                     sort_num += 10
                     if item.get('children'):
-                        save_doc_sort(item['children'], parent_doc_id=doc_id, ancestors=ancestors + (doc_id,))
+                        save_doc_sort(item['children'], parent_doc_id=doc_id)
 
-            save_doc_sort(sort_data)
+            with transaction.atomic():
+                save_doc_sort(sort_data)
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
             return JsonResponse({'status':False,'data':_('无权操作')})

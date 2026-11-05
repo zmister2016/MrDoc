@@ -22,7 +22,6 @@ urlpatterns = [
     path('manage_pro_colla_self/',views.manage_pro_colla_self,name="manage_pro_colla_self"), # 我协作的文集
     path('manage_project_import/',views_import.import_project,name="import_project"), # 导入文集
     path('import_doc_to_project/', views_import.import_local_doc_to_project, name="import_doc_to_project"),  # 导入本地文档到文集
-    path('manage_project_doc_sort/',views_import.project_doc_sort,name='project_doc_sort'), # 导入文集文档排序
     path('manage_project_transfer/<int:pro_id>/',views.manage_project_transfer,name='manage_pro_transfer'), # 文集转让
     path('manage_pro_doc_sort/<int:pro_id>/',views.manage_project_doc_sort,name='manage_pro_doc_sort'), # 文集排序
     path('api/my_colla_list/', views.MyCollaList.as_view(), name="my_colla_list"),  # 我的协作文集列表

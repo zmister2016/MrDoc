@@ -28,6 +28,7 @@ from app_doc.report_utils import *
 from app_admin.decorators import check_headers,allow_report_file
 from app_doc.import_utils import *
 from app_doc.views import get_pro_toc,html_filter,jsonXssFilter
+from app_doc.utils import parse_doc_sort_tree, check_user_can_sort_docs
 from app_api.auth_app import AppAuth,AppMustAuth # 自定义认证
 import datetime
 import traceback
@@ -164,10 +165,21 @@ class ImportLocalDoc(APIView):
     # 发布文档
     def put(self,request):
         sort_data = request.data.get('sort_data', '[]')  # 文档排序列表
+        # 兼容 JSON 字符串与直接提交数组两种形式
+        if isinstance(sort_data, str):
+            try:
+                sort_data = json.loads(sort_data)
+            except Exception:
+                return JsonResponse({'code': 5, 'data': _('文档参数错误')})
+
+        # 先整体校验结构与归属，任一文档越权则整单拒绝
         try:
-            sort_data = json.loads(sort_data)
-        except Exception:
+            doc_pairs = parse_doc_sort_tree(sort_data)
+        except ValueError:
             return JsonResponse({'code': 5, 'data': _('文档参数错误')})
+        if not check_user_can_sort_docs(request.user, [i[0] for i in doc_pairs]):
+            return JsonResponse({'code': 5, 'data': _('无权操作')})
+
         # 递归保存不限层级的文档排序与上级归属，同时发布文档
         def save_doc_sort(items, parent_doc_id=0):
             sort_num = 10
@@ -178,50 +190,9 @@ class ImportLocalDoc(APIView):
                 if item.get('children'):
                     save_doc_sort(item['children'], parent_doc_id=doc_id)
 
-        save_doc_sort(sort_data)
+        with transaction.atomic():
+            save_doc_sort(sort_data)
         return Response({'code':0,'data':'ok'})
-
-
-
-# 文集文档排序
-@login_required()
-@require_http_methods(['POST'])
-def project_doc_sort(request):
-    project_id = request.POST.get('pid',None) # 文集ID
-    title = request.POST.get('title',None) # 文集名称
-    desc = request.POST.get('desc',None) # 文集简介
-    role = request.POST.get('role',1) # 文集权限
-    sort_data = request.POST.get('sort_data','[]') # 文档排序列表
-    doc_status = request.POST.get('status',0) # 文档状态
-    # print(sort_data)
-    try:
-        sort_data = json.loads(sort_data)
-    except Exception:
-        return JsonResponse({'status':False,'data':_('文档参数错误')})
-
-    try:
-        Project.objects.get(id=project_id,create_user=request.user)
-    except ObjectDoesNotExist:
-        return JsonResponse({'status':False,'data':_('没有匹配的文集')})
-
-    # 修改文集信息
-    Project.objects.filter(id=project_id).update(
-        name = title,
-        intro = desc,
-        role = role
-    )
-    # 递归保存不限层级的文档排序与上级归属
-    def save_doc_sort(items, parent_doc_id=0):
-        sort_num = 10
-        for item in items:
-            doc_id = int(item['id'])
-            Doc.objects.filter(id=doc_id).update(sort=sort_num, parent_doc=parent_doc_id, status=doc_status)
-            sort_num += 10
-            if item.get('children'):
-                save_doc_sort(item['children'], parent_doc_id=doc_id)
-
-    save_doc_sort(sort_data)
-    return JsonResponse({'status':True,'data':'ok'})
 
 
 # 导入docx文档
