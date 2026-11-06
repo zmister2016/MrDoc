@@ -21,7 +21,7 @@ from django.contrib.sitemaps import views
 from django.views.i18n import JavaScriptCatalog
 from app_doc.sitemaps import SitemapAll
 from app_admin import views as admin_views
-from .static import robots_txt_serve,llms_txt_serve,extend_root_txt_serve
+from .static import robots_txt_serve,llms_txt_serve,extend_root_txt_serve,backup_download,backup_legacy_deny,media_serve
 
 sitemaps = SitemapAll()
 
@@ -36,7 +36,11 @@ urlpatterns = [
     path('api_app/',include('app_api.urls_app')), # RESTFUL API 接口
     path('ai/',include('app_ai.urls')), # AI 接入
     # re_path('^static/(?P<path>.*)$',serve,{'document_root':settings.STATIC_ROOT}),# 静态文件
-    re_path('^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
+    # 站点备份下载（仅超级管理员）
+    path('admin/backup/download/<str:filename>', backup_download, name='admin_backup_download'),
+    # 旧备份路径一律 404（备份文件已迁出 MEDIA_ROOT）
+    re_path('^media/backup/(?P<path>.*)$', backup_legacy_deny),
+    re_path('^media/(?P<path>.*)$',media_serve,{'document_root':settings.MEDIA_ROOT}),# 媒体文件
     path('robots.txt',robots_txt_serve),# robots协议文件
     path('llms.txt',llms_txt_serve),# llms协议文件
     re_path(r'^jsi18n/', JavaScriptCatalog.as_view(),name="javascript-catalog"),

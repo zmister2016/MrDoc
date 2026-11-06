@@ -254,6 +254,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 if os.path.exists(MEDIA_ROOT) is False:
     os.mkdir(MEDIA_ROOT)
 
+# 站点备份目录（放在 MEDIA_ROOT 之外，避免经由 /media/ 被直接下载）
+BACKUP_DIR = os.path.join(BASE_DIR, 'backup')
+if os.path.exists(BACKUP_DIR) is False:
+    os.makedirs(BACKUP_DIR)
+
 # 允许上传的图片后缀
 ALLOWED_IMG = CONFIG.get("image_upload","suffix_name",fallback="jpg,jpeg,gif,png,bmp,webp").split(",")
 

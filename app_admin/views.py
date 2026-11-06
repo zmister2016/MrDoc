@@ -1583,7 +1583,7 @@ def check_update(request):
 def admin_backup(request):
     mode = request.POST.get('mode','data')
     # 定义备份文件路径
-    backup_dir = os.path.join(settings.MEDIA_ROOT, 'backup')
+    backup_dir = settings.BACKUP_DIR
     if not os.path.exists(backup_dir):
         os.makedirs(backup_dir)
 
@@ -1620,7 +1620,7 @@ def admin_backup(request):
             for db_file, app_label in db_files.items():
                 os.remove(os.path.join(backup_dir,db_file))
 
-            backup_file_path = "/media/backup/" + zip_file_name
+            backup_file_path = reverse('admin_backup_download', args=[zip_file_name])
             return JsonResponse({'status':True,'data':backup_file_path})
         except Exception as e:
             return JsonResponse({'status':False,'data':f"An error occurred: {str(e)}"})
@@ -1638,7 +1638,7 @@ def admin_backup(request):
                         file_path = os.path.join(root, file)
                         arcname = os.path.relpath(file_path, settings.MEDIA_ROOT)
                         zipf.write(file_path, arcname)
-            backup_file_path = "/media/backup/" + zip_file_name
+            backup_file_path = reverse('admin_backup_download', args=[zip_file_name])
             return JsonResponse({'status': True, 'data': backup_file_path})
         except Exception as e:
             return JsonResponse({'status': False, 'data': _("导出媒体文件失败: %(e)s") % {"e": str(e)}})
