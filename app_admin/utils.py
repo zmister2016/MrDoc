@@ -12,16 +12,16 @@ from email.header import Header
 from app_admin.models import SysSetting
 from loguru import logger
 from cryptography.fernet import Fernet
-import random
+import secrets
 import smtplib
 import zipfile
 import os
 
-# 生成数字验证码
-def generate_vcode(n=6):
-    # 生成数字验证码
-    _num = ''.join(map(str, range(3, 10)))
-    vcode_str = ''.join(random.sample(_num, n))
+# 生成随机验证码（使用密码学安全随机源）
+def generate_vcode(n=8):
+    # 57 个字符，去除易混淆的 I、O、0、1
+    _chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    vcode_str = ''.join(secrets.choice(_chars) for _ in range(n))
     return vcode_str
 
 # 发送电子邮件

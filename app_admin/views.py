@@ -277,6 +277,7 @@ def forget_pwd(request):
                 user = User.objects.get(email=email)
                 user.set_password(new_pwd)
                 user.save()
+                data.delete()  # 验证码一次性使用，成功即作废
                 errormsg = _("修改密码成功，请返回登录！")
                 request.session['ForgetPwdEmailCodeVerifyNum'] = 0 # 重试次数
                 request.session['ForgetPwdEmailCodeVerifyLock'] = False # 是否锁定
@@ -287,6 +288,10 @@ def forget_pwd(request):
                 return render(request, 'forget_pwd.html', locals())
         except ObjectDoesNotExist:
             logger.error(_("验证码或邮箱不存在：{}".format(email)))
+            # 验证失败即销毁该邮箱的待验证码，避免同一验证码被反复猜测
+            EmaiVerificationCode.objects.filter(
+                email_name=email, verification_type='忘记密码'
+            ).delete()
             errormsg = _("验证码或邮箱错误！")
             request.session['ForgetPwdEmailCodeVerifyNum'] += 1
             return render(request, 'forget_pwd.html', locals())
@@ -323,7 +328,8 @@ def send_email_vcode(request):
                 return JsonResponse({'status':False,'data':_('发送验证码出错，请重试！')})
 
         else:
-            return JsonResponse({'status':False,'data':_('电子邮箱不存在！')})
+            # 邮箱不存在时返回与发送成功一致的响应，避免账号枚举
+            return JsonResponse({'status':True,'data':_('发送成功')})
     else:
         return JsonResponse({'status':False,'data':_('方法错误')})
 
