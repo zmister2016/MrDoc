@@ -158,6 +158,21 @@ MrDoc 适用于个人、团队和组织的知识管理与文档协作场景，�
 
 用户名：test1  密码：123456
 
+## 本地开发（Conda）
+
+安装 Conda 后，在仓库根目录运行以下命令。开发环境使用 Python 3.11 和项目默认的 SQLite 数据库。
+
+```sh
+conda env create -f environment.yml
+conda activate mrdoc
+python manage.py migrate
+python manage.py runserver 127.0.0.1:8000
+```
+
+访问 [http://127.0.0.1:8000/](http://127.0.0.1:8000/) 查看站点。如需登录管理后台，先运行 `python manage.py createsuperuser`。
+
+依赖有变动时，运行 `conda env update -f environment.yml`。运行测试可使用 `python manage.py test`。
+
 ## Docker Compose 一键部署
 
 ### 1、部署

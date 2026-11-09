@@ -156,6 +156,21 @@ Comparison between the Open Source Edition and the Professional Edition - [https
 
 username: test1　password: 123456
 
+## Local Development with Conda
+
+With Conda installed, run these commands from the repository root. The development environment uses Python 3.11 and the project's default SQLite database.
+
+```sh
+conda env create -f environment.yml
+conda activate mrdoc
+python manage.py migrate
+python manage.py runserver 127.0.0.1:8000
+```
+
+Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to view the site. To sign in to the admin panel, first run `python manage.py createsuperuser`.
+
+Run `conda env update -f environment.yml` when dependencies change and `python manage.py test` to run the tests.
+
 ## Docker Compose Deployment
 
 ### 1、Deployment

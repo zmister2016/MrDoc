@@ -59,6 +59,7 @@ local_settings.py
 db.sqlite3
 media
 backup/
+/whoosh_index/
 
 # Flask stuff:
 instance/
