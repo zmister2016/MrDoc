@@ -20,6 +20,7 @@ mysqlclient
 django-cors-headers==4.4.0
 django-filter==24.3
 bleach
+cryptography
 # AI知识库
 openai>=1.40
 numpy

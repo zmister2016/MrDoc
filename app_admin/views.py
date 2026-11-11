@@ -343,6 +343,12 @@ def send_email_test(request):
     smtp_port = request.POST.get('smtp_port', '')
     username = request.POST.get('username', '')
     pwd = request.POST.get('pwd', '')
+    if not pwd.strip():
+        # 页面不回显明文密码，未填写时回退使用已保存的密码
+        try:
+            pwd = get_email_pwd()[0]
+        except Exception:
+            pwd = ''
     ssl = True if request.POST.get('smtp_ssl', '') == 'on' else False
     # print(smtp_host,smtp_port,send_emailer,username,pwd)
 
@@ -361,9 +367,9 @@ def send_email_test(request):
     try:
         # print(smtp_host,smtp_port)
         if ssl:
-            s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
+            s = smtplib.SMTP_SSL(smtp_host, int(smtp_port), timeout=30)  # 发件箱邮件服务器及端口号
         else:
-            s = smtplib.SMTP(smtp_host, int(smtp_port))
+            s = smtplib.SMTP(smtp_host, int(smtp_port), timeout=30)
         # print(pwd)
         s.login(username, pwd)
         s.sendmail(from_addr=msg_from, to_addrs=msg_to, msg=msg.as_string())
@@ -1322,7 +1328,8 @@ def admin_setting(request):
         email_username = email_settings.get(name="username")
         email_ssl = email_settings.get(name="smtp_ssl")
         email_pwd = email_settings.get(name="pwd")
-        email_dec_pwd = dectry(email_settings.get(name="pwd").value)
+        # 不在页面回显明文密码：留空表示保持原密码，填写则覆盖
+        email_dec_pwd = ''
     if request.method == 'GET':
         return render(request,'app_admin/admin_setting.html',locals())
     elif request.method == 'POST':
@@ -1459,8 +1466,8 @@ def admin_setting(request):
             username = request.POST.get("smtp_username",None)
             pwd = request.POST.get("smtp_pwd",None)
             ssl = request.POST.get("smtp_ssl",None)
-            # 对密码进行加密
-            pwd = enctry(pwd)
+            # 仅当填写了新密码时才加密更新，留空（含纯空格）表示保持原密码不变
+            pwd = encrypt_data(pwd) if pwd and pwd.strip() else None
             if emailer != None:
                 # 更新发件箱
                 SysSetting.objects.update_or_create(
@@ -1491,11 +1498,12 @@ def admin_setting(request):
                     name='pwd',
                     defaults={"value": pwd, "types": 'email'}
                 )
-            # 更新SSL
-            SysSetting.objects.update_or_create(
-                name='smtp_ssl',
-                defaults={"value": ssl, "types": 'email'}
-            )
+            # 更新SSL：未提交该字段时保持原值，避免被空值覆盖
+            if ssl != None:
+                SysSetting.objects.update_or_create(
+                    name='smtp_ssl',
+                    defaults={"value": ssl, "types": 'email'}
+                )
             email_settings = SysSetting.objects.filter(types="email")
             if email_settings.count() == 6:
                 emailer = email_settings.get(name='send_emailer')
@@ -1552,7 +1560,10 @@ def admin_site_config(request):
         data_json = json.loads(data)
         for d in data_json:
             if d['type'] == 'email' and d['name'] == 'pwd':
-                d['value'] = enctry(d['value'])
+                # 留空（含纯空格）表示不修改密码，跳过该字段，避免被空值覆盖
+                if not (d['value'] or '').strip():
+                    continue
+                d['value'] = encrypt_data(d['value'])
             SysSetting.objects.update_or_create(
                 name=d['name'],
                 defaults={'value': d['value'], 'types': d['type']}

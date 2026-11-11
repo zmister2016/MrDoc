@@ -11,7 +11,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from app_admin.models import SysSetting
 from loguru import logger
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet, InvalidToken
 import secrets
 import smtplib
 import zipfile
@@ -32,12 +32,14 @@ def send_email(to_email,vcode_str):
         send_emailer = SysSetting.objects.get(types='email', name='send_emailer').value
         smtp_port = SysSetting.objects.get(types='email', name='smtp_port').value
         username = SysSetting.objects.get(types='email', name='username').value
-        pwd = SysSetting.objects.get(types='email', name='pwd').value
         ssl = SysSetting.objects.get(types='email',name='smtp_ssl').value
-        # print(smtp_host,smtp_port,send_emailer,username,pwd)
 
         msg_from = send_emailer  # 发件人邮箱
-        passwd = dectry(pwd)  # 发件人邮箱密码
+        try:
+            passwd, is_legacy = get_email_pwd()  # 发件人邮箱密码
+        except Exception as e:
+            logger.error("SMTP 密码解密失败，请在后台重新填写邮箱密码:{}".format(repr(e)))
+            return False
         msg_to = to_email  # 收件人邮箱
         try:
             sitename = SysSetting.objects.get(types="basic",name="site_name").value
@@ -52,10 +54,13 @@ def send_email(to_email,vcode_str):
         try:
             # print(smtp_host,smtp_port)
             if ssl:
-                s = smtplib.SMTP_SSL(smtp_host, int(smtp_port))  # 发件箱邮件服务器及端口号
+                s = smtplib.SMTP_SSL(smtp_host, int(smtp_port), timeout=30)  # 发件箱邮件服务器及端口号
             else:
-                s = smtplib.SMTP(smtp_host, int(smtp_port))
+                s = smtplib.SMTP(smtp_host, int(smtp_port), timeout=30)
             s.login(username, passwd)
+            if is_legacy:
+                # 旧版 enctry 无法自校验，登录成功才证明明文正确，此时才写回新格式
+                migrate_email_pwd(passwd)
             s.sendmail(from_addr=msg_from, to_addrs=msg_to, msg=msg.as_string())
             return True
         except smtplib.SMTPException as e:
@@ -65,43 +70,77 @@ def send_email(to_email,vcode_str):
             logger.error("邮件发送异常:{}".format(repr(e)))
             return False
         finally:
-            s.quit()
+            if 's' in locals():  # 连接可能未建立（s 未定义），避免 NameError
+                s.quit()
     else:
         return False
 
 
-# 加密
-def enctry(s):
-    k = settings.SECRET_KEY
-    encry_str = ""
-    for i,j in zip(s,k):
-        # i为字符，j为秘钥字符
-        temp = str(ord(i)+ord(j))+'_' # 加密字符 = 字符的Unicode码 + 秘钥的Unicode码
-        encry_str = encry_str + temp
-    return encry_str
-
-# 解密
-def dectry(p):
-    k = settings.SECRET_KEY
-    dec_str = ""
-    for i,j in zip(p.split("_")[:-1],k):
-        # i 为加密字符，j为秘钥字符
-        temp = chr(int(i) - ord(j)) # 解密字符 = (加密Unicode码字符 - 秘钥字符的Unicode码)的单字节字符
-        dec_str = dec_str+temp
-    return dec_str
-
 # 基于cryptography的加解密
+def _cipher_suite():
+    # 首个密钥用于加密，其余用于解密存量数据（密钥轮换期间新旧数据并存）
+    return MultiFernet([Fernet(k) for k in settings.CRYPTO_KEYS])
+
 # 加密数据
 def encrypt_data(data):
-    cipher_suite = Fernet(settings.CRYPTO_KEY)
-    encrypted_data = cipher_suite.encrypt(data.encode()).decode()
+    encrypted_data = _cipher_suite().encrypt(data.encode()).decode()
     return encrypted_data
 
 # 解密数据
 def decrypt_data(encrypted_data):
-    cipher_suite = Fernet(settings.CRYPTO_KEY)
-    decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
+    decrypted_data = _cipher_suite().decrypt(encrypted_data).decode()
     return decrypted_data
+
+
+# 旧版 enctry 的逆向：密文为 '码_码_...'，每个码 = ord(明文字符) + ord(密钥字符)
+def _legacy_dectry(p, k):
+    try:
+        nums = [int(i) for i in p.split('_')[:-1]]
+    except (ValueError, AttributeError):
+        return None
+    if not nums:
+        return None
+    # 密文段数多于密钥长度说明不是合法旧密文，zip 会静默截断成前缀，需显式拒绝
+    if len(nums) > len(k):
+        return None
+    dec_str = ''
+    for i, j in zip(nums, k):
+        code = i - ord(j)
+        if code < 0x20 or code > 0x10FFFF or 0xD800 <= code <= 0xDFFF:
+            return None
+        dec_str += chr(code)
+    return dec_str
+
+
+# 解密旧版 enctry 密文，失败返回 None
+def decrypt_legacy_data(data):
+    # 历史版本的 SECRET_KEY 是硬编码的，旧密文只可能由该值生成，
+    # 因此只保留唯一候选，避免多候选放大误判
+    key = getattr(settings, '_LEGACY_SECRET_KEY', '')
+    if not key:
+        return None
+    return _legacy_dectry(data, key)
+
+
+# 获取发件人邮箱密码，返回 (明文, 是否为旧版格式)
+# 只解密不写库：旧版 enctry 无法自校验，必须等 SMTP 登录成功后再迁移
+def get_email_pwd():
+    pwd = SysSetting.objects.get(types='email', name='pwd').value
+    if not pwd:
+        return '', False
+    try:
+        return decrypt_data(pwd), False
+    except InvalidToken:
+        plain = decrypt_legacy_data(pwd)
+        if plain is None:
+            raise
+        return plain, True
+
+
+# 将旧版 enctry 密文迁移为 Fernet 密文，调用前必须已确认明文可登录
+def migrate_email_pwd(plain):
+    SysSetting.objects.filter(types='email', name='pwd').update(value=encrypt_data(plain))
+    logger.info('已将邮箱密码从旧版加密格式迁移为新格式')
 
 
 # 判断是否内部链接

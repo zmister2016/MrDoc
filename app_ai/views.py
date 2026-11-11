@@ -202,8 +202,8 @@ def ai_config(request):
 def ai_text_genarate(request):
     def event_stream():
         user_input = json.loads(request.body)['inputs']['query']
-        stream = ai_router.call_llm_core(user_input, request)
         try:
+            stream = ai_router.call_llm_core(user_input, request)
             for chunk in stream:
                 if chunk:
                     yield chunk

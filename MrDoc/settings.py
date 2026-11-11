@@ -11,8 +11,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+import contextlib
 import os
-from configparser import ConfigParser,RawConfigParser
+import secrets
+import sys
+import tempfile
+import time
+from configparser import ConfigParser,RawConfigParser,Error as ConfigParserError
+from django.core.exceptions import ImproperlyConfigured
 from loguru import logger
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -40,13 +46,177 @@ logger.add(
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
+# 密钥读取顺序：环境变量 > config/secret.ini > config.ini（兼容旧版手工配置）> 自动生成
+# 自动生成的密钥写入 config/secret.ini：该文件不进 git，也不在 dumpdata 备份包内，不会被版本更新覆盖
+SECRET_FILE = os.path.join(CONFIG_DIR, 'secret.ini')
 
-MRDOC_CRYPTO_KEY = os.getenv('MRDOC_CRYPTO_KEY', None)
-if MRDOC_CRYPTO_KEY is None:
-    CRYPTO_KEY = CONFIG.get('site','crypto_key',fallback='i8wVMM2WxTXGK8wdKV4_WBP1syNPdNVRfdG7bVoTtoM=')
+_LEGACY_SECRET_KEY = '5&71mt9@^58zdg*_!t(x6g14q*@84d%ptr%%s6e0l50zs0we3d'
+
+
+def _read_secret_file():
+    # 不走插值：手写密钥里若含 % 也不会在读取时抛异常
+    cfg = ConfigParser(interpolation=None)
+    cfg.read(SECRET_FILE, encoding='utf-8')
+    return cfg
+
+
+def _secret_get(option):
+    return (_read_secret_file().get('secret', option, fallback='') or '').strip()
+
+
+def _secret_set(option, value):
+    """写入 config/secret.ini：保留已有项，临时文件 + os.replace 原子替换"""
+    cfg = _read_secret_file()
+    if not cfg.has_section('secret'):
+        cfg.add_section('secret')
+    cfg.set('secret', option, value)
+
+    fd, tmp_path = tempfile.mkstemp(dir=CONFIG_DIR, prefix='.secret-', suffix='.ini')
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            cfg.write(f)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, SECRET_FILE)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+
+@contextlib.contextmanager
+def _secret_lock():
+    """uwsgi/gunicorn 多 worker 会同时进入生成逻辑，用独占锁保证只生成一次"""
+    lock_path = SECRET_FILE + '.lock'
+    # 必须大于下方 30 秒的陈旧锁阈值，否则进程异常退出后重启会等不到接管就超时
+    deadline = time.time() + 35
+    while True:
+        try:
+            fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            try:
+                # 锁文件超过30秒视为进程异常退出遗留，直接接管
+                if time.time() - os.path.getmtime(lock_path) > 30:
+                    os.remove(lock_path)
+                    continue
+            except OSError:
+                pass
+            if time.time() > deadline:
+                raise ImproperlyConfigured(
+                    '等待密钥生成超时，请检查 config 目录权限，'
+                    '或在 config/secret.ini 的 [secret] 段手动配置密钥'
+                )
+            time.sleep(0.1)
+        except OSError as e:
+            raise ImproperlyConfigured(
+                '无法在 config 目录创建锁文件，密钥无法持久化：%s。'
+                '请确保 config 目录可写，或在 config/secret.ini 的 [secret] 段手动配置密钥' % e
+            )
+    try:
+        yield
+    finally:
+        os.close(fd)
+        try:
+            os.remove(lock_path)
+        except OSError:
+            pass
+
+
+def _load_secret_key():
+    env_key = (os.environ.get('MRDOC_SECRET_KEY') or '').strip()
+    if env_key:
+        return env_key
+
+    key = _secret_get('secret_key')
+    if key:
+        return key
+
+    # 兼容旧版手工写在 config.ini 中的配置（raw=True：旧密钥含 % 时不触发插值解析）
+    for section in ('secret', 'site'):
+        key = (CONFIG.get(section, 'secret_key', fallback='', raw=True) or '').strip()
+        if key:
+            return key
+
+    with _secret_lock():
+        # 拿到锁后重新读取，避免等待期间已被其他进程写入
+        key = _secret_get('secret_key')
+        if key:
+            return key
+        key = secrets.token_urlsafe(50)
+        _secret_set('secret_key', key)
+        logger.info('首次启动：已生成新的 SECRET_KEY 并写入 config/secret.ini（此前签发的签名类令牌将失效）')
+        return key
+
+
+SECRET_KEY = _load_secret_key()
+
+if SECRET_KEY == _LEGACY_SECRET_KEY:
+    logger.warning('SECRET_KEY 仍在使用公开默认值，请立即更换为随机密钥')
+
+# 密钥轮换支持（Django 4.1+）：旧密钥可临时放入回退列表，避免轮换导致会话、令牌集中失效
+_secret_key_fallbacks = CONFIG.get('site', 'secret_key_fallbacks', fallback='')
+SECRET_KEY_FALLBACKS = [k.strip() for k in _secret_key_fallbacks.split(',') if k.strip()]
+
+### 加密密钥配置
+# 用于 AI Provider 凭据的静态加密。旧版所有实例共用下面这个公开默认密钥，
+# 因此它必须保留在解密回退列表中，否则升级后存量 api_key 将全部无法解密。
+DEFAULT_CRYPTO_KEY = 'i8wVMM2WxTXGK8wdKV4_WBP1syNPdNVRfdG7bVoTtoM='
+
+
+def _load_crypto_key():
+    env_key = (os.getenv('MRDOC_CRYPTO_KEY') or '').strip()
+    if env_key:
+        return env_key
+
+    key = _secret_get('crypto_key')
+    if key:
+        return key
+
+    # 兼容旧版手工写在 config.ini 中的配置
+    key = (CONFIG.get('site', 'crypto_key', fallback='', raw=True) or '').strip()
+    if key:
+        return key
+
+    # 首次启动自动生成：默认密钥仍留在回退列表中，存量凭据照常可解
+    from cryptography.fernet import Fernet
+    try:
+        with _secret_lock():
+            key = _secret_get('crypto_key')
+            if key:
+                return key
+            key = Fernet.generate_key().decode()
+            _secret_set('crypto_key', key)
+            logger.info('首次启动：已生成新的 CRYPTO_KEY 并写入 config/secret.ini')
+            return key
+    except (OSError, ImproperlyConfigured) as e:
+        # 只读部署等无法持久化的场景：降级为默认密钥，不阻断启动
+        logger.warning('CRYPTO_KEY 无法持久化（%s），本次使用公开默认值，AI 凭据的静态加密不具备实际保护' % e)
+        return DEFAULT_CRYPTO_KEY
+
+
+CRYPTO_KEY = _load_crypto_key()
+
+# MultiFernet：首个密钥用于加密，其余仅用于解密存量数据。
+# 执行 reencrypt_ai_keys 完成迁移后，可从本列表中移除 DEFAULT_CRYPTO_KEY。
+CRYPTO_KEYS = [CRYPTO_KEY]
+if DEFAULT_CRYPTO_KEY not in CRYPTO_KEYS:
+    CRYPTO_KEYS.append(DEFAULT_CRYPTO_KEY)
+
+if CRYPTO_KEY == DEFAULT_CRYPTO_KEY:
+    logger.warning(
+        'CRYPTO_KEY 仍在使用公开默认值，AI 凭据的静态加密不具备实际保护。'
+        '生成新密钥后配置 MRDOC_CRYPTO_KEY 或 config/secret.ini 的 [secret] crypto_key：'
+        'python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())"'
+    )
 else:
-    CRYPTO_KEY = MRDOC_CRYPTO_KEY
+    # 只有显式配置时才校验格式：自动生成的密钥必然合法，手填错误应立即暴露
+    from cryptography.fernet import Fernet
+    try:
+        Fernet(CRYPTO_KEY)
+    except Exception:
+        raise ImproperlyConfigured(
+            'CRYPTO_KEY 不是合法的 Fernet 密钥（需 32 字节 urlsafe base64，44 字符，以 = 结尾）'
+        )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.getboolean('site','debug',fallback=False)

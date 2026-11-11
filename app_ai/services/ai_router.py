@@ -5,6 +5,19 @@ from .embedding import call_embedding
 from .base import sse_yield
 from app_ai.models import AIProvider
 from app_admin.utils import decrypt_data
+from cryptography.fernet import InvalidToken
+from loguru import logger
+
+
+def _decrypt_api_key(value):
+    """解密 AI Provider 密钥：空值返回空串，密文无法解密时给出可定位的错误"""
+    if not value:
+        return ''
+    try:
+        return decrypt_data(value)
+    except InvalidToken:
+        logger.error('AI Provider 的 api_key 解密失败，请在后台重新保存该模型的密钥')
+        raise Exception('API 密钥解密失败，请在后台重新保存该模型的密钥')
 
 
 def call_ai(provider, task_type, api_key, base_url, model, payload, mode="stream"):
@@ -65,7 +78,7 @@ def call_llm_core(user_input, request=None, mode="stream", task_type='text_gener
 
     provider = ai_model_info.provider
     base_url = ai_model_info.base_url or ''
-    api_key = decrypt_data(ai_model_info.api_key)
+    api_key = _decrypt_api_key(ai_model_info.api_key)
     model = ai_model_info.model_name or 'gpt-4o-mini'
     if mode == 'sync':
         return call_ai_sync(provider, task_type, api_key, base_url, model, user_input)
@@ -87,7 +100,7 @@ def get_embedding(text: str) -> list:
 
     provider = ai_model.provider
     base_url = ai_model.base_url or ''
-    api_key = decrypt_data(ai_model.api_key)
+    api_key = _decrypt_api_key(ai_model.api_key)
     model = ai_model.model_name
 
     return call_embedding(provider, api_key, base_url, model, text)

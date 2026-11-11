@@ -158,8 +158,8 @@ class AIProviderSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         from app_admin.utils import encrypt_data
         api_key = validated_data.get("api_key", None)
-        if api_key in (None, "", "******"):
-            # 不修改原值
+        if api_key is None or api_key == "******" or not str(api_key).strip():
+            # 留空（含纯空白）或掩码表示不修改原值
             validated_data.pop("api_key", None)
         else:
             validated_data["api_key"] = encrypt_data(api_key)

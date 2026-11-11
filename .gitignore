@@ -60,6 +60,10 @@ db.sqlite3
 media
 backup/
 
+# 自动生成的密钥文件，切勿提交
+config/secret.ini
+config/secret.ini.lock
+
 # Flask stuff:
 instance/
 .webassets-cache
