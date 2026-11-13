@@ -22,6 +22,7 @@ from app_api.permissions_app import SuperUserPermission # 自定义权限
 from app_admin.decorators import superuser_only,open_register
 from app_doc.models import *
 from app_doc.views import jsonXssFilter
+from app_doc.utils import normalize_allowed_usernames
 from app_admin.models import *
 from app_admin.utils import *
 from loguru import logger
@@ -653,7 +654,7 @@ def admin_project_role(request,pro_id):
                     modify_time = datetime.datetime.now()
                 )
             if int(role_type) == 2: # 指定用户可见
-                role_value = request.POST.get('tagsinput','')
+                role_value = ','.join(normalize_allowed_usernames(request.POST.get('tagsinput','')))
                 Project.objects.filter(id=int(pro_id)).update(
                     role=role_type,
                     role_value = role_value,

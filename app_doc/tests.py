@@ -5,6 +5,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from app_doc.models import Project, Doc, ProjectCollaborator
+from app_doc.utils import normalize_allowed_usernames, get_project_allowed_usernames, check_user_project_view_role
 
 
 class DocSortAuthTest(TestCase):
@@ -98,3 +99,69 @@ class DocSortAuthTest(TestCase):
         self.assertTrue(resp.json().get('status'))
         self.my_doc.refresh_from_db()
         self.assertEqual(self.my_doc.sort, 10)
+
+
+class ProjectSpecifiedUsernameAuthTest(TestCase):
+    """指定用户可见文集的用户名精确匹配回归测试"""
+
+    def setUp(self):
+        self.owner = User.objects.create_user('owner', password='pwd')
+        self.allowed = User.objects.create_user('joann', password='pwd')
+        self.attacker = User.objects.create_user('ann', password='pwd')
+        self.unrelated = User.objects.create_user('mallory', password='pwd')
+        self.project = Project.objects.create(
+            name='specified-pro', intro='', create_user=self.owner,
+            role=2, role_value='joann',
+        )
+        self.doc = Doc.objects.create(
+            name='secret-doc', top_doc=self.project.id, create_user=self.owner,
+            status=1, content='confidential-body', pre_content='confidential-body',
+        )
+
+    def test_normalize_allowed_usernames(self):
+        """写入口归一化：去空格、去空项、去重"""
+        self.assertEqual(normalize_allowed_usernames(' joann ,, joann, ann '), ['joann', 'ann'])
+        self.assertEqual(get_project_allowed_usernames(self.project), {'joann'})
+
+    def test_view_role_helper_uses_exact_username(self):
+        """权限 helper 只认可完整用户名，不做子串匹配"""
+        self.assertTrue(check_user_project_view_role(self.allowed.id, self.project.id))
+        self.assertTrue(check_user_project_view_role(self.owner.id, self.project.id))
+        self.assertFalse(check_user_project_view_role(self.attacker.id, self.project.id))
+        self.assertFalse(check_user_project_view_role(self.unrelated.id, self.project.id))
+
+    def test_doc_view_denies_substring_username(self):
+        """ann 不能读取仅授权 joann 的文档"""
+        self.client.force_login(self.attacker)
+        resp = self.client.get(f'/doc/{self.doc.id}/')
+        self.assertTemplateUsed(resp, '404.html')
+
+    def test_doc_view_allows_listed_username(self):
+        """被授权用户 joann 可以正常阅读文档"""
+        self.client.force_login(self.allowed)
+        resp = self.client.get(f'/doc/{self.doc.id}/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'confidential-body')
+
+    def test_doc_view_denies_unrelated_and_anonymous(self):
+        """无关用户和匿名访客均被拒绝"""
+        self.client.force_login(self.unrelated)
+        self.assertTemplateUsed(self.client.get(f'/doc/{self.doc.id}/'), '404.html')
+        self.client.logout()
+        self.assertTemplateUsed(self.client.get(f'/doc/{self.doc.id}/'), '404.html')
+
+    def test_project_view_denies_substring_username(self):
+        """ann 不能访问仅授权 joann 的文集页"""
+        self.client.force_login(self.attacker)
+        resp = self.client.get(f'/project/{self.project.id}/', HTTP_USER_AGENT='test')
+        self.assertTemplateUsed(resp, '404.html')
+
+    def test_project_list_hides_specified_project(self):
+        """文集列表不会把受限文集展示给子串用户名用户"""
+        self.client.force_login(self.attacker)
+        resp = self.client.get('/', HTTP_USER_AGENT='test')
+        self.assertNotContains(resp, 'specified-pro')
+
+        self.client.force_login(self.allowed)
+        resp = self.client.get('/', HTTP_USER_AGENT='test')
+        self.assertContains(resp, 'specified-pro')

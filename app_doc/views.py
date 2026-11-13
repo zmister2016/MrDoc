@@ -26,7 +26,8 @@ from app_api.serializers_app import *
 from app_doc.report_utils import *
 from app_doc.utils import check_user_project_writer_role, EDITOR_MODE_ICON_MAP, check_user_project_view_role, \
     build_doc_tree, get_doc_children_ids, check_doc_parent_valid, \
-    parse_doc_sort_tree, check_user_can_sort_docs
+    parse_doc_sort_tree, check_user_can_sort_docs, get_project_allowed_usernames, \
+    project_username_regex, normalize_allowed_usernames
 from app_admin.models import UserOptions,SysSetting
 from app_admin.decorators import check_headers,allow_report_file
 from app_admin.utils import is_zip_bomb
@@ -172,7 +173,7 @@ def project_list(request):
         colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)] # 用户的协作文集列表
         project_list = Project.objects.filter(
             Q(role__in=role_list) | \
-            Q(role=2,role_value__contains=str(request.user.username)) | \
+            Q(role=2, role_value__regex=project_username_regex(request.user.username)) | \
             Q(create_user=request.user) | \
             Q(id__in=colla_list)
         ).order_by('-is_top',"{}create_time".format(sort_str))
@@ -185,7 +186,7 @@ def project_list(request):
             project_list = Project.objects.filter(create_user=request.user,role=1).order_by(
                 '-is_top',"{}create_time".format(sort_str))
         elif role in ['2',2]:
-            project_list = Project.objects.filter(role=2,role_value__contains=str(request.user.username)).order_by(
+            project_list = Project.objects.filter(role=2, role_value__regex=project_username_regex(request.user.username)).order_by(
                 '-is_top',"{}create_time".format(sort_str))
         elif role in ['3',3]:
             project_list = Project.objects.filter(role=3).order_by('-is_top',"{}create_time".format(sort_str))
@@ -214,7 +215,7 @@ def project_list(request):
         # 查询所有可显示的文集
         project_list = Project.objects.filter(
             Q(role__in=[0, 3]) | \
-            Q(role=2, role_value__contains=str(request.user.username)) | \
+            Q(role=2, role_value__regex=project_username_regex(request.user.username)) | \
             Q(create_user=request.user) | \
             Q(id__in=colla_list),
             Q(name__icontains=kw) | Q(intro__icontains=kw)
@@ -236,7 +237,7 @@ def project_list(request):
             project_list = Project.objects.filter(
                 Q(name__icontains=kw) | Q(intro__icontains=kw),
                 role=2,
-                role_value__contains=str(request.user.username)
+                role_value__regex=project_username_regex(request.user.username)
             ).order_by('-is_top',"{}create_time".format(sort_str))
         elif role in ['3',3]:
             project_list = Project.objects.filter(
@@ -361,9 +362,8 @@ def project_index(request,pro_id):
             return render(request,'404.html')
         # 指定用户可见文集
         elif project.role == 2:
-            user_list = project.role_value
             if request.user.is_authenticated: # 认证用户判断是否在许可用户列表中
-                if (request.user.username not in user_list) and \
+                if (request.user.username not in get_project_allowed_usernames(project)) and \
                         (request.user != project.create_user) and \
                         (colla_user == 0): # 访问者不在指定用户之中
                     return render(request, '404.html')
@@ -470,7 +470,7 @@ def modify_project_role(request,pro_id):
                             modify_time = datetime.datetime.now()
                         )
                     if int(role_type) == 2: # 指定用户可见
-                        role_value = request.POST.get('tagsinput','')
+                        role_value = ','.join(normalize_allowed_usernames(request.POST.get('tagsinput','')))
                         Project.objects.filter(id=int(pro_id)).update(
                             role=role_type,
                             role_value = role_value,
@@ -956,9 +956,8 @@ def doc_index(request,pro_id=None,doc_id=None,doc=None):
             return render(request, '404.html')
         # 指定用户可见文集
         elif project.role == 2:
-            user_list = project.role_value
             if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
-                if (request.user.username not in user_list) and \
+                if (request.user.username not in get_project_allowed_usernames(project)) and \
                         (request.user != project.create_user) and \
                         (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
                     return render(request, '404.html')
@@ -2241,9 +2240,8 @@ def genera_project_file(request):
 
         # 指定用户可见文集 - 指定用户、文集创建者和协作者可导出
         elif project.role == 2:
-            user_list = project.role_value
             if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
-                if (request.user.username not in user_list) and \
+                if (request.user.username not in get_project_allowed_usernames(project)) and \
                         (request.user != project.create_user) and \
                         (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
                     allow_export = False
@@ -2384,9 +2382,8 @@ def report_file(request):
 
         # 指定用户可见文集 - 指定用户、文集创建者和协作者可导出
         elif project.role == 2:
-            user_list = project.role_value
             if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
-                if (request.user.username not in user_list) and \
+                if (request.user.username not in get_project_allowed_usernames(project)) and \
                         (request.user != project.create_user) and \
                         (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
                     allow_export = False
@@ -2840,7 +2837,7 @@ def search(request):
                 # 查询所有可显示的文集
                 data_list = Project.objects.filter(
                     Q(role=0) | \
-                    Q(role=2, role_value__contains=str(request.user.username)) | \
+                    Q(role=2, role_value__regex=project_username_regex(request.user.username)) | \
                     Q(create_user=request.user) | \
                     Q(id__in=colla_list),
                     Q(create_time__gte=start_date, create_time__lte=end_date),  # 筛选创建时间
@@ -3155,9 +3152,8 @@ def tag_doc(request,tag_id,doc_id):
                 return render(request, '404.html')
             # 指定用户可见文集
             elif project.role == 2:
-                user_list = project.role_value
                 if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
-                    if (request.user.username not in user_list) and \
+                    if (request.user.username not in get_project_allowed_usernames(project)) and \
                             (request.user != project.create_user) and \
                             (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
                         return render(request, '404.html')

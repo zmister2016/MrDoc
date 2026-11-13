@@ -21,7 +21,8 @@ from app_api.serializers_app import *
 from app_api.auth_app import AppAuth,AppMustAuth
 from app_ai.utils import ai_sync_doc,ai_del_doc # AI知识库同步
 from app_doc.views import validateTitle
-from app_doc.utils import get_doc_children_ids
+from app_doc.utils import get_doc_children_ids, get_project_allowed_usernames, project_username_regex, \
+    normalize_allowed_usernames
 from app_doc.util_upload_img import img_upload,base_img_upload
 from loguru import logger
 import datetime
@@ -150,9 +151,8 @@ class ProjectView(APIView):
                 resp['code'] = 2
             # 指定用户可见文集
             elif project.role == 2:
-                user_list = project.role_value
                 if request.auth:  # 认证用户判断是否在许可用户列表中
-                    if (request.user.username not in user_list) and \
+                    if (request.user.username not in get_project_allowed_usernames(project)) and \
                             (request.user != project.create_user) and \
                             (colla_user == 0):  # 访问者不在指定用户之中
                         resp['code'] = 2
@@ -208,7 +208,7 @@ class ProjectView(APIView):
                 colla_list = [i.project.id for i in ProjectCollaborator.objects.filter(user=request.user)]  # 用户的协作文集列表
                 project_list = Project.objects.filter(
                     Q(role__in=role_list) | \
-                    Q(role=2, role_value__contains=str(request.user.username)) | \
+                    Q(role=2, role_value__regex=project_username_regex(request.user.username)) | \
                     Q(create_user=request.user) | \
                     Q(id__in=colla_list)
                 ).order_by("{}create_time".format(sort_str))
@@ -221,7 +221,7 @@ class ProjectView(APIView):
                     project_list = Project.objects.filter(create_user=request.user, role=1).order_by(
                         "{}create_time".format(sort_str))
                 elif role in ['2', 2]:
-                    project_list = Project.objects.filter(role=2, role_value__contains=str(request.user.username)).order_by(
+                    project_list = Project.objects.filter(role=2, role_value__regex=project_username_regex(request.user.username)).order_by(
                         "{}create_time".format(sort_str))
                 elif role in ['3', 3]:
                     project_list = Project.objects.filter(role=3).order_by("{}create_time".format(sort_str))
@@ -250,7 +250,7 @@ class ProjectView(APIView):
                 # 查询所有可显示的文集
                 project_list = Project.objects.filter(
                     Q(role__in=[0, 3]) | \
-                    Q(role=2, role_value__contains=str(request.user.username)) | \
+                    Q(role=2, role_value__regex=project_username_regex(request.user.username)) | \
                     Q(create_user=request.user) | \
                     Q(id__in=colla_list),
                     Q(name__icontains=kw) | Q(intro__icontains=kw)
@@ -272,7 +272,7 @@ class ProjectView(APIView):
                     project_list = Project.objects.filter(
                         Q(name__icontains=kw) | Q(intro__icontains=kw),
                         role=2,
-                        role_value__contains=str(request.user.username)
+                        role_value__regex=project_username_regex(request.user.username)
                     ).order_by("{}create_time".format(sort_str))
                 elif role in ['3', 3]:
                     project_list = Project.objects.filter(
@@ -370,7 +370,10 @@ class ProjectView(APIView):
                     project.name = validateTitle(name)
                     project.intro = content
                     project.role = role
-                    project.role_value = role_value
+                    if str(role) == '2':
+                        project.role_value = ','.join(normalize_allowed_usernames(role_value))
+                    else:
+                        project.role_value = role_value
                     project.save()
                     resp['code'] = 0
                     resp['data'] = 'ok'
@@ -460,9 +463,8 @@ class DocView(APIView):
                 return Response({'code':2})
             # 指定用户可见文集
             elif project.role == 2:
-                user_list = project.role_value
                 if request.user.is_authenticated:  # 认证用户判断是否在许可用户列表中
-                    if (request.user.username not in user_list) and \
+                    if (request.user.username not in get_project_allowed_usernames(project)) and \
                             (request.user != project.create_user) and \
                             (colla_user == 0):  # 访问者不在指定用户之中，也不是协作者
                         return Response({'code': 2})
