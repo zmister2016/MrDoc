@@ -167,6 +167,12 @@ git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chm
 
 If a new version is available, simply run the `docker-update.sh` script in the MrDoc project directory to complete the update.
 
+## Railway One-Click Deployment
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/mrdoc)
+
+Deploys the official `zmister/mrdoc` image with SQLite, uploads, backups and the search index on a persistent `/data` volume. The Django secret key and the admin password (service variable `DJANGO_SUPERUSER_PASSWORD`, username `admin`) are generated per deployment, and open registration is switched off.
+
 ## Windows Deployment Panel
 
 Even without a Linux server or dedicated technical staff, you can still build your own MrDoc AI knowledge base on Windows.
