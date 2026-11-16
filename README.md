@@ -188,6 +188,7 @@ See the deployment documentation for details: https://mrdoc.pro/doc/1362/
 - [~~Linux Deployment Script By jonnyan404~~](https://gitee.com/jonnyan404/oh-my-mrdoc)
 - [Windows Deployment Panel](https://mrdoc.pro/d/windows-deploy-panel/)
 - [VirtualBox/VmWare Image By 无名](https://gitee.com/nicktf/tinycore-mrdoc)
+- [RepoCloud](https://repocloud.io/details/MrDoc/): one-click deployment.
 
 ## Document Import Tools
 - [MrDoc Desktop Client](https://mrdoc.pro/doc/4031/)
