@@ -4,86 +4,288 @@
 {% block title %}{% trans "用户Token管理" %}{% endblock %}
 {% block content %}
 <div class="layui-card">
+    <div class="layui-card-header">
+        <span>{% trans "细粒度访问令牌" %}</span>
+        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" style="float:right;margin-top:10px;" onclick="createTokenDialog()">{% trans "新建令牌" %}</button>
+    </div>
     <div class="layui-card-body">
         <blockquote class="layui-elem-quote layui-quote-nm" style="font-size: 12px;color: #999;">
-            {% trans "借助Token，你可以无需打开网站，即可通过更加自动化的方式进行文档编写；桌面客户端、手机APP和浏览器扩展均需使用此 Token 实现用户认证。" %}
-            </blockquote>
-            <div class="layui-row">
-                <form>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">{% trans "Token值" %}</label>
-                        <div class="layui-input-inline" style="width:450px;">
-                            <input type="text" name="token" id="token" value="{{token}}" autocomplete="off" class="layui-input" readonly>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">{% trans "操作" %}</label>
-                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="copy-token" onclick="copyToken()">{% trans "复制" %}</button>
-                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="qrcode-token"><i class="pear-icon pear-icon-scanning"></i> {% trans "二维码" %}</button>
-                        <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="generaToken()">{% trans "重新生成Token" %}</button>
-                    </div>
-                    <div class="layui-form-item">
-                        <div id="token_qrcode" style="display: none;margin-left: 110px;"></div>
-                    </div>
-                </form>
-            </div>
+            {% blocktrans %}每个令牌可单独设置权限范围、限定文集和有效期，适合第三方应用（如知识库连接器、脚本）按最小权限接入。令牌明文仅在创建时显示一次，请妥善保存。{% endblocktrans %}
+            <br>{% blocktrans %}调用 API 时建议使用 Authorization: Bearer 请求头传递令牌；URL 参数 ?token= 仍兼容，但不推荐在 URL 中携带密钥。{% endblocktrans %}
+        </blockquote>
+        <table class="layui-table" lay-size="sm">
+            <colgroup>
+                <col width="140"><col width="150"><col><col width="110"><col width="110"><col width="140"><col width="80"><col width="80">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>{% trans "名称" %}</th>
+                    <th>{% trans "前缀" %}</th>
+                    <th>{% trans "权限范围" %}</th>
+                    <th>{% trans "限定文集" %}</th>
+                    <th>{% trans "过期时间" %}</th>
+                    <th>{% trans "最近使用" %}</th>
+                    <th>{% trans "状态" %}</th>
+                    <th>{% trans "操作" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for t in access_tokens %}
+                <tr>
+                    <td>{{t.name}}</td>
+                    <td><code>{{t.token_prefix}}…</code></td>
+                    <td style="font-size:12px;">{{t.scopes|join:", "}}</td>
+                    <td style="font-size:12px;">{% if t.project_ids %}{{t.project_ids|join:", "}}{% else %}{% trans "全部" %}{% endif %}</td>
+                    <td style="font-size:12px;">{% if t.expires_at %}{{t.expires_at|date:"Y-m-d H:i"}}{% else %}{% trans "长期" %}{% endif %}</td>
+                    <td style="font-size:12px;">{% if t.last_used_at %}{{t.last_used_at|date:"Y-m-d H:i"}}{% else %}-{% endif %}</td>
+                    <td>
+                        {% if t.revoked_at %}<span style="color:#999;">{% trans "已吊销" %}</span>
+                        {% elif t.is_expired %}<span style="color:#999;">{% trans "已过期" %}</span>
+                        {% else %}<span style="color:#16b777;">{% trans "有效" %}</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if not t.revoked_at and not t.is_expired %}
+                        <button class="pear-btn pear-btn-danger pear-btn-sm" type="button" onclick="revokeToken('{{t.id}}','{{t.name|escapejs}}')">{% trans "吊销" %}</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="8" style="text-align:center;color:#999;">{% trans "还没有创建过细粒度令牌" %}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
+<div class="layui-card">
+    <div class="layui-card-header">{% trans "旧版 Token（继续支持）" %}</div>
+    <div class="layui-card-body">
+        <blockquote class="layui-elem-quote layui-quote-nm" style="font-size: 12px;color: #999;">
+            {% blocktrans %}旧版 Token 每个账号仅有一个，拥有全部权限且长期有效。桌面客户端、浏览器扩展等现有客户端可继续使用，无需迁移；如为第三方连接器新建令牌，建议使用上方的细粒度令牌。{% endblocktrans %}
+        </blockquote>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{% trans "Token值" %}</label>
+            <div class="layui-input-inline" style="width:450px;">
+                <input type="text" name="token" id="legacy-token" value="{{legacy_token}}" autocomplete="off" class="layui-input" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{% trans "操作" %}</label>
+            <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="copyLegacyToken()">{% trans "复制" %}</button>
+            <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" id="qrcode-token"><i class="pear-icon pear-icon-scanning"></i> {% trans "二维码" %}</button>
+            <button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="generaToken()">{% trans "重新生成Token" %}</button>
+        </div>
+        <div class="layui-form-item">
+            <div id="token_qrcode" style="display: none;margin-left: 110px;"></div>
+        </div>
+    </div>
+</div>
+{{ project_options|json_script:"project-options-data" }}
 {% endblock %}
 {% block custom_script %}
 <script src="{% static 'qrcodejs/qrcode.min.js' %}?version={{mrdoc_version}}"></script>
 <script>
-    layui.use(['table', 'form', 'jquery', 'dtree'], function() {
-        let table = layui.table;
-        let form = layui.form;
+    layui.use(['form', 'jquery'], function() {
         let $ = layui.jquery;
-        let dtree = layui.dtree;
         $.ajaxSetup({
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-        //复制Token
-        copyToken = function(){
-            var token_val = document.getElementById("token");
+
+        // 可选权限（由后端 scope 注册表渲染）
+        var SCOPE_OPTIONS = [
+            {% for key,label in scopes.items %}{key: '{{key|escapejs}}', label: '{{label|escapejs}}', checked: {% if key == 'project:read' or key == 'doc:read' %}true{% else %}false{% endif %}}{% if not forloop.last %},{% endif %}{% endfor %}
+        ];
+
+        // 可限定的文集（由后端按当前用户权限渲染）
+        var PROJECT_OPTIONS = JSON.parse(document.getElementById('project-options-data').textContent);
+        var projectSelectInstance = null;
+        var createDialogIndex = null;
+
+        function formField(label, control, hint){
+            return '<div style="margin-bottom:12px;">'
+                + '<div style="margin-bottom:6px;color:#333;">' + label + '</div>'
+                + control
+                + (hint ? '<div style="color:#999;font-size:12px;margin-top:4px;">' + hint + '</div>' : '')
+                + '</div>';
+        }
+
+        // 打开新建令牌弹窗
+        createTokenDialog = function(){
+            var scopeHtml = '';
+            SCOPE_OPTIONS.forEach(function(s){
+                scopeHtml += '<label style="display:inline-block;margin:0 16px 6px 0;font-weight:normal;white-space:nowrap;">'
+                    + '<input type="checkbox" name="scope" value="' + s.key + '"' + (s.checked ? ' checked' : '') + '> '
+                    + s.label + ' <span style="color:#999;font-size:12px;">(' + s.key + ')</span></label>';
+            });
+            var html = '<div style="padding:16px 20px 20px;" id="create-token-form">'
+                + formField("{% trans '名称' %}", '<input type="text" id="ct-name" class="layui-input" maxlength="64" placeholder="{% trans '如：WeKnora 只读' %}">', "{% trans '用于区分不同用途的令牌' %}")
+                + formField("{% trans '权限范围' %}", '<div style="line-height:28px;">' + scopeHtml + '</div>', '')
+                + formField("{% trans '限定文集' %}", '<div id="ct-project-select"></div>', "{% trans '不选择表示不限定，可多选' %}")
+                + formField("{% trans '有效期' %}", '<input type="number" id="ct-expires" class="layui-input" min="1" placeholder="{% trans '留空表示长期有效' %}">', "{% trans '单位：天；留空表示长期有效' %}")
+                + '<div style="margin-top:16px;text-align:right;">'
+                + '<button id="ct-submit" class="pear-btn pear-btn-primary pear-btn-sm" type="button">{% trans "创建" %}</button>'
+                + '<button id="ct-cancel" class="pear-btn pear-btn-default pear-btn-sm" type="button" style="margin-left:8px;">{% trans "取消" %}</button>'
+                + '</div>'
+                + '</div>';
+            createDialogIndex = layer.open({
+                type: 1,
+                title: "{% trans '新建令牌' %}",
+                area: ['620px', 'auto'],
+                content: html,
+                success: function(layero){
+                    // 允许下拉浮层溢出弹窗，避免被裁切
+                    layero.find('.layui-layer-content').css('overflow', 'visible');
+                    projectSelectInstance = xmSelect.render({
+                        el: '#ct-project-select',
+                        name: 'ct_projects',
+                        filterable: true,
+                        radio: false,
+                        direction: 'down',
+                        paging: true,
+                        pageSize: 20,
+                        height: '180px',
+                        theme: {color: '#333333'},
+                        data: PROJECT_OPTIONS,
+                    });
+                    // xmSelect 渲染后表单变高，重新按内容撑开弹窗，避免底部按钮被裁切
+                    layero.css('height', 'auto');
+                    layero.find('.layui-layer-content').css('height', 'auto');
+                    layero.find('#ct-submit').on('click', function(){
+                        submitCreateToken(createDialogIndex);
+                    });
+                    layero.find('#ct-cancel').on('click', function(){
+                        layer.close(createDialogIndex);
+                    });
+                },
+            });
+        };
+
+        // 读取 xmSelect 中选中的文集ID（空表示不限定）
+        function getSelectedProjectIds(){
+            if(!projectSelectInstance){
+                return '';
+            }
+            return projectSelectInstance.getValue('valueStr') || '';
+        }
+
+        // 提交新建令牌
+        function submitCreateToken(index){
+            var scopes = [];
+            $('#create-token-form input[name="scope"]:checked').each(function(){
+                scopes.push($(this).val());
+            });
+            if(scopes.length === 0){
+                layer.msg("{% trans '请至少选择一项权限' %}");
+                return;
+            }
+            layer.load(1);
+            $.ajax({
+                url: "{% url 'manage_token' %}",
+                type: "POST",
+                traditional: true,
+                data: {
+                    action: 'create',
+                    name: $('#ct-name').val(),
+                    scopes: scopes,
+                    project_ids: getSelectedProjectIds(),
+                    expires_days: $('#ct-expires').val()
+                },
+                success: function(r){
+                    layer.closeAll('loading');
+                    if(r.status){
+                        layer.close(index);
+                        showToken(r.data);
+                    }else{
+                        layer.msg(r.data);
+                    }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg("{% trans '请求失败，请重试' %}");
+                }
+            });
+        }
+
+        // 展示新令牌（仅此一次）
+        showToken = function(data){
+            var html = '<div style="padding:16px;">'
+                + '<div style="color:#ff5722;margin-bottom:8px;">{% trans "请立即复制保存，关闭后将无法再次查看该令牌。" %}</div>'
+                + '<textarea id="new-token-value" class="layui-textarea" rows="3" readonly>' + data.token + '</textarea>'
+                + '<div style="margin-top:12px;"><button class="pear-btn pear-btn-primary pear-btn-sm" type="button" onclick="copyNewToken()">{% trans "复制" %}</button></div>'
+                + '</div>';
+            layer.open({
+                type: 1,
+                title: "{% trans '令牌创建成功' %} - " + data.name,
+                area: ['560px', '260px'],
+                content: html
+            });
+        };
+
+        copyNewToken = function(){
+            var el = document.getElementById('new-token-value');
+            el.select();
+            document.execCommand("Copy");
+            layer.msg("{% trans '已复制！' %}");
+        };
+
+        // 吊销令牌
+        revokeToken = function(id, name){
+            layer.confirm("{% trans '确定吊销该令牌？吊销后使用该令牌的客户端将立即失效。' %}<br>" + name, {
+                btn: ["{% trans '确定' %}", "{% trans '取消' %}"]
+            }, function(index){
+                $.post("{% url 'manage_token' %}", {action: 'revoke', id: id}, function(r){
+                    if(r.status){
+                        layer.msg("{% trans '已吊销' %}", {offset: 't'});
+                        setTimeout(function(){window.location.reload();}, 600);
+                    }else{
+                        layer.msg(r.data);
+                    }
+                });
+                layer.close(index);
+            });
+        };
+
+        // 旧版Token：复制
+        copyLegacyToken = function(){
+            var token_val = document.getElementById("legacy-token");
             token_val.select();
             document.execCommand("Copy");
-            layer.msg("{% trans '已复制！' %}")
+            layer.msg("{% trans '已复制！' %}");
         };
-        //生成Token
+
+        // 旧版Token：重新生成
         generaToken = function(){
             layer.open({
                 type:1,
                 title:'{% trans "重置Token" %}',
                 area:'300px;',
-                id:'delPro',//配置ID
+                id:'delPro',
                 content:'<div style="margin:10px;">{% trans "警告：此操作将重新为你的账户生成Token，旧Token将失效！" %}</div>',
-                btn:['{% trans "确定" %}','{% trans "取消" %}'], //添加按钮
-                btnAlign:'c', //按钮居中
+                btn:['{% trans "确定" %}','{% trans "取消" %}'],
+                btnAlign:'c',
                 yes:function (index,layero) {
                     layer.load(1);
                     $.post("{% url 'manage_token' %}",function(r){
                         layer.closeAll('loading');
                         if(r.status){
-                            //生成成功
-                            //window.location.reload();
-                            $('#token').val(r.data);
-                            layer.close(index)
+                            $('#legacy-token').val(r.data);
+                            layer.close(index);
                             doc_qrcode();
-                            layer.msg("{% trans '生成成功！' %}",{offset: 't'})
+                            layer.msg("{% trans '生成成功！' %}",{offset: 't'});
                         }else{
-                            //生成失败，提示
-                            //console.log(r)
-                            layer.close(index)
-                            layer.msg(r.data)
+                            layer.close(index);
+                            layer.msg(r.data);
                         }
-                    })
+                    });
                 },
             });
         };
-        // 生成文档链接二维码
+
+        // 旧版Token 二维码
         doc_qrcode = function(){
             $("#token_qrcode").empty();
             new QRCode("token_qrcode", {
-                text: JSON.stringify({'url':window.location.origin,'token':$("#token").val()}) ,
+                text: JSON.stringify({'url':window.location.origin,'token':$("#legacy-token").val()}),
                 width: 150,
                 height: 150,
                 colorDark : "#000000",
@@ -93,11 +295,10 @@
         };
         doc_qrcode();
         $("#qrcode-token").hover(function(){
-            $("#token_qrcode").show()
+            $("#token_qrcode").show();
         },function(){
-            $("#token_qrcode").hide()
-        })
-
+            $("#token_qrcode").hide();
+        });
     })
 </script>
 {% endblock %}

@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods,require_safe,requi
 from django.contrib.auth.decorators import login_required # 登录需求装饰器
 from django.core.exceptions import PermissionDenied,ObjectDoesNotExist
 from django.conf import settings
+from django.utils import timezone
 from django.contrib.auth import authenticate,login,logout # 认证相关方法
 from django.contrib.auth.models import User # Django默认用户模型
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage,InvalidPage # 后端分页
@@ -14,9 +15,10 @@ from django.db.models import Q
 from app_doc.util_upload_img import upload_generation_dir,base_img_upload,url_img_upload,img_upload
 from app_doc.util_upload_file import handle_attachment_upload
 from app_doc.utils import find_doc_next,find_doc_previous,build_doc_tree,check_doc_parent_valid
-from app_api.models import UserToken
+from app_api.models import UserToken, AccessToken
+from app_api.token_auth import TokenError, SCOPES, authenticate, resolve_token, generate_token, scoped_projects
 from app_ai.utils import ai_sync_doc,ai_del_doc # AI知识库同步
-from app_doc.models import Project, Doc, DocHistory, Image, ProjectCollaborator
+from app_doc.models import Project, Doc, DocHistory, Image, ProjectCollaborator, Attachment
 from app_api.serializers_app import ImageSerializer,ProjectSerializer
 from app_api.utils import read_add_projects, remove_doc_tag, is_edit_authorized
 from loguru import logger
@@ -95,19 +97,74 @@ def oauth0(request):
 @login_required()
 def manage_token(request):
     if request.method == 'GET':
+        access_tokens = AccessToken.objects.filter(user=request.user).order_by('-created_at')
         try:
-            token = UserToken.objects.get(user=request.user).token # 查询用户Token
+            legacy_token = UserToken.objects.get(user=request.user).token  # 查询用户旧版Token
         except ObjectDoesNotExist:
-            token = _('你还没有生成过Token！')
+            legacy_token = ''
         except:
+            legacy_token = ''
             if settings.DEBUG:
                 logger.exception(_("Token管理页面异常"))
-        return render(request,'app_api/manage_token.html',locals())
+        # 可限定文集列表：仅本人创建的文集 + 协作文集
+        own_project_ids = set(Project.objects.filter(create_user=request.user).values_list('id', flat=True))
+        user_project_ids = read_add_projects(request.user)
+        project_options = [
+            {
+                'name': name,
+                'value': str(pid),
+                'group': '我创建的' if pid in own_project_ids else '协作文集',
+            }
+            for pid, name in Project.objects.filter(id__in=user_project_ids).order_by('-create_time').values_list('id', 'name')
+        ]
+        return render(request, 'app_api/manage_token.html', {
+            'access_tokens': access_tokens,
+            'legacy_token': legacy_token,
+            'scopes': SCOPES,
+            'project_options': project_options,
+        })
     elif request.method == 'POST':
+        action = request.POST.get('action', '')
+        # 创建细粒度Token
+        if action == 'create':
+            name = (request.POST.get('name') or '默认').strip()[:64]
+            scopes = [s for s in request.POST.getlist('scopes') if s in SCOPES]
+            if not scopes:
+                return JsonResponse({'status': False, 'data': _('请至少选择一项权限')})
+            project_ids = []
+            for pid in (request.POST.get('project_ids') or '').replace('，', ',').split(','):
+                pid = pid.strip()
+                if not pid:
+                    continue
+                if not pid.isdigit():
+                    return JsonResponse({'status': False, 'data': _('限定的文集ID须为数字，多个用逗号分隔')})
+                project_ids.append(int(pid))
+            expires_at = None
+            expires_days = (request.POST.get('expires_days') or '').strip()
+            if expires_days:
+                if not expires_days.isdigit() or int(expires_days) <= 0:
+                    return JsonResponse({'status': False, 'data': _('有效期须为正整数天数')})
+                expires_at = timezone.now() + datetime.timedelta(days=int(expires_days))
+            try:
+                token_obj, raw_token = generate_token(request.user, name=name, scopes=scopes,
+                                                      project_ids=project_ids, expires_at=expires_at)
+            except:
+                logger.exception(_("细粒度Token生成异常"))
+                return JsonResponse({'status': False, 'data': _('生成出错，请重试！')})
+            return JsonResponse({'status': True, 'data': {'token': raw_token, 'name': token_obj.name,
+                                                          'prefix': token_obj.token_prefix}})
+        # 吊销细粒度Token
+        elif action == 'revoke':
+            token_id = request.POST.get('id', '')
+            if not token_id.isdigit():
+                return JsonResponse({'status': False, 'data': _('参数错误')})
+            AccessToken.objects.filter(id=token_id, user=request.user, revoked_at__isnull=True).update(revoked_at=timezone.now())
+            return JsonResponse({'status': True, 'data': _('已吊销')})
+        # 兼容旧版：未指定 action 时重置用户唯一Token
         try:
             user = request.user
-            now_time =str(time.time())
-            string = 'user_{}_time_{}'.format(user,now_time).encode('utf-8')
+            now_time = str(time.time())
+            string = 'user_{}_time_{}'.format(user, now_time).encode('utf-8')
             token_str = hashlib.sha224(string).hexdigest()
             user_token = UserToken.objects.filter(user=user)
             if user_token.exists():
@@ -116,26 +173,24 @@ def manage_token(request):
                 user=user,
                 token=token_str
             )
-            return JsonResponse({'status':True,'data':token_str})
+            return JsonResponse({'status': True, 'data': token_str})
         except:
             logger.exception(_("用户Token生成异常"))
-            return JsonResponse({'status':False,'data':_('生成出错，请重试！')})
+            return JsonResponse({'status': False, 'data': _('生成出错，请重试！')})
 
 
 # 检查用户Token
 def check_token(request):
-    token = request.GET.get('token', '')
-    try:
-        token = UserToken.objects.get(token=token)
-        user = token.user
-        data = {
-            'is_writer':True,
-            'username': user.first_name if user.first_name else user.username,  # 用户昵称
-            'user_type': 'admin' if user.is_superuser else 'user',  # 用户类型
-        }
-        return JsonResponse({'status':True,'data':data})
-    except:
-        return JsonResponse({'status':False})
+    context = resolve_token(request)
+    if context is None:
+        return JsonResponse({'status': False})
+    user = context.user
+    data = {
+        'is_writer':True,
+        'username': user.first_name if user.first_name else user.username,  # 用户昵称
+        'user_type': 'admin' if user.is_superuser else 'user',  # 用户类型
+    }
+    return JsonResponse({'status':True,'data':data})
 
 # 获取文集
 @require_GET
@@ -150,14 +205,16 @@ def get_projects(request):
     else:
         sort = ''
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'project:read')
         if filter == 'self':  # 自己的文集
-            view_list = Project.objects.filter(create_user=token.user).values_list('id', flat=True)
+            view_list = [pid for pid in Project.objects.filter(create_user=token.user).values_list('id', flat=True)
+                         if token.allows_project(pid)]
         elif filter == 'colla':  # 协作的文集
-            view_list = ProjectCollaborator.objects.filter(user=token.user).values_list('project_id', flat=True)
+            view_list = [pid for pid in ProjectCollaborator.objects.filter(user=token.user).values_list('project_id', flat=True)
+                         if token.allows_project(pid)]
         else:  # 自己和协作的文集
             # 用户有浏览和新增权限的文集列表
-            view_list = read_add_projects(token.user)
+            view_list = scoped_projects(token)
 
         # 查询符合条件的文集
         if kw == '':
@@ -179,6 +236,8 @@ def get_projects(request):
             }
             project_list.append(item)
         return JsonResponse({'status':True,'data':project_list})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status':False,'data':_('token无效')})
     except:
@@ -189,17 +248,19 @@ def get_projects(request):
 def get_project(request):
     token = request.GET.get('token', '')
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'project:read')
         pid = request.GET.get('pid', '')
         project = Project.objects.get(id=pid)
         # 用户有浏览和新增权限的文集列表
-        view_list = read_add_projects(token.user)
+        view_list = scoped_projects(token)
 
         if project.id not in view_list:
             return JsonResponse({'status': False, 'data': _('无权限')})
 
         item = ProjectSerializer(project,many=False).data
         return JsonResponse({'status': True, 'data': item})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -217,10 +278,10 @@ def get_docs(request):
     else:
         sort = ''
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         pid = request.GET.get('pid','')
         # 用户有浏览和新增权限的文集列表
-        view_list = read_add_projects(token.user)
+        view_list = scoped_projects(token)
         if not pid.isdigit() or int(pid) not in view_list:
             return JsonResponse({'status': False, 'data': _('无文集权限')})
 
@@ -258,6 +319,8 @@ def get_docs(request):
             }
             doc_list.append(item)
         return JsonResponse({'status': True, 'data': doc_list})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -269,12 +332,12 @@ def get_docs(request):
 def get_level_docs(request):
     token = request.GET.get('token', '')
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         pid = request.GET.get('pid', '')
         is_page = request.GET.get('is_page', True)
 
         # 用户有浏览和新增权限的文集列表
-        view_list = read_add_projects(token.user)
+        view_list = scoped_projects(token)
         if int(pid) not in view_list:
             return JsonResponse({'status': False, 'data': _('无文集权限')})
 
@@ -315,6 +378,8 @@ def get_level_docs(request):
                 'total_page': paginator.num_pages, 'current': page}
         return JsonResponse(resp)
 
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -332,12 +397,12 @@ def get_self_docs(request):
     else:
         sort = ''
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         # 按文档修改时间进行排序
         if kw == '':
-            docs = Doc.objects.filter(create_user=token.user,status=1).order_by('{}modify_time'.format(sort))
+            docs = Doc.objects.filter(create_user=token.user,status=1,top_doc__in=scoped_projects(token)).order_by('{}modify_time'.format(sort))
         else:
-            docs = Doc.objects.filter(create_user=token.user,status=1).filter(
+            docs = Doc.objects.filter(create_user=token.user,status=1,top_doc__in=scoped_projects(token)).filter(
                 Q(name__icontains=kw) | Q(pre_content__icontains=kw)
             ).order_by('{}modify_time'.format(sort))
 
@@ -373,6 +438,8 @@ def get_self_docs(request):
             }
             doc_list.append(item)
         return JsonResponse({'status': True, 'data': doc_list})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -385,12 +452,12 @@ def get_self_docs(request):
 def get_doc(request):
     token = request.GET.get('token', '')
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         did = request.GET.get('did', '')
         doc = Doc.objects.get(create_user=token.user, id=did)  # 查询文集下的文档
         project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
         # 用户有浏览和新增权限的文集列表
-        view_list = read_add_projects(token.user)
+        view_list = scoped_projects(token)
 
         if project.id not in view_list:
             return JsonResponse({'status': False, 'data': _('无权限')})
@@ -411,6 +478,8 @@ def get_doc(request):
             'create_user': doc.create_user.username  # 文档的创建者
         }
         return JsonResponse({'status': True, 'data': item})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -422,12 +491,12 @@ def get_doc(request):
 def get_doc_previous_next(request):
     token = request.GET.get('token', '')
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         did = request.GET.get('did', '')
         doc = Doc.objects.get(id=did)  # 查询文档
         project = Project.objects.get(id=doc.top_doc)  # 查询文档所属的文集
         # 用户有浏览和新增权限的文集列表
-        view_list = read_add_projects(token.user)
+        view_list = scoped_projects(token)
 
         if project.id not in view_list:
             return JsonResponse({'status': False, 'data': _('无权限')})
@@ -455,7 +524,7 @@ def get_images(request):
     page_num = request.GET.get('page', 1)
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         imgs = Image.objects.filter(user=token.user)
         paginator = Paginator(imgs, 10)
         page = request.GET.get('page', 1)
@@ -477,6 +546,8 @@ def get_images(request):
             img_list.append(item)
 
         return JsonResponse({'status': True, 'data': {'imgs':img_list,'total_cnt':paginator.count,'total_page':paginator.num_pages}})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -505,7 +576,7 @@ def create_project(request):
         return JsonResponse({'status': False, 'data': _('文集名称不能为空！')})
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'project:write')
         p = Project.objects.create(
             name = project_name, # 文集名称
             intro = project_desc, # 文集简介
@@ -513,6 +584,8 @@ def create_project(request):
             create_user = token.user # 创建的用户
         )
         return JsonResponse({'status': True, 'data': p.id})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -544,9 +617,9 @@ def create_doc(request):
         parent_doc = request.POST.get('parent_doc', 0)
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
-        # 文集是否属于用户
-        is_project = Project.objects.filter(create_user=token.user,id=project_id)
+        token = authenticate(request, 'doc:write')
+        # 文集是否属于用户，且在当前 Token 的授权范围内
+        is_project = Project.objects.filter(create_user=token.user,id=project_id,id__in=scoped_projects(token))
         # 新建文档
         if is_project.exists():
             if int(editor_mode) == 1 or int(editor_mode) == 2:
@@ -572,6 +645,8 @@ def create_doc(request):
             return JsonResponse({'status': True, 'data': doc.id})
         else:
             return JsonResponse({'status':False,'data':_('非法请求')})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -602,12 +677,12 @@ def modify_doc(request):
         parent_doc = request.POST.get('parent_doc', '')
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:write')
         # 修改现有文档
         doc = Doc.objects.get(id=doc_id)
 
-        # 验证权限
-        if not is_edit_authorized(token, doc):
+        # 验证权限（用户权限 + Token 限定文集）
+        if not is_edit_authorized(token, doc) or not token.allows_project(doc.top_doc):
             return JsonResponse({'status': False, 'data': _('非法请求')})
 
         # 校验上级文档设置，避免把文档挂到自己的下级文档中形成循环引用
@@ -642,6 +717,8 @@ def modify_doc(request):
         ai_sync_doc(Doc.objects.get(id=doc_id))
         return JsonResponse({'status': True, 'data': 'ok'})
 
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -670,7 +747,7 @@ def upload_img(request):
         commom_img = request.FILES.get('image', None)  # 普通图片上传
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'image:write')
         # 上传图片
         if base64_img:
             result = base_img_upload(base64_img, '', token.user)
@@ -680,6 +757,8 @@ def upload_img(request):
             return JsonResponse({'status': False, 'data': _('无有效图片')})
         return JsonResponse(result)
         # return HttpResponse(json.dumps(result), content_type="application/json")
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'success': 0, 'data': _('token无效')})
     except:
@@ -694,7 +773,7 @@ def upload_img_url(request):
     url_img = request.POST.get('url','')
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'image:write')
         if token.user:
             # 上传图片
             if url_img.startswith("data:image"):  # 以URL形式上传的BASE64编码图片
@@ -704,6 +783,8 @@ def upload_img_url(request):
             return JsonResponse(result)
         else:
             return JsonResponse({'status': False, 'data': _('用户无权限操作')})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'success': 0, 'data': _('token无效')})
     except:
@@ -726,11 +807,11 @@ def delete_doc(request):
         doc_id = request.POST.get('did', '')
     try:
         # 验证Token
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:delete')
         doc = Doc.objects.get(id=doc_id)
 
-        # 验证权限
-        if doc.create_user == token.user:
+        # 验证权限（文档创建者 + Token 限定文集）
+        if doc.create_user == token.user and token.allows_project(doc.top_doc):
             Doc.objects.filter(id=int(doc_id)).update(
                 status=3,
                 modify_time=datetime.datetime.now(),
@@ -740,6 +821,8 @@ def delete_doc(request):
             return JsonResponse({'status': True, 'data': 'ok'})
         else:
             return JsonResponse({'status':False,'data':_('非法请求')})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -757,12 +840,14 @@ def ai_chat_stream(request):
     if ai_status != '1':
         return JsonResponse({'status': False, 'data': _('AI功能未启用')})
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         # 注入用户身份并标记Token已验证，内部ChatSessionAuthentication据此跳过CSRF校验（避免403）
         request.user = token.user
         request._token_api_authenticated = True
         from app_ai.view.chat import ai_chat_stream as origin_ai_chat_stream
         return origin_ai_chat_stream(request)
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -776,7 +861,7 @@ def get_attachments(request):
     kw = request.GET.get('kw', '')
     limit = int(request.GET.get('limit', 10))
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'doc:read')
         # 查询当前用户的附件
         if kw == '':
             attachments = Attachment.objects.filter(user=token.user).order_by('-create_time')
@@ -804,6 +889,8 @@ def get_attachments(request):
             }
             attachment_list.append(item)
         return JsonResponse({'status': True, 'data': attachment_list, 'cnt': attachments.count(), 'total_page': paginator.num_pages})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except:
@@ -817,11 +904,13 @@ def upload_attachment(request):
     attachment = request.FILES.get('attachment_upload', None)
     token = request.GET.get('token', '')
     try:
-        token = UserToken.objects.get(token=token)
+        token = authenticate(request, 'attachment:write')
         if attachment is None:
             return JsonResponse({'status': False, 'data': _('未选择文件')})
         result = handle_attachment_upload(attachment, token.user, request)
         return JsonResponse({'status': result['status'], 'data': result['data']})
+    except TokenError as e:
+        return JsonResponse({'status': False, 'code': e.code, 'data': e.message})
     except ObjectDoesNotExist:
         return JsonResponse({'status': False, 'data': _('token无效')})
     except Exception:
