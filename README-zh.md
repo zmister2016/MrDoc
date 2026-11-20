@@ -169,6 +169,12 @@ git clone https://gitee.com/zmister/mrdoc-install.git && cd mrdoc-install && chm
 
 如果有版本更新，直接在觅思文档项目目录下运行`docker-update.sh`脚本即可完成更新。
 
+## Railway 一键部署
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/mrdoc)
+
+使用官方 `zmister/mrdoc` 镜像部署，SQLite 数据库、附件、备份和搜索索引保存在 `/data` 持久化卷中。每次部署都会自动生成 Django 密钥和管理员密码（服务变量 `DJANGO_SUPERUSER_PASSWORD`，用户名 `admin`），并默认关闭开放注册。
+
 ## Windows 部署面板
 
 没有 Linux 服务器、没有专门的技术人员，也可以在 Windows 上搭建自己的 MrDoc AI知识库。
