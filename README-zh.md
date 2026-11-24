@@ -56,6 +56,7 @@ MrDoc 目前提供以下客户端及扩展：
 - 🗔桌面客户端：主要用于文档编辑和文档导入，支持 Windows、macOS、Linux，[下载地址](https://mrdoc.pro/d/mrdoc-desktop-releases/)
 - 📱移动客户端：主要用于个人知识库查看、文档编辑和AI知识库问答，支持 Android，[下载地址](https://mrdoc.pro/d/mobile-app-releases/)
 - Obsidian 同步插件：主要用于Obsidian文档和MrDoc 文档之间的双向同步 [使用教程](https://mrdoc.pro/doc/45650/)
+- 微信小程序：用于OEM客户，品牌定制构建团队自己的对外知识库，支持文档查看、分享和AI知识库问答。
 
 ## 适用场景
 

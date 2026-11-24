@@ -54,6 +54,7 @@ MrDoc currently provides the following clients and extensions:
 - 🗔Desktop Client: mainly for document editing and importing; supports Windows, macOS, Linux, [Download](https://mrdoc.pro/d/mrdoc-desktop-releases/)
 - 📱Mobile Client: mainly for personal knowledge base viewing, document editing and AI knowledge base Q&A; supports Android, [Download](https://mrdoc.pro/d/mobile-app-releases/)
 - Obsidian Sync Plugin: mainly for two-way sync between Obsidian documents and MrDoc documents [Tutorial](https://mrdoc.pro/doc/45650/)
+- WeChat Mini Program: mainly for OEM customers, brand-customized knowledge base for teams, supports document viewing, sharing, and AI knowledge base Q&A.
 
 ## Applicable Scenarios
 
